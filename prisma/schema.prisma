@@ -9,16 +9,17 @@ datasource db {
 }
 
 model Product {
-  id        String   @id @default(uuid())
-  name      String
-  price     Int
+  id          String   @id @default(uuid())
+  name        String
+  price       Int
   priceInCents Int
-  imagePath String
+  imagePath   String  // Cloudinary URL
+  imagePublicId String? // Cloudinary public ID for future operations like delete
   description String
   isAvailable Boolean @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  orders Order[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  orders      Order[]
 }
 
 model User {
@@ -27,16 +28,16 @@ model User {
   password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  orders Order[]
+  orders    Order[]
 }
 
 model Order {
-  id        String   @id @default(uuid())
-  userId    String
-  productId String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id              String   @id @default(uuid())
+  userId          String
+  productId       String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
   pricePaidInCents Int
-  user User @relation(fields: [userId], references: [id],  onDelete: Cascade)
-  product Product @relation(fields: [productId], references: [id],  onDelete:Restrict)
+  user            User     @relation(fields: [userId], references: [id],  onDelete: Cascade)
+  product         Product  @relation(fields: [productId], references: [id],  onDelete:Restrict)
 }

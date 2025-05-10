@@ -2,8 +2,8 @@
 
 import prisma from "@/db";
 import { z } from "zod";
-import fs from "fs/promises";
 import { redirect } from "next/navigation";
+import { uploadImage, deleteImage } from "@/lib/cloudinary";
 
 const fileSchema = z
   .instanceof(File, {
@@ -73,26 +73,31 @@ export async function addProduct(
       return { error: { image: ["Zdjęcie jest wymagane"] } };
     }
 
-    // Create directory if it doesn't exist
-    await fs.mkdir("public/products", { recursive: true });
+    // Convert file to buffer for upload
+    const imageBuffer = Buffer.from(await data.image.arrayBuffer());
 
-    // Generate unique image path
-    const imagePath = `/products/${crypto.randomUUID()}-${data.image.name}`;
+    // Upload image to Cloudinary
+    const cloudinaryResult = await uploadImage(imageBuffer, data.image.name);
 
-    // Save image file
-    await fs.writeFile(
-      `public${imagePath}`,
-      Buffer.from(await data.image.arrayBuffer())
-    );
+    if (!cloudinaryResult || !cloudinaryResult.secure_url) {
+      return {
+        error: {
+          _form: [
+            "Wystąpił błąd podczas przesyłania zdjęcia. Spróbuj ponownie.",
+          ],
+        },
+      };
+    }
 
-    // Create product in database
+    // Create product in database with Cloudinary URL
     await prisma.product.create({
       data: {
         name: data.name,
         price: data.priceInCents / 100,
         priceInCents: data.priceInCents,
         description: data.description,
-        imagePath: imagePath,
+        imagePath: cloudinaryResult.secure_url,
+        imagePublicId: cloudinaryResult.public_id,
         isAvailable: true,
       },
     });
@@ -115,4 +120,41 @@ export async function addProduct(
 
   // This line will never be reached due to the redirect, but TypeScript needs it
   return { success: true };
+}
+
+/**
+ * Delete a product and its associated image from Cloudinary
+ */
+export async function deleteProduct(
+  productId: string
+): Promise<{ success: boolean; message: string }> {
+  try {
+    // First get the product to find the image public ID
+    const product = await prisma.product.findUnique({
+      where: { id: productId },
+      select: { imagePublicId: true },
+    });
+
+    if (!product) {
+      return { success: false, message: "Produkt nie został znaleziony" };
+    }
+
+    // Delete from Cloudinary if we have a public ID
+    if (product.imagePublicId) {
+      await deleteImage(product.imagePublicId);
+    }
+
+    // Delete the product from the database
+    await prisma.product.delete({
+      where: { id: productId },
+    });
+
+    return { success: true, message: "Produkt został usunięty" };
+  } catch (error) {
+    console.error("Error deleting product:", error);
+    return {
+      success: false,
+      message: "Wystąpił błąd podczas usuwania produktu",
+    };
+  }
 }

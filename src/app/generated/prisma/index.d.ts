@@ -1140,6 +1140,7 @@ export namespace Prisma {
     price: number | null
     priceInCents: number | null
     imagePath: string | null
+    imagePublicId: string | null
     description: string | null
     isAvailable: boolean | null
     createdAt: Date | null
@@ -1152,6 +1153,7 @@ export namespace Prisma {
     price: number | null
     priceInCents: number | null
     imagePath: string | null
+    imagePublicId: string | null
     description: string | null
     isAvailable: boolean | null
     createdAt: Date | null
@@ -1164,6 +1166,7 @@ export namespace Prisma {
     price: number
     priceInCents: number
     imagePath: number
+    imagePublicId: number
     description: number
     isAvailable: number
     createdAt: number
@@ -1188,6 +1191,7 @@ export namespace Prisma {
     price?: true
     priceInCents?: true
     imagePath?: true
+    imagePublicId?: true
     description?: true
     isAvailable?: true
     createdAt?: true
@@ -1200,6 +1204,7 @@ export namespace Prisma {
     price?: true
     priceInCents?: true
     imagePath?: true
+    imagePublicId?: true
     description?: true
     isAvailable?: true
     createdAt?: true
@@ -1212,6 +1217,7 @@ export namespace Prisma {
     price?: true
     priceInCents?: true
     imagePath?: true
+    imagePublicId?: true
     description?: true
     isAvailable?: true
     createdAt?: true
@@ -1311,6 +1317,7 @@ export namespace Prisma {
     price: number
     priceInCents: number
     imagePath: string
+    imagePublicId: string | null
     description: string
     isAvailable: boolean
     createdAt: Date
@@ -1342,6 +1349,7 @@ export namespace Prisma {
     price?: boolean
     priceInCents?: boolean
     imagePath?: boolean
+    imagePublicId?: boolean
     description?: boolean
     isAvailable?: boolean
     createdAt?: boolean
@@ -1356,6 +1364,7 @@ export namespace Prisma {
     price?: boolean
     priceInCents?: boolean
     imagePath?: boolean
+    imagePublicId?: boolean
     description?: boolean
     isAvailable?: boolean
     createdAt?: boolean
@@ -1368,6 +1377,7 @@ export namespace Prisma {
     price?: boolean
     priceInCents?: boolean
     imagePath?: boolean
+    imagePublicId?: boolean
     description?: boolean
     isAvailable?: boolean
     createdAt?: boolean
@@ -1380,13 +1390,14 @@ export namespace Prisma {
     price?: boolean
     priceInCents?: boolean
     imagePath?: boolean
+    imagePublicId?: boolean
     description?: boolean
     isAvailable?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "price" | "priceInCents" | "imagePath" | "description" | "isAvailable" | "createdAt" | "updatedAt", ExtArgs["result"]["product"]>
+  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "price" | "priceInCents" | "imagePath" | "imagePublicId" | "description" | "isAvailable" | "createdAt" | "updatedAt", ExtArgs["result"]["product"]>
   export type ProductInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     orders?: boolean | Product$ordersArgs<ExtArgs>
     _count?: boolean | ProductCountOutputTypeDefaultArgs<ExtArgs>
@@ -1405,6 +1416,7 @@ export namespace Prisma {
       price: number
       priceInCents: number
       imagePath: string
+      imagePublicId: string | null
       description: string
       isAvailable: boolean
       createdAt: Date
@@ -1838,6 +1850,7 @@ export namespace Prisma {
     readonly price: FieldRef<"Product", 'Int'>
     readonly priceInCents: FieldRef<"Product", 'Int'>
     readonly imagePath: FieldRef<"Product", 'String'>
+    readonly imagePublicId: FieldRef<"Product", 'String'>
     readonly description: FieldRef<"Product", 'String'>
     readonly isAvailable: FieldRef<"Product", 'Boolean'>
     readonly createdAt: FieldRef<"Product", 'DateTime'>
@@ -4475,6 +4488,7 @@ export namespace Prisma {
     price: 'price',
     priceInCents: 'priceInCents',
     imagePath: 'imagePath',
+    imagePublicId: 'imagePublicId',
     description: 'description',
     isAvailable: 'isAvailable',
     createdAt: 'createdAt',
@@ -4521,6 +4535,14 @@ export namespace Prisma {
   };
 
   export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+
+
+  export const NullsOrder: {
+    first: 'first',
+    last: 'last'
+  };
+
+  export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 
 
   /**
@@ -4603,6 +4625,7 @@ export namespace Prisma {
     price?: IntFilter<"Product"> | number
     priceInCents?: IntFilter<"Product"> | number
     imagePath?: StringFilter<"Product"> | string
+    imagePublicId?: StringNullableFilter<"Product"> | string | null
     description?: StringFilter<"Product"> | string
     isAvailable?: BoolFilter<"Product"> | boolean
     createdAt?: DateTimeFilter<"Product"> | Date | string
@@ -4616,6 +4639,7 @@ export namespace Prisma {
     price?: SortOrder
     priceInCents?: SortOrder
     imagePath?: SortOrder
+    imagePublicId?: SortOrderInput | SortOrder
     description?: SortOrder
     isAvailable?: SortOrder
     createdAt?: SortOrder
@@ -4632,6 +4656,7 @@ export namespace Prisma {
     price?: IntFilter<"Product"> | number
     priceInCents?: IntFilter<"Product"> | number
     imagePath?: StringFilter<"Product"> | string
+    imagePublicId?: StringNullableFilter<"Product"> | string | null
     description?: StringFilter<"Product"> | string
     isAvailable?: BoolFilter<"Product"> | boolean
     createdAt?: DateTimeFilter<"Product"> | Date | string
@@ -4645,6 +4670,7 @@ export namespace Prisma {
     price?: SortOrder
     priceInCents?: SortOrder
     imagePath?: SortOrder
+    imagePublicId?: SortOrderInput | SortOrder
     description?: SortOrder
     isAvailable?: SortOrder
     createdAt?: SortOrder
@@ -4665,6 +4691,7 @@ export namespace Prisma {
     price?: IntWithAggregatesFilter<"Product"> | number
     priceInCents?: IntWithAggregatesFilter<"Product"> | number
     imagePath?: StringWithAggregatesFilter<"Product"> | string
+    imagePublicId?: StringNullableWithAggregatesFilter<"Product"> | string | null
     description?: StringWithAggregatesFilter<"Product"> | string
     isAvailable?: BoolWithAggregatesFilter<"Product"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"Product"> | Date | string
@@ -4797,6 +4824,7 @@ export namespace Prisma {
     price: number
     priceInCents: number
     imagePath: string
+    imagePublicId?: string | null
     description: string
     isAvailable?: boolean
     createdAt?: Date | string
@@ -4810,6 +4838,7 @@ export namespace Prisma {
     price: number
     priceInCents: number
     imagePath: string
+    imagePublicId?: string | null
     description: string
     isAvailable?: boolean
     createdAt?: Date | string
@@ -4823,6 +4852,7 @@ export namespace Prisma {
     price?: IntFieldUpdateOperationsInput | number
     priceInCents?: IntFieldUpdateOperationsInput | number
     imagePath?: StringFieldUpdateOperationsInput | string
+    imagePublicId?: NullableStringFieldUpdateOperationsInput | string | null
     description?: StringFieldUpdateOperationsInput | string
     isAvailable?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -4836,6 +4866,7 @@ export namespace Prisma {
     price?: IntFieldUpdateOperationsInput | number
     priceInCents?: IntFieldUpdateOperationsInput | number
     imagePath?: StringFieldUpdateOperationsInput | string
+    imagePublicId?: NullableStringFieldUpdateOperationsInput | string | null
     description?: StringFieldUpdateOperationsInput | string
     isAvailable?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -4849,6 +4880,7 @@ export namespace Prisma {
     price: number
     priceInCents: number
     imagePath: string
+    imagePublicId?: string | null
     description: string
     isAvailable?: boolean
     createdAt?: Date | string
@@ -4861,6 +4893,7 @@ export namespace Prisma {
     price?: IntFieldUpdateOperationsInput | number
     priceInCents?: IntFieldUpdateOperationsInput | number
     imagePath?: StringFieldUpdateOperationsInput | string
+    imagePublicId?: NullableStringFieldUpdateOperationsInput | string | null
     description?: StringFieldUpdateOperationsInput | string
     isAvailable?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -4873,6 +4906,7 @@ export namespace Prisma {
     price?: IntFieldUpdateOperationsInput | number
     priceInCents?: IntFieldUpdateOperationsInput | number
     imagePath?: StringFieldUpdateOperationsInput | string
+    imagePublicId?: NullableStringFieldUpdateOperationsInput | string | null
     description?: StringFieldUpdateOperationsInput | string
     isAvailable?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -5026,6 +5060,21 @@ export namespace Prisma {
     not?: NestedIntFilter<$PrismaModel> | number
   }
 
+  export type StringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
   export type BoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
@@ -5048,6 +5097,11 @@ export namespace Prisma {
     none?: OrderWhereInput
   }
 
+  export type SortOrderInput = {
+    sort: SortOrder
+    nulls?: NullsOrder
+  }
+
   export type OrderOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -5058,6 +5112,7 @@ export namespace Prisma {
     price?: SortOrder
     priceInCents?: SortOrder
     imagePath?: SortOrder
+    imagePublicId?: SortOrder
     description?: SortOrder
     isAvailable?: SortOrder
     createdAt?: SortOrder
@@ -5075,6 +5130,7 @@ export namespace Prisma {
     price?: SortOrder
     priceInCents?: SortOrder
     imagePath?: SortOrder
+    imagePublicId?: SortOrder
     description?: SortOrder
     isAvailable?: SortOrder
     createdAt?: SortOrder
@@ -5087,6 +5143,7 @@ export namespace Prisma {
     price?: SortOrder
     priceInCents?: SortOrder
     imagePath?: SortOrder
+    imagePublicId?: SortOrder
     description?: SortOrder
     isAvailable?: SortOrder
     createdAt?: SortOrder
@@ -5130,6 +5187,24 @@ export namespace Prisma {
     _sum?: NestedIntFilter<$PrismaModel>
     _min?: NestedIntFilter<$PrismaModel>
     _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type BoolWithAggregatesFilter<$PrismaModel = never> = {
@@ -5247,6 +5322,10 @@ export namespace Prisma {
     decrement?: number
     multiply?: number
     divide?: number
+  }
+
+  export type NullableStringFieldUpdateOperationsInput = {
+    set?: string | null
   }
 
   export type BoolFieldUpdateOperationsInput = {
@@ -5380,6 +5459,20 @@ export namespace Prisma {
     not?: NestedIntFilter<$PrismaModel> | number
   }
 
+  export type NestedStringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
   export type NestedBoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
@@ -5438,6 +5531,34 @@ export namespace Prisma {
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
     not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
+  export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type NestedIntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
   export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
@@ -5585,6 +5706,7 @@ export namespace Prisma {
     price: number
     priceInCents: number
     imagePath: string
+    imagePublicId?: string | null
     description: string
     isAvailable?: boolean
     createdAt?: Date | string
@@ -5597,6 +5719,7 @@ export namespace Prisma {
     price: number
     priceInCents: number
     imagePath: string
+    imagePublicId?: string | null
     description: string
     isAvailable?: boolean
     createdAt?: Date | string
@@ -5652,6 +5775,7 @@ export namespace Prisma {
     price?: IntFieldUpdateOperationsInput | number
     priceInCents?: IntFieldUpdateOperationsInput | number
     imagePath?: StringFieldUpdateOperationsInput | string
+    imagePublicId?: NullableStringFieldUpdateOperationsInput | string | null
     description?: StringFieldUpdateOperationsInput | string
     isAvailable?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -5664,6 +5788,7 @@ export namespace Prisma {
     price?: IntFieldUpdateOperationsInput | number
     priceInCents?: IntFieldUpdateOperationsInput | number
     imagePath?: StringFieldUpdateOperationsInput | string
+    imagePublicId?: NullableStringFieldUpdateOperationsInput | string | null
     description?: StringFieldUpdateOperationsInput | string
     isAvailable?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
