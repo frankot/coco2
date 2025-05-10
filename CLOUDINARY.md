@@ -65,3 +65,7 @@ Deletes an image from Cloudinary by its public ID.
 ### getPublicIdFromUrl(cloudinaryUrl)
 
 Extracts the public ID from a Cloudinary URL.
+
+## Clean-up Process
+
+Old local images can be cleaned up once your migration to Cloudinary is complete. This ensures your repository stays clean and optimized.
