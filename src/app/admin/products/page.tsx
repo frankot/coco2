@@ -45,35 +45,42 @@ async function ProductsTable() {
     );
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead className="w-0">
-            <span className="sr-only">Dostepnosc</span>
-          </TableHead>
-          <TableHead>Nazwa</TableHead>
-          <TableHead>Cena</TableHead>
-          <TableHead className="w-0">
-            <span className="sr-only">Akcje</span>
-          </TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {products.map((product) => (
-          <TableRow key={product.id}>
-            <TableCell>
-              {product.isAvailable ? (
-                <CheckCircle2 className="w-4 h-4 text-green-500" />
-              ) : (
-                <XCircle className="w-4 h-4 text-red-500" />
-              )}
-            </TableCell>
-            <TableCell>{product.name}</TableCell>
-            <TableCell>{product.price}</TableCell>
-
+    <>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-0">
+              <span className="sr-only">Dostepnosc</span>
+            </TableHead>
+            <TableHead>Nazwa</TableHead>
+            <TableHead>Cena</TableHead>
+            <TableHead className="w-0">
+              <span className="sr-only">Akcje</span>
+            </TableHead>
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHeader>
+        <TableBody>
+          {products.map((product) => (
+            <TableRow key={product.id}>
+              <TableCell>
+                {product.isAvailable ? (
+                  <CheckCircle2 className="w-4 h-4 text-green-500" />
+                ) : (
+                  <XCircle className="w-4 h-4 text-red-500" />
+                )}
+              </TableCell>
+              <TableCell>{product.name}</TableCell>
+              <TableCell>{product.price}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+
+      <div className="mt-8 flex justify-end">
+        <Button variant="destructive">
+          <Link href="/admin/clean-db">Usuń wszystkie produkty</Link>
+        </Button>
+      </div>
+    </>
   );
 }
