@@ -11,8 +11,7 @@ import type { Product } from "@/app/generated/prisma/client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-export default function ProductForm({product}: {product?: Product | null}) {
-    
+export default function ProductForm({ product }: { product?: Product | null }) {
   const formRef = useRef<HTMLFormElement>(null);
   const [priceInCents, setPriceInCents] = useState<string>(product?.priceInCents?.toString() || "");
   const [fileName, setFileName] = useState<string>(product?.imagePath || "");
@@ -20,11 +19,11 @@ export default function ProductForm({product}: {product?: Product | null}) {
   const router = useRouter();
 
   const initialState = { error: {} };
-  
+
   const [state, formAction, isPending] = useActionState(
-    product 
+    product
       ? (prevState: any, formData: FormData) => updateProduct(product.id, prevState, formData)
-      : addProduct, 
+      : addProduct,
     initialState
   );
 
@@ -54,10 +53,10 @@ export default function ProductForm({product}: {product?: Product | null}) {
       </div>
       <div className="space-y-2">
         <Label htmlFor="description">Opis</Label>
-        <Textarea 
-          id="description" 
-          name="description" 
-          required 
+        <Textarea
+          id="description"
+          name="description"
+          required
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
@@ -69,11 +68,11 @@ export default function ProductForm({product}: {product?: Product | null}) {
         <Label htmlFor="image">Zdjęcie</Label>
         {product?.imagePath && (
           <div className="mb-4">
-            <Image 
-              src={product.imagePath} 
-              alt={product.name || "Product image"} 
-              width={200} 
-              height={200} 
+            <Image
+              src={product.imagePath}
+              alt={product.name || "Product image"}
+              width={200}
+              height={200}
               className="rounded-md object-cover"
             />
             <p className="text-sm text-muted-foreground mt-1">
@@ -96,7 +95,9 @@ export default function ProductForm({product}: {product?: Product | null}) {
               }
             }}
           />
-          {fileName && !product?.imagePath && <span className="text-sm text-muted-foreground">{fileName}</span>}
+          {fileName && !product?.imagePath && (
+            <span className="text-sm text-muted-foreground">{fileName}</span>
+          )}
         </div>
         {state?.error?.image && <div className="text-destructive">{state.error.image}</div>}
       </div>
@@ -105,11 +106,7 @@ export default function ProductForm({product}: {product?: Product | null}) {
         <Button type="submit" disabled={isPending}>
           {isPending ? "Dodawanie..." : product ? "Aktualizuj produkt" : "Dodaj produkt"}
         </Button>
-        <Button 
-          type="button" 
-          variant="outline" 
-          onClick={() => router.back()}
-        >
+        <Button type="button" variant="outline" onClick={() => router.back()}>
           Wróć
         </Button>
       </div>

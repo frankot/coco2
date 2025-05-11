@@ -119,7 +119,11 @@ const editSchema = addSchema.extend({
   image: fileSchema.optional(),
 });
 
-export async function updateProduct(productId: string, prevState: FormState, formData: FormData): Promise<FormState> {
+export async function updateProduct(
+  productId: string,
+  prevState: FormState,
+  formData: FormData
+): Promise<FormState> {
   try {
     // Log what we received for debugging
     const entries = Object.fromEntries(formData);
@@ -157,7 +161,7 @@ export async function updateProduct(productId: string, prevState: FormState, for
     if (!product) {
       return { error: { _form: ["Produkt nie został znaleziony"] } };
     }
-    
+
     // Prepare update data
     const updateData: any = {
       name: data.name,
@@ -259,5 +263,3 @@ export async function toggleProductAvailability(productId: string, isAvailable: 
     data: { isAvailable },
   });
 }
-
-

@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import PageHeader from "../_components/pageHeader";
 import Link from "next/link";
@@ -95,7 +94,7 @@ async function ProductsTable() {
                     </DropdownMenuItem>
                     <ActiveToggleDropdownItem id={product.id} isAvailable={product.isAvailable} />
                     <DropdownMenuSeparator />
-                    <DeleteDropdownItem  id={product.id} disabled={product._count.orders > 0} />
+                    <DeleteDropdownItem id={product.id} disabled={product._count.orders > 0} />
                   </DropdownMenuContent>
                 </DropdownMenu>
               </TableCell>
