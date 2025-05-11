@@ -33,9 +33,7 @@ export default function CleanDbPage() {
     } catch (error) {
       setResult({
         success: false,
-        message: `Błąd: ${
-          error instanceof Error ? error.message : String(error)
-        }`,
+        message: `Błąd: ${error instanceof Error ? error.message : String(error)}`,
       });
     } finally {
       setIsDeleting(false);
@@ -48,16 +46,12 @@ export default function CleanDbPage() {
 
       <div className="bg-red-50 border border-red-200 rounded-md p-6 mb-8">
         <h2 className="text-xl font-semibold text-red-700 mb-4">Strefa Niebezpieczna</h2>
-        <p className="mb-4 text-red-600">
-          Ta akcja trwale usunie:
-        </p>
+        <p className="mb-4 text-red-600">Ta akcja trwale usunie:</p>
         <ul className="list-disc pl-8 mb-6 text-red-600">
           <li>WSZYSTKIE produkty z bazy danych</li>
           <li>WSZYSTKIE powiązane obrazy z Cloudinary</li>
         </ul>
-        <p className="mb-6 text-red-600 font-semibold">
-          Tej operacji nie można cofnąć.
-        </p>
+        <p className="mb-6 text-red-600 font-semibold">Tej operacji nie można cofnąć.</p>
 
         <Button
           variant="destructive"
@@ -72,9 +66,7 @@ export default function CleanDbPage() {
       {result.message && (
         <div
           className={`mt-4 p-4 rounded-md ${
-            result.success
-              ? "bg-green-50 text-green-700"
-              : "bg-red-50 text-red-700"
+            result.success ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"
           }`}
         >
           <p className="font-semibold mb-2">{result.message}</p>

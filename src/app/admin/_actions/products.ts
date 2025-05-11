@@ -38,10 +38,7 @@ type FormState = {
   success?: boolean;
 };
 
-export async function addProduct(
-  prevState: FormState,
-  formData: FormData
-): Promise<FormState> {
+export async function addProduct(prevState: FormState, formData: FormData): Promise<FormState> {
   try {
     // Log what we received for debugging
     const entries = Object.fromEntries(formData);
@@ -82,9 +79,7 @@ export async function addProduct(
     if (!cloudinaryResult || !cloudinaryResult.secure_url) {
       return {
         error: {
-          _form: [
-            "Wystąpił błąd podczas przesyłania zdjęcia. Spróbuj ponownie.",
-          ],
+          _form: ["Wystąpił błąd podczas przesyłania zdjęcia. Spróbuj ponownie."],
         },
       };
     }
@@ -117,8 +112,6 @@ export async function addProduct(
       },
     };
   }
-
-  // This line will never be reached due to the redirect, but TypeScript needs it
   return { success: true };
 }
 
@@ -158,3 +151,12 @@ export async function deleteProduct(
     };
   }
 }
+
+export async function toggleProductAvailability(productId: string, isAvailable: boolean) {
+  await prisma.product.update({
+    where: { id: productId },
+    data: { isAvailable },
+  });
+}
+
+

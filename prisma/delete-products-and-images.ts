@@ -23,10 +23,7 @@ async function deleteAllProductsAndImages() {
           await deleteImage(product.imagePublicId);
           cloudinaryDeleteCount++;
         } catch (error) {
-          console.error(
-            `Error deleting Cloudinary image for product ${product.id}:`,
-            error
-          );
+          console.error(`Error deleting Cloudinary image for product ${product.id}:`, error);
         }
       }
     }

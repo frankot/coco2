@@ -44,12 +44,7 @@ We've created a `CloudinaryImage` component that provides:
 
 ```tsx
 // Example usage
-<CloudinaryImage
-  src={product.imagePath}
-  alt={product.name}
-  width={400}
-  height={300}
-/>
+<CloudinaryImage src={product.imagePath} alt={product.name} width={400} height={300} />
 ```
 
 ## API Reference

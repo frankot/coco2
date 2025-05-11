@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import PageHeader from "../_components/pageHeader";
 import Link from "next/link";
@@ -10,8 +11,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import prisma from "@/db";
-
-import { CheckCircle2, XCircle } from "lucide-react";
+import { CheckCircle2, MoreVertical, XCircle } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
+import { ActiveToggleDropdownItem, DeleteDropdownItem } from "./_components/ProductActions";
 export default function AdminProductsPage() {
   return (
     <>
@@ -38,11 +46,7 @@ async function ProductsTable() {
     orderBy: { createdAt: "asc" },
   });
   if (products.length === 0)
-    return (
-      <div className="text-center text-sm text-muted-foreground">
-        Brak produktów
-      </div>
-    );
+    return <div className="text-center text-sm text-muted-foreground">Brak produktów</div>;
 
   return (
     <>
@@ -54,6 +58,7 @@ async function ProductsTable() {
             </TableHead>
             <TableHead>Nazwa</TableHead>
             <TableHead>Cena</TableHead>
+            <TableHead>Zamówienia</TableHead>
             <TableHead className="w-0">
               <span className="sr-only">Akcje</span>
             </TableHead>
@@ -64,13 +69,36 @@ async function ProductsTable() {
             <TableRow key={product.id}>
               <TableCell>
                 {product.isAvailable ? (
-                  <CheckCircle2 className="w-4 h-4 text-green-500" />
+                  <>
+                    <span className="sr-only">Dostepne</span>
+                    <CheckCircle2 className="size-8 text-green-500" />
+                  </>
                 ) : (
-                  <XCircle className="w-4 h-4 text-red-500" />
+                  <>
+                    <span className="sr-only">Niedostepne</span>
+                    <XCircle className="size-8 text-red-500" />
+                  </>
                 )}
               </TableCell>
               <TableCell>{product.name}</TableCell>
               <TableCell>{product.price}</TableCell>
+              <TableCell>{product._count.orders}</TableCell>
+              <TableCell>
+                <DropdownMenu>
+                  <DropdownMenuTrigger>
+                    <MoreVertical className="size-4 cursor-pointer" />
+                    <span className="sr-only">Otwórz menu</span>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem asChild>
+                      <Link href={`/admin/products/${product.id}`}>Edytuj</Link>
+                    </DropdownMenuItem>
+                    <ActiveToggleDropdownItem id={product.id} isAvailable={product.isAvailable} />
+                    <DropdownMenuSeparator />
+                    <DeleteDropdownItem  id={product.id} disabled={product._count.orders > 0} />
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

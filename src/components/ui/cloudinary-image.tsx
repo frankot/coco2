@@ -33,9 +33,7 @@ export default function CloudinaryImage({
   const optimizedSrc = isCloudinaryUrl
     ? src.replace(
         "/upload/",
-        `/upload/q_${quality},f_auto,c_${
-          objectFit === "contain" ? "pad" : objectFit
-        }/`
+        `/upload/q_${quality},f_auto,c_${objectFit === "contain" ? "pad" : objectFit}/`
       )
     : src;
 

@@ -11,10 +11,7 @@ cloudinary.config({
  * @param file File object from form submission
  * @returns Promise with Cloudinary upload response
  */
-export async function uploadImage(
-  imageBuffer: Buffer,
-  fileName: string
-): Promise<any> {
+export async function uploadImage(imageBuffer: Buffer, fileName: string): Promise<any> {
   try {
     // Convert buffer to base64
     const base64String = imageBuffer.toString("base64");

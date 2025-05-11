@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import prisma from "@/db";
 import { formatPLN, formatNumber } from "@/lib/formatter";
 
@@ -44,10 +38,7 @@ async function getProductData() {
 }
 
 export default async function AdminPage() {
-  const [salesData, productData] = await Promise.all([
-    getSalesData(),
-    getProductData(),
-  ]);
+  const [salesData, productData] = await Promise.all([getSalesData(), getProductData()]);
 
   const totalProducts = productData.available + productData.unavailable;
 
@@ -67,9 +58,7 @@ export default async function AdminPage() {
               <span>Available:</span>
               <span className="font-medium">
                 {formatNumber(productData.available)} (
-                {Math.round(
-                  (productData.available / (totalProducts || 1)) * 100,
-                )}
+                {Math.round((productData.available / (totalProducts || 1)) * 100)}
                 %)
               </span>
             </div>
@@ -77,9 +66,7 @@ export default async function AdminPage() {
               <span>Unavailable:</span>
               <span className="font-medium">
                 {formatNumber(productData.unavailable)} (
-                {Math.round(
-                  (productData.unavailable / (totalProducts || 1)) * 100,
-                )}
+                {Math.round((productData.unavailable / (totalProducts || 1)) * 100)}
                 %)
               </span>
             </div>
@@ -105,9 +92,7 @@ function DashboardCard({
         <CardTitle>{title}</CardTitle>
         <CardDescription>{subtitle?.toString()}</CardDescription>
       </CardHeader>
-      <CardContent>
-        {typeof body === "object" ? body : body?.toString()}
-      </CardContent>
+      <CardContent>{typeof body === "object" ? body : body?.toString()}</CardContent>
     </Card>
   );
 }

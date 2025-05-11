@@ -15,19 +15,14 @@ export default function ProductForm() {
   const [fileName, setFileName] = useState<string>("");
 
   const initialState = { error: {} };
-  const [state, formAction, isPending] = useActionState(
-    addProduct,
-    initialState
-  );
+  const [state, formAction, isPending] = useActionState(addProduct, initialState);
 
   return (
     <form ref={formRef} action={formAction} className="space-y-8">
       <div className="space-y-2">
         <Label htmlFor="name">Nazwa</Label>
         <Input type="text" id="name" name="name" required />
-        {state?.error?.name && (
-          <div className="text-destructive">{state.error.name}</div>
-        )}
+        {state?.error?.name && <div className="text-destructive">{state.error.name}</div>}
       </div>
       <div className="space-y-2">
         <Label htmlFor="priceInCents">Cena w groszach</Label>
@@ -70,17 +65,11 @@ export default function ProductForm() {
               }
             }}
           />
-          {fileName && (
-            <span className="text-sm text-muted-foreground">{fileName}</span>
-          )}
+          {fileName && <span className="text-sm text-muted-foreground">{fileName}</span>}
         </div>
-        {state?.error?.image && (
-          <div className="text-destructive">{state.error.image}</div>
-        )}
+        {state?.error?.image && <div className="text-destructive">{state.error.image}</div>}
       </div>
-      {state?.error?._form && (
-        <div className="text-destructive">{state.error._form}</div>
-      )}
+      {state?.error?._form && <div className="text-destructive">{state.error._form}</div>}
       <Button type="submit" disabled={isPending}>
         {isPending ? "Dodawanie..." : "Dodaj produkt"}
       </Button>

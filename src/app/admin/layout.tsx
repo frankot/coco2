@@ -2,11 +2,7 @@ import { Nav, NavLink } from "@/components/Nav";
 
 export const dynamic = "force-dynamic";
 
-export default function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <Nav>
