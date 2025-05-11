@@ -1,4 +1,5 @@
 import { Nav, NavLink } from "@/components/Nav";
+import { LogOut } from "./_components/LogOut";
 
 export const dynamic = "force-dynamic";
 
@@ -10,6 +11,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <NavLink href="/admin/products">Products</NavLink>
         <NavLink href="/admin/orders">Orders</NavLink>
         <NavLink href="/admin/customers">Customers</NavLink>
+        <div className="absolute right-0">
+          <LogOut />
+        </div>
       </Nav>
       <div className="container my-6 mx-auto max-w-screen-lg">{children}</div>
     </>
