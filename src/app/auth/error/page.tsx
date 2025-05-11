@@ -1,11 +1,12 @@
 "use client";
 
+import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 
-export default function AuthError() {
+function AuthErrorContent() {
   const searchParams = useSearchParams();
   const error = searchParams.get("error") || "unknown";
 
@@ -38,5 +39,29 @@ export default function AuthError() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+// Loading fallback for Suspense
+function ErrorLoading() {
+  return (
+    <div className="flex h-screen items-center justify-center">
+      <Card className="w-full max-w-md">
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold text-center">Loading...</CardTitle>
+        </CardHeader>
+        <CardContent className="flex justify-center py-8">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+export default function AuthError() {
+  return (
+    <Suspense fallback={<ErrorLoading />}>
+      <AuthErrorContent />
+    </Suspense>
   );
 }
