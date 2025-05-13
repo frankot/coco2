@@ -1,11 +1,24 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import { Geist, Galindo, Outfit } from "next/font/google";
 import "./globals.css";
 import { SessionProvider } from "@/components/SessionProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+});
+
+const galindo = Galindo({
+  weight: "400",
+  variable: "--font-galindo",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const outfit = Outfit({
+  subsets: ["latin"],
+  variable: "--font-outfit",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -19,8 +32,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${geistSans.variable} bg-background min-h-screen antialiased`}>
+    <html lang="pl">
+      <body
+        className={`${geistSans.variable} ${galindo.variable} ${outfit.variable} font-outfit min-h-screen antialiased bg-background`}
+      >
         <SessionProvider>{children}</SessionProvider>
       </body>
     </html>

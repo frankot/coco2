@@ -17,6 +17,7 @@ const config: Config = {
     extend: {
       fontFamily: {
         sans: ["var(--font-geist-sans)"],
+        galindo: ["var(--font-galindo)", "cursive"],
       },
       colors: {
         border: "var(--border)",

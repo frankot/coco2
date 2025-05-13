@@ -1,4 +1,4 @@
-import { Nav, NavLink } from "@/components/Nav";
+import { Nav, NavLink } from "@/components/NavAdmin";
 import { LogOut } from "./_components/LogOut";
 
 export const dynamic = "force-dynamic";
