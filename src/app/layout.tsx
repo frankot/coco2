@@ -34,6 +34,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pl">
+      <head>
+        {/* Preload critical images */}
+        <link rel="preload" href="/palmy-prawa.png" as="image" />
+        <link rel="preload" href="/logo.png" as="image" />
+      </head>
       <body
         className={`${geistSans.variable} ${galindo.variable} ${outfit.variable} font-outfit min-h-screen antialiased bg-background scroll-smooth`}
       >

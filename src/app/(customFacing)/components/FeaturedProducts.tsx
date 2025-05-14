@@ -28,7 +28,7 @@ export default async function FeaturedProducts() {
   return (
     <section className="py-12">
       <div className="container px-4 mx-auto">
-        <h2 className="text-3xl font-bold mb-8">Polecane produkty</h2>
+    
 
         <div className="">
           {products.map((product, index) => (

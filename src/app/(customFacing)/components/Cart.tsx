@@ -60,17 +60,22 @@ function CartOverlay({
   onClose: () => void;
 }) {
   return (
-    <div
-      className={cn(
-        "fixed left-0 right-0 z-20 bg-primary/30 backdrop-blur-sm transition-opacity duration-700 ease-in-out",
-        isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+          className="fixed left-0 right-0 z-20 bg-primary/30 backdrop-blur-sm"
+          style={{
+            top: `${navbarHeight}px`,
+            height: `calc(100vh - ${navbarHeight}px)`,
+          }}
+          onClick={onClose}
+        />
       )}
-      style={{
-        top: `${navbarHeight}px`,
-        height: `calc(100vh - ${navbarHeight}px)`,
-      }}
-      onClick={onClose}
-    />
+    </AnimatePresence>
   );
 }
 
@@ -105,7 +110,7 @@ function CartFloatingButton({ isVisible, onClick }: { isVisible: boolean; onClic
 // EmptyCart component
 function EmptyCart({ onClose }: { onClose: () => void }) {
   return (
-    <div className="flex flex-col items-center justify-center h-full text-gray-500">
+    <div className="p-6 flex-grow flex flex-col items-center justify-center text-gray-500">
       <ShoppingBag size={64} strokeWidth={1.5} className="mb-6 opacity-50" />
       <p className="text-center mb-2 text-xl">Twój koszyk jest pusty</p>
       <p className="text-center text-md mb-6">Dodaj produkty do koszyka</p>
@@ -202,9 +207,7 @@ function CartContent({
 }) {
   return (
     <div className="p-6 flex-grow cart-content" style={scrollbarStyles}>
-      {items.length === 0 ? (
-        <EmptyCart onClose={onClose} />
-      ) : (
+      {items.length > 0 ? (
         <ul className="space-y-6">
           {items.map((item) => (
             <CartItemComponent
@@ -215,7 +218,7 @@ function CartContent({
             />
           ))}
         </ul>
-      )}
+      ) : null}
     </div>
   );
 }
@@ -303,18 +306,23 @@ function CartSidePanel({
   children: React.ReactNode;
 }) {
   return (
-    <Card
-      className={cn(
-        "fixed left-0 z-20 w-80 py-0 transition-transform duration-300 ease-in-out bg-background shadow-none rounded-none flex flex-col",
-        isOpen ? "translate-x-0" : "-translate-x-full"
-      )}
+    <motion.div
+      initial={{ x: "-100%" }}
+      animate={{ x: isOpen ? 0 : "-100%" }}
+      transition={{
+        type: "spring",
+        stiffness: 300,
+        damping: 30,
+        duration: 0.3,
+      }}
+      className="fixed left-0 z-20 w-80 bg-background shadow-none rounded-none flex flex-col"
       style={{
         top: `${navbarHeight}px`,
         height: `calc(100vh - ${navbarHeight}px)`,
       }}
     >
       {children}
-    </Card>
+    </motion.div>
   );
 }
 
@@ -412,8 +420,9 @@ export default function Cart({ isOpen, onClose, navbarHeight, onOpenCart }: Cart
     }, 800);
   };
 
-  // If cart is empty and not open, don't render the main cart component
-  const renderMainCart = cartItems.length > 0 || isOpen;
+  // If cart is empty and not open, don't render the cart content
+  const hasCartItems = cartItems.length > 0;
+  const showEmptyCart = isOpen && !hasCartItems;
 
   // Count total items in the cart
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
@@ -428,36 +437,38 @@ export default function Cart({ isOpen, onClose, navbarHeight, onOpenCart }: Cart
       {/* Floating Cart Button - only show when panel is not open */}
       {!isOpen && <CartFloatingButton isVisible={isFloatingButtonVisible} onClick={onOpenCart} />}
 
-      {renderMainCart && (
-        <>
-          {/* Cart Overlay */}
-          <CartOverlay isOpen={isOpen} navbarHeight={navbarHeight} onClose={onClose} />
+      {/* Cart Overlay - always render but conditionally show */}
+      <CartOverlay isOpen={isOpen} navbarHeight={navbarHeight} onClose={onClose} />
 
-          {/* Cart Side Panel */}
-          <CartSidePanel isOpen={isOpen} navbarHeight={navbarHeight}>
-            {/* Cart header */}
-            <CartHeader onClose={onClose} />
+      {/* Cart Side Panel - always render but conditionally show */}
+      <CartSidePanel isOpen={isOpen} navbarHeight={navbarHeight}>
+        {/* Cart header */}
+        <CartHeader onClose={onClose} />
 
-            {/* Cart content with custom scrollbar */}
-            <CartContent
-              items={cartItems}
-              onUpdateQuantity={updateQuantity}
-              onRemove={removeItem}
-              onClose={onClose}
-            />
+        {/* Cart content with custom scrollbar */}
+        {showEmptyCart ? (
+          <EmptyCart onClose={onClose} />
+        ) : (
+          <CartContent
+            items={cartItems}
+            onUpdateQuantity={updateQuantity}
+            onRemove={removeItem}
+            onClose={onClose}
+          />
+        )}
 
-            {/* Cart footer */}
-            <CartFooter
-              items={cartItems}
-              discount={discount}
-              discountCode={discountCode}
-              isApplyingDiscount={isApplyingDiscount}
-              onDiscountCodeChange={setDiscountCode}
-              onApplyDiscount={applyDiscount}
-            />
-          </CartSidePanel>
-        </>
-      )}
+        {/* Cart footer - only show if items exist */}
+        {hasCartItems && (
+          <CartFooter
+            items={cartItems}
+            discount={discount}
+            discountCode={discountCode}
+            isApplyingDiscount={isApplyingDiscount}
+            onDiscountCodeChange={setDiscountCode}
+            onApplyDiscount={applyDiscount}
+          />
+        )}
+      </CartSidePanel>
     </>
   );
 }

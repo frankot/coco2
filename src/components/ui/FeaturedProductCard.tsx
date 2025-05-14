@@ -6,8 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { formatPLN } from "@/lib/formatter";
 import { ShoppingBag, Star } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
+
 
 type Product = {
   id: string;

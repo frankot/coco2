@@ -12,6 +12,7 @@ import { motion } from "framer-motion";
 import Cart, { CartItem } from "./components/Cart";
 import { NavIconButton } from "@/components/ui/nav-icon-button";
 import { FeaturedProductCard } from "@/components/ui/FeaturedProductCard";
+import { PalmDecorations } from "./components/PalmDecorations";
 
 // Sample featured product data (in real app, this would come from API/database)
 const sampleFeaturedProduct = {
@@ -231,42 +232,8 @@ export function Nav({ children }: { children: React.ReactNode }) {
         animate={isPanelOpen || hovering ? "visible" : hidden ? "hidden" : "visible"}
         variants={isPanelOpen ? navAnimation : navbarSlideVariants}
       >
-        {/* Palm decorations - positioned relative to viewport, not just the navbar */}
-        <div className="fixed inset-0 w-full pointer-events-none" style={{ height: "200vh" }}>
-          {/* Right palm decoration */}
-          <div
-            className="absolute -right-40 -top-20 w-96 h-96 transition-all duration-1000 ease-out"
-            style={{
-              transform: `translateX(${scrollProgress * -100}px) translateY(${scrollProgress * 50}px) rotate(${scrollProgress * -15}deg)`,
-              opacity: hidden && !hovering ? 0 : scrollProgress,
-            }}
-          >
-            <Image
-              src="/palmy-prawa.png"
-              alt="Palm decoration"
-              width={600}
-              height={600}
-              className="object-contain"
-            />
-          </div>
-
-          {/* Left palm decoration (flipped version of the right one) */}
-          <div
-            className="absolute -left-40 -top-20 w-96 h-96 transition-all duration-1000 ease-out"
-            style={{
-              transform: `translateX(${scrollProgress * 100}px) translateY(${scrollProgress * 50}px) rotate(${scrollProgress * 15}deg) scaleX(-1)`,
-              opacity: hidden && !hovering ? 0 : scrollProgress,
-            }}
-          >
-            <Image
-              src="/palmy-prawa.png"
-              alt="Palm decoration"
-              width={600}
-              height={600}
-              className="object-contain "
-            />
-          </div>
-        </div>
+        {/* Palm decorations */}
+        <PalmDecorations hidden={hidden} hovering={hovering} scrollProgress={scrollProgress} />
 
         <div className="container mx-auto flex items-center justify-between h-full relative z-10">
           {/* Left - CTA Button with Cart Icon */}
@@ -298,8 +265,8 @@ export function Nav({ children }: { children: React.ReactNode }) {
                 width={280}
                 height={280}
                 className={cn(
-                  "object-contain size-64 bg-background/80 backdrop-blur-sm rounded-full transition-all duration-1000 ease-in-out border-primary",
-                  hidden ? "border-b-2 " : ""
+                  "object-contain size-64 bg-background/60 backdrop-blur-sm rounded-full transition-all duration-1000 ease-in-out border-primary",
+                  hidden ? "border-b-2 " : " bg-background"
                 )}
               />
             </Link>
@@ -352,59 +319,58 @@ export function Nav({ children }: { children: React.ReactNode }) {
       >
         <div className="p-6 space-y-6 flex-grow">
           {/* Featured Product */}
-          <div className="mb-6">
-            <h3 className="font-galindo text-xl text-primary mb-4">Polecany produkt</h3>
-            <FeaturedProductCard
-              product={sampleFeaturedProduct}
-              onAddToCart={() => {
-                // Add sample product to cart
-                const newItem: CartItem = {
-                  id: sampleFeaturedProduct.id,
-                  name: sampleFeaturedProduct.name,
-                  priceInCents: sampleFeaturedProduct.priceInCents,
-                  quantity: 1,
-                  imagePath: sampleFeaturedProduct.imagePath,
-                };
-
-                // Get existing cart
-                const existingCart = localStorage.getItem("cart");
-                let cart: CartItem[] = [];
-
-                if (existingCart) {
-                  try {
-                    cart = JSON.parse(existingCart);
-
-                    // Check if item already exists
-                    const existingItemIndex = cart.findIndex((item) => item.id === newItem.id);
-                    if (existingItemIndex >= 0) {
-                      // Update quantity
-                      cart[existingItemIndex].quantity += 1;
-                    } else {
-                      // Add new item
-                      cart.push(newItem);
-                    }
-                  } catch (e) {
-                    console.error("Failed to parse cart:", e);
-                    cart = [newItem];
-                  }
-                } else {
-                  cart = [newItem];
-                }
-
-                // Save cart
-                localStorage.setItem("cart", JSON.stringify(cart));
-
-                // Notify other components
-                window.dispatchEvent(new Event("cartUpdated"));
-
-                // Close panel
-                closePanel();
-              }}
-            />
-          </div>
+          <div className="mb-6"></div>
 
           {/* Navigation Links */}
           <div className="space-y-2">{children}</div>
+
+          <FeaturedProductCard
+            product={sampleFeaturedProduct}
+            onAddToCart={() => {
+              // Add sample product to cart
+              const newItem: CartItem = {
+                id: sampleFeaturedProduct.id,
+                name: sampleFeaturedProduct.name,
+                priceInCents: sampleFeaturedProduct.priceInCents,
+                quantity: 1,
+                imagePath: sampleFeaturedProduct.imagePath,
+              };
+
+              // Get existing cart
+              const existingCart = localStorage.getItem("cart");
+              let cart: CartItem[] = [];
+
+              if (existingCart) {
+                try {
+                  cart = JSON.parse(existingCart);
+
+                  // Check if item already exists
+                  const existingItemIndex = cart.findIndex((item) => item.id === newItem.id);
+                  if (existingItemIndex >= 0) {
+                    // Update quantity
+                    cart[existingItemIndex].quantity += 1;
+                  } else {
+                    // Add new item
+                    cart.push(newItem);
+                  }
+                } catch (e) {
+                  console.error("Failed to parse cart:", e);
+                  cart = [newItem];
+                }
+              } else {
+                cart = [newItem];
+              }
+
+              // Save cart
+              localStorage.setItem("cart", JSON.stringify(cart));
+
+              // Notify other components
+              window.dispatchEvent(new Event("cartUpdated"));
+
+              // Close panel
+              closePanel();
+            }}
+          />
         </div>
 
         {/* Social Media Icons */}
