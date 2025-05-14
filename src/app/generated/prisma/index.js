@@ -183,18 +183,17 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
-  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
         "fromEnvVar": "DATABASE_URL",
-        "value": null
+        "value": "prisma+postgres://accelerate.prisma-data.net/?api_key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfa2V5IjoiMTNmNTY4YzYtYzQ0OC00YjA5LTkyNjQtOTQwZjNmZDJlYzQyIiwidGVuYW50X2lkIjoiNTgxNDJiMGQxYjRmMjUwZmUxNTkxOTNmMmVhMDE5NzAyN2QxNDg2MzJjMDFmMGYxYzRhODY3ZDllMTVjZDEwNCIsImludGVybmFsX3NlY3JldCI6IjExMTQ1YjViLTI1MjctNDEwZC1iMWUwLTUxZjlkNTU3ODdmMSJ9.72boFjUzP3_7qyG6XYJAiH56uNMtHkjnfeexXGcemk4"
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/app/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel Product {\n  id            String   @id @default(uuid())\n  name          String\n  price         Int\n  priceInCents  Int\n  imagePath     String // Cloudinary URL\n  imagePublicId String? // Cloudinary public ID for future operations like delete\n  description   String\n  isAvailable   Boolean  @default(true)\n  createdAt     DateTime @default(now())\n  updatedAt     DateTime @updatedAt\n  orders        Order[]\n}\n\nmodel User {\n  id        String   @id @default(uuid())\n  email     String   @unique\n  password  String\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  orders    Order[]\n}\n\nmodel Order {\n  id               String   @id @default(uuid())\n  userId           String\n  productId        String\n  createdAt        DateTime @default(now())\n  updatedAt        DateTime @updatedAt\n  pricePaidInCents Int\n  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n  product          Product  @relation(fields: [productId], references: [id], onDelete: Restrict)\n}\n",
-  "inlineSchemaHash": "dcdfe8bd0d3c42920c4239b88147c1dd4f0ee10ce48e018d0b460baff9fa2935",
-  "copyEngine": true
+  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/app/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel Product {\n  id            String   @id @default(uuid())\n  name          String\n  price         Int\n  priceInCents  Int\n  imagePath     String // Cloudinary URL\n  imagePublicId String? // Cloudinary public ID\n  description   String\n  isAvailable   Boolean  @default(true)\n  createdAt     DateTime @default(now())\n  updatedAt     DateTime @updatedAt\n  orders        Order[]\n}\n\nmodel User {\n  id        String   @id @default(uuid())\n  email     String   @unique\n  password  String\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  orders    Order[]\n}\n\nmodel Order {\n  id               String   @id @default(uuid())\n  userId           String\n  productId        String\n  createdAt        DateTime @default(now())\n  updatedAt        DateTime @updatedAt\n  pricePaidInCents Int\n  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n  product          Product  @relation(fields: [productId], references: [id], onDelete: Restrict)\n}\n",
+  "inlineSchemaHash": "e5ea2a55f9d82224012a55f715f896f15ac5398b24b21a90f56c81f74de72e99",
+  "copyEngine": false
 }
 
 const fs = require('fs')
@@ -231,9 +230,3 @@ const PrismaClient = getPrismaClient(config)
 exports.PrismaClient = PrismaClient
 Object.assign(exports, Prisma)
 
-// file annotations for bundling tools to include these files
-path.join(__dirname, "libquery_engine-darwin-arm64.dylib.node");
-path.join(process.cwd(), "src/app/generated/prisma/libquery_engine-darwin-arm64.dylib.node")
-// file annotations for bundling tools to include these files
-path.join(__dirname, "schema.prisma");
-path.join(process.cwd(), "src/app/generated/prisma/schema.prisma")

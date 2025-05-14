@@ -14,7 +14,7 @@ model Product {
   price         Int
   priceInCents  Int
   imagePath     String // Cloudinary URL
-  imagePublicId String? // Cloudinary public ID for future operations like delete
+  imagePublicId String? // Cloudinary public ID
   description   String
   isAvailable   Boolean  @default(true)
   createdAt     DateTime @default(now())

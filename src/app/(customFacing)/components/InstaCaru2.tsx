@@ -97,7 +97,7 @@ export function InstaCaru() {
                   />
                   {/* Primary color blur overlay that disappears on hover */}
                   <div
-                    className="absolute inset-0 bg-primary/30 transition-opacity duration-300 ease-in-out group-hover:opacity-0"
+                    className="absolute inset-0 bg-primary/10 transition-opacity duration-300 ease-in-out group-hover:opacity-0"
                     aria-hidden="true"
                   ></div>
                 </div>
@@ -111,10 +111,10 @@ export function InstaCaru() {
             href="https://www.instagram.com/dr.coco/"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-primary hover:underline flex items-center justify-center gap-2"
+            className="text-primary hover:underline flex items-center justify-center gap-2 font-galindo text-2xl"
           >
             Zobacz więcej na Instagramie
-            <ExternalLink className="w-4 h-4" />
+            <ExternalLink className="size-6" />
           </Link>
         </div>
       </div>

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Galindo, Outfit } from "next/font/google";
 import "./globals.css";
 import { SessionProvider } from "@/components/SessionProvider";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,9 +35,10 @@ export default function RootLayout({
   return (
     <html lang="pl">
       <body
-        className={`${geistSans.variable} ${galindo.variable} ${outfit.variable} font-outfit min-h-screen antialiased bg-background`}
+        className={`${geistSans.variable} ${galindo.variable} ${outfit.variable} font-outfit min-h-screen antialiased bg-background scroll-smooth`}
       >
         <SessionProvider>{children}</SessionProvider>
+        <Toaster position="top-right" richColors closeButton />
       </body>
     </html>
   );

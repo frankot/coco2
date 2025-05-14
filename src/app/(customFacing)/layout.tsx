@@ -1,5 +1,5 @@
-import { Nav, NavLink } from "@/components/Nav";
-
+import { Nav, NavLink } from "./Nav";
+import { Footer } from "./components/Footer";
 
 export const dynamic = "force-dynamic";
 
@@ -14,6 +14,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     
       </Nav>
       <div className="">{children}</div>
+      <Footer />
     </div>
   );
 }
