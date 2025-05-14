@@ -53,8 +53,8 @@ export function Hero() {
   };
 
   return (
-    <div className="w-full min-h-screen ">
-      <div className="container mx-auto h-full flex flex-col lg:flex-row items-center justify-between gap-8 py-16 lg:py-20 px-4">
+    <div className="w-full  ">
+      <div className="container mx-auto h-full lg:h-[80vh] flex flex-col lg:flex-row items-center justify-between gap-8 py-16 lg:py-20 px-4">
         {/* Left side - Text content */}
         <motion.div
           className="w-full lg:w-1/2 space-y-6 lg:pr-8"

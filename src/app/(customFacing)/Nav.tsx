@@ -62,7 +62,6 @@ export function Nav({ children }: { children: React.ReactNode }) {
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [hovering, setHovering] = useState(false);
-  const [scrollProgress, setScrollProgress] = useState(0);
   const [navbarHeight, setNavbarHeight] = useState(0);
   const [prevScrollY, setPrevScrollY] = useState(0);
   const navRef = useRef<HTMLElement>(null);
@@ -146,7 +145,7 @@ export function Nav({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  // Handle scroll events to change navbar appearance and animate decorations
+  // Handle scroll events to change navbar appearance
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
@@ -170,11 +169,6 @@ export function Nav({ children }: { children: React.ReactNode }) {
         // Scrolling up - show navbar
         setHidden(false);
       }
-
-      // Calculate scroll progress for animations (capped at 1)
-      const maxScrollForAnimation = 250; // Adjust this value to control animation speed
-      const progress = Math.min(currentScrollY / maxScrollForAnimation, 1);
-      setScrollProgress(progress);
 
       // Update previous scroll position
       setPrevScrollY(currentScrollY);
@@ -225,15 +219,14 @@ export function Nav({ children }: { children: React.ReactNode }) {
       <motion.nav
         ref={navRef}
         className={cn(
-          "text-primary-foreground sticky top-0 z-40 w-full px-72 py-2 transition-colors duration-300 h-32",
-          scrolled ? "bg-background text-foreground" : "bg-transparent"
+          " sticky top-0 z-40 w-full px-72 py-2 transition-colors duration-300 h-32 bg-background text-foreground "
         )}
         initial="hidden"
         animate={isPanelOpen || hovering ? "visible" : hidden ? "hidden" : "visible"}
         variants={isPanelOpen ? navAnimation : navbarSlideVariants}
       >
         {/* Palm decorations */}
-        <PalmDecorations hidden={hidden} hovering={hovering} scrollProgress={scrollProgress} />
+        <PalmDecorations hidden={hidden} hovering={hovering} />
 
         <div className="container mx-auto flex items-center justify-between h-full relative z-10">
           {/* Left - CTA Button with Cart Icon */}
