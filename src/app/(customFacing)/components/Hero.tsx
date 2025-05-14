@@ -111,7 +111,7 @@ export function Hero() {
           animate="visible"
           variants={fadeInRight}
         >
-          <div className="relative w-full h-full translate-x-12">
+          <div className="relative w-full h-full lg:translate-x-12">
             <Image
               src="/butelka-roll.tif"
               alt="Dr.Coco coconut water bottle"

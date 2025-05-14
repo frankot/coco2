@@ -224,7 +224,7 @@ export function Nav({ children }: { children: React.ReactNode }) {
       <motion.nav
         ref={navRef}
         className={cn(
-          " sticky top-0 z-40 w-full px-72 py-2 transition-colors duration-300 h-32 bg-background text-foreground "
+          "hidden lg:block sticky top-0 z-40 w-full px-72 py-2 transition-colors duration-300 h-32 bg-background text-foreground "
         )}
         initial="hidden"
         animate={isPanelOpen || hovering ? "visible" : hidden ? "hidden" : "visible"}
