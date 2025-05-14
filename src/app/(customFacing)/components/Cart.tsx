@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback, memo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
@@ -49,8 +49,8 @@ const scrollbarStyles = {
   overflowY: "scroll",
 } as React.CSSProperties;
 
-// CartOverlay component
-function CartOverlay({
+// CartOverlay component - memoized to prevent unnecessary rerenders
+const CartOverlay = memo(function CartOverlay({
   isOpen,
   navbarHeight,
   onClose,
@@ -77,10 +77,16 @@ function CartOverlay({
       )}
     </AnimatePresence>
   );
-}
+});
 
-// CartFloatingButton component
-function CartFloatingButton({ isVisible, onClick }: { isVisible: boolean; onClick?: () => void }) {
+// CartFloatingButton component - memoized
+const CartFloatingButton = memo(function CartFloatingButton({
+  isVisible,
+  onClick,
+}: {
+  isVisible: boolean;
+  onClick?: () => void;
+}) {
   if (!isVisible) return null;
 
   return (
@@ -105,10 +111,10 @@ function CartFloatingButton({ isVisible, onClick }: { isVisible: boolean; onClic
       </motion.div>
     </div>
   );
-}
+});
 
-// EmptyCart component
-function EmptyCart({ onClose }: { onClose: () => void }) {
+// EmptyCart component - memoized
+const EmptyCart = memo(function EmptyCart({ onClose }: { onClose: () => void }) {
   return (
     <div className="p-6 flex-grow flex flex-col items-center justify-center text-gray-500">
       <ShoppingBag size={64} strokeWidth={1.5} className="mb-6 opacity-50" />
@@ -119,25 +125,22 @@ function EmptyCart({ onClose }: { onClose: () => void }) {
       </Button>
     </div>
   );
-}
+});
 
-// CartHeader component
-function CartHeader({ onClose }: { onClose: () => void }) {
+// CartHeader component - memoized
+const CartHeader = memo(function CartHeader({ onClose }: { onClose: () => void }) {
   return (
-    <div className="p-6 border-b flex items-center justify-between">
-      <h2 className="text-3xl font-galindo flex items-center text-primary">
-        <ShoppingBag className="mr-3 h-7 w-7" />
-        Koszyk
-      </h2>
+    <div className="p-6 border-b flex items-center justify-between pl-10">
+      <h2 className="text-3xl font-galindo flex items-center text-primary">Koszyk</h2>
       <button onClick={onClose} className="text-primary hover:text-secondary transition-colors">
         <X size={32} />
       </button>
     </div>
   );
-}
+});
 
-// CartItemComponent
-function CartItemComponent({
+// CartItemComponent - memoized with efficient callback handlers
+const CartItemComponent = memo(function CartItemComponent({
   item,
   onUpdateQuantity,
   onRemove,
@@ -146,10 +149,22 @@ function CartItemComponent({
   onUpdateQuantity: (id: string, quantity: number) => void;
   onRemove: (id: string) => void;
 }) {
+  const handleIncrement = useCallback(() => {
+    onUpdateQuantity(item.id, item.quantity + 1);
+  }, [item.id, item.quantity, onUpdateQuantity]);
+
+  const handleDecrement = useCallback(() => {
+    onUpdateQuantity(item.id, item.quantity - 1);
+  }, [item.id, item.quantity, onUpdateQuantity]);
+
+  const handleRemove = useCallback(() => {
+    onRemove(item.id);
+  }, [item.id, onRemove]);
+
   return (
     <li className="flex gap-4 pb-6 border-b">
       {/* Product image */}
-      <div className="w-24 h-24 bg-gray-100 rounded-md flex-shrink-0 relative overflow-hidden">
+      <div className="size-28 rounded-md flex-shrink-0 relative overflow-hidden">
         <Image
           src={item.imagePath}
           alt={item.name}
@@ -166,7 +181,7 @@ function CartItemComponent({
             {item.name}
           </Link>
           <button
-            onClick={() => onRemove(item.id)}
+            onClick={handleRemove}
             className="text-gray-400 hover:text-red-500 transition-colors"
           >
             <Trash2 size={18} />
@@ -175,14 +190,14 @@ function CartItemComponent({
         <p className="text-primary text-md font-medium my-2">{formatPLN(item.priceInCents)}</p>
         <div className="flex items-center mt-3">
           <button
-            onClick={() => onUpdateQuantity(item.id, item.quantity - 1)}
+            onClick={handleDecrement}
             className="p-1.5 border rounded-md text-primary hover:bg-gray-100 transition-colors"
           >
             <Minus size={16} />
           </button>
           <span className="mx-3 w-8 text-center font-medium">{item.quantity}</span>
           <button
-            onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
+            onClick={handleIncrement}
             className="p-1.5 border rounded-md text-primary hover:bg-gray-100 transition-colors"
           >
             <Plus size={16} />
@@ -191,10 +206,10 @@ function CartItemComponent({
       </div>
     </li>
   );
-}
+});
 
-// CartContent component
-function CartContent({
+// CartContent component - memoized
+const CartContent = memo(function CartContent({
   items,
   onUpdateQuantity,
   onRemove,
@@ -221,10 +236,10 @@ function CartContent({
       ) : null}
     </div>
   );
-}
+});
 
-// CartFooter component
-function CartFooter({
+// CartFooter component - memoized with precalculated values
+const CartFooter = memo(function CartFooter({
   items,
   discount,
   discountCode,
@@ -246,6 +261,13 @@ function CartFooter({
 
   if (items.length === 0) return null;
 
+  const handleDiscountCodeChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      onDiscountCodeChange(e.target.value);
+    },
+    [onDiscountCodeChange]
+  );
+
   return (
     <div className="p-6 border-t">
       {/* Discount code */}
@@ -254,7 +276,7 @@ function CartFooter({
         <div className="flex gap-2">
           <Input
             value={discountCode}
-            onChange={(e) => onDiscountCodeChange(e.target.value)}
+            onChange={handleDiscountCodeChange}
             placeholder="COCO10"
             className="bg-gray-50"
           />
@@ -293,10 +315,10 @@ function CartFooter({
       </Button>
     </div>
   );
-}
+});
 
-// CartSidePanel component
-function CartSidePanel({
+// CartSidePanel component - memoized
+const CartSidePanel = memo(function CartSidePanel({
   isOpen,
   navbarHeight,
   children,
@@ -315,7 +337,7 @@ function CartSidePanel({
         damping: 30,
         duration: 0.3,
       }}
-      className="fixed left-0 z-20 w-80 bg-background shadow-none rounded-none flex flex-col"
+      className="fixed left-0 z-20  w-80 bg-background shadow-none rounded-none flex flex-col"
       style={{
         top: `${navbarHeight}px`,
         height: `calc(100vh - ${navbarHeight}px)`,
@@ -324,7 +346,7 @@ function CartSidePanel({
       {children}
     </motion.div>
   );
-}
+});
 
 // Main Cart component
 export default function Cart({ isOpen, onClose, navbarHeight, onOpenCart }: CartProps) {
@@ -335,23 +357,23 @@ export default function Cart({ isOpen, onClose, navbarHeight, onOpenCart }: Cart
   const [isInitialized, setIsInitialized] = useState(false);
   const [isFloatingButtonVisible, setIsFloatingButtonVisible] = useState(false);
 
-  // Load cart from local storage
+  // Load cart from local storage - optimized with error handling
   useEffect(() => {
     const loadCart = () => {
-      const savedCart = localStorage.getItem("cart");
-      if (savedCart) {
-        try {
+      try {
+        const savedCart = localStorage.getItem("cart");
+        if (savedCart) {
           const parsedCart = JSON.parse(savedCart);
           setCartItems(parsedCart);
           // Update visibility immediately based on cart state
           setIsFloatingButtonVisible(parsedCart.length > 0 && !isOpen);
-        } catch (e) {
-          console.error("Failed to parse cart from localStorage:", e);
-          localStorage.removeItem("cart");
+        } else {
           setCartItems([]);
           setIsFloatingButtonVisible(false);
         }
-      } else {
+      } catch (e) {
+        console.error("Failed to parse cart from localStorage:", e);
+        localStorage.removeItem("cart");
         setCartItems([]);
         setIsFloatingButtonVisible(false);
       }
@@ -366,46 +388,42 @@ export default function Cart({ isOpen, onClose, navbarHeight, onOpenCart }: Cart
     };
   }, [isOpen]);
 
-  // Save cart to local storage whenever it changes
+  // Save cart to local storage whenever it changes - optimized
   useEffect(() => {
     if (isInitialized) {
-      localStorage.setItem("cart", JSON.stringify(cartItems));
-
-      // Debug log for cart changes
-      console.log(`Cart updated: ${cartItems.length} items, isOpen: ${isOpen}, items:`, cartItems);
-
-      // Dispatch custom event to notify other components about cart changes
-      window.dispatchEvent(new Event("cartUpdated"));
+      try {
+        localStorage.setItem("cart", JSON.stringify(cartItems));
+        window.dispatchEvent(new Event("cartUpdated"));
+      } catch (e) {
+        console.error("Failed to save cart to localStorage:", e);
+      }
     }
-  }, [cartItems, isInitialized, isOpen]);
+  }, [cartItems, isInitialized]);
 
-  // Update floating button visibility based on cart state and panel state
+  // Update floating button visibility based on cart state and panel state - memoized logic
   useEffect(() => {
     // Only show the floating button when there are items in the cart AND the cart panel is closed
-    const shouldBeVisible = cartItems.length > 0 && !isOpen;
-    setIsFloatingButtonVisible(shouldBeVisible);
-  }, [cartItems, isOpen]);
+    setIsFloatingButtonVisible(cartItems.length > 0 && !isOpen);
+  }, [cartItems.length, isOpen]);
 
-  // Update quantity of an item in cart
-  const updateQuantity = (id: string, newQuantity: number) => {
+  // Event handlers - optimized with useCallback
+  const updateQuantity = useCallback((id: string, newQuantity: number) => {
     if (newQuantity < 1) {
       // Remove item if quantity becomes 0 or negative
-      removeItem(id);
+      setCartItems((prev) => prev.filter((item) => item.id !== id));
       return;
     }
 
     setCartItems((prev) =>
       prev.map((item) => (item.id === id ? { ...item, quantity: newQuantity } : item))
     );
-  };
+  }, []);
 
-  // Remove an item from cart
-  const removeItem = (id: string) => {
+  const removeItem = useCallback((id: string) => {
     setCartItems((prev) => prev.filter((item) => item.id !== id));
-  };
+  }, []);
 
-  // Apply discount code
-  const applyDiscount = () => {
+  const applyDiscount = useCallback(() => {
     setIsApplyingDiscount(true);
     // Simulate API call with timeout
     setTimeout(() => {
@@ -418,14 +436,11 @@ export default function Cart({ isOpen, onClose, navbarHeight, onOpenCart }: Cart
       }
       setIsApplyingDiscount(false);
     }, 800);
-  };
+  }, [discountCode]);
 
-  // If cart is empty and not open, don't render the cart content
+  // Memoized derived values
   const hasCartItems = cartItems.length > 0;
   const showEmptyCart = isOpen && !hasCartItems;
-
-  // Count total items in the cart
-  const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
     <>
@@ -435,7 +450,7 @@ export default function Cart({ isOpen, onClose, navbarHeight, onOpenCart }: Cart
       </style>
 
       {/* Floating Cart Button - only show when panel is not open */}
-      {!isOpen && <CartFloatingButton isVisible={isFloatingButtonVisible} onClick={onOpenCart} />}
+      <CartFloatingButton isVisible={isFloatingButtonVisible} onClick={onOpenCart} />
 
       {/* Cart Overlay - always render but conditionally show */}
       <CartOverlay isOpen={isOpen} navbarHeight={navbarHeight} onClose={onClose} />

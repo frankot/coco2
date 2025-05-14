@@ -16,27 +16,18 @@ export const PalmDecorations = memo(function PalmDecorations({
 }: PalmDecorationsProps) {
   const [animationPlayed, setAnimationPlayed] = useState(false);
 
-  // Track if user has scrolled
+  // Play animation once when component mounts
   useEffect(() => {
-    const handleScroll = () => {
-      // Only trigger once when first scrolled
-      if (!animationPlayed && window.scrollY > 50) {
-        setAnimationPlayed(true);
-        // Remove listener after animation is triggered
-        window.removeEventListener("scroll", handleScroll);
-      }
-    };
+    // Delay to ensure animation plays after initial render
+    const timer = setTimeout(() => {
+      setAnimationPlayed(true);
+    }, 800);
 
-    window.addEventListener("scroll", handleScroll);
+    return () => clearTimeout(timer);
+  }, []);
 
-    // Cleanup
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, [animationPlayed]);
-
-  // Determine opacity based on whether animation has played and navbar state
-  // Always 0 before first scroll (animationPlayed === false)
+  // Determine opacity based on animation state and navbar visibility
+  // Always 0 before animation plays
   const opacity = !animationPlayed ? 0 : hidden && !hovering ? 0 : 1;
 
   return (
@@ -77,7 +68,7 @@ export const PalmDecorations = memo(function PalmDecorations({
       {/* Left palm decoration (flipped version of the right one) */}
       <AnimatePresence>
         <motion.div
-          className="absolute -left-40 -top-20 w-96 h-96 will-change-transform"
+          className="absolute -left-40 -top-30 w-96 h-96 will-change-transform"
           initial={{
             x: 0,
             y: 0,

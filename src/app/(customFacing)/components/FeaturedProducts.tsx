@@ -27,10 +27,10 @@ export default async function FeaturedProducts() {
 
   return (
     <section className="py-12">
-      <div className="container px-4 mx-auto">
+      <div className="container px-4 mx-auto ">
     
 
-        <div className="">
+        <div className="space-y-20">
           {products.map((product, index) => (
             <FeaturedProduct
               key={product.id}

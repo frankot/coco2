@@ -22,7 +22,7 @@ export function NavIconButton({
 }: NavIconButtonProps) {
   return (
     <Button
-      className={cn("size-20 text-secondary", className)}
+      className={cn("size-20 text-background", className)}
       size="icon"
       onClick={onClick}
       aria-label={ariaLabel}

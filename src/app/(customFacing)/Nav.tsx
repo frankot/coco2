@@ -67,18 +67,14 @@ export function Nav({ children }: { children: React.ReactNode }) {
   const navRef = useRef<HTMLElement>(null);
   const logoRef = useRef<HTMLDivElement>(null);
 
-  // Load cart items
+  // Load cart items with optimized event handling
   useEffect(() => {
     const handleCartChange = () => {
-      const savedCart = localStorage.getItem("cart");
-      if (savedCart) {
-        try {
-          setCartItems(JSON.parse(savedCart));
-        } catch (e) {
-          console.error("Failed to parse cart from localStorage:", e);
-          setCartItems([]);
-        }
-      } else {
+      try {
+        const savedCart = localStorage.getItem("cart");
+        setCartItems(savedCart ? JSON.parse(savedCart) : []);
+      } catch (e) {
+        console.error("Failed to parse cart from localStorage:", e);
         setCartItems([]);
       }
     };
@@ -86,14 +82,18 @@ export function Nav({ children }: { children: React.ReactNode }) {
     // Initial load
     handleCartChange();
 
-    // Listen for changes to localStorage
-    window.addEventListener("storage", handleCartChange);
+    // Use a single event handler for both events
+    const handleStorageEvent = (e: StorageEvent | Event) => {
+      if (!(e instanceof StorageEvent) || e.key === null || e.key === "cart") {
+        handleCartChange();
+      }
+    };
 
-    // Custom event for cart updates from same window
+    window.addEventListener("storage", handleStorageEvent);
     window.addEventListener("cartUpdated", handleCartChange);
 
     return () => {
-      window.removeEventListener("storage", handleCartChange);
+      window.removeEventListener("storage", handleStorageEvent);
       window.removeEventListener("cartUpdated", handleCartChange);
     };
   }, []);
@@ -126,56 +126,71 @@ export function Nav({ children }: { children: React.ReactNode }) {
     },
   };
 
-  // Measure navbar height for proper side panel positioning
+  // Measure navbar height and handle scroll events with debouncing
   useEffect(() => {
     const updateNavbarHeight = () => {
       if (navRef.current) {
         const height = navRef.current.offsetHeight;
         setNavbarHeight(height);
-        console.log("Navbar height:", height);
       }
     };
 
-    // Update on mount and on window resize
+    // Debounce resize function
+    let resizeTimeout: NodeJS.Timeout;
+    const debouncedResize = () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(updateNavbarHeight, 100);
+    };
+
+    // Update on mount
     updateNavbarHeight();
-    window.addEventListener("resize", updateNavbarHeight);
+    window.addEventListener("resize", debouncedResize);
 
     return () => {
-      window.removeEventListener("resize", updateNavbarHeight);
+      window.removeEventListener("resize", debouncedResize);
+      clearTimeout(resizeTimeout);
     };
   }, []);
 
-  // Handle scroll events to change navbar appearance
+  // Handle scroll events with throttling
   useEffect(() => {
+    const scrollThreshold = 50;
+    const hideThreshold = 420;
+    let ticking = false;
+
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      const scrollThreshold = 50;
-      const hideThreshold = 420;
+      if (!ticking) {
+        // Use requestAnimationFrame to optimize scroll performance
+        window.requestAnimationFrame(() => {
+          const currentScrollY = window.scrollY;
 
-      // First threshold - change background
-      const isScrolled = currentScrollY > scrollThreshold;
-      setScrolled(isScrolled);
+          // First threshold - change background
+          setScrolled(currentScrollY > scrollThreshold);
 
-      // Second threshold - hide/show based on scroll direction or hover
-      if (currentScrollY < scrollThreshold || hovering) {
-        // Always show navbar when at the top or when hovering the logo
-        setHidden(false);
-      } else if (currentScrollY > prevScrollY + 10) {
-        // Scrolling down past threshold - hide navbar
-        if (currentScrollY > hideThreshold) {
-          setHidden(true);
-        }
-      } else if (prevScrollY - currentScrollY > 10) {
-        // Scrolling up - show navbar
-        setHidden(false);
+          // Second threshold - hide/show based on scroll direction or hover
+          if (currentScrollY < scrollThreshold || hovering) {
+            // Always show navbar when at the top or when hovering the logo
+            setHidden(false);
+          } else if (currentScrollY > prevScrollY + 10) {
+            // Scrolling down past threshold - hide navbar
+            if (currentScrollY > hideThreshold) {
+              setHidden(true);
+            }
+          } else if (prevScrollY - currentScrollY > 10) {
+            // Scrolling up - show navbar
+            setHidden(false);
+          }
+
+          // Update previous scroll position
+          setPrevScrollY(currentScrollY);
+          ticking = false;
+        });
+        ticking = true;
       }
-
-      // Update previous scroll position
-      setPrevScrollY(currentScrollY);
     };
 
     // Add event listener
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
 
     // Initial check
     handleScroll();
@@ -188,31 +203,21 @@ export function Nav({ children }: { children: React.ReactNode }) {
 
   // Disable scroll when panel is open
   useEffect(() => {
-    if (isPanelOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
+    document.body.style.overflow = isPanelOpen ? "hidden" : "unset";
     return () => {
       document.body.style.overflow = "unset";
     };
   }, [isPanelOpen]);
 
-  // Toggle panel open/closed
-  const togglePanel = () => {
-    setIsPanelOpen((prev) => !prev);
-  };
-
-  // Close panel
-  const closePanel = () => {
-    setIsPanelOpen(false);
-  };
-
-  // Check if cart has items
+  // Memoize derived values
   const hasCartItems = cartItems.length > 0;
-
-  // Calculate total items for badge
   const totalCartItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+
+  // Event handlers
+  const togglePanel = () => setIsPanelOpen((prev) => !prev);
+  const closePanel = () => setIsPanelOpen(false);
+  const handleLogoMouseEnter = () => setHovering(true);
+  const handleLogoMouseLeave = () => setHovering(false);
 
   return (
     <>
@@ -248,8 +253,8 @@ export function Nav({ children }: { children: React.ReactNode }) {
           <div
             ref={logoRef}
             className="absolute left-1/2 top-3/4 -translate-y-1/2 transform -translate-x-1/2 cursor-pointer"
-            onMouseEnter={() => setHovering(true)}
-            onMouseLeave={() => setHovering(false)}
+            onMouseEnter={handleLogoMouseEnter}
+            onMouseLeave={handleLogoMouseLeave}
           >
             <Link href="/">
               <Image
@@ -426,7 +431,7 @@ export function NavLink(props: Omit<ComponentProps<typeof Link>, "className">) {
     <Link
       {...props}
       className={cn(
-        "block w-full p-3 rounded-md font-galindo text-3xl hover:bg-secondary text-primary transition-colors",
+        "block w-full p-3 rounded-md font-galindo text-3xl hover:bg-accent text-primary transition-colors",
         pathname === props.href && "bg-primary text-secondary-foreground"
       )}
     />

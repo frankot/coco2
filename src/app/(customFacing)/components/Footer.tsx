@@ -135,7 +135,7 @@ export function Footer() {
                 href="https://instagram.com/dr.coco"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-white p-2 rounded-full shadow-sm hover:bg-primary hover:text-white transition-colors"
+                className="p-2 rounded-full shadow-sm hover:bg-primary hover:text-white transition-colors"
                 aria-label="Instagram"
               >
                 <Instagram size={20} />
@@ -144,7 +144,7 @@ export function Footer() {
                 href="https://facebook.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-white p-2 rounded-full shadow-sm hover:bg-primary hover:text-white transition-colors"
+                className=" p-2 rounded-full shadow-sm hover:bg-primary hover:text-white transition-colors"
                 aria-label="Facebook"
               >
                 <Facebook size={20} />
@@ -153,7 +153,7 @@ export function Footer() {
                 href="https://twitter.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-white p-2 rounded-full shadow-sm hover:bg-primary hover:text-white transition-colors"
+                className=" p-2 rounded-full shadow-sm hover:bg-primary hover:text-white transition-colors"
                 aria-label="Twitter"
               >
                 <Twitter size={20} />
@@ -162,7 +162,7 @@ export function Footer() {
                 href="https://youtube.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-white p-2 rounded-full shadow-sm hover:bg-primary hover:text-white transition-colors"
+                className=" p-2 rounded-full shadow-sm hover:bg-primary hover:text-white transition-colors"
                 aria-label="YouTube"
               >
                 <Youtube size={20} />

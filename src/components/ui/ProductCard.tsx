@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useState, useEffect, useRef } from "react";
 import { Plus, Minus, ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 // Define the Product type based on our database structure
 type Product = {
@@ -20,13 +21,13 @@ type Product = {
 
 type FeaturedProductProps = {
   product: Product;
-  backgroundColor: string; // CSS color value
+  backgroundColor?: string; // CSS color value, now optional
   imageOnLeft?: boolean; // Changed to boolean - true means image is on left, false means right
 };
 
 export default function FeaturedProduct({
   product,
-  backgroundColor,
+  backgroundColor = "hsl(var(--primary) / 0.2)", // Default to primary color with opacity
   imageOnLeft = true, // Default to image on left if not specified
 }: FeaturedProductProps) {
   const [quantity, setQuantity] = useState(1);
@@ -39,12 +40,19 @@ export default function FeaturedProduct({
   const imageOrderClass = imageOnLeft ? "md:order-1" : "md:order-2";
   const contentOrderClass = imageOnLeft ? "md:order-2" : "md:order-1";
 
-  // Define rotation based on image position
-  const rotationAmount = imageOnLeft ? "12deg" : "-12deg";
+  // Define rotation and hover effects
+  const rotationAmount = imageOnLeft ? "6deg" : "-6deg";
   const hoverRotationAmount = "0deg";
+  const hoverScale = 1.05;
 
   // Define slide direction based on image position
   const slideDirection = imageOnLeft ? "-50px" : "50px";
+
+  // Define gradient direction based on image position
+  const gradientDirection = imageOnLeft ? "to bottom right" : "to bottom left";
+  const gradientStyle = {
+    background: `linear-gradient(${gradientDirection}, hsl(var(--background)), ${backgroundColor})`,
+  };
 
   // Handle quantity change
   const increaseQuantity = () => setQuantity((prev) => prev + 1);
@@ -130,7 +138,7 @@ export default function FeaturedProduct({
   return (
     <div
       ref={cardRef}
-      className={`grid grid-cols-1 md:grid-cols-2 gap-4 overflow-hidden rounded-xl bg-white shadow-lg transition-all duration-1000 ease-out`}
+      className={`grid grid-cols-1 md:grid-cols-2 gap-4 overflow-hidden rounded-xl bg-background/80 transition-all duration-1000 ease-out backdrop-blur-sm`}
       style={{
         opacity: isVisible ? 1 : 0,
         transform: isVisible
@@ -140,15 +148,28 @@ export default function FeaturedProduct({
     >
       {/* Product image with background */}
       <div
-        className={`relative w-full aspect-square md:aspect-auto md:h-full ${imageOrderClass} overflow-hidden`}
-        style={{ backgroundColor }}
+        className={`relative w-full aspect-square md:aspect-auto md:h-full ${imageOrderClass} overflow-hidden rounded-t-xl`}
+        style={gradientStyle}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
+              {/* Decorative palm pattern overlay */}
+              <div
+          className="absolute inset-0 opacity-15  z-0"
+          style={{
+            backgroundImage: "url('/palmy-prawa.png')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            filter: "blur(1px)",
+          }}
+        ></div>
+
         <div
           className="w-full h-full relative transition-transform duration-500 ease-in-out"
           style={{
-            transform: isHovered ? `rotate(${hoverRotationAmount})` : `rotate(${rotationAmount})`,
+            transform: isHovered
+              ? `rotate(${hoverRotationAmount}) scale(${hoverScale})`
+              : `rotate(${rotationAmount})`,
           }}
         >
           <Image
@@ -162,53 +183,54 @@ export default function FeaturedProduct({
         </div>
       </div>
 
-      {/* Product information - Redesigned for teenage brand */}
+      {/* Product information */}
       <div className={`flex flex-col justify-between p-6 ${contentOrderClass} relative`}>
-        {/* Fun pattern overlay for background */}
-        <div
-          className="absolute inset-0 opacity-5 z-0"
-          style={{
-            backgroundImage:
-              "url(\"data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23000000' fill-opacity='0.5' fill-rule='evenodd'/%3E%3C/svg%3E\")",
-          }}
-        ></div>
-
+  
         <div className="z-10">
           <Link href={`/product/${product.id}`} className="group">
-            <h2 className="text-3xl font-bold mb-2 text-pink-600 group-hover:text-pink-500 transition-colors">
+            <h2 className="text-3xl font-galindo mb-3 text-primary group-hover:text-primary/80 transition-colors">
               {product.name}
             </h2>
           </Link>
 
-          <div className="bg-gradient-to-r from-yellow-100 to-pink-100 p-4 rounded-lg mb-4">
-            <p className="text-gray-600 line-clamp-3 text-lg">{product.description}</p>
+          <div className="bg-gradient-to-r from-primary/10 to-secondary/10 p-4 rounded-lg mb-4 backdrop-blur-sm">
+            <p className="text-foreground/80 line-clamp-3 text-lg">{product.description}</p>
           </div>
 
           {/* Price section with quantity selector */}
-          <div className="bg-white border-2 border-dashed border-pink-200 rounded-lg p-4 mb-6">
+          <div className="bg-background/90 border border-primary/30 rounded-lg p-4 mb-6">
             {/* Price display */}
             <div className="flex justify-between items-center mb-3">
-              <span className="text-lg text-gray-700">Cena:</span>
-              <span className="text-2xl font-bold text-pink-600">{formatPLN(totalPrice)}</span>
+              <span className="text-lg text-foreground/80">Cena:</span>
+              <span className="text-2xl font-bold text-primary font-galindo">
+                {formatPLN(totalPrice)}
+              </span>
             </div>
 
             {/* Quantity selector */}
             <div className="mb-2">
-              <p className="text-sm text-gray-500 mb-2">(Sprzedawane w paczkach po 12 sztuk)</p>
+              <p className="text-sm text-foreground/60 mb-2">
+                (Sprzedawane w paczkach po 12 sztuk)
+              </p>
               <div className="flex items-center">
-                <span className="mr-4 text-gray-700">Ilość paczek:</span>
-                <div className="flex items-center border border-gray-300 rounded-md overflow-hidden">
+                <span className="mr-4 text-foreground/80">Ilość paczek:</span>
+                <div className="flex items-center border border-primary/30 rounded-md overflow-hidden">
                   <button
                     onClick={decreaseQuantity}
-                    className="px-3 py-1 bg-gray-100 hover:bg-gray-200 transition-colors"
+                    className={cn(
+                      "px-3 py-1 bg-primary/10 hover:bg-primary/20 transition-colors",
+                      quantity <= 1 && "opacity-50 cursor-not-allowed"
+                    )}
                     disabled={quantity <= 1}
                   >
                     <Minus size={16} />
                   </button>
-                  <span className="px-4 py-1 font-medium text-center w-12">{quantity}</span>
+                  <span className="px-4 py-1 font-medium text-center w-12 bg-background/90">
+                    {quantity}
+                  </span>
                   <button
                     onClick={increaseQuantity}
-                    className="px-3 py-1 bg-gray-100 hover:bg-gray-200 transition-colors"
+                    className="px-3 py-1 bg-primary/10 hover:bg-primary/20 transition-colors"
                   >
                     <Plus size={16} />
                   </button>
@@ -221,7 +243,7 @@ export default function FeaturedProduct({
         <div className="flex flex-col space-y-3 z-10">
           <Button
             size="lg"
-            className="w-full bg-pink-500 hover:bg-pink-600 font-bold text-lg group"
+            className="w-full bg-primary hover:bg-primary/90 font-bold text-lg group shadow-none"
             disabled={!product.isAvailable || isAddingToCart}
             onClick={addToCart}
           >
@@ -230,7 +252,7 @@ export default function FeaturedProduct({
           </Button>
           <Link
             href={`/product/${product.id}`}
-            className="text-center text-sm text-pink-600 hover:text-pink-700 font-medium hover:underline"
+            className="text-center text-sm text-primary hover:text-primary/80 font-medium hover:underline"
           >
             Zobacz szczegóły →
           </Link>

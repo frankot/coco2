@@ -3,6 +3,7 @@
 import { useState, Suspense } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -30,7 +31,7 @@ function SignInForm() {
     setIsLoading(true);
     setError("");
 
-    console.log("Attempting login with:", { username });
+    console.log("Próba logowania z:", { username });
 
     try {
       const result = await signIn("credentials", {
@@ -39,34 +40,37 @@ function SignInForm() {
         redirect: false,
       });
 
-      console.log("Sign-in result:", result);
+      console.log("Wynik logowania:", result);
 
       if (result?.error) {
-        setError("Invalid username or password");
+        setError("Nieprawidłowa nazwa użytkownika lub hasło");
         setIsLoading(false);
         return;
       }
 
       if (result?.ok) {
-        console.log("Login successful, redirecting to:", callbackUrl);
-        // Redirect to callback URL or admin dashboard
+        console.log("Logowanie udane, przekierowanie do:", callbackUrl);
+        // Przekierowanie do URL zwrotnego lub panelu administratora
         router.push(callbackUrl);
         router.refresh();
       }
     } catch (error) {
-      console.error("Sign-in error:", error);
-      setError("An error occurred. Please try again.");
+      console.error("Błąd logowania:", error);
+      setError("Wystąpił błąd. Spróbuj ponownie.");
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="flex h-screen items-center justify-center">
-      <Card className="w-full max-w-md">
+    <div className="flex h-screen items-center justify-center relative">
+      <div className="absolute top-16">
+        <Image src="/logo.png" alt="Logo" width={200} height={200} />
+      </div>
+      <Card className="w-full max-w-md mt-24">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Admin Login</CardTitle>
+          <CardTitle className="text-2xl font-bold text-center">Panel Administratora</CardTitle>
           <CardDescription className="text-center">
-            Enter your credentials to access the admin dashboard
+            Wprowadź dane logowania, aby uzyskać dostęp do panelu administratora
           </CardDescription>
         </CardHeader>
 
@@ -79,7 +83,7 @@ function SignInForm() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="username">Username</Label>
+              <Label htmlFor="username">Nazwa użytkownika</Label>
               <Input
                 id="username"
                 name="username"
@@ -87,13 +91,13 @@ function SignInForm() {
                 required
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="Enter your username"
+                placeholder="Wprowadź nazwę użytkownika"
                 disabled={isLoading}
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">Hasło</Label>
               <Input
                 id="password"
                 name="password"
@@ -101,13 +105,13 @@ function SignInForm() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter your password"
+                placeholder="Wprowadź hasło"
                 disabled={isLoading}
               />
             </div>
 
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Signing in..." : "Sign in"}
+              {isLoading ? "Logowanie..." : "Zaloguj się"}
             </Button>
           </form>
         </CardContent>
@@ -116,13 +120,16 @@ function SignInForm() {
   );
 }
 
-// Loading fallback for Suspense
+// Komponent ładowania dla Suspense
 function SignInLoading() {
   return (
-    <div className="flex h-screen items-center justify-center">
-      <Card className="w-full max-w-md">
+    <div className="flex h-screen items-center justify-center relative">
+      <div className="absolute top-16">
+        <Image src="/logo.png" alt="Logo"  width={400} height={400} />
+      </div>
+      <Card className="w-full max-w-md mt-24">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Loading...</CardTitle>
+          <CardTitle className="text-2xl font-bold text-center">Ładowanie...</CardTitle>
         </CardHeader>
         <CardContent className="flex justify-center py-8">
           <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
