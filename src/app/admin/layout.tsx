@@ -8,9 +8,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <>
       <Nav>
         <NavLink href="/admin">Dashboard</NavLink>
-        <NavLink href="/admin/products">Products</NavLink>
-        <NavLink href="/admin/orders">Orders</NavLink>
-        <NavLink href="/admin/customers">Customers</NavLink>
+        <NavLink href="/admin/products">Produkty</NavLink>
+        <NavLink href="/admin/orders">Zamówienia</NavLink>
+        <NavLink href="/admin/customers">Klienci</NavLink>
         <div className="absolute right-10">
           <LogOut />
         </div>

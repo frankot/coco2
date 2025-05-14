@@ -10,7 +10,7 @@ export function LogOut() {
 
   return (
     <Button onClick={handleLogout} variant="destructive" size="sm">
-      Log Out
+      Wyloguj
     </Button>
   );
 }
