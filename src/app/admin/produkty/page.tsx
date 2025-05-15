@@ -19,13 +19,15 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { ActiveToggleDropdownItem, DeleteDropdownItem } from "./_components/ProductActions";
+
+
 export default function AdminProductsPage() {
   return (
     <>
       <div className="flex justify-between items-center gap-4">
         <PageHeader>Produkty</PageHeader>
         <Button>
-          <Link href="/admin/products/new">Dodaj produkt</Link>
+          <Link href="/admin/produkty/new">Dodaj produkt</Link>
         </Button>
       </div>
       <ProductsTable />
@@ -90,7 +92,7 @@ async function ProductsTable() {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
                     <DropdownMenuItem asChild>
-                      <Link href={`/admin/products/${product.id}`}>Edytuj</Link>
+                      <Link href={`/admin/produkty/${product.id}`}>Edytuj</Link>
                     </DropdownMenuItem>
                     <ActiveToggleDropdownItem id={product.id} isAvailable={product.isAvailable} />
                     <DropdownMenuSeparator />

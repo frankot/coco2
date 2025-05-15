@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
-  images: {
+    images: {
     domains: ["res.cloudinary.com"],
     formats: ["image/avif", "image/webp"],
     minimumCacheTTL: 60,
@@ -12,7 +12,6 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
   compress: true,
-  swcMinify: true,
   productionBrowserSourceMaps: false,
   compiler: {
     removeConsole: process.env.NODE_ENV === "production",

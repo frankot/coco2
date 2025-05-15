@@ -8,6 +8,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum AccountType {
+  DETAL
+  HURT
+  ADMIN
+}
+
 model Product {
   id          String   @id @default(uuid())
   name        String
@@ -22,17 +28,11 @@ model Product {
   orders      Order[]
 }
 
-enum AccountType {
-  ADMIN
-  DETAL
-  HURT
-}
-
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
   password  String
-  accountType AccountType @default(DETAL)
+  accountType AccountType? 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   orders    Order[]

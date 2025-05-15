@@ -9,7 +9,7 @@ export async function updateAllUsersAccountType() {
     // Get all users that might not have account type set
     const usersToUpdate = await prisma.user.findMany({
       where: {
-        accountType: null,
+        NOT: [{ accountType: "ADMIN" }, { accountType: "DETAL" }, { accountType: "HURT" }],
       },
       select: {
         id: true,
