@@ -12,9 +12,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </div>
       <Nav>
         <NavLink href="/admin">Dashboard</NavLink>
-        <NavLink href="/admin/products">Produkty</NavLink>
-        <NavLink href="/admin/orders">Zamówienia</NavLink>
-        <NavLink href="/admin/customers">Klienci</NavLink>
+        <NavLink href="/admin/produkty">Produkty</NavLink>
+        <NavLink href="/admin/zamowienia">Zamówienia</NavLink>
+        <NavLink href="/admin/klienci">Klienci</NavLink>
         <div className="absolute right-10">
           <LogOut />
         </div>

@@ -22,10 +22,17 @@ model Product {
   orders      Order[]
 }
 
+enum AccountType {
+  ADMIN
+  DETAL
+  HURT
+}
+
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
   password  String
+  accountType AccountType @default(DETAL)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   orders    Order[]

@@ -30,6 +30,24 @@ export type User = $Result.DefaultSelection<Prisma.$UserPayload>
 export type Order = $Result.DefaultSelection<Prisma.$OrderPayload>
 
 /**
+ * Enums
+ */
+export namespace $Enums {
+  export const AccountType: {
+  ADMIN: 'ADMIN',
+  DETAL: 'DETAL',
+  HURT: 'HURT'
+};
+
+export type AccountType = (typeof AccountType)[keyof typeof AccountType]
+
+}
+
+export type AccountType = $Enums.AccountType
+
+export const AccountType: typeof $Enums.AccountType
+
+/**
  * ##  Prisma Client ʲˢ
  *
  * Type-safe database client for TypeScript & Node.js
@@ -2299,6 +2317,7 @@ export namespace Prisma {
     id: string | null
     email: string | null
     password: string | null
+    accountType: $Enums.AccountType | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -2307,6 +2326,7 @@ export namespace Prisma {
     id: string | null
     email: string | null
     password: string | null
+    accountType: $Enums.AccountType | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -2315,6 +2335,7 @@ export namespace Prisma {
     id: number
     email: number
     password: number
+    accountType: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -2325,6 +2346,7 @@ export namespace Prisma {
     id?: true
     email?: true
     password?: true
+    accountType?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -2333,6 +2355,7 @@ export namespace Prisma {
     id?: true
     email?: true
     password?: true
+    accountType?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -2341,6 +2364,7 @@ export namespace Prisma {
     id?: true
     email?: true
     password?: true
+    accountType?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -2422,6 +2446,7 @@ export namespace Prisma {
     id: string
     email: string
     password: string
+    accountType: $Enums.AccountType
     createdAt: Date
     updatedAt: Date
     _count: UserCountAggregateOutputType | null
@@ -2447,6 +2472,7 @@ export namespace Prisma {
     id?: boolean
     email?: boolean
     password?: boolean
+    accountType?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     orders?: boolean | User$ordersArgs<ExtArgs>
@@ -2457,6 +2483,7 @@ export namespace Prisma {
     id?: boolean
     email?: boolean
     password?: boolean
+    accountType?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["user"]>
@@ -2465,6 +2492,7 @@ export namespace Prisma {
     id?: boolean
     email?: boolean
     password?: boolean
+    accountType?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["user"]>
@@ -2473,11 +2501,12 @@ export namespace Prisma {
     id?: boolean
     email?: boolean
     password?: boolean
+    accountType?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "password" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "password" | "accountType" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     orders?: boolean | User$ordersArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -2494,6 +2523,7 @@ export namespace Prisma {
       id: string
       email: string
       password: string
+      accountType: $Enums.AccountType
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["user"]>
@@ -2923,6 +2953,7 @@ export namespace Prisma {
     readonly id: FieldRef<"User", 'String'>
     readonly email: FieldRef<"User", 'String'>
     readonly password: FieldRef<"User", 'String'>
+    readonly accountType: FieldRef<"User", 'AccountType'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
   }
@@ -4502,6 +4533,7 @@ export namespace Prisma {
     id: 'id',
     email: 'email',
     password: 'password',
+    accountType: 'accountType',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -4596,6 +4628,20 @@ export namespace Prisma {
    * Reference to a field of type 'DateTime[]'
    */
   export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'AccountType'
+   */
+  export type EnumAccountTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AccountType'>
+    
+
+
+  /**
+   * Reference to a field of type 'AccountType[]'
+   */
+  export type ListEnumAccountTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AccountType[]'>
     
 
 
@@ -4705,6 +4751,7 @@ export namespace Prisma {
     id?: StringFilter<"User"> | string
     email?: StringFilter<"User"> | string
     password?: StringFilter<"User"> | string
+    accountType?: EnumAccountTypeFilter<"User"> | $Enums.AccountType
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     orders?: OrderListRelationFilter
@@ -4714,6 +4761,7 @@ export namespace Prisma {
     id?: SortOrder
     email?: SortOrder
     password?: SortOrder
+    accountType?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     orders?: OrderOrderByRelationAggregateInput
@@ -4726,6 +4774,7 @@ export namespace Prisma {
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
     password?: StringFilter<"User"> | string
+    accountType?: EnumAccountTypeFilter<"User"> | $Enums.AccountType
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     orders?: OrderListRelationFilter
@@ -4735,6 +4784,7 @@ export namespace Prisma {
     id?: SortOrder
     email?: SortOrder
     password?: SortOrder
+    accountType?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: UserCountOrderByAggregateInput
@@ -4749,6 +4799,7 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"User"> | string
     email?: StringWithAggregatesFilter<"User"> | string
     password?: StringWithAggregatesFilter<"User"> | string
+    accountType?: EnumAccountTypeWithAggregatesFilter<"User"> | $Enums.AccountType
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
   }
@@ -4917,6 +4968,7 @@ export namespace Prisma {
     id?: string
     email: string
     password: string
+    accountType?: $Enums.AccountType
     createdAt?: Date | string
     updatedAt?: Date | string
     orders?: OrderCreateNestedManyWithoutUserInput
@@ -4926,6 +4978,7 @@ export namespace Prisma {
     id?: string
     email: string
     password: string
+    accountType?: $Enums.AccountType
     createdAt?: Date | string
     updatedAt?: Date | string
     orders?: OrderUncheckedCreateNestedManyWithoutUserInput
@@ -4935,6 +4988,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
+    accountType?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     orders?: OrderUpdateManyWithoutUserNestedInput
@@ -4944,6 +4998,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
+    accountType?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     orders?: OrderUncheckedUpdateManyWithoutUserNestedInput
@@ -4953,6 +5008,7 @@ export namespace Prisma {
     id?: string
     email: string
     password: string
+    accountType?: $Enums.AccountType
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -4961,6 +5017,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
+    accountType?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -4969,6 +5026,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
+    accountType?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -5229,10 +5287,18 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type EnumAccountTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.AccountType | EnumAccountTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.AccountType[] | ListEnumAccountTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AccountType[] | ListEnumAccountTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumAccountTypeFilter<$PrismaModel> | $Enums.AccountType
+  }
+
   export type UserCountOrderByAggregateInput = {
     id?: SortOrder
     email?: SortOrder
     password?: SortOrder
+    accountType?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -5241,6 +5307,7 @@ export namespace Prisma {
     id?: SortOrder
     email?: SortOrder
     password?: SortOrder
+    accountType?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -5249,8 +5316,19 @@ export namespace Prisma {
     id?: SortOrder
     email?: SortOrder
     password?: SortOrder
+    accountType?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type EnumAccountTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AccountType | EnumAccountTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.AccountType[] | ListEnumAccountTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AccountType[] | ListEnumAccountTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumAccountTypeWithAggregatesFilter<$PrismaModel> | $Enums.AccountType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumAccountTypeFilter<$PrismaModel>
+    _max?: NestedEnumAccountTypeFilter<$PrismaModel>
   }
 
   export type UserScalarRelationFilter = {
@@ -5376,6 +5454,10 @@ export namespace Prisma {
     connectOrCreate?: OrderCreateOrConnectWithoutUserInput | OrderCreateOrConnectWithoutUserInput[]
     createMany?: OrderCreateManyUserInputEnvelope
     connect?: OrderWhereUniqueInput | OrderWhereUniqueInput[]
+  }
+
+  export type EnumAccountTypeFieldUpdateOperationsInput = {
+    set?: $Enums.AccountType
   }
 
   export type OrderUpdateManyWithoutUserNestedInput = {
@@ -5583,6 +5665,23 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type NestedEnumAccountTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.AccountType | EnumAccountTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.AccountType[] | ListEnumAccountTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AccountType[] | ListEnumAccountTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumAccountTypeFilter<$PrismaModel> | $Enums.AccountType
+  }
+
+  export type NestedEnumAccountTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.AccountType | EnumAccountTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.AccountType[] | ListEnumAccountTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AccountType[] | ListEnumAccountTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumAccountTypeWithAggregatesFilter<$PrismaModel> | $Enums.AccountType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumAccountTypeFilter<$PrismaModel>
+    _max?: NestedEnumAccountTypeFilter<$PrismaModel>
+  }
+
   export type OrderCreateWithoutProductInput = {
     id?: string
     createdAt?: Date | string
@@ -5683,6 +5782,7 @@ export namespace Prisma {
     id?: string
     email: string
     password: string
+    accountType?: $Enums.AccountType
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -5691,6 +5791,7 @@ export namespace Prisma {
     id?: string
     email: string
     password: string
+    accountType?: $Enums.AccountType
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -5746,6 +5847,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
+    accountType?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -5754,6 +5856,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     password?: StringFieldUpdateOperationsInput | string
+    accountType?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
