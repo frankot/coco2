@@ -2,7 +2,8 @@ import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { NextAuthOptions } from "next-auth";
 import { PrismaClient } from "@/app/generated/prisma";
-import bcrypt from "bcrypt";
+import { verifyUserCredentials } from "@/lib/auth-utils";
+import { findUserByEmail } from "@/lib/auth-server";
 
 const prisma = new PrismaClient();
 
@@ -62,31 +63,32 @@ export const authOptions: NextAuthOptions = {
             return null;
           }
 
-          // Look up the user in the database
-          const user = await prisma.user.findUnique({
-            where: { email: credentials.email },
+          // Use our verifyUserCredentials function that uses server components
+          const result = await verifyUserCredentials({
+            email: credentials.email,
+            password: credentials.password,
           });
 
-          if (!user) {
-            console.log("User not found");
+          if (!result.success) {
+            console.log(result.message);
             return null;
           }
 
-          // Compare the password with the stored hash
-          const passwordMatch = await bcrypt.compare(credentials.password, user.password);
+          // Look up the user to get their details
+          const user = await findUserByEmail(credentials.email);
 
-          if (passwordMatch) {
-            console.log("User login successful");
-            return {
-              id: user.id,
-              email: user.email,
-              name: user.email.split("@")[0], // Using email as name for simplicity
-              role: "USER",
-            };
+          if (!user) {
+            console.log("User not found after verification");
+            return null;
           }
 
-          console.log("Invalid user password");
-          return null;
+          console.log("User login successful");
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.firstName || user.email.split("@")[0], // Use firstName if available
+            role: "USER",
+          };
         } catch (error) {
           console.error("User auth error:", error);
           return null;

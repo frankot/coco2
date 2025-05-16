@@ -22,6 +22,9 @@ async function EditClientContent({ id }: { id: string }) {
     select: {
       id: true,
       email: true,
+      firstName: true,
+      lastName: true,
+      phoneNumber: true,
       accountType: true,
     },
   });

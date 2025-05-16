@@ -23,6 +23,14 @@ import { toast } from "sonner";
 // Type definitions
 type OrderStatus = "PENDING" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED";
 
+type Address = {
+  id: string;
+  street: string;
+  city: string;
+  postalCode: string;
+  country: string;
+};
+
 type OrderItem = {
   id: string;
   quantity: number;
@@ -44,7 +52,12 @@ type Order = {
     id: string;
     email: string;
     accountType: string;
+    firstName: string | null;
+    lastName: string | null;
+    phoneNumber: string | null;
   };
+  billingAddress: Address;
+  shippingAddress: Address;
   orderItems: OrderItem[];
 };
 
@@ -59,6 +72,7 @@ export default function OrderDetailsPage() {
         const response = await fetch(`/api/admin/orders/${id}`);
         if (response.ok) {
           const data = await response.json();
+          console.log("Fetched order data:", data); // Debug: Log fetched data
           setOrder(data);
         } else {
           toast.error("Nie udało się pobrać danych zamówienia");
@@ -262,8 +276,23 @@ export default function OrderDetailsPage() {
               <div className="text-sm text-muted-foreground">Email:</div>
               <div className="text-sm font-medium">{order.user.email}</div>
 
+              <div className="text-sm text-muted-foreground">Imię:</div>
+              <div className="text-sm font-medium">{order.user.firstName || "—"}</div>
+
+              <div className="text-sm text-muted-foreground">Nazwisko:</div>
+              <div className="text-sm font-medium">{order.user.lastName || "—"}</div>
+
+              <div className="text-sm text-muted-foreground">Telefon:</div>
+              <div className="text-sm font-medium">{order.user.phoneNumber || "—"}</div>
+
               <div className="text-sm text-muted-foreground">Typ konta:</div>
-              <div className="text-sm font-medium">{order.user.accountType}</div>
+              <div className="text-sm font-medium">
+                {order.user.accountType === "DETAL"
+                  ? "Detaliczny"
+                  : order.user.accountType === "HURT"
+                    ? "Hurtowy"
+                    : order.user.accountType}
+              </div>
             </div>
 
             <Separator className="my-4" />
@@ -271,6 +300,53 @@ export default function OrderDetailsPage() {
             <Button variant="outline" size="sm" asChild className="w-full">
               <Link href={`/admin/klienci/${order.user.id}`}>Zobacz profil klienta</Link>
             </Button>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Address details */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Billing Address */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Adres rozliczeniowy</CardTitle>
+            <CardDescription>Dane do faktury</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <div className="grid grid-cols-1 gap-1">
+              <div className="text-sm">
+                <span className="font-medium">
+                  {order.user.firstName} {order.user.lastName}
+                </span>
+              </div>
+              <div className="text-sm">{order.billingAddress.street}</div>
+              <div className="text-sm">
+                {order.billingAddress.postalCode} {order.billingAddress.city}
+              </div>
+              <div className="text-sm">{order.billingAddress.country}</div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Shipping Address */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Adres dostawy</CardTitle>
+            <CardDescription>Dane do wysyłki</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <div className="grid grid-cols-1 gap-1">
+              <div className="text-sm">
+                <span className="font-medium">
+                  {order.user.firstName} {order.user.lastName}
+                </span>
+              </div>
+              <div className="text-sm">{order.shippingAddress.street}</div>
+              <div className="text-sm">
+                {order.shippingAddress.postalCode} {order.shippingAddress.city}
+              </div>
+              <div className="text-sm">{order.shippingAddress.country}</div>
+            </div>
           </CardContent>
         </Card>
       </div>

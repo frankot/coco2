@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/card";
 import { signIn } from "next-auth/react";
 import Loading from "@/components/ui/loading";
+import { userRegistrationSchema } from "@/lib/auth-utils";
 
 function RegisterForm() {
   const [email, setEmail] = useState("");
@@ -39,6 +40,15 @@ function RegisterForm() {
     }
 
     try {
+      // Validate with zod schema
+      const validationResult = userRegistrationSchema.safeParse({ email, password });
+      if (!validationResult.success) {
+        const errorMessages = validationResult.error.errors.map((err) => err.message).join(", ");
+        setError(errorMessages);
+        setIsLoading(false);
+        return;
+      }
+
       // Call the API endpoint to register the user
       const response = await fetch("/api/auth/rejestracja", {
         method: "POST",

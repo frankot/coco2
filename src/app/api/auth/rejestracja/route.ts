@@ -1,51 +1,27 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@/app/generated/prisma";
-import { hash } from "bcrypt";
-
-const prisma = new PrismaClient();
+import { registerUser } from "@/lib/auth-utils";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { email, password, firstName, lastName, phoneNumber } = body;
 
-    // Validate required fields
-    if (!email || !password) {
-      return NextResponse.json({ message: "Email i hasło są wymagane" }, { status: 400 });
-    }
-
-    // Check if user already exists
-    const existingUser = await prisma.user.findUnique({
-      where: {
-        email,
-      },
+    // Call the registerUser function from auth-utils which now uses server functions internally
+    const result = await registerUser({
+      email,
+      password,
+      firstName,
+      lastName,
+      phoneNumber,
     });
 
-    if (existingUser) {
-      return NextResponse.json(
-        { message: "Użytkownik o podanym adresie email już istnieje" },
-        { status: 400 }
-      );
+    if (!result.success) {
+      return NextResponse.json({ message: result.message }, { status: 400 });
     }
-
-    // Hash password
-    const hashedPassword = await hash(password, 10);
-
-    // Create new user with optional fields
-    const user = await prisma.user.create({
-      data: {
-        email,
-        password: hashedPassword,
-        firstName: firstName || null,
-        lastName: lastName || null,
-        phoneNumber: phoneNumber || null,
-        accountType: "DETAL", // Default account type
-      },
-    });
 
     return NextResponse.json({
-      message: "Konto zostało utworzone pomyślnie",
-      userId: user.id,
+      message: result.message,
+      userId: result.userId,
     });
   } catch (error) {
     console.error("Registration error:", error);

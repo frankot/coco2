@@ -75,3 +75,35 @@ Example:
 ```
 
 This approach avoids the complexity of Instagram API authentication while still allowing you to showcase Instagram content on your site.
+
+# Coco E-commerce
+
+## Authentication System
+
+The application uses a centralized authentication system with reusable utility functions. All authentication-related functionality is managed through the following files:
+
+- `src/lib/auth.ts` - NextAuth.js configuration
+- `src/lib/auth-utils.ts` - Reusable authentication utilities
+
+### Auth Utilities
+
+The `auth-utils.ts` file provides the following functions:
+
+- `registerUser()` - Handles user registration with proper password hashing
+- `createOrUpdateUser()` - Creates a new user or updates an existing one (used in checkout)
+- `verifyUserCredentials()` - Validates user login credentials
+
+### Usage
+
+These functions are used throughout the application:
+
+1. During registration: `/auth/rejestracja` uses `registerUser()`
+2. During checkout: The checkout flow uses `createOrUpdateUser()` to handle guest checkouts
+3. During login: NextAuth.js uses `verifyUserCredentials()` for authentication
+
+### Type Safety
+
+All functions use Zod schemas for validation:
+
+- `userRegistrationSchema` - Validates registration data
+- `userLoginSchema` - Validates login credentials

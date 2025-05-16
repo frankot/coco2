@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { createOrUpdateUser } from "@/lib/auth-utils";
 
 const prisma = new PrismaClient();
 
@@ -36,8 +37,11 @@ type OrderFormData = z.infer<typeof orderFormSchema>;
 
 export async function createOrder(formData: OrderFormData) {
   try {
+    console.log("Received form data:", JSON.stringify(formData, null, 2));
+
     // Validate form data
     const validatedData = orderFormSchema.parse(formData);
+    console.log("Validation passed");
 
     // Get product IDs from cart
     const productIds = validatedData.cartItems.map((item) => item.id);
@@ -51,6 +55,7 @@ export async function createOrder(formData: OrderFormData) {
         isAvailable: true,
       },
     });
+    console.log(`Found ${existingProducts.length} products in database`);
 
     // Verify all cart items have corresponding products
     const existingProductIds = existingProducts.map((p) => p.id);
@@ -59,6 +64,7 @@ export async function createOrder(formData: OrderFormData) {
     );
 
     if (missingProducts.length > 0) {
+      console.log("Missing products:", missingProducts);
       return {
         success: false,
         error: `Niektóre produkty nie są dostępne: ${missingProducts.map((p) => p.name).join(", ")}`,
@@ -66,6 +72,7 @@ export async function createOrder(formData: OrderFormData) {
     }
 
     if (existingProducts.length === 0) {
+      console.log("No products found in database");
       return {
         success: false,
         error: "Nie znaleziono żadnych produktów w bazie danych",
@@ -90,35 +97,33 @@ export async function createOrder(formData: OrderFormData) {
     if (!userId) {
       const session = await getServerSession(authOptions);
       userId = session?.user?.id;
+      console.log("Found userId from session:", userId);
     }
 
-    // If we still don't have a userId, check if user with this email exists
+    // If we still don't have a userId, use createOrUpdateUser function
     if (!userId) {
-      const existingUser = await prisma.user.findUnique({
-        where: { email: validatedData.email },
+      console.log("No userId found, creating or updating user with data:", {
+        email: validatedData.email,
+        firstName: validatedData.firstName,
+        lastName: validatedData.lastName,
+        phoneNumber: validatedData.phoneNumber,
       });
 
-      if (existingUser) {
-        userId = existingUser.id;
-      } else {
-        // Create a new user only if none exists
-        try {
-          const newUser = await prisma.user.create({
-            data: {
-              email: validatedData.email,
-              password: "hashedpassword", // In a real app, this should be properly hashed
-              firstName: validatedData.firstName,
-              lastName: validatedData.lastName,
-              phoneNumber: validatedData.phoneNumber,
-              accountType: "DETAL",
-            },
-          });
-          userId = newUser.id;
-        } catch (error) {
-          console.error("Failed to create user:", error);
-          return { success: false, error: "Nie udało się utworzyć konta użytkownika" };
-        }
+      const userResult = await createOrUpdateUser({
+        email: validatedData.email,
+        firstName: validatedData.firstName,
+        lastName: validatedData.lastName,
+        phoneNumber: validatedData.phoneNumber,
+      });
+
+      console.log("User creation/update result:", userResult);
+
+      if (!userResult.success) {
+        return { success: false, error: userResult.message };
       }
+
+      userId = userResult.userId;
+      console.log("Assigned userId:", userId);
     }
 
     // Verify the user exists before proceeding
@@ -128,15 +133,20 @@ export async function createOrder(formData: OrderFormData) {
     });
 
     if (!userExists) {
+      console.log("User not found in database:", userId);
       return { success: false, error: "Nie znaleziono użytkownika. Zaloguj się lub utwórz konto." };
     }
+
+    // Now userId is definitely not undefined - if we got here, userId exists and is valid
+    const verifiedUserId = userId as string;
+    console.log("Verified userId:", verifiedUserId);
 
     // Create the address with verified userId
     let address;
     try {
       address = await prisma.address.create({
         data: {
-          userId,
+          userId: verifiedUserId,
           street: validatedData.street,
           city: validatedData.city,
           postalCode: validatedData.postalCode,
@@ -145,6 +155,7 @@ export async function createOrder(formData: OrderFormData) {
           addressType: "BOTH",
         },
       });
+      console.log("Created address:", address.id);
     } catch (error) {
       console.error("Failed to create address:", error);
       return { success: false, error: "Nie udało się utworzyć adresu" };
@@ -155,7 +166,7 @@ export async function createOrder(formData: OrderFormData) {
     try {
       order = await prisma.order.create({
         data: {
-          userId,
+          userId: verifiedUserId,
           status: "PENDING",
           paymentMethod: validatedData.paymentMethod,
           pricePaidInCents: totalPriceInCents,
@@ -176,6 +187,7 @@ export async function createOrder(formData: OrderFormData) {
           orderItems: true,
         },
       });
+      console.log("Created order:", order.id);
     } catch (error) {
       console.error("Failed to create order:", error);
       return { success: false, error: "Nie udało się utworzyć zamówienia" };
@@ -186,19 +198,21 @@ export async function createOrder(formData: OrderFormData) {
       await prisma.payment.create({
         data: {
           orderId: order.id,
-          userId,
+          userId: verifiedUserId,
           amount: totalPriceInCents,
           currency: "PLN",
           status: "PENDING",
           paymentMethodType: validatedData.paymentMethod,
         },
       });
+      console.log("Created payment record for order:", order.id);
     } catch (error) {
       console.error("Failed to create payment:", error);
       // If payment creation fails, we should still return the order, but log the error
     }
 
     revalidatePath("/");
+    console.log("Order process completed successfully");
 
     return { success: true, orderId: order.id };
   } catch (error) {

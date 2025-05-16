@@ -2,19 +2,27 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/db";
 
 // GET request to fetch a specific order
-export async function GET(request: NextRequest, context: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
+    // Await params before accessing its properties
+    const resolvedParams = await params;
+    const orderId = resolvedParams.id;
+
     const order = await prisma.order.findUnique({
-      where: { id: context.params.id },
+      where: { id: orderId },
       include: {
         user: {
           select: {
+            id: true,
             email: true,
             firstName: true,
             lastName: true,
             phoneNumber: true,
+            accountType: true,
           },
         },
+        billingAddress: true,
+        shippingAddress: true,
         orderItems: {
           include: {
             product: true,
@@ -35,12 +43,16 @@ export async function GET(request: NextRequest, context: { params: { id: string 
 }
 
 // PATCH request to update a specific order
-export async function PATCH(request: NextRequest, context: { params: { id: string } }) {
+export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
   try {
+    // Await params before accessing its properties
+    const resolvedParams = await params;
+    const orderId = resolvedParams.id;
+
     const body = await request.json();
 
     const updatedOrder = await prisma.order.update({
-      where: { id: context.params.id },
+      where: { id: orderId },
       data: {
         status: body.status,
         paymentMethod: body.paymentMethod,
@@ -59,10 +71,14 @@ export async function PATCH(request: NextRequest, context: { params: { id: strin
 }
 
 // DELETE request to delete a specific order
-export async function DELETE(request: NextRequest, context: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   try {
+    // Await params before accessing its properties
+    const resolvedParams = await params;
+    const orderId = resolvedParams.id;
+
     await prisma.order.delete({
-      where: { id: context.params.id },
+      where: { id: orderId },
     });
 
     return NextResponse.json({ message: "Order deleted successfully" });

@@ -12,6 +12,9 @@ import { useActionState } from "react";
 type User = {
   id: string;
   email: string;
+  firstName: string | null;
+  lastName: string | null;
+  phoneNumber: string | null;
   accountType: "ADMIN" | "DETAL" | "HURT";
 };
 
@@ -35,6 +38,31 @@ export default function ClientForm({ client }: { client?: User | null }) {
         <Label htmlFor="email">Email</Label>
         <Input type="email" id="email" name="email" required defaultValue={client?.email || ""} />
         {state?.error?.email && <div className="text-destructive">{state.error.email}</div>}
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="firstName">Imię</Label>
+        <Input type="text" id="firstName" name="firstName" defaultValue={client?.firstName || ""} />
+        {state?.error?.firstName && <div className="text-destructive">{state.error.firstName}</div>}
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="lastName">Nazwisko</Label>
+        <Input type="text" id="lastName" name="lastName" defaultValue={client?.lastName || ""} />
+        {state?.error?.lastName && <div className="text-destructive">{state.error.lastName}</div>}
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="phoneNumber">Telefon</Label>
+        <Input
+          type="text"
+          id="phoneNumber"
+          name="phoneNumber"
+          defaultValue={client?.phoneNumber || ""}
+        />
+        {state?.error?.phoneNumber && (
+          <div className="text-destructive">{state.error.phoneNumber}</div>
+        )}
       </div>
 
       <div className="space-y-2">

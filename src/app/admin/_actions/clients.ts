@@ -9,6 +9,9 @@ import bcrypt from "bcrypt";
 type FormState = {
   error?: {
     email?: string[];
+    firstName?: string[];
+    lastName?: string[];
+    phoneNumber?: string[];
     password?: string[];
     confirmPassword?: string[];
     accountType?: string[];
@@ -19,6 +22,9 @@ type FormState = {
 
 const clientSchema = z.object({
   email: z.string().email("Nieprawidłowy adres email"),
+  firstName: z.string().optional(),
+  lastName: z.string().optional(),
+  phoneNumber: z.string().optional(),
   password: z.string().min(6, "Hasło musi mieć co najmniej 6 znaków"),
   confirmPassword: z.string().min(6, "Hasło musi mieć co najmniej 6 znaków"),
   accountType: z.enum(["ADMIN", "DETAL", "HURT"], {
@@ -29,6 +35,9 @@ const clientSchema = z.object({
 // Edit schema with optional password
 const editClientSchema = z.object({
   email: z.string().email("Nieprawidłowy adres email"),
+  firstName: z.string().optional(),
+  lastName: z.string().optional(),
+  phoneNumber: z.string().optional(),
   password: z.string().min(6, "Hasło musi mieć co najmniej 6 znaków").optional().or(z.literal("")),
   confirmPassword: z
     .string()
@@ -87,6 +96,9 @@ export async function addClient(prevState: FormState, formData: FormData): Promi
     await prisma.user.create({
       data: {
         email: data.email,
+        firstName: data.firstName || null,
+        lastName: data.lastName || null,
+        phoneNumber: data.phoneNumber || null,
         password: hashedPassword,
         accountType: data.accountType,
       },
@@ -154,6 +166,9 @@ export async function updateClient(
     // Prepare update data
     const updateData: any = {
       email: data.email,
+      firstName: data.firstName || null,
+      lastName: data.lastName || null,
+      phoneNumber: data.phoneNumber || null,
       accountType: data.accountType,
     };
 
