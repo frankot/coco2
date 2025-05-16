@@ -280,7 +280,7 @@ export default function FeaturedProduct({
             {isAddingToCart ? "Dodawanie..." : "Dodaj do koszyka"}
           </Button>
           <Link
-            href={`/product/${product.id}`}
+            href={`/sklep/${product.id}`}
             className="text-center text-sm text-primary hover:text-primary/80 font-medium hover:underline"
           >
             Zobacz szczegóły →
