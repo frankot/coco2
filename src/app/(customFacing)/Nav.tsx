@@ -4,7 +4,19 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { ComponentProps } from "react";
-import { Menu, X, Instagram, Facebook, Twitter, Youtube, ShoppingCart, Phone } from "lucide-react";
+import {
+  Menu,
+  X,
+  Instagram,
+  Facebook,
+  Twitter,
+  Youtube,
+  ShoppingCart,
+  Phone,
+  User,
+  LogOut,
+  Settings,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -13,6 +25,15 @@ import Cart, { CartItem } from "./components/Cart";
 import { NavIconButton } from "@/components/ui/nav-icon-button";
 import { FeaturedProductCard } from "@/components/ui/FeaturedProductCard";
 import { PalmDecorations } from "./components/PalmDecorations";
+import { useSession, signOut } from "next-auth/react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 // Sample featured product data (in real app, this would come from API/database)
 const sampleFeaturedProduct = {
@@ -54,6 +75,65 @@ function NavButton({
   }
 
   return content;
+}
+
+// User Account Menu component
+function UserAccountMenu() {
+  const { data: session, status } = useSession();
+  const isLoading = status === "loading";
+  const isAuthenticated = status === "authenticated";
+
+  // If loading, show nothing
+  if (isLoading) return null;
+
+  // If not authenticated, show login link
+  if (!isAuthenticated) {
+    return (
+      <div className="flex items-center gap-2">
+        <NavButton href="/auth/zaloguj" className="text-xl">
+          <div className="flex items-center gap-2">
+            <User className="size-5" strokeWidth={2.5} />
+            <span>Zaloguj</span>
+          </div>
+        </NavButton>
+      </div>
+    );
+  }
+
+  // If authenticated, show user dropdown
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="secondary"
+          className="font-galindo text-xl text-primary hover:rotate-3 transition-transform duration-300 ease-in-out shadow-none bg-transparent"
+        >
+          <div className="flex items-center gap-2">
+            <User className="size-5" strokeWidth={2.5} />
+            <span>{session.user?.name || "Użytkownik"}</span>
+          </div>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuLabel>Moje konto</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <Link href="/user/settings">
+            <div className="flex items-center gap-2">
+              <Settings className="size-4" />
+              <span>Ustawienia</span>
+            </div>
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => signOut({ callbackUrl: "/" })}>
+          <div className="flex items-center gap-2">
+            <LogOut className="size-4" />
+            <span>Wyloguj</span>
+          </div>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
 }
 
 export function Nav({ children }: { children: React.ReactNode }) {
@@ -280,6 +360,9 @@ export function Nav({ children }: { children: React.ReactNode }) {
               </div>
             </NavButton>
 
+            {/* User Account Menu */}
+            <UserAccountMenu />
+
             {/* Burger Menu */}
             <NavIconButton
               icon={isPanelOpen ? X : Menu}
@@ -321,6 +404,48 @@ export function Nav({ children }: { children: React.ReactNode }) {
 
           {/* Navigation Links */}
           <div className="space-y-2">{children}</div>
+
+          {/* Login/Account Link (Mobile) */}
+          <div className="my-4 py-2 border-t border-b border-secondary/20">
+            {(() => {
+              const { data: session, status } = useSession();
+              if (status === "loading") return null;
+
+              if (status === "authenticated") {
+                return (
+                  <div className="space-y-3">
+                    <div className="font-medium text-lg">{session.user?.name || "Użytkownik"}</div>
+                    <div className="flex flex-col gap-2">
+                      <Link
+                        href="/user/settings"
+                        className="flex items-center gap-2 p-2 hover:bg-accent rounded-md transition-colors text-primary"
+                      >
+                        <Settings className="size-4" />
+                        <span>Ustawienia</span>
+                      </Link>
+                      <button
+                        onClick={() => signOut({ callbackUrl: "/" })}
+                        className="flex items-center gap-2 p-2 hover:bg-accent rounded-md transition-colors text-primary text-left"
+                      >
+                        <LogOut className="size-4" />
+                        <span>Wyloguj</span>
+                      </button>
+                    </div>
+                  </div>
+                );
+              }
+
+              return (
+                <Link
+                  href="/auth/zaloguj"
+                  className="flex items-center gap-2 p-2 hover:bg-accent rounded-md transition-colors text-primary"
+                >
+                  <User className="size-5" />
+                  <span className="font-medium">Zaloguj się</span>
+                </Link>
+              );
+            })()}
+          </div>
 
           <FeaturedProductCard
             product={sampleFeaturedProduct}

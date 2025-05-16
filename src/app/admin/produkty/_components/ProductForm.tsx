@@ -27,6 +27,12 @@ export default function ProductForm({ product }: { product?: Product | null }) {
     initialState
   );
 
+  // Handle successful form submission
+  if (state?.success) {
+    router.push("/admin/produkty");
+    router.refresh();
+  }
+
   return (
     <form ref={formRef} action={formAction} className="space-y-8">
       <div className="space-y-2">

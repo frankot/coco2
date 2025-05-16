@@ -97,8 +97,8 @@ export async function addProduct(prevState: FormState, formData: FormData): Prom
       },
     });
 
-    // Redirect outside try/catch
-    redirect("/admin/products");
+    // Redirect outside try/catch with correct path
+    redirect("/admin/produkty");
   } catch (error) {
     // For redirect errors, we need to just rethrow them
     if (error instanceof Error && error.message.includes("NEXT_REDIRECT")) {
@@ -202,8 +202,8 @@ export async function updateProduct(
       data: updateData,
     });
 
-    // Redirect outside try/catch
-    redirect("/admin/products");
+    // Redirect outside try/catch with correct path
+    redirect("/admin/produkty");
   } catch (error) {
     // For redirect errors, we need to just rethrow them
     if (error instanceof Error && error.message.includes("NEXT_REDIRECT")) {

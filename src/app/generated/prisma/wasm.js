@@ -126,29 +126,42 @@ exports.Prisma.ProductScalarFieldEnum = {
   price: 'price',
   priceInCents: 'priceInCents',
   imagePath: 'imagePath',
-  imagePublicId: 'imagePublicId',
   description: 'description',
   isAvailable: 'isAvailable',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  imagePublicId: 'imagePublicId'
 };
 
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   email: 'email',
   password: 'password',
-  accountType: 'accountType',
+  firstName: 'firstName',
+  lastName: 'lastName',
+  phoneNumber: 'phoneNumber',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  accountType: 'accountType'
 };
 
 exports.Prisma.OrderScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
-  productId: 'productId',
+  status: 'status',
+  paymentMethod: 'paymentMethod',
+  pricePaidInCents: 'pricePaidInCents',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  pricePaidInCents: 'pricePaidInCents'
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.OrderItemScalarFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  productId: 'productId',
+  quantity: 'quantity',
+  pricePerItemInCents: 'pricePerItemInCents',
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -171,10 +184,24 @@ exports.AccountType = exports.$Enums.AccountType = {
   HURT: 'HURT'
 };
 
+exports.OrderStatus = exports.$Enums.OrderStatus = {
+  PENDING: 'PENDING',
+  PROCESSING: 'PROCESSING',
+  SHIPPED: 'SHIPPED',
+  DELIVERED: 'DELIVERED',
+  CANCELLED: 'CANCELLED'
+};
+
+exports.PaymentMethod = exports.$Enums.PaymentMethod = {
+  BANK_TRANSFER: 'BANK_TRANSFER',
+  STRIPE: 'STRIPE'
+};
+
 exports.Prisma.ModelName = {
   Product: 'Product',
   User: 'User',
-  Order: 'Order'
+  Order: 'Order',
+  OrderItem: 'OrderItem'
 };
 
 /**

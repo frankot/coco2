@@ -1,9 +1,5 @@
-import { Loader2 } from "lucide-react";
+import Loading from "@/components/ui/loading";
 
 export default function AdminLoading() {
-  return (
-    <div className="flex justify-center items-center h-screen">
-      <Loader2 className="size-24 animate-spin" />
-    </div>
-  );
+  return <Loading fullScreen size="lg" text="Wczytywanie panelu administracyjnego..." />;
 }

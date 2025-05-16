@@ -25,6 +25,36 @@ type FeaturedProductProps = {
   imageOnLeft?: boolean; // Changed to boolean - true means image is on left, false means right
 };
 
+// Skeleton loader component
+export function ProductCardSkeleton() {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 rounded-xl bg-background/80 border border-primary/10 animate-pulse">
+      <div className="relative w-full aspect-square md:aspect-auto overflow-hidden rounded-t-xl bg-secondary/20"></div>
+      <div className="flex flex-col justify-between p-6 space-y-4">
+        <div className="space-y-4">
+          <div className="h-8 bg-primary/10 rounded-md w-3/4"></div>
+          <div className="bg-secondary/10 p-4 rounded-lg space-y-2">
+            <div className="h-4 bg-primary/10 rounded w-full"></div>
+            <div className="h-4 bg-primary/10 rounded w-5/6"></div>
+            <div className="h-4 bg-primary/10 rounded w-4/6"></div>
+          </div>
+          <div className="bg-background/90 border border-primary/30 rounded-lg p-4 space-y-4">
+            <div className="flex justify-between items-center">
+              <div className="h-5 bg-primary/10 rounded w-1/4"></div>
+              <div className="h-6 bg-primary/20 rounded w-1/4"></div>
+            </div>
+            <div className="h-8 bg-primary/10 rounded w-full"></div>
+          </div>
+        </div>
+        <div className="space-y-3">
+          <div className="h-12 bg-primary/20 rounded-md w-full"></div>
+          <div className="h-5 bg-primary/10 rounded w-1/3 mx-auto"></div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function FeaturedProduct({
   product,
   backgroundColor = "hsl(var(--primary) / 0.2)", // Default to primary color with opacity
@@ -153,8 +183,8 @@ export default function FeaturedProduct({
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-              {/* Decorative palm pattern overlay */}
-              <div
+        {/* Decorative palm pattern overlay */}
+        <div
           className="absolute inset-0 opacity-15  z-0"
           style={{
             backgroundImage: "url('/palmy-prawa.png')",
@@ -185,7 +215,6 @@ export default function FeaturedProduct({
 
       {/* Product information */}
       <div className={`flex flex-col justify-between p-6 ${contentOrderClass} relative`}>
-  
         <div className="z-10">
           <Link href={`/product/${product.id}`} className="group">
             <h2 className="text-3xl font-galindo mb-3 text-primary group-hover:text-primary/80 transition-colors">

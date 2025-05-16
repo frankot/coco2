@@ -1,4 +1,4 @@
-import { PrismaClient } from "../src/app/generated/prisma";
+import { PrismaClient } from "@prisma/client";
 import { deleteImage } from "../src/lib/cloudinary";
 
 const prisma = new PrismaClient();

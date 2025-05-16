@@ -1,53 +1,58 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
+import { withAuth, NextRequestWithAuth } from "next-auth/middleware";
 
-export async function middleware(req: NextRequest) {
-  const pathname = req.nextUrl.pathname;
+export default withAuth(
+  async function middleware(request: NextRequestWithAuth) {
+    const token = await getToken({ req: request });
+    const isAuth = !!token;
+    const isAdmin = token?.role === "ADMIN";
+    const isAdminPanel = request.nextUrl.pathname.startsWith("/admin");
+    const isAdminLogin = request.nextUrl.pathname === "/admin/login";
 
-  // Skip middleware for auth paths to prevent redirect loops
-  if (pathname.startsWith("/auth") || pathname === "/") {
+    // Allow access to admin login page
+    if (isAdminLogin) {
+      // Only redirect if already authenticated as admin
+      if (isAuth && isAdmin) {
+        return NextResponse.redirect(new URL("/admin", request.url));
+      }
+      return NextResponse.next();
+    }
+
+    // Redirect unauthenticated users trying to access admin panel to admin login
+    if (isAdminPanel && !isAuth) {
+      const url = new URL("/admin/login", request.url);
+      url.searchParams.set("callbackUrl", request.nextUrl.pathname);
+      return NextResponse.redirect(url);
+    }
+
+    // Redirect authenticated non-admin users trying to access admin panel to home
+    if (isAdminPanel && isAuth && !isAdmin) {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
+
+    // Redirect user accessing login page when already authenticated
+    if (request.nextUrl.pathname === "/auth/zaloguj" && isAuth) {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
+
     return NextResponse.next();
+  },
+  {
+    callbacks: {
+      // Skip auth check for public paths
+      authorized: () => true,
+    },
   }
+);
 
-  // Only apply to admin routes
-  if (!pathname.startsWith("/admin")) {
-    return NextResponse.next();
-  }
-
-  console.log("Middleware checking auth for path:", pathname);
-
-  // Get the NextAuth token
-  const token = await getToken({
-    req,
-    secret: process.env.NEXTAUTH_SECRET,
-  });
-
-  console.log(
-    "Auth token:",
-    token
-      ? {
-          role: token.role,
-          name: token.name,
-          authenticated: !!token,
-        }
-      : "No token"
-  );
-
-  // If the user is not authenticated or doesn't have the ADMIN role, redirect to sign-in
-  if (!token || token.role !== "ADMIN") {
-    console.log("Unauthorized access, redirecting to sign-in");
-
-    // Create sign-in URL with the current path as callback URL
-    const signInUrl = new URL("/auth/signin", req.url);
-    signInUrl.searchParams.set("callbackUrl", encodeURI(pathname));
-
-    return NextResponse.redirect(signInUrl);
-  }
-
-  console.log("Access granted to admin area");
-  return NextResponse.next();
-}
-
+// Configure paths that require middleware processing
 export const config = {
-  matcher: ["/admin/:path*", "/auth/:path*", "/"],
+  matcher: [
+    // Admin routes (excluding login)
+    "/admin/:path*",
+    // Auth routes
+    "/auth/zaloguj",
+    "/auth/rejestracja",
+  ],
 };

@@ -8,43 +8,71 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Product {
-  id            String   @id @default(uuid())
-  name          String
-  price         Int
-  priceInCents  Int
-  imagePath     String // Cloudinary URL
-  imagePublicId String? // Cloudinary public ID
-  description   String
-  isAvailable   Boolean  @default(true)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  orders        Order[]
-}
-
 enum AccountType {
   ADMIN
   DETAL
   HURT
 }
 
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  BANK_TRANSFER
+  STRIPE
+}
+
+model Product {
+  id            String      @id @default(uuid())
+  name          String
+  price         Int
+  priceInCents  Int
+  imagePath     String
+  description   String
+  isAvailable   Boolean     @default(true)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  imagePublicId String?
+  orderItems    OrderItem[]
+}
+
 model User {
   id          String      @id @default(uuid())
   email       String      @unique
   password    String
-  accountType AccountType @default(DETAL)
+  firstName   String?
+  lastName    String?
+  phoneNumber String?
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
+  accountType AccountType @default(DETAL)
   orders      Order[]
 }
 
 model Order {
-  id               String   @id @default(uuid())
+  id               String        @id @default(uuid())
   userId           String
-  productId        String
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  status           OrderStatus   @default(PENDING)
+  paymentMethod    PaymentMethod
   pricePaidInCents Int
-  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  product          Product  @relation(fields: [productId], references: [id], onDelete: Restrict)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orderItems       OrderItem[]
+}
+
+model OrderItem {
+  id                  String   @id @default(uuid())
+  orderId             String
+  productId           String
+  quantity            Int
+  pricePerItemInCents Int
+  createdAt           DateTime @default(now())
+  order               Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product             Product  @relation(fields: [productId], references: [id])
 }

@@ -1,4 +1,4 @@
-import { Nav, NavLink } from "@/components/NavAdmin";
+import { Nav, NavLink } from "@/app/admin/NavAdmin";
 import { LogOut } from "./_components/LogOut";
 import Image from "next/image";
 

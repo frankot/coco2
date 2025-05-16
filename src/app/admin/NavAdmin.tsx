@@ -3,13 +3,22 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { ComponentProps } from "react";
 import { cn } from "@/lib/utils";
+import { useSession } from "next-auth/react";
+
 export function Nav({ children }: { children: React.ReactNode }) {
+  const { data: session } = useSession();
+  
+  if (!session || session.user.role !== "ADMIN") {
+    return null;
+  }
+  
   return (
     <nav className="bg-primary text-primary-foreground flex justify-center items-center px-4">
       {children}
     </nav>
   );
 }
+
 export function NavLink(props: Omit<ComponentProps<typeof Link>, "className">) {
   const pathname = usePathname();
   return (

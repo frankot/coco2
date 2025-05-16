@@ -33,7 +33,7 @@ function AuthErrorContent() {
 
           <div className="flex justify-center">
             <Button asChild>
-              <Link href="/auth/signin">Back to Sign In</Link>
+              <Link href="/auth/zaloguj">Back to Sign In</Link>
             </Button>
           </div>
         </CardContent>

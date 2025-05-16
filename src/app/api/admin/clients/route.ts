@@ -19,7 +19,10 @@ export async function GET() {
         createdAt: true,
         orders: {
           select: {
+            id: true,
             pricePaidInCents: true,
+            status: true,
+            createdAt: true,
           },
         },
         _count: { select: { orders: true } },
