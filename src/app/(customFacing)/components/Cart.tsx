@@ -310,8 +310,8 @@ const CartFooter = memo(function CartFooter({
       </div>
 
       {/* Checkout button */}
-      <Button className="w-full" size="lg">
-        Przejdź do kasy
+      <Button asChild className="w-full" size="lg">
+        <Link href="/kasa">Przejdź do kasy</Link>
       </Button>
     </div>
   );

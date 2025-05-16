@@ -27,6 +27,19 @@ enum PaymentMethod {
   STRIPE
 }
 
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+enum AddressType {
+  BILLING
+  SHIPPING
+  BOTH
+}
+
 model Product {
   id            String      @id @default(uuid())
   name          String
@@ -52,18 +65,44 @@ model User {
   updatedAt   DateTime    @updatedAt
   accountType AccountType @default(DETAL)
   orders      Order[]
+  addresses   Address[]
+  payments    Payment[]
+}
+
+model Address {
+  id                String      @id @default(uuid())
+  userId            String
+  street            String
+  city              String
+  postalCode        String
+  country           String
+  isDefault         Boolean     @default(false)
+  addressType       AddressType @default(BOTH)
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+  user              User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  billingOrders     Order[]     @relation("BillingAddress")
+  shippingOrders    Order[]     @relation("ShippingAddress")
 }
 
 model Order {
-  id               String       @id @default(uuid())
-  userId           String
-  status           OrderStatus  @default(PENDING)
-  paymentMethod    PaymentMethod
-  pricePaidInCents Int
-  createdAt        DateTime     @default(now())
-  updatedAt        DateTime     @updatedAt
-  user             User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  orderItems       OrderItem[]
+  id                  String       @id @default(uuid())
+  userId              String
+  status              OrderStatus  @default(PENDING)
+  paymentMethod       PaymentMethod
+  pricePaidInCents    Int
+  subtotalInCents     Int
+  taxInCents          Int
+  shippingCostInCents Int
+  billingAddressId    String
+  shippingAddressId   String
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+  user                User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  billingAddress      Address      @relation("BillingAddress", fields: [billingAddressId], references: [id])
+  shippingAddress     Address      @relation("ShippingAddress", fields: [shippingAddressId], references: [id])
+  orderItems          OrderItem[]
+  payments            Payment[]
 }
 
 model OrderItem {
@@ -75,4 +114,19 @@ model OrderItem {
   createdAt          DateTime @default(now())
   order              Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
   product            Product  @relation(fields: [productId], references: [id])
+}
+
+model Payment {
+  id                String        @id @default(uuid())
+  orderId           String
+  userId            String
+  amount            Int
+  currency          String        @default("PLN")
+  status            PaymentStatus @default(PENDING)
+  paymentMethodType PaymentMethod
+  transactionId     String?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  order             Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

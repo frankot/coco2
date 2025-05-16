@@ -145,12 +145,30 @@ exports.Prisma.UserScalarFieldEnum = {
   accountType: 'accountType'
 };
 
+exports.Prisma.AddressScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  street: 'street',
+  city: 'city',
+  postalCode: 'postalCode',
+  country: 'country',
+  isDefault: 'isDefault',
+  addressType: 'addressType',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.OrderScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
   status: 'status',
   paymentMethod: 'paymentMethod',
   pricePaidInCents: 'pricePaidInCents',
+  subtotalInCents: 'subtotalInCents',
+  taxInCents: 'taxInCents',
+  shippingCostInCents: 'shippingCostInCents',
+  billingAddressId: 'billingAddressId',
+  shippingAddressId: 'shippingAddressId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -162,6 +180,19 @@ exports.Prisma.OrderItemScalarFieldEnum = {
   quantity: 'quantity',
   pricePerItemInCents: 'pricePerItemInCents',
   createdAt: 'createdAt'
+};
+
+exports.Prisma.PaymentScalarFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  userId: 'userId',
+  amount: 'amount',
+  currency: 'currency',
+  status: 'status',
+  paymentMethodType: 'paymentMethodType',
+  transactionId: 'transactionId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -184,6 +215,12 @@ exports.AccountType = exports.$Enums.AccountType = {
   HURT: 'HURT'
 };
 
+exports.AddressType = exports.$Enums.AddressType = {
+  BILLING: 'BILLING',
+  SHIPPING: 'SHIPPING',
+  BOTH: 'BOTH'
+};
+
 exports.OrderStatus = exports.$Enums.OrderStatus = {
   PENDING: 'PENDING',
   PROCESSING: 'PROCESSING',
@@ -197,11 +234,20 @@ exports.PaymentMethod = exports.$Enums.PaymentMethod = {
   STRIPE: 'STRIPE'
 };
 
+exports.PaymentStatus = exports.$Enums.PaymentStatus = {
+  PENDING: 'PENDING',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED',
+  REFUNDED: 'REFUNDED'
+};
+
 exports.Prisma.ModelName = {
   Product: 'Product',
   User: 'User',
+  Address: 'Address',
   Order: 'Order',
-  OrderItem: 'OrderItem'
+  OrderItem: 'OrderItem',
+  Payment: 'Payment'
 };
 
 /**
