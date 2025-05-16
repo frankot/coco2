@@ -1,7 +1,7 @@
 "use client";
 
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { useTransition, useState } from "react";
+import { useTransition, useState, useCallback } from "react";
 import { updateClientType, deleteClient } from "../../_actions/clients";
 import { useRouter } from "next/navigation";
 import {
@@ -17,26 +17,29 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { toast } from "sonner";
+import { useRefresh } from "@/providers/RefreshProvider";
 
 export function ChangeTypeDropdownItem({ id, currentType }: { id: string; currentType: string }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [isOpen, setIsOpen] = useState(false);
   const [selectedType, setSelectedType] = useState(currentType);
+  const { triggerRefresh } = useRefresh();
 
-  const handleUpdateType = () => {
+  const handleUpdateType = useCallback(() => {
     startTransition(async () => {
       const result = await updateClientType(id, selectedType as "ADMIN" | "DETAL" | "HURT");
-
       if (result.success) {
         toast.success(result.message);
         setIsOpen(false);
+        // Force refresh data
         router.refresh();
+        triggerRefresh(); // Trigger client-side refetch
       } else {
         toast.error(result.message);
       }
     });
-  };
+  }, [id, selectedType, router, triggerRefresh]);
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -80,20 +83,22 @@ export function DeleteDropdownItem({ id, disabled }: { id: string; disabled: boo
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
+  const { triggerRefresh } = useRefresh();
 
-  const handleDelete = () => {
+  const handleDelete = useCallback(() => {
     startTransition(async () => {
       const result = await deleteClient(id);
-
       if (result.success) {
         toast.success(result.message);
         setIsOpen(false);
+        // Force refresh data
         router.refresh();
+        triggerRefresh(); // Trigger client-side refetch
       } else {
         toast.error(result.message);
       }
     });
-  };
+  }, [id, router, triggerRefresh]);
 
   return (
     <Dialog open={isOpen} onOpenChange={disabled ? () => {} : setIsOpen}>

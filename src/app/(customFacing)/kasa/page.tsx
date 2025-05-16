@@ -117,7 +117,7 @@ export default function CheckoutPage() {
 
         // Redirect to order confirmation page
         router.push(
-          `/zlozone-zamowienie?orderId=${result.orderId}&payment=${formData.paymentMethod}`
+          `/kasa/zlozone-zamowienie?orderId=${result.orderId}&payment=${formData.paymentMethod}`
         );
       } else {
         setError(result.error || "Wystąpił błąd podczas składania zamówienia");

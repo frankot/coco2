@@ -25,8 +25,10 @@ import {
   DeleteDropdownItem,
   EditClientDropdownItem,
 } from "./_components/ClientActions";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import AdminLoading from "../loading";
+import { useRouter } from "next/navigation";
+import { useRefresh } from "@/providers/RefreshProvider";
 
 // Type for client data
 type Client = {
@@ -62,40 +64,42 @@ function ClientsTable() {
   const [loading, setLoading] = useState(true);
   const [sortField, setSortField] = useState<SortField | null>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
+  const router = useRouter();
+  const { refreshCounter } = useRefresh();
 
   // Fetch clients
-  useEffect(() => {
-    const fetchClients = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch(`/api/admin/clients?timestamp=${Date.now()}`, {
-          cache: "no-store",
+  const fetchClients = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`/api/admin/clients?timestamp=${Date.now()}`, {
+        cache: "no-store",
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+
+        // Calculate total spent for each client
+        const clientsWithTotalSpent = data.map((client: Client) => {
+          const totalSpent = client.orders.reduce(
+            (sum: number, order: { pricePaidInCents: number }) =>
+              sum + (order.pricePaidInCents || 0),
+            0
+          );
+          return { ...client, totalSpent };
         });
 
-        if (response.ok) {
-          const data = await response.json();
-
-          // Calculate total spent for each client
-          const clientsWithTotalSpent = data.map((client: Client) => {
-            const totalSpent = client.orders.reduce(
-              (sum: number, order: { pricePaidInCents: number }) =>
-                sum + (order.pricePaidInCents || 0),
-              0
-            );
-            return { ...client, totalSpent };
-          });
-
-          setClients(clientsWithTotalSpent);
-        }
-      } catch (error) {
-        console.error("Error fetching clients:", error);
-      } finally {
-        setLoading(false);
+        setClients(clientsWithTotalSpent);
       }
-    };
-
-    fetchClients();
+    } catch (error) {
+      console.error("Error fetching clients:", error);
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchClients();
+  }, [fetchClients, refreshCounter]); // Add refreshCounter as dependency
 
   // Handle sorting
   const handleSort = (field: SortField) => {

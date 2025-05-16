@@ -1,6 +1,7 @@
 import { Nav, NavLink } from "@/app/admin/NavAdmin";
 import { LogOut } from "./_components/LogOut";
 import Image from "next/image";
+import { RefreshProvider } from "@/providers/RefreshProvider";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +20,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <LogOut />
         </div>
       </Nav>
-      <div className="container my-6 mx-auto max-w-screen-lg">{children}</div>
+      <div className="container my-6 mx-auto max-w-screen-lg">
+        <RefreshProvider>{children}</RefreshProvider>
+      </div>
     </>
   );
 }
