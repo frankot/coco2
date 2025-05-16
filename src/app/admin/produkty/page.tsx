@@ -1,5 +1,3 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
 import PageHeader from "../_components/pageHeader";
 import Link from "next/link";
@@ -11,7 +9,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { CheckCircle2, MoreVertical, XCircle, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
+import prisma from "@/db";
+import { CheckCircle2, MoreVertical, XCircle } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuItem,
@@ -20,21 +19,7 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { ActiveToggleDropdownItem, DeleteDropdownItem } from "./_components/ProductActions";
-import { useState, useEffect } from "react";
-import AdminLoading from "../loading";
 
-// Type for product data
-type Product = {
-  id: string;
-  name: string;
-  price: number;
-  isAvailable: boolean;
-  _count: { orders: number };
-};
-
-// Sorting type
-type SortField = "price" | "orders";
-type SortDirection = "asc" | "desc";
 
 export default function AdminProductsPage() {
   return (
@@ -50,82 +35,19 @@ export default function AdminProductsPage() {
   );
 }
 
-function ProductsTable() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [sortField, setSortField] = useState<SortField | null>(null);
-  const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
-
-  // Fetch products
-  useEffect(() => {
-    const fetchProducts = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch("/api/admin/products");
-        if (response.ok) {
-          const data = await response.json();
-          setProducts(data);
-        }
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProducts();
-  }, []);
-
-  // Handle sorting
-  const handleSort = (field: SortField) => {
-    if (sortField === field) {
-      // Toggle direction if already sorting by this field
-      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
-    } else {
-      // Set new field and default to ascending
-      setSortField(field);
-      setSortDirection("asc");
-    }
-  };
-
-  // Sort products
-  const sortedProducts = [...products].sort((a, b) => {
-    if (!sortField) return 0;
-
-    // Determine sort direction multiplier
-    const multiplier = sortDirection === "asc" ? 1 : -1;
-
-    switch (sortField) {
-      case "price":
-        return multiplier * (a.price - b.price);
-
-      case "orders":
-        return multiplier * (a._count.orders - b._count.orders);
-
-      default:
-        return 0;
-    }
+async function ProductsTable() {
+  const products = await prisma.product.findMany({
+    select: {
+      id: true,
+      name: true,
+      price: true,
+      isAvailable: true,
+      _count: { select: { orders: true } },
+    },
+    orderBy: { createdAt: "asc" },
   });
-
-  // Render sort icon
-  const renderSortIcon = (field: SortField) => {
-    if (sortField !== field) {
-      return <ArrowUpDown className="h-4 w-4 ml-1" />;
-    }
-    return sortDirection === "asc" ? (
-      <ArrowUp className="h-4 w-4 ml-1" />
-    ) : (
-      <ArrowDown className="h-4 w-4 ml-1" />
-    );
-  };
-
-  if (loading) {
-    return <AdminLoading />;
-  }
-
-  if (products.length === 0) {
+  if (products.length === 0)
     return <div className="text-center text-sm text-muted-foreground">Brak produktów</div>;
-  }
 
   return (
     <>
@@ -136,25 +58,15 @@ function ProductsTable() {
               <span className="sr-only">Dostepnosc</span>
             </TableHead>
             <TableHead>Nazwa</TableHead>
-            <TableHead className="cursor-pointer" onClick={() => handleSort("price")}>
-              <div className="flex items-center">
-                Cena
-                {renderSortIcon("price")}
-              </div>
-            </TableHead>
-            <TableHead className="cursor-pointer" onClick={() => handleSort("orders")}>
-              <div className="flex items-center">
-                Zamówienia
-                {renderSortIcon("orders")}
-              </div>
-            </TableHead>
+            <TableHead>Cena</TableHead>
+            <TableHead>Zamówienia</TableHead>
             <TableHead className="w-0">
               <span className="sr-only">Akcje</span>
             </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {sortedProducts.map((product) => (
+          {products.map((product) => (
             <TableRow key={product.id}>
               <TableCell>
                 {product.isAvailable ? (
