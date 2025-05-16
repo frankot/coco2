@@ -5,7 +5,8 @@ import { notFound } from "next/navigation";
 const prisma = new PrismaClient();
 
 export default async function ProductPage({ params }: { params: { id: string } }) {
-  const productId = params.id;
+  // Await params before accessing
+  const { id: productId } = await params;
 
   // Fetch product by ID
   const product = await prisma.product.findUnique({
