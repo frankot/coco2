@@ -13,6 +13,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { CreditCard, BanknoteIcon, ShoppingBag, LogIn, User, Trash2, Loader2 } from "lucide-react";
 import { formatPLN } from "@/lib/formatter";
 import { createOrder } from "./_actions";
+import { ApaczkaService } from "@/types/apaczka";
 
 // Import cart item type from Cart component
 type CartItem = {
@@ -34,6 +35,10 @@ export default function CheckoutPage() {
   const [checkoutMode, setCheckoutMode] = useState<"guest" | "login" | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [shippingMethods, setShippingMethods] = useState<ApaczkaService[]>([]);
+  const [selectedShippingMethod, setSelectedShippingMethod] = useState<string | null>(null);
+  const [isLoadingShipping, setIsLoadingShipping] = useState(false);
+  const [shippingError, setShippingError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     firstName: session?.user?.name?.split(" ")[0] || "",
@@ -45,6 +50,7 @@ export default function CheckoutPage() {
     postalCode: "",
     country: "Polska",
     paymentMethod: "BANK_TRANSFER" as PaymentMethod,
+    shippingMethodId: "",
   });
 
   // Load cart items from localStorage
@@ -72,6 +78,47 @@ export default function CheckoutPage() {
       }));
     }
   }, [session]);
+
+  // Fetch shipping methods
+  useEffect(() => {
+    const fetchShippingMethods = async () => {
+      setIsLoadingShipping(true);
+      setShippingError(null);
+      try {
+        const response = await fetch("/api/shipping/apaczka");
+        const data = await response.json();
+
+        console.log("Shipping methods response:", data);
+
+        if (data.status === 200 && data.response?.services) {
+          setShippingMethods(data.response.services);
+          // Select first shipping method by default if available
+          if (data.response.services.length > 0) {
+            setSelectedShippingMethod(data.response.services[0].service_id);
+            setFormData((prev) => ({
+              ...prev,
+              shippingMethodId: data.response.services[0].service_id,
+            }));
+          }
+        } else {
+          setShippingError(
+            data.message ||
+              "Nie udało się pobrać metod dostawy. Spróbuj ponownie później lub skontaktuj się z obsługą."
+          );
+          console.error("Shipping methods error:", data);
+        }
+      } catch (error) {
+        console.error("Error fetching shipping methods:", error);
+        setShippingError(
+          "Wystąpił błąd podczas pobierania metod dostawy. Spróbuj ponownie później lub skontaktuj się z obsługą."
+        );
+      } finally {
+        setIsLoadingShipping(false);
+      }
+    };
+
+    fetchShippingMethods();
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -157,10 +204,16 @@ export default function CheckoutPage() {
     window.dispatchEvent(new Event("cartUpdated"));
   };
 
+  // Calculate shipping cost based on selected method
+  const getShippingCost = () => {
+    // For now, return a fixed cost. In a real implementation, you would calculate this based on the selected method
+    return selectedShippingMethod ? 1500 : 0; // 15 PLN in cents
+  };
+
   // Calculate totals
   const subtotal = cartItems.reduce((sum, item) => sum + item.priceInCents * item.quantity, 0);
   const tax = Math.round(subtotal * 0.23); // 23% VAT
-  const shipping = 0; // Free shipping
+  const shipping = getShippingCost();
   const total = subtotal + tax + shipping;
 
   // Check if cart is empty
@@ -414,6 +467,41 @@ export default function CheckoutPage() {
                 </RadioGroup>
               </Card>
 
+              {/* Shipping Method Selection */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Metoda dostawy</h3>
+                {isLoadingShipping ? (
+                  <div className="flex items-center justify-center py-4">
+                    <Loader2 className="w-6 h-6 animate-spin" />
+                  </div>
+                ) : shippingError ? (
+                  <div className="text-red-500">{shippingError}</div>
+                ) : (
+                  <RadioGroup
+                    value={selectedShippingMethod || ""}
+                    onValueChange={(value) => {
+                      setSelectedShippingMethod(value);
+                      setFormData((prev) => ({
+                        ...prev,
+                        shippingMethodId: value,
+                      }));
+                    }}
+                  >
+                    {shippingMethods.map((method) => (
+                      <div key={method.service_id} className="flex items-center space-x-2">
+                        <RadioGroupItem
+                          value={method.service_id}
+                          id={`shipping-${method.service_id}`}
+                        />
+                        <Label htmlFor={`shipping-${method.service_id}`}>
+                          {method.name} - {method.delivery_time}
+                        </Label>
+                      </div>
+                    ))}
+                  </RadioGroup>
+                )}
+              </div>
+
               <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
                 {isSubmitting ? (
                   <>
@@ -491,7 +579,7 @@ export default function CheckoutPage() {
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Dostawa</span>
-                <span>{shipping === 0 ? "Za darmo" : formatPLN(shipping)}</span>
+                <span>{formatPLN(shipping)}</span>
               </div>
               <div className="flex justify-between font-medium text-lg pt-2">
                 <span>Razem</span>

@@ -40,7 +40,7 @@ export default function RootLayout({
         <link rel="preload" href="/logo.png" as="image" />
       </head>
       <body
-        className={`${geistSans.variable} ${galindo.variable} ${outfit.variable} font-outfit min-h-screen antialiased bg-background scroll-smooth`}
+        className={`${geistSans.variable} ${galindo.variable} ${outfit.variable} font-outfit min-h-screen antialiased bg-white scroll-smooth`}
       >
         <SessionProvider>{children}</SessionProvider>
         <Toaster position="top-right" richColors closeButton />

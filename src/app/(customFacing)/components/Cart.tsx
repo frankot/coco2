@@ -3,12 +3,10 @@
 import { useState, useEffect, useRef, useCallback, memo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
 import { Plus, Minus, Trash2, X, ShoppingBag } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { formatPLN } from "@/lib/formatter";
-import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 
 // Define types for cart
