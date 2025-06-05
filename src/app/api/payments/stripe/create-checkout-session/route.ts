@@ -17,11 +17,12 @@ export async function POST(req: Request) {
 
     // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
+      payment_method_types: ["card", "blik"],
       mode: "payment",
+      locale: "pl", // Set locale to Polish for proper BLIK display
       line_items: items.map((item: any) => ({
         price_data: {
-          currency: "pln",
+          currency: "pln", // BLIK only works with PLN currency
           product_data: {
             name: item.name,
             images: [item.imagePath],
