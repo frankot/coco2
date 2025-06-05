@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { ApaczkaServiceResponse, ApaczkaError } from "@/types/apaczka";
+import { ApaczkaServiceResponse, ApaczkaError, ApaczkaService } from "@/types/apaczka";
 
 // Remove trailing slash as it might cause issues
 const APACZKA_API_URL = "https://www.apaczka.pl/api/v2";
@@ -14,6 +14,29 @@ function stringToSign(appId: string, route: string, data: string, expires: numbe
 function getSignature(string: string, key: string): string {
   const crypto = require("crypto");
   return crypto.createHmac("sha256", key).update(string).digest("hex");
+}
+
+// Filter for specific courier services
+function filterCourierServices(response: ApaczkaServiceResponse): ApaczkaServiceResponse {
+  if (!response.response?.services) {
+    return response;
+  }
+
+  const filteredServices = response.response.services.filter((service: ApaczkaService) => {
+    // Only get DPD Kurier and InPost Kurier services
+    const isDPDKurier = service.name === "DPD Kurier" && service.service_id === "21";
+    const isInPostKurier = service.name === "InPost Kurier" && service.service_id === "42";
+
+    return (isDPDKurier || isInPostKurier) && service.door_to_door === "1";
+  });
+
+  return {
+    ...response,
+    response: {
+      ...response.response,
+      services: filteredServices,
+    },
+  };
 }
 
 export async function GET() {
@@ -39,7 +62,7 @@ export async function GET() {
     // Structure the request exactly as shown in documentation
     const requestData = {
       app_id: APACZKA_APP_ID,
-      request: data, // Send as stringified JSON
+      request: data,
       expires: expires,
       signature: signature,
     };
@@ -89,7 +112,9 @@ export async function GET() {
 
     try {
       const result = JSON.parse(responseText) as ApaczkaServiceResponse;
-      return NextResponse.json(result);
+      // Filter the services before returning
+      const filteredResult = filterCourierServices(result);
+      return NextResponse.json(filteredResult);
     } catch (parseError) {
       console.error("Failed to parse Apaczka response:", parseError);
       return NextResponse.json(

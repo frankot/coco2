@@ -11,11 +11,21 @@ export interface ApaczkaService {
   point_to_door: "0" | "1";
 }
 
+export interface ApaczkaServiceStructure {
+  services: ApaczkaService[];
+  options?: Record<string, unknown>;
+  package_type?: Record<string, unknown>;
+  points_type?: string[];
+}
+
 export interface ApaczkaServiceResponse {
   status: number;
   message: string;
   response: {
     services: ApaczkaService[];
+    options?: Record<string, unknown>;
+    package_type?: Record<string, unknown>;
+    points_type?: string[];
   };
 }
 
