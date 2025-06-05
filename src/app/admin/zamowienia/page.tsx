@@ -2,6 +2,8 @@
 
 import { Button } from "@/components/ui/button";
 import PageHeader from "../_components/pageHeader";
+import Link from "next/link";
+import { deleteAllOrders } from "../_actions/clean-db";
 import {
   Table,
   TableBody,
@@ -59,6 +61,31 @@ type SortField = "createdAt" | "status" | "totalItems" | "totalAmount";
 type SortDirection = "asc" | "desc";
 
 export default function AdminOrdersPage() {
+  const [isDeletingAll, setIsDeletingAll] = useState(false);
+
+  const handleDeleteAllOrders = async () => {
+    if (
+      !confirm("Czy na pewno chcesz usunąć WSZYSTKIE zamówienia? Tej operacji nie można cofnąć.")
+    ) {
+      return;
+    }
+
+    setIsDeletingAll(true);
+    try {
+      const result = await deleteAllOrders();
+      if (result.success) {
+        // Refresh the page to show updated data
+        window.location.reload();
+      } else {
+        alert(result.message);
+      }
+    } catch (error) {
+      alert(`Błąd: ${error instanceof Error ? error.message : String(error)}`);
+    } finally {
+      setIsDeletingAll(false);
+    }
+  };
+
   return (
     <>
       <div className="flex justify-between items-center gap-4">
@@ -199,87 +226,95 @@ function OrdersTable() {
   }
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead className="w-0">
-            <span className="sr-only">Ikona</span>
-          </TableHead>
-          <TableHead>Klient</TableHead>
-          <TableHead className="cursor-pointer" onClick={() => handleSort("status")}>
-            <div className="flex items-center">
-              Status
-              {renderSortIcon("status")}
-            </div>
-          </TableHead>
-          <TableHead className="cursor-pointer" onClick={() => handleSort("createdAt")}>
-            <div className="flex items-center">
-              Data zamówienia
-              {renderSortIcon("createdAt")}
-            </div>
-          </TableHead>
-          <TableHead className="cursor-pointer" onClick={() => handleSort("totalItems")}>
-            <div className="flex items-center">
-              Produkty
-              {renderSortIcon("totalItems")}
-            </div>
-          </TableHead>
-          <TableHead className="cursor-pointer" onClick={() => handleSort("totalAmount")}>
-            <div className="flex items-center">
-              Kwota (PLN)
-              {renderSortIcon("totalAmount")}
-            </div>
-          </TableHead>
-          <TableHead className="w-0">
-            <span className="sr-only">Akcje</span>
-          </TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {sortedOrders.map((order) => {
-          // Format to PLN (złoty)
-          const formattedTotal = (order.pricePaidInCents / 100).toFixed(2);
+    <>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-0">
+              <span className="sr-only">Ikona</span>
+            </TableHead>
+            <TableHead>Klient</TableHead>
+            <TableHead className="cursor-pointer" onClick={() => handleSort("status")}>
+              <div className="flex items-center">
+                Status
+                {renderSortIcon("status")}
+              </div>
+            </TableHead>
+            <TableHead className="cursor-pointer" onClick={() => handleSort("createdAt")}>
+              <div className="flex items-center">
+                Data zamówienia
+                {renderSortIcon("createdAt")}
+              </div>
+            </TableHead>
+            <TableHead className="cursor-pointer" onClick={() => handleSort("totalItems")}>
+              <div className="flex items-center">
+                Produkty
+                {renderSortIcon("totalItems")}
+              </div>
+            </TableHead>
+            <TableHead className="cursor-pointer" onClick={() => handleSort("totalAmount")}>
+              <div className="flex items-center">
+                Kwota (PLN)
+                {renderSortIcon("totalAmount")}
+              </div>
+            </TableHead>
+            <TableHead className="w-0">
+              <span className="sr-only">Akcje</span>
+            </TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {sortedOrders.map((order) => {
+            // Format to PLN (złoty)
+            const formattedTotal = (order.pricePaidInCents / 100).toFixed(2);
 
-          return (
-            <TableRow key={order.id}>
-              <TableCell>
-                <ShoppingBag className="size-8 text-gray-500" />
-              </TableCell>
-              <TableCell>
-                {order.user.email}
-                <div className="text-xs text-muted-foreground mt-1">
-                  Typ: {order.user.accountType}
-                </div>
-              </TableCell>
-              <TableCell>
-                <Badge variant={getStatusBadgeVariant(order.status)}>
-                  {getStatusDisplayName(order.status)}
-                </Badge>
-              </TableCell>
-              <TableCell>{format(new Date(order.createdAt), "dd.MM.yyyy | HH:mm")}</TableCell>
-              <TableCell>{order._count.orderItems}</TableCell>
-              <TableCell>{formattedTotal}</TableCell>
-              <TableCell>
-                <DropdownMenu>
-                  <DropdownMenuTrigger>
-                    <MoreVertical className="size-4 cursor-pointer" />
-                    <span className="sr-only">Otwórz menu</span>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <ViewOrderDropdownItem id={order.id} />
-                    <UpdateStatusDropdownItem id={order.id} currentStatus={order.status} />
-                    <DropdownMenuSeparator />
-                    <CancelOrderDropdownItem
-                      id={order.id}
-                      disabled={order.status === "DELIVERED" || order.status === "CANCELLED"}
-                    />
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </TableCell>
-            </TableRow>
-          );
-        })}
-      </TableBody>
-    </Table>
+            return (
+              <TableRow key={order.id}>
+                <TableCell>
+                  <ShoppingBag className="size-8 text-gray-500" />
+                </TableCell>
+                <TableCell>
+                  {order.user.email}
+                  <div className="text-xs text-muted-foreground mt-1">
+                    Typ: {order.user.accountType}
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <Badge variant={getStatusBadgeVariant(order.status)}>
+                    {getStatusDisplayName(order.status)}
+                  </Badge>
+                </TableCell>
+                <TableCell>{format(new Date(order.createdAt), "dd.MM.yyyy | HH:mm")}</TableCell>
+                <TableCell>{order._count.orderItems}</TableCell>
+                <TableCell>{formattedTotal}</TableCell>
+                <TableCell>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger>
+                      <MoreVertical className="size-4 cursor-pointer" />
+                      <span className="sr-only">Otwórz menu</span>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <ViewOrderDropdownItem id={order.id} />
+                      <UpdateStatusDropdownItem id={order.id} currentStatus={order.status} />
+                      <DropdownMenuSeparator />
+                      <CancelOrderDropdownItem
+                        id={order.id}
+                        disabled={order.status === "DELIVERED" || order.status === "CANCELLED"}
+                      />
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
+
+      <div className="mt-8 flex justify-end">
+        <Button variant="destructive">
+          <Link href="/admin/clean-db">Usuń wszystkie zamówienia</Link>
+        </Button>
+      </div>
+    </>
   );
 }

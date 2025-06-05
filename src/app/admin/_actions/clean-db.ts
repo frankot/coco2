@@ -74,3 +74,42 @@ export async function deleteAllProducts() {
     };
   }
 }
+
+/**
+ * Deletes all orders from the database
+ */
+export async function deleteAllOrders() {
+  try {
+    // First delete all payments (they reference orders)
+    await prisma.payment.deleteMany();
+
+    // Then delete all orderItems (they reference orders)
+    await prisma.orderItem.deleteMany();
+
+    // Finally delete all orders
+    const deletedCount = await prisma.order.deleteMany();
+
+    if (deletedCount.count === 0) {
+      return {
+        success: true,
+        message: "Nie znaleziono zamówień do usunięcia.",
+      };
+    }
+
+    return {
+      success: true,
+      message: `Usunięto ${deletedCount.count} zamówień z bazy danych.`,
+      details: {
+        ordersDeleted: deletedCount.count,
+      },
+    };
+  } catch (error) {
+    console.error("Error deleting orders:", error);
+    return {
+      success: false,
+      message: `Błąd podczas usuwania zamówień: ${
+        error instanceof Error ? error.message : String(error)
+      }`,
+    };
+  }
+}
