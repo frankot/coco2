@@ -1,3 +1,9 @@
 {
-  "buildCommand": "npm run postinstall && next build"
+  "buildCommand": "npm run postinstall && next build",
+  "git": {
+    "deploymentEnabled": {
+      "main": true,
+      "preview": false
+    }
+  }
 }
