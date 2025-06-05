@@ -158,14 +158,41 @@ export default function CheckoutPage() {
       const result = await createOrder(orderData);
 
       if (result.success) {
-        // Clear cart after successful order
-        localStorage.removeItem("cart");
-        window.dispatchEvent(new Event("cartUpdated"));
+        if (formData.paymentMethod === "STRIPE") {
+          // Create Stripe checkout session
+          const response = await fetch("/api/payments/stripe/create-checkout-session", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              orderId: result.orderId,
+              items: cartItems,
+              totalAmount: total,
+            }),
+          });
 
-        // Redirect to order confirmation page
-        router.push(
-          `/kasa/zlozone-zamowienie?orderId=${result.orderId}&payment=${formData.paymentMethod}`
-        );
+          const { url } = await response.json();
+
+          if (url) {
+            // Clear cart
+            localStorage.removeItem("cart");
+            window.dispatchEvent(new Event("cartUpdated"));
+
+            // Redirect to Stripe Checkout
+            window.location.href = url;
+            return;
+          }
+        } else {
+          // Clear cart after successful order
+          localStorage.removeItem("cart");
+          window.dispatchEvent(new Event("cartUpdated"));
+
+          // Redirect to order confirmation page
+          router.push(
+            `/kasa/zlozone-zamowienie?orderId=${result.orderId}&payment=${formData.paymentMethod}`
+          );
+        }
       } else {
         setError(result.error || "Wystąpił błąd podczas składania zamówienia");
 
