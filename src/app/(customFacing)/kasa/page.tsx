@@ -239,9 +239,8 @@ export default function CheckoutPage() {
 
   // Calculate totals
   const subtotal = cartItems.reduce((sum, item) => sum + item.priceInCents * item.quantity, 0);
-  const tax = Math.round(subtotal * 0.23); // 23% VAT
   const shipping = getShippingCost();
-  const total = subtotal + tax + shipping;
+  const total = subtotal + shipping;
 
   // Check if cart is empty
   if (isClient && cartItems.length === 0) {
@@ -600,10 +599,7 @@ export default function CheckoutPage() {
                 <span className="text-muted-foreground">Suma częściowa</span>
                 <span>{formatPLN(subtotal)}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Podatek (23% VAT)</span>
-                <span>{formatPLN(tax)}</span>
-              </div>
+
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Dostawa</span>
                 <span>{formatPLN(shipping)}</span>

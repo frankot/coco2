@@ -90,9 +90,8 @@ model Order {
   userId              String
   status              OrderStatus   @default(PENDING)
   paymentMethod       PaymentMethod
-  pricePaidInCents    Int
-  subtotalInCents     Int
-  taxInCents          Int
+  pricePaidInCents    Int // Total price including VAT
+  subtotalInCents     Int // Total price including VAT before shipping
   shippingCostInCents Int
   billingAddressId    String
   shippingAddressId   String
@@ -110,7 +109,7 @@ model OrderItem {
   orderId             String
   productId           String
   quantity            Int
-  pricePerItemInCents Int
+  pricePerItemInCents Int // Price including VAT
   createdAt           DateTime @default(now())
   order               Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
   product             Product  @relation(fields: [productId], references: [id])

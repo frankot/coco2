@@ -114,10 +114,6 @@ export default async function OrderConfirmationPage({
               <span>{formatPLN(order.subtotalInCents)}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Podatek (23% VAT)</span>
-              <span>{formatPLN(order.taxInCents)}</span>
-            </div>
-            <div className="flex justify-between">
               <span className="text-muted-foreground">Dostawa</span>
               <span>{formatPLN(order.shippingCostInCents)}</span>
             </div>

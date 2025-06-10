@@ -5102,14 +5102,12 @@ export namespace Prisma {
   export type OrderAvgAggregateOutputType = {
     pricePaidInCents: number | null
     subtotalInCents: number | null
-    taxInCents: number | null
     shippingCostInCents: number | null
   }
 
   export type OrderSumAggregateOutputType = {
     pricePaidInCents: number | null
     subtotalInCents: number | null
-    taxInCents: number | null
     shippingCostInCents: number | null
   }
 
@@ -5120,7 +5118,6 @@ export namespace Prisma {
     paymentMethod: $Enums.PaymentMethod | null
     pricePaidInCents: number | null
     subtotalInCents: number | null
-    taxInCents: number | null
     shippingCostInCents: number | null
     billingAddressId: string | null
     shippingAddressId: string | null
@@ -5135,7 +5132,6 @@ export namespace Prisma {
     paymentMethod: $Enums.PaymentMethod | null
     pricePaidInCents: number | null
     subtotalInCents: number | null
-    taxInCents: number | null
     shippingCostInCents: number | null
     billingAddressId: string | null
     shippingAddressId: string | null
@@ -5150,7 +5146,6 @@ export namespace Prisma {
     paymentMethod: number
     pricePaidInCents: number
     subtotalInCents: number
-    taxInCents: number
     shippingCostInCents: number
     billingAddressId: number
     shippingAddressId: number
@@ -5163,14 +5158,12 @@ export namespace Prisma {
   export type OrderAvgAggregateInputType = {
     pricePaidInCents?: true
     subtotalInCents?: true
-    taxInCents?: true
     shippingCostInCents?: true
   }
 
   export type OrderSumAggregateInputType = {
     pricePaidInCents?: true
     subtotalInCents?: true
-    taxInCents?: true
     shippingCostInCents?: true
   }
 
@@ -5181,7 +5174,6 @@ export namespace Prisma {
     paymentMethod?: true
     pricePaidInCents?: true
     subtotalInCents?: true
-    taxInCents?: true
     shippingCostInCents?: true
     billingAddressId?: true
     shippingAddressId?: true
@@ -5196,7 +5188,6 @@ export namespace Prisma {
     paymentMethod?: true
     pricePaidInCents?: true
     subtotalInCents?: true
-    taxInCents?: true
     shippingCostInCents?: true
     billingAddressId?: true
     shippingAddressId?: true
@@ -5211,7 +5202,6 @@ export namespace Prisma {
     paymentMethod?: true
     pricePaidInCents?: true
     subtotalInCents?: true
-    taxInCents?: true
     shippingCostInCents?: true
     billingAddressId?: true
     shippingAddressId?: true
@@ -5313,7 +5303,6 @@ export namespace Prisma {
     paymentMethod: $Enums.PaymentMethod
     pricePaidInCents: number
     subtotalInCents: number
-    taxInCents: number
     shippingCostInCents: number
     billingAddressId: string
     shippingAddressId: string
@@ -5347,7 +5336,6 @@ export namespace Prisma {
     paymentMethod?: boolean
     pricePaidInCents?: boolean
     subtotalInCents?: boolean
-    taxInCents?: boolean
     shippingCostInCents?: boolean
     billingAddressId?: boolean
     shippingAddressId?: boolean
@@ -5368,7 +5356,6 @@ export namespace Prisma {
     paymentMethod?: boolean
     pricePaidInCents?: boolean
     subtotalInCents?: boolean
-    taxInCents?: boolean
     shippingCostInCents?: boolean
     billingAddressId?: boolean
     shippingAddressId?: boolean
@@ -5386,7 +5373,6 @@ export namespace Prisma {
     paymentMethod?: boolean
     pricePaidInCents?: boolean
     subtotalInCents?: boolean
-    taxInCents?: boolean
     shippingCostInCents?: boolean
     billingAddressId?: boolean
     shippingAddressId?: boolean
@@ -5404,7 +5390,6 @@ export namespace Prisma {
     paymentMethod?: boolean
     pricePaidInCents?: boolean
     subtotalInCents?: boolean
-    taxInCents?: boolean
     shippingCostInCents?: boolean
     billingAddressId?: boolean
     shippingAddressId?: boolean
@@ -5412,7 +5397,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type OrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "status" | "paymentMethod" | "pricePaidInCents" | "subtotalInCents" | "taxInCents" | "shippingCostInCents" | "billingAddressId" | "shippingAddressId" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
+  export type OrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "status" | "paymentMethod" | "pricePaidInCents" | "subtotalInCents" | "shippingCostInCents" | "billingAddressId" | "shippingAddressId" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
   export type OrderInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     billingAddress?: boolean | AddressDefaultArgs<ExtArgs>
@@ -5448,7 +5433,6 @@ export namespace Prisma {
       paymentMethod: $Enums.PaymentMethod
       pricePaidInCents: number
       subtotalInCents: number
-      taxInCents: number
       shippingCostInCents: number
       billingAddressId: string
       shippingAddressId: string
@@ -5888,7 +5872,6 @@ export namespace Prisma {
     readonly paymentMethod: FieldRef<"Order", 'PaymentMethod'>
     readonly pricePaidInCents: FieldRef<"Order", 'Int'>
     readonly subtotalInCents: FieldRef<"Order", 'Int'>
-    readonly taxInCents: FieldRef<"Order", 'Int'>
     readonly shippingCostInCents: FieldRef<"Order", 'Int'>
     readonly billingAddressId: FieldRef<"Order", 'String'>
     readonly shippingAddressId: FieldRef<"Order", 'String'>
@@ -8706,7 +8689,6 @@ export namespace Prisma {
     paymentMethod: 'paymentMethod',
     pricePaidInCents: 'pricePaidInCents',
     subtotalInCents: 'subtotalInCents',
-    taxInCents: 'taxInCents',
     shippingCostInCents: 'shippingCostInCents',
     billingAddressId: 'billingAddressId',
     shippingAddressId: 'shippingAddressId',
@@ -9169,7 +9151,6 @@ export namespace Prisma {
     paymentMethod?: EnumPaymentMethodFilter<"Order"> | $Enums.PaymentMethod
     pricePaidInCents?: IntFilter<"Order"> | number
     subtotalInCents?: IntFilter<"Order"> | number
-    taxInCents?: IntFilter<"Order"> | number
     shippingCostInCents?: IntFilter<"Order"> | number
     billingAddressId?: StringFilter<"Order"> | string
     shippingAddressId?: StringFilter<"Order"> | string
@@ -9189,7 +9170,6 @@ export namespace Prisma {
     paymentMethod?: SortOrder
     pricePaidInCents?: SortOrder
     subtotalInCents?: SortOrder
-    taxInCents?: SortOrder
     shippingCostInCents?: SortOrder
     billingAddressId?: SortOrder
     shippingAddressId?: SortOrder
@@ -9212,7 +9192,6 @@ export namespace Prisma {
     paymentMethod?: EnumPaymentMethodFilter<"Order"> | $Enums.PaymentMethod
     pricePaidInCents?: IntFilter<"Order"> | number
     subtotalInCents?: IntFilter<"Order"> | number
-    taxInCents?: IntFilter<"Order"> | number
     shippingCostInCents?: IntFilter<"Order"> | number
     billingAddressId?: StringFilter<"Order"> | string
     shippingAddressId?: StringFilter<"Order"> | string
@@ -9232,7 +9211,6 @@ export namespace Prisma {
     paymentMethod?: SortOrder
     pricePaidInCents?: SortOrder
     subtotalInCents?: SortOrder
-    taxInCents?: SortOrder
     shippingCostInCents?: SortOrder
     billingAddressId?: SortOrder
     shippingAddressId?: SortOrder
@@ -9255,7 +9233,6 @@ export namespace Prisma {
     paymentMethod?: EnumPaymentMethodWithAggregatesFilter<"Order"> | $Enums.PaymentMethod
     pricePaidInCents?: IntWithAggregatesFilter<"Order"> | number
     subtotalInCents?: IntWithAggregatesFilter<"Order"> | number
-    taxInCents?: IntWithAggregatesFilter<"Order"> | number
     shippingCostInCents?: IntWithAggregatesFilter<"Order"> | number
     billingAddressId?: StringWithAggregatesFilter<"Order"> | string
     shippingAddressId?: StringWithAggregatesFilter<"Order"> | string
@@ -9708,7 +9685,6 @@ export namespace Prisma {
     paymentMethod: $Enums.PaymentMethod
     pricePaidInCents: number
     subtotalInCents: number
-    taxInCents: number
     shippingCostInCents: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -9726,7 +9702,6 @@ export namespace Prisma {
     paymentMethod: $Enums.PaymentMethod
     pricePaidInCents: number
     subtotalInCents: number
-    taxInCents: number
     shippingCostInCents: number
     billingAddressId: string
     shippingAddressId: string
@@ -9742,7 +9717,6 @@ export namespace Prisma {
     paymentMethod?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
     pricePaidInCents?: IntFieldUpdateOperationsInput | number
     subtotalInCents?: IntFieldUpdateOperationsInput | number
-    taxInCents?: IntFieldUpdateOperationsInput | number
     shippingCostInCents?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9760,7 +9734,6 @@ export namespace Prisma {
     paymentMethod?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
     pricePaidInCents?: IntFieldUpdateOperationsInput | number
     subtotalInCents?: IntFieldUpdateOperationsInput | number
-    taxInCents?: IntFieldUpdateOperationsInput | number
     shippingCostInCents?: IntFieldUpdateOperationsInput | number
     billingAddressId?: StringFieldUpdateOperationsInput | string
     shippingAddressId?: StringFieldUpdateOperationsInput | string
@@ -9777,7 +9750,6 @@ export namespace Prisma {
     paymentMethod: $Enums.PaymentMethod
     pricePaidInCents: number
     subtotalInCents: number
-    taxInCents: number
     shippingCostInCents: number
     billingAddressId: string
     shippingAddressId: string
@@ -9791,7 +9763,6 @@ export namespace Prisma {
     paymentMethod?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
     pricePaidInCents?: IntFieldUpdateOperationsInput | number
     subtotalInCents?: IntFieldUpdateOperationsInput | number
-    taxInCents?: IntFieldUpdateOperationsInput | number
     shippingCostInCents?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9804,7 +9775,6 @@ export namespace Prisma {
     paymentMethod?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
     pricePaidInCents?: IntFieldUpdateOperationsInput | number
     subtotalInCents?: IntFieldUpdateOperationsInput | number
-    taxInCents?: IntFieldUpdateOperationsInput | number
     shippingCostInCents?: IntFieldUpdateOperationsInput | number
     billingAddressId?: StringFieldUpdateOperationsInput | string
     shippingAddressId?: StringFieldUpdateOperationsInput | string
@@ -10327,7 +10297,6 @@ export namespace Prisma {
     paymentMethod?: SortOrder
     pricePaidInCents?: SortOrder
     subtotalInCents?: SortOrder
-    taxInCents?: SortOrder
     shippingCostInCents?: SortOrder
     billingAddressId?: SortOrder
     shippingAddressId?: SortOrder
@@ -10338,7 +10307,6 @@ export namespace Prisma {
   export type OrderAvgOrderByAggregateInput = {
     pricePaidInCents?: SortOrder
     subtotalInCents?: SortOrder
-    taxInCents?: SortOrder
     shippingCostInCents?: SortOrder
   }
 
@@ -10349,7 +10317,6 @@ export namespace Prisma {
     paymentMethod?: SortOrder
     pricePaidInCents?: SortOrder
     subtotalInCents?: SortOrder
-    taxInCents?: SortOrder
     shippingCostInCents?: SortOrder
     billingAddressId?: SortOrder
     shippingAddressId?: SortOrder
@@ -10364,7 +10331,6 @@ export namespace Prisma {
     paymentMethod?: SortOrder
     pricePaidInCents?: SortOrder
     subtotalInCents?: SortOrder
-    taxInCents?: SortOrder
     shippingCostInCents?: SortOrder
     billingAddressId?: SortOrder
     shippingAddressId?: SortOrder
@@ -10375,7 +10341,6 @@ export namespace Prisma {
   export type OrderSumOrderByAggregateInput = {
     pricePaidInCents?: SortOrder
     subtotalInCents?: SortOrder
-    taxInCents?: SortOrder
     shippingCostInCents?: SortOrder
   }
 
@@ -11296,7 +11261,6 @@ export namespace Prisma {
     paymentMethod: $Enums.PaymentMethod
     pricePaidInCents: number
     subtotalInCents: number
-    taxInCents: number
     shippingCostInCents: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -11312,7 +11276,6 @@ export namespace Prisma {
     paymentMethod: $Enums.PaymentMethod
     pricePaidInCents: number
     subtotalInCents: number
-    taxInCents: number
     shippingCostInCents: number
     billingAddressId: string
     shippingAddressId: string
@@ -11430,7 +11393,6 @@ export namespace Prisma {
     paymentMethod?: EnumPaymentMethodFilter<"Order"> | $Enums.PaymentMethod
     pricePaidInCents?: IntFilter<"Order"> | number
     subtotalInCents?: IntFilter<"Order"> | number
-    taxInCents?: IntFilter<"Order"> | number
     shippingCostInCents?: IntFilter<"Order"> | number
     billingAddressId?: StringFilter<"Order"> | string
     shippingAddressId?: StringFilter<"Order"> | string
@@ -11541,7 +11503,6 @@ export namespace Prisma {
     paymentMethod: $Enums.PaymentMethod
     pricePaidInCents: number
     subtotalInCents: number
-    taxInCents: number
     shippingCostInCents: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -11558,7 +11519,6 @@ export namespace Prisma {
     paymentMethod: $Enums.PaymentMethod
     pricePaidInCents: number
     subtotalInCents: number
-    taxInCents: number
     shippingCostInCents: number
     shippingAddressId: string
     createdAt?: Date | string
@@ -11583,7 +11543,6 @@ export namespace Prisma {
     paymentMethod: $Enums.PaymentMethod
     pricePaidInCents: number
     subtotalInCents: number
-    taxInCents: number
     shippingCostInCents: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -11600,7 +11559,6 @@ export namespace Prisma {
     paymentMethod: $Enums.PaymentMethod
     pricePaidInCents: number
     subtotalInCents: number
-    taxInCents: number
     shippingCostInCents: number
     billingAddressId: string
     createdAt?: Date | string
@@ -12004,7 +11962,6 @@ export namespace Prisma {
     paymentMethod: $Enums.PaymentMethod
     pricePaidInCents: number
     subtotalInCents: number
-    taxInCents: number
     shippingCostInCents: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -12021,7 +11978,6 @@ export namespace Prisma {
     paymentMethod: $Enums.PaymentMethod
     pricePaidInCents: number
     subtotalInCents: number
-    taxInCents: number
     shippingCostInCents: number
     billingAddressId: string
     shippingAddressId: string
@@ -12083,7 +12039,6 @@ export namespace Prisma {
     paymentMethod?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
     pricePaidInCents?: IntFieldUpdateOperationsInput | number
     subtotalInCents?: IntFieldUpdateOperationsInput | number
-    taxInCents?: IntFieldUpdateOperationsInput | number
     shippingCostInCents?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -12100,7 +12055,6 @@ export namespace Prisma {
     paymentMethod?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
     pricePaidInCents?: IntFieldUpdateOperationsInput | number
     subtotalInCents?: IntFieldUpdateOperationsInput | number
-    taxInCents?: IntFieldUpdateOperationsInput | number
     shippingCostInCents?: IntFieldUpdateOperationsInput | number
     billingAddressId?: StringFieldUpdateOperationsInput | string
     shippingAddressId?: StringFieldUpdateOperationsInput | string
@@ -12152,7 +12106,6 @@ export namespace Prisma {
     paymentMethod: $Enums.PaymentMethod
     pricePaidInCents: number
     subtotalInCents: number
-    taxInCents: number
     shippingCostInCents: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -12169,7 +12122,6 @@ export namespace Prisma {
     paymentMethod: $Enums.PaymentMethod
     pricePaidInCents: number
     subtotalInCents: number
-    taxInCents: number
     shippingCostInCents: number
     billingAddressId: string
     shippingAddressId: string
@@ -12233,7 +12185,6 @@ export namespace Prisma {
     paymentMethod?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
     pricePaidInCents?: IntFieldUpdateOperationsInput | number
     subtotalInCents?: IntFieldUpdateOperationsInput | number
-    taxInCents?: IntFieldUpdateOperationsInput | number
     shippingCostInCents?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -12250,7 +12201,6 @@ export namespace Prisma {
     paymentMethod?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
     pricePaidInCents?: IntFieldUpdateOperationsInput | number
     subtotalInCents?: IntFieldUpdateOperationsInput | number
-    taxInCents?: IntFieldUpdateOperationsInput | number
     shippingCostInCents?: IntFieldUpdateOperationsInput | number
     billingAddressId?: StringFieldUpdateOperationsInput | string
     shippingAddressId?: StringFieldUpdateOperationsInput | string
@@ -12336,7 +12286,6 @@ export namespace Prisma {
     paymentMethod: $Enums.PaymentMethod
     pricePaidInCents: number
     subtotalInCents: number
-    taxInCents: number
     shippingCostInCents: number
     billingAddressId: string
     shippingAddressId: string
@@ -12374,7 +12323,6 @@ export namespace Prisma {
     paymentMethod?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
     pricePaidInCents?: IntFieldUpdateOperationsInput | number
     subtotalInCents?: IntFieldUpdateOperationsInput | number
-    taxInCents?: IntFieldUpdateOperationsInput | number
     shippingCostInCents?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -12390,7 +12338,6 @@ export namespace Prisma {
     paymentMethod?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
     pricePaidInCents?: IntFieldUpdateOperationsInput | number
     subtotalInCents?: IntFieldUpdateOperationsInput | number
-    taxInCents?: IntFieldUpdateOperationsInput | number
     shippingCostInCents?: IntFieldUpdateOperationsInput | number
     billingAddressId?: StringFieldUpdateOperationsInput | string
     shippingAddressId?: StringFieldUpdateOperationsInput | string
@@ -12406,7 +12353,6 @@ export namespace Prisma {
     paymentMethod?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
     pricePaidInCents?: IntFieldUpdateOperationsInput | number
     subtotalInCents?: IntFieldUpdateOperationsInput | number
-    taxInCents?: IntFieldUpdateOperationsInput | number
     shippingCostInCents?: IntFieldUpdateOperationsInput | number
     billingAddressId?: StringFieldUpdateOperationsInput | string
     shippingAddressId?: StringFieldUpdateOperationsInput | string
@@ -12497,7 +12443,6 @@ export namespace Prisma {
     paymentMethod: $Enums.PaymentMethod
     pricePaidInCents: number
     subtotalInCents: number
-    taxInCents: number
     shippingCostInCents: number
     shippingAddressId: string
     createdAt?: Date | string
@@ -12511,7 +12456,6 @@ export namespace Prisma {
     paymentMethod: $Enums.PaymentMethod
     pricePaidInCents: number
     subtotalInCents: number
-    taxInCents: number
     shippingCostInCents: number
     billingAddressId: string
     createdAt?: Date | string
@@ -12524,7 +12468,6 @@ export namespace Prisma {
     paymentMethod?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
     pricePaidInCents?: IntFieldUpdateOperationsInput | number
     subtotalInCents?: IntFieldUpdateOperationsInput | number
-    taxInCents?: IntFieldUpdateOperationsInput | number
     shippingCostInCents?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -12541,7 +12484,6 @@ export namespace Prisma {
     paymentMethod?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
     pricePaidInCents?: IntFieldUpdateOperationsInput | number
     subtotalInCents?: IntFieldUpdateOperationsInput | number
-    taxInCents?: IntFieldUpdateOperationsInput | number
     shippingCostInCents?: IntFieldUpdateOperationsInput | number
     shippingAddressId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -12557,7 +12499,6 @@ export namespace Prisma {
     paymentMethod?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
     pricePaidInCents?: IntFieldUpdateOperationsInput | number
     subtotalInCents?: IntFieldUpdateOperationsInput | number
-    taxInCents?: IntFieldUpdateOperationsInput | number
     shippingCostInCents?: IntFieldUpdateOperationsInput | number
     shippingAddressId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -12570,7 +12511,6 @@ export namespace Prisma {
     paymentMethod?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
     pricePaidInCents?: IntFieldUpdateOperationsInput | number
     subtotalInCents?: IntFieldUpdateOperationsInput | number
-    taxInCents?: IntFieldUpdateOperationsInput | number
     shippingCostInCents?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -12587,7 +12527,6 @@ export namespace Prisma {
     paymentMethod?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
     pricePaidInCents?: IntFieldUpdateOperationsInput | number
     subtotalInCents?: IntFieldUpdateOperationsInput | number
-    taxInCents?: IntFieldUpdateOperationsInput | number
     shippingCostInCents?: IntFieldUpdateOperationsInput | number
     billingAddressId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -12603,7 +12542,6 @@ export namespace Prisma {
     paymentMethod?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
     pricePaidInCents?: IntFieldUpdateOperationsInput | number
     subtotalInCents?: IntFieldUpdateOperationsInput | number
-    taxInCents?: IntFieldUpdateOperationsInput | number
     shippingCostInCents?: IntFieldUpdateOperationsInput | number
     billingAddressId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string

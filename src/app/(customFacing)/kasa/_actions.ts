@@ -87,8 +87,7 @@ export async function createOrder(formData: OrderFormData) {
 
     // Set default values for required fields
     const shippingCostInCents = 0; // Free shipping
-    const taxInCents = Math.round(subtotalInCents * 0.23); // 23% VAT
-    const totalPriceInCents = subtotalInCents + shippingCostInCents + taxInCents;
+    const totalPriceInCents = subtotalInCents + shippingCostInCents;
 
     // Handle user - first check if a userId was provided or if there's a logged in user
     let userId = validatedData.userId;
@@ -171,7 +170,7 @@ export async function createOrder(formData: OrderFormData) {
           paymentMethod: validatedData.paymentMethod,
           pricePaidInCents: totalPriceInCents,
           subtotalInCents: subtotalInCents,
-          taxInCents: taxInCents,
+          taxInCents: 0,
           shippingCostInCents: shippingCostInCents,
           billingAddressId: address.id,
           shippingAddressId: address.id,
