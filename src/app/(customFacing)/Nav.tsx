@@ -18,6 +18,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { CartSheet } from "./components/CartSheet";
+import { CartButton } from "./components/CartButton";
 
 type CartItem = {
   id: string;
@@ -113,7 +114,7 @@ export function Nav({ children }: { children: React.ReactNode }) {
   return (
     <>
       {/* Desktop Navigation */}
-      <nav className="hidden lg:block w-full fixed top-0 left-0 right-0 z-50 bg-white  shadow-xs py-5">
+      <nav className="hidden lg:block w-full absolute top-0 left-0 right-0 z-50 bg-white  shadow-xs py-5">
         <div className="container mx-auto px-4">
           <div className="flex h-16 items-center justify-between">
             {/* Left side - Navigation */}
@@ -134,16 +135,7 @@ export function Nav({ children }: { children: React.ReactNode }) {
 
             {/* Right side - Cart & Account */}
             <div className="flex items-center space-x-4">
-              <div className="relative">
-                <Button variant="ghost" size="icon" onClick={() => setIsCartOpen(true)}>
-                  <ShoppingCart className="size-7" />
-                </Button>
-                {cartItemCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-primary text-primary-foreground rounded-full h-5 w-5 text-xs flex items-center justify-center">
-                    {cartItemCount}
-                  </span>
-                )}
-              </div>
+              <CartButton onClick={() => setIsCartOpen(true)} itemCount={cartItemCount} />
               <UserAccountMenu />
             </div>
           </div>
@@ -200,20 +192,18 @@ export function Nav({ children }: { children: React.ReactNode }) {
             />
           </Link>
 
-          <div className="flex items-center space-x-4">
-            <div className="relative">
-              <Button variant="ghost" size="icon" className="" onClick={() => setIsCartOpen(true)}>
-                <ShoppingCart className="size-6" />
-              </Button>
-              {cartItemCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-primary text-primary-foreground rounded-full h-6 w-6 text-sm flex items-center justify-center">
-                  {cartItemCount}
-                </span>
-              )}
-            </div>
+          <div className="flex items-center">
+            <CartButton onClick={() => setIsCartOpen(true)} itemCount={cartItemCount} />
           </div>
         </div>
       </nav>
+
+      {/* Floating Cart Button */}
+      <CartButton
+        onClick={() => setIsCartOpen(true)}
+        itemCount={cartItemCount}
+        variant="floating"
+      />
 
       {/* Cart Sheet */}
       <CartSheet isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />

@@ -13,11 +13,12 @@ export default function Home() {
       <main>
 {/* <LatestProductsSection/> */}
 <Hero/>
-        <Features />
         <About />
         <Faq/>  
-        <FeaturedProducts />
+
         <InstaCaru />
+        <Features />
+
       </main>
     </div>
   );

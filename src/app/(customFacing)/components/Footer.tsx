@@ -33,7 +33,7 @@ export function Footer() {
   };
 
   return (
-    <footer className="bg-background border-t-2 mx-10 border-primary pt-16 pb-8">
+    <footer className=" border-t-2 mx-10 border-primary pt-16 pb-8">
       <div className="container mx-auto px-4">
         <motion.div
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10"

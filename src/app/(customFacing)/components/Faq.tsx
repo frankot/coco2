@@ -33,7 +33,8 @@ const faqData = [
 
 export function Faq() {
   return (
-    <section className="container mx-auto py-12 bg-gradient-to-br from-green-50 to-teal-50 rounded-xl">
+    <div className="bg-gradient-to-br from-green-50 to-teal-50">
+    <section className="container mx-auto py-12 rounded-xl">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center p-6">
         <div className="relative h-[500px] w-full shadow-2xl rounded-2xl overflow-hidden">
           <Image
@@ -69,5 +70,6 @@ export function Faq() {
         </div>
       </div>
     </section>
+    </div>
   );
 }
