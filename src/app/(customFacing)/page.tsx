@@ -5,6 +5,7 @@ import FeaturedProducts from "./components/FeaturedProducts";
 import Features from "./components/Features";
 import LatestProductsSection from "./components/LatestProductsSection";
 import { Hero } from "./components/Hero";
+import { Faq } from "@/app/(customFacing)/components/Faq";
 
 export default function Home() {
   return (
@@ -14,6 +15,7 @@ export default function Home() {
 <Hero/>
         <Features />
         <About />
+        <Faq/>  
         <FeaturedProducts />
         <InstaCaru />
       </main>

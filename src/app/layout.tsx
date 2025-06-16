@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Galindo, Outfit } from "next/font/google";
 import "./globals.css";
 import { SessionProvider } from "@/components/SessionProvider";
-import { Toaster } from "sonner";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -43,7 +43,20 @@ export default function RootLayout({
         className={`${geistSans.variable} ${galindo.variable} ${outfit.variable} font-outfit min-h-screen antialiased bg-white scroll-smooth`}
       >
         <SessionProvider>{children}</SessionProvider>
-        <Toaster position="top-right" richColors closeButton />
+        <Toaster
+          position="bottom-right"
+          expand={false}
+          richColors
+          closeButton
+          theme="light"
+          style={
+            {
+              "--normal-bg": "hsl(var(--background))",
+              "--normal-border": "1px solid hsl(var(--primary))",
+              "--normal-text": "hsl(var(--foreground))",
+            } as React.CSSProperties
+          }
+        />
       </body>
     </html>
   );

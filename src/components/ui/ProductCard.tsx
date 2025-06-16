@@ -8,21 +8,13 @@ import { useState, useEffect, useRef } from "react";
 import { Plus, Minus, ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-
-// Define the Product type based on our database structure
-type Product = {
-  id: string;
-  name: string;
-  priceInCents: number;
-  description: string;
-  imagePath: string;
-  isAvailable: boolean;
-};
+import { useCart } from "@/app/(customFacing)/components/Cart";
+import type { Product } from "@/app/(customFacing)/components/Cart";
 
 type FeaturedProductProps = {
   product: Product;
-  backgroundColor?: string; // CSS color value, now optional
-  imageOnLeft?: boolean; // Changed to boolean - true means image is on left, false means right
+  backgroundColor?: string;
+  imageOnLeft?: boolean;
 };
 
 // Skeleton loader component
@@ -65,6 +57,7 @@ export default function FeaturedProduct({
   const [isVisible, setIsVisible] = useState(false);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
+  const { addToCart } = useCart();
 
   // Define order classes based on image position
   const imageOrderClass = imageOnLeft ? "md:order-1" : "md:order-2";
@@ -92,53 +85,11 @@ export default function FeaturedProduct({
   const totalPrice = product.priceInCents * quantity;
 
   // Add to cart function
-  const addToCart = () => {
+  const handleAddToCart = async () => {
     if (!product.isAvailable) return;
-
     setIsAddingToCart(true);
-
-    try {
-      // Get existing cart from localStorage
-      const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
-
-      // Check if product already exists in cart
-      const existingItemIndex = existingCart.findIndex((item: any) => item.id === product.id);
-
-      if (existingItemIndex >= 0) {
-        // Update quantity if item already exists
-        existingCart[existingItemIndex].quantity += quantity;
-      } else {
-        // Add new item
-        existingCart.push({
-          id: product.id,
-          name: product.name,
-          priceInCents: product.priceInCents,
-          quantity: quantity,
-          imagePath: product.imagePath,
-        });
-      }
-
-      // Save updated cart back to localStorage
-      localStorage.setItem("cart", JSON.stringify(existingCart));
-
-      // Trigger event for other components to update
-      window.dispatchEvent(new Event("cartUpdated"));
-
-      // Show success notification
-      toast.success("Produkt dodany do koszyka", {
-        description: `${quantity} × ${product.name}`,
-        duration: 3000,
-      });
-
-      // Reset quantity
-      setQuantity(1);
-    } catch (error) {
-      console.error("Failed to add item to cart:", error);
-      toast.error("Nie udało się dodać produktu do koszyka", {
-        description: "Spróbuj ponownie później",
-      });
-    }
-
+    await addToCart(product, quantity);
+    setQuantity(1);
     setIsAddingToCart(false);
   };
 
@@ -274,7 +225,7 @@ export default function FeaturedProduct({
             size="lg"
             className="w-full bg-primary hover:bg-primary/90 font-bold text-lg group shadow-none"
             disabled={!product.isAvailable || isAddingToCart}
-            onClick={addToCart}
+            onClick={handleAddToCart}
           >
             <ShoppingBag className="mr-2 h-5 w-5 group-hover:scale-110 transition-transform" />
             {isAddingToCart ? "Dodawanie..." : "Dodaj do koszyka"}

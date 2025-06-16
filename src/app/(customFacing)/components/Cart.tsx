@@ -3,13 +3,24 @@
 import { useState, useEffect, useRef, useCallback, memo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Minus, Trash2, X, ShoppingBag } from "lucide-react";
+import { Plus, Minus, Trash2, X, ShoppingBag, Check } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { formatPLN } from "@/lib/formatter";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 // Define types for cart
+export type Product = {
+  id: string;
+  name: string;
+  priceInCents: number;
+  description: string;
+  imagePath: string;
+  isAvailable: boolean;
+};
+
 export type CartItem = {
   id: string;
   name: string;
@@ -485,3 +496,123 @@ export default function Cart({ isOpen, onClose, navbarHeight, onOpenCart }: Cart
     </>
   );
 }
+
+// Add toast styles
+const toastStyles = {
+  style: {
+    background: "hsl(var(--background))",
+    border: "1px solid hsl(var(--primary))",
+    color: "hsl(var(--foreground))",
+  },
+  position: "bottom-right" as const,
+};
+
+export const useCart = () => {
+  const addToCart = useCallback((product: Product, quantity: number = 1) => {
+    try {
+      const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
+      const existingItemIndex = existingCart.findIndex((item: CartItem) => item.id === product.id);
+
+      if (existingItemIndex >= 0) {
+        existingCart[existingItemIndex].quantity += quantity;
+      } else {
+        existingCart.push({
+          id: product.id,
+          name: product.name,
+          priceInCents: product.priceInCents,
+          quantity: quantity,
+          imagePath: product.imagePath,
+        });
+      }
+
+      localStorage.setItem("cart", JSON.stringify(existingCart));
+      window.dispatchEvent(new Event("cartUpdated"));
+
+      toast.success(
+        <div className="flex items-center gap-2">
+          <Check className="h-4 w-4 text-primary" />
+          <div>
+            <p className="font-medium">Dodano do koszyka</p>
+            <p className="text-sm text-muted-foreground">
+              {quantity} × {product.name}
+            </p>
+          </div>
+        </div>,
+        {
+          ...toastStyles,
+          duration: 3000,
+        }
+      );
+
+      return true;
+    } catch (error) {
+      console.error("Failed to add item to cart:", error);
+      toast.error(
+        <div className="flex items-center gap-2">
+          <X className="h-4 w-4 text-destructive" />
+          <div>
+            <p className="font-medium">Błąd</p>
+            <p className="text-sm text-muted-foreground">Nie udało się dodać produktu do koszyka</p>
+          </div>
+        </div>,
+        {
+          ...toastStyles,
+          duration: 3000,
+        }
+      );
+      return false;
+    }
+  }, []);
+
+  const removeFromCart = useCallback((productId: string) => {
+    try {
+      const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
+      const updatedCart = existingCart.filter((item: CartItem) => item.id !== productId);
+      localStorage.setItem("cart", JSON.stringify(updatedCart));
+      window.dispatchEvent(new Event("cartUpdated"));
+      return true;
+    } catch (error) {
+      console.error("Failed to remove item from cart:", error);
+      return false;
+    }
+  }, []);
+
+  const updateCartItemQuantity = useCallback(
+    (productId: string, quantity: number) => {
+      if (quantity < 1) {
+        return removeFromCart(productId);
+      }
+
+      try {
+        const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
+        const updatedCart = existingCart.map((item: CartItem) =>
+          item.id === productId ? { ...item, quantity } : item
+        );
+        localStorage.setItem("cart", JSON.stringify(updatedCart));
+        window.dispatchEvent(new Event("cartUpdated"));
+        return true;
+      } catch (error) {
+        console.error("Failed to update cart item quantity:", error);
+        return false;
+      }
+    },
+    [removeFromCart]
+  );
+
+  const getCart = useCallback((): CartItem[] => {
+    try {
+      const savedCart = localStorage.getItem("cart");
+      return savedCart ? JSON.parse(savedCart) : [];
+    } catch (error) {
+      console.error("Failed to get cart:", error);
+      return [];
+    }
+  }, []);
+
+  return {
+    addToCart,
+    removeFromCart,
+    updateCartItemQuantity,
+    getCart,
+  };
+};

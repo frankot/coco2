@@ -113,21 +113,21 @@ export function Nav({ children }: { children: React.ReactNode }) {
   return (
     <>
       {/* Desktop Navigation */}
-      <nav className="hidden lg:block pt-5">
+      <nav className="hidden lg:block w-full fixed top-0 left-0 right-0 z-50 bg-white  shadow-xs py-5">
         <div className="container mx-auto px-4">
           <div className="flex h-16 items-center justify-between">
             {/* Left side - Navigation */}
             <div className="hidden lg:flex items-center space-x-8">{children}</div>
 
             {/* Center - Logo */}
-            <div className="flex-shrink-0">
+            <div className="flex-shrink-0 z-10 bg-white rounded-full p-2">
               <Link href="/">
                 <Image
                   src="/logo.png"
                   alt="Logo"
                   width={120}
                   height={120}
-                  className="h-32 mt-10 w-auto"
+                  className="h-32 mt-10  w-auto"
                 />
               </Link>
             </div>
