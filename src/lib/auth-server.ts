@@ -24,6 +24,14 @@ export async function findUserByEmail(email: string) {
   console.log(`Looking up user by email: ${email}`);
   const user = await prisma.user.findUnique({
     where: { email },
+    select: {
+      id: true,
+      email: true,
+      password: true,
+      firstName: true,
+      lastName: true,
+      accountType: true,
+    },
   });
   console.log(`User lookup result: ${user ? `Found user ID ${user.id}` : "User not found"}`);
   return user;

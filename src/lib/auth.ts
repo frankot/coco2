@@ -88,6 +88,7 @@ export const authOptions: NextAuthOptions = {
             email: user.email,
             name: user.firstName || user.email.split("@")[0], // Use firstName if available
             role: "USER",
+            accountType: user.accountType,
           };
         } catch (error) {
           console.error("User auth error:", error);
@@ -108,6 +109,7 @@ export const authOptions: NextAuthOptions = {
         console.log("Setting JWT with user role:", user.role);
         token.role = user.role;
         token.id = user.id;
+        token.accountType = user.accountType;
       }
       return token;
     },
@@ -117,6 +119,7 @@ export const authOptions: NextAuthOptions = {
         console.log("Setting session with role:", token.role);
         session.user.role = token.role;
         session.user.id = token.id;
+        session.user.accountType = token.accountType;
       }
       return session;
     },

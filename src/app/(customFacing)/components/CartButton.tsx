@@ -30,9 +30,8 @@ export function CartButton({ onClick, itemCount, className, variant = "ghost" }:
     return () => window.removeEventListener("scroll", handleScroll);
   }, [variant]);
 
-  if (variant === "floating" && !hasScrolled) {
-    return null;
-  }
+  if (itemCount === 0) return null;
+  if (variant === "floating" && !hasScrolled) return null;
 
   const baseButton = (
     <div className="relative">
@@ -47,16 +46,14 @@ export function CartButton({ onClick, itemCount, className, variant = "ghost" }:
         )}
       >
         <ShoppingCart className={cn("size-7")} />
-        {itemCount > 0 && (
-          <span
-            className={cn(
-              "absolute -top-2 -right-2 bg-primary text-primary-foreground rounded-full h-5 w-5 text-xs flex items-center justify-center",
-              variant === "floating" && "bg-primary text-white"
-            )}
-          >
-            {itemCount}
-          </span>
-        )}
+        <span
+          className={cn(
+            "absolute -top-2 -right-2 bg-primary text-primary-foreground rounded-full h-5 w-5 text-xs flex items-center justify-center",
+            variant === "floating" && "bg-primary text-white"
+          )}
+        >
+          {itemCount}
+        </span>
       </Button>
     </div>
   );

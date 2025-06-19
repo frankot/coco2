@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { ComponentProps } from "react";
-import { Menu, ShoppingCart, User, Instagram, Facebook } from "lucide-react";
+import { Menu, User, Instagram, Facebook } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
@@ -114,7 +114,7 @@ export function Nav({ children }: { children: React.ReactNode }) {
   return (
     <>
       {/* Desktop Navigation */}
-      <nav className="hidden lg:block w-full absolute top-0 left-0 right-0 z-50 bg-white  shadow-xs py-5">
+      <nav className="hidden lg:block w-full  top-0 left-0 right-0 z-50 bg-white  shadow-xs py-5">
         <div className="container mx-auto px-4">
           <div className="flex h-16 items-center justify-between">
             {/* Left side - Navigation */}

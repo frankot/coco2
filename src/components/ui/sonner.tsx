@@ -10,12 +10,15 @@ const Toaster = ({ className, ...props }: ToasterProps) => {
   return (
     <Sonner
       theme={theme as ToasterProps["theme"]}
+      position="bottom-right"
+      offset={7}
       className={cn(
-        "toaster group bg-primary/50",
+        "toaster group",
         "[&>*]:!font-outfit [&>*]:!rounded-lg [&>*]:!shadow-lg",
-        "[&>*]:!border-primary/20 [&>*]:backdrop-blur-sm",
+        "[&>*]:!bg-white [&>*]:!border [&>*]:!border-primary",
         "[&_div[role=status]]:!gap-3",
         "[&_button]:!transition-opacity [&_button:hover]:!opacity-70",
+        "[&>*]:!text-foreground",
         className
       )}
       {...props}

@@ -170,7 +170,6 @@ export async function createOrder(formData: OrderFormData) {
           paymentMethod: validatedData.paymentMethod,
           pricePaidInCents: totalPriceInCents,
           subtotalInCents: subtotalInCents,
-          taxInCents: 0,
           shippingCostInCents: shippingCostInCents,
           billingAddressId: address.id,
           shippingAddressId: address.id,

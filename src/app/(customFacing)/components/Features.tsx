@@ -29,8 +29,8 @@ const itemVariants = {
 
 const FeatureCard = ({ icon: Icon, title }: { icon: React.ElementType; title: string }) => (
   <motion.div className="relative group md:h-[230px]" variants={itemVariants}>
-    <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-3xl blur-xl group-hover:blur-2xl transition-all opacity-0 group-hover:opacity-70 " />
-    <div className="relative bg-background/50 backdrop-blur-lg border border-primary/10 rounded-3xl p-8 flex flex-col items-center justify-center text-center space-y-6 hover:shadow-lg hover:shadow-primary/5 transition-all group-hover:translate-y-[-2px] h-full">
+    <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-3xl blur-xl group-hover:blur-2xl transition-all border opacity-0 group-hover:opacity-70 " />
+    <div className="relative bg-background/50 backdrop-blur-lg border border-primary/10 rounded-3xl p-8 flex flex-col items-center justify-center text-center space-y-6 transition-all group-hover:translate-y-[-2px] h-full">
       <div className="relative">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-full blur-lg" />
         <div className="relative bg-background border border-primary/10 h-20 w-20 rounded-full flex items-center justify-center">

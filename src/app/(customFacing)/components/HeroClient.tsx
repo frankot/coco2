@@ -176,7 +176,7 @@ export function HeroClient({ products }: HeroClientProps) {
   };
 
   return (
-    <div className="relative w-full mt-20 min-h-[80vh] overflow-hidden" ref={containerRef}>
+    <div className="relative w-full min-h-[80vh] overflow-hidden" ref={containerRef}>
       {/* Features slider */}
       <div className="absolute bottom-0 z-30 mt-8 overflow-hidden" ref={featuresContainerRef}>
         <motion.div className="flex gap-16 whitespace-nowrap py-4" style={{ x }}>
@@ -193,13 +193,7 @@ export function HeroClient({ products }: HeroClientProps) {
 
       {/* Background Video */}
       <div className="absolute inset-0 z-0">
-        <video
-          className="h-full w-full object-cover"
-          autoPlay
-          playsInline
-          muted
-          loop
-        >
+        <video className="h-full w-full object-cover" autoPlay playsInline muted loop>
           <source
             src="https://res.cloudinary.com/dxdjxuxeu/video/upload/f_auto:video,q_auto/v1/coco-vid/oszzngaidbkomei6bhkk"
             type="video/mp4"
@@ -208,88 +202,76 @@ export function HeroClient({ products }: HeroClientProps) {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 container mx-auto h-full flex flex-col lg:flex-row items-center justify-between gap-8 py-16 lg:py-20 px-4">
+      <div className="relative z-10 container mx-auto h-full flex flex-col lg:flex-row items-start justify-between gap-8 py-16 lg:py-20 px-4">
         {/* Left side - Text content */}
         <div className="w-full lg:w-1/2 overflow-hidden">
-          <div
-            className="flex transition-transform duration-500 ease-in-out"
-            style={{ transform: `translateX(-${currentSlide * 100}%)` }}
-          >
-            {products.map((product, index) => (
-              <motion.div
-                key={product.id}
-                className="w-full flex-shrink-0"
-                variants={cardSpring}
-                initial="initial"
-                animate="animate"
-              >
-                <div className="space-y-6 lg:pr-8 bg-white/10 backdrop-blur-sm rounded-lg p-8 border border-primary/50">
-                  <motion.h1
-                    className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight font-galindo"
-                    variants={fadeInUp}
-                  >
-                    Naturalna
-                    <br />
-                    Woda Kokosowa <br />
-                    Dr.Coco
-                  </motion.h1>
+          <div className="space-y-6 lg:pr-8 bg-stone-50/15 backdrop-blur-xs shadow-xl rounded-lg p-8 border border-primary/50">
+            <motion.h1
+              className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight font-galindo"
+              variants={fadeInUp}
+            >
+              Naturalna
+              <br />
+              Woda Kokosowa <br />
+              Dr.Coco
+            </motion.h1>
 
-                  <p className="text-lg md:text-xl text-white/90 line-clamp-5 max-w-xl">
-                    {product.description}
-                  </p>
+            <p className="text-lg md:text-xl text-white/90 line-clamp-5 max-w-xl">
+              Dr Coco to w pełni naturalna woda kokosowa, produkowana z najwyższej jakości młodych
+              kokosów. Nasz przepyszna woda ma również cudowne właściwości, jest uznawana za
+              najlepszy naturalny izotonik. Dodatkowo wzmocni twój organizm dawka minerałów i
+              witamin.
+            </p>
 
-                  {/* Key Points Row */}
-                  <div className="flex justify-between items-center gap-4 py-4">
-                    {keyPoints.map((point, index) => (
-                      <motion.div
-                        key={index}
-                        className="flex flex-col items-center text-center"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.1 }}
-                      >
-                        <div className="bg-white/5 backdrop-blur-sm rounded-full p-3 mb-2">
-                          <point.icon className="size-10 text-white" strokeWidth={1.5} />
-                        </div>
-                        <span className="text-sm font-medium text-white/90">{point.text}</span>
-                      </motion.div>
-                    ))}
+            {/* Key Points Row */}
+            <div className="flex justify-between items-center gap-4 py-4">
+              {keyPoints.map((point, index) => (
+                <motion.div
+                  key={index}
+                  className="flex flex-col items-center text-center"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                >
+                  <div className="bg-white/5 backdrop-blur-sm rounded-full p-3 mb-2">
+                    <point.icon className="size-10 text-white" strokeWidth={1.5} />
                   </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* Dots navigation */}
-          <div className="flex justify-center gap-2 mt-4">
-            {products.map((_, index) => (
-              <button
-                key={index}
-                className={`w-3 h-3 rounded-full transition-colors ${
-                  currentSlide === index ? "bg-white" : "bg-white/50"
-                }`}
-                onClick={() => setCurrentSlide(index)}
-              />
-            ))}
+                  <span className="text-sm font-medium text-white/90">{point.text}</span>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </div>
 
         {/* Right side - Product Image and Cart Card */}
         <div className="w-full lg:w-1/2 relative flex flex-col gap-6">
-          {/* Product Card */}
           {products.map((product, index) => (
             <motion.div
               key={product.id}
-              className="w-full"
+              className="w-full relative h-[500px] flex flex-col items-start justify-center"
               initial="initial"
               animate={currentSlide === index ? "animate" : "initial"}
               variants={cardSpring}
               style={{ display: currentSlide === index ? "block" : "none" }}
             >
-              <div className="bg-white/10  border border-primary/50 backdrop-blur-sm rounded-lg p-6 mb-4 absolute -bottom-10 z-10 left-1/5 ">
-                <h2 className="text-2xl text-center text-white/90 font-galindo mb-4">
-                  {product.name}
-                </h2>
+              {/* Product Image */}
+              <motion.div
+                className="relative h-full w-full flex justify-center"
+                variants={imageSpring}
+              >
+                <Image
+                  src={product.imagePath}
+                  alt={product.name}
+                  fill
+                  priority
+                  className="object-contain drop-shadow-2xl hover:scale-105 hover:rotate-2 transition-all duration-300"
+                />
+              </motion.div>
+
+              {/* Cart Card */}
+              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 bg-white/10 translate-y-2/3 border border-primary/50 backdrop-blur-sm rounded-lg p-6 w-[480px] max-w-[90%]">
+                <h2 className="text-2xl text-center text-white/90 font-galindo">{product.name}</h2>
+                <p className="text-sm text-center text-white/80 mb-4">(w paczkach po 12 szt.)</p>
                 <div className="flex items-center justify-between gap-4">
                   <div className="flex items-center gap-4">
                     <Button
@@ -329,48 +311,32 @@ export function HeroClient({ products }: HeroClientProps) {
             </motion.div>
           ))}
 
-          {/* Product Image */}
-          <motion.div
-            className="relative h-[400px] lg:h-[500px] -mt-10 flex items-center justify-center"
-            initial="hidden"
-            animate="visible"
-            variants={fadeInRight}
-          >
-            <div className="relative w-full h-full lg:translate-x-12 ">
-              {products.map((product, index) => (
-                <motion.div
-                  key={product.id}
-                  className="absolute inset-0"
-                  initial="initial"
-                  animate={currentSlide === index ? "animate" : "initial"}
-                  variants={imageSpring}
-                  style={{ display: currentSlide === index ? "block" : "none" }}
-                >
-                  <Image
-                    src={product.imagePath}
-                    alt={product.name}
-                    fill
-                    priority
-                    className="object-contain drop-shadow-2xl hover:scale-105 hover:rotate-2 transition-all duration-300 "
-                  />
-                </motion.div>
-              ))}
-            </div>
+          {/* Vertical Dots navigation */}
+          <div className="absolute right-0 top-1/2 -translate-y-1/2 flex flex-col gap-3 pr-4">
+            {products.map((_, index) => (
+              <button
+                key={index}
+                className={`w-3 h-12 rounded-full transition-colors border border-stone-200/50 ${
+                  currentSlide === index ? "bg-white" : "bg-primary/50"
+                }`}
+                onClick={() => setCurrentSlide(index)}
+              />
+            ))}
+          </div>
 
-            {/* Decorative elements */}
-            <motion.div
-              className="absolute -z-10 w-96 h-96 rounded-full bg-white/10 blur-3xl right-1/3 top-1/3"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1.5, delay: 0.5 }}
-            />
-            <motion.div
-              className="absolute -z-10 w-64 h-64 rounded-full bg-white/10 blur-2xl left-1/2 bottom-1/4"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1.5, delay: 0.7 }}
-            />
-          </motion.div>
+          {/* Decorative elements */}
+          <motion.div
+            className="absolute -z-10 w-96 h-96 rounded-full bg-white/10 blur-3xl right-1/3 top-1/3"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1.5, delay: 0.5 }}
+          />
+          <motion.div
+            className="absolute -z-10 w-64 h-64 rounded-full bg-white/10 blur-2xl left-1/2 bottom-1/4"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1.5, delay: 0.7 }}
+          />
         </div>
       </div>
     </div>
