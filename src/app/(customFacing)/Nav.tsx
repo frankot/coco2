@@ -116,9 +116,9 @@ export function Nav({ children }: { children: React.ReactNode }) {
       {/* Desktop Navigation */}
       <nav className="hidden lg:block w-full  top-0 left-0 right-0 z-50 bg-white  shadow-xs py-5">
         <div className="container mx-auto px-4">
-          <div className="flex h-16 items-center justify-between">
+          <div className="flex h-16 items-center">
             {/* Left side - Navigation */}
-            <div className="hidden lg:flex items-center space-x-8">{children}</div>
+            <div className="flex-1 flex items-center space-x-8">{children}</div>
 
             {/* Center - Logo */}
             <div className="flex-shrink-0 z-10 bg-white rounded-full p-2">
@@ -134,7 +134,7 @@ export function Nav({ children }: { children: React.ReactNode }) {
             </div>
 
             {/* Right side - Cart & Account */}
-            <div className="flex items-center space-x-4">
+            <div className="flex-1 flex items-center justify-end space-x-4">
               <CartButton onClick={() => setIsCartOpen(true)} itemCount={cartItemCount} />
               <UserAccountMenu />
             </div>
