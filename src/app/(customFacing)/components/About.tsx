@@ -82,45 +82,54 @@ export function About() {
             variants={fadeInUp}
             transition={{ delay: 0.2 }}
           >
-            <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-100">
-              <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6">Nasza misja</h3>
-              <p className="text-gray-600 leading-relaxed mb-6">
-                W Dr.Coco wierzymy, że natura dostarcza nam wszystkiego, czego potrzebujemy do
-                zdrowego życia. Nasza misja to dostarczać najwyższej jakości wodę kokosową, która
-                zachwyca smakiem i odżywia organizm.
-              </p>
-              <p className="text-gray-600 leading-relaxed">
-                Każda butelka Dr.Coco to gwarancja czystości i jakości. Nie dodajemy cukru,
-                konserwantów ani sztucznych aromatów. Nasza woda kokosowa jest naturalnie słodka,
-                orzeźwiająca i bogata w elektrolity.
-              </p>
+            <div className="relative mb-12">
+              {/* Decorative Background */}
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-primary/20 rounded-3xl transform rotate-4"></div>
+
+              <div className="relative bg-white rounded-2xl p-8 shadow border border-gray-100">
+                <h3 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6">Nasza misja</h3>
+                <p className="text-gray-600 leading-relaxed mb-6">
+                  W Dr.Coco wierzymy, że natura dostarcza nam wszystkiego, czego potrzebujemy do
+                  zdrowego życia. Nasza misja to dostarczać najwyższej jakości wodę kokosową, która
+                  zachwyca smakiem i odżywia organizm.
+                </p>
+                <p className="text-gray-600 leading-relaxed">
+                  Każda butelka Dr.Coco to gwarancja czystości i jakości. Nie dodajemy cukru,
+                  konserwantów ani sztucznych aromatów. Nasza woda kokosowa jest naturalnie słodka,
+                  orzeźwiająca i bogata w elektrolity.
+                </p>
+              </div>
             </div>
 
             {/* Nutrition Facts */}
-            <motion.div
-              className="bg-white rounded-2xl p-8 shadow-lg border border-gray-100"
-              variants={staggerChildren}
-            >
-              <h4 className="text-xl font-bold text-gray-900 mb-6">Wartości odżywcze</h4>
-              <div className="grid grid-cols-2 gap-4">
-                {nutritionFacts.map((fact, index) => (
-                  <motion.div
-                    key={fact.label}
-                    className="relative text-center p-4 bg-gray-50 rounded-xl hover:bg-primary/5 transition-colors overflow-hidden"
-                    variants={fadeInUp}
-                  >
-                    <div className="absolute -top-3 -left-3 size-24  flex items-center justify-center">
-                      <fact.icon className="size-16 text-primary/30" />
-                    </div>
-                    <div className="relative z-10 mt-4">
-                      <div className="text-2xl lg:text-3xl font-bold text-primary mb-1">
-                        {fact.value}
-                        <span className="text-sm font-normal text-gray-600 ml-1">{fact.unit}</span>
+            <motion.div className="relative" variants={staggerChildren}>
+              {/* Decorative Background */}
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-primary/20 rounded-3xl transform rotate-6"></div>
+
+              <div className="relative bg-white rounded-2xl p-8 shadow border border-gray-100">
+                <h4 className="text-xl font-bold text-gray-900 mb-6">Wartości odżywcze</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  {nutritionFacts.map((fact, index) => (
+                    <motion.div
+                      key={fact.label}
+                      className="relative text-center p-4 bg-gray-50 rounded-xl hover:bg-primary/5 transition-colors overflow-hidden"
+                      variants={fadeInUp}
+                    >
+                      <div className="absolute -top-3 -left-3 size-24  flex items-center justify-center">
+                        <fact.icon className="size-16 text-primary/30" />
                       </div>
-                      <div className="text-sm text-gray-600">{fact.label}</div>
-                    </div>
-                  </motion.div>
-                ))}
+                      <div className="relative z-10 mt-4">
+                        <div className="text-2xl lg:text-3xl font-bold text-primary mb-1">
+                          {fact.value}
+                          <span className="text-sm font-normal text-gray-600 ml-1">
+                            {fact.unit}
+                          </span>
+                        </div>
+                        <div className="text-sm text-gray-600">{fact.label}</div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
               </div>
             </motion.div>
           </motion.div>
@@ -137,7 +146,7 @@ export function About() {
             {/* Main Image Container */}
             <div className="relative">
               {/* Decorative Background */}
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-primary/20 rounded-3xl transform rotate-3"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-primary/20 rounded-3xl transform rotate-6"></div>
 
               {/* Images Grid */}
               <div className="relative bg-white rounded-3xl shadow-xl overflow-hidden p-6">
@@ -186,7 +195,7 @@ export function About() {
               </div>
 
               {/* Floating Quality Badge */}
-              <div className="absolute -top-4 -right-4 bg-white rounded-2xl shadow-lg p-4 border border-gray-100">
+              <div className="absolute -top-4 -right-4 bg-white rounded-2xl shadow p-4 border border-gray-100">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
                     <Award className="w-6 h-6 text-primary" />
@@ -217,7 +226,7 @@ export function About() {
             ].map((feature, index) => (
               <motion.div
                 key={feature.title}
-                className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100 text-center hover:shadow-xl transition-shadow"
+                className="bg-white rounded-2xl p-6 shadow border border-gray-100 text-center hover:shadow-xl transition-shadow"
                 variants={fadeInUp}
               >
                 <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">

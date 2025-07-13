@@ -233,13 +233,6 @@ export function Nav({ children }: { children: React.ReactNode }) {
         </div>
       </nav>
 
-      {/* Floating Cart Button */}
-      <CartButton
-        onClick={() => setIsCartOpen(true)}
-        itemCount={cartItemCount}
-        variant="floating"
-      />
-
       {/* Cart Sheet */}
       <CartSheet isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </>
