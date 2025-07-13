@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetOverlay } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Minus, Plus, Trash2 } from "lucide-react";
+import { Minus, Plus, Trash2, ShoppingBag, Sparkles } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { formatPrice } from "@/lib/utils";
@@ -72,77 +72,129 @@ export function CartSheet({ isOpen, onClose }: CartSheetProps) {
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetOverlay className="bg-black/20" />
-      <SheetContent className="w-full p-8 md:p-16 sm:max-w-lg bg-stone-50">
-        <SheetHeader>
-          <SheetTitle>Koszyk</SheetTitle>
-        </SheetHeader>
+      <SheetOverlay className="bg-black/30" />
+      <SheetContent className="w-full p-0 sm:max-w-lg bg-gradient-to-br from-stone-50 to-stone-100/50 backdrop-blur">
+        <div className="h-full flex flex-col">
+          {/* Header */}
+          <SheetHeader className=" pb-4 border-b border-stone-200/50">
+            <SheetTitle className="text-2xl font-bold text-gray-900 flex items-center gap-3">
+              <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                <ShoppingBag className="w-5 h-5 text-primary" />
+              </div>
+              Koszyk
+            </SheetTitle>
+          </SheetHeader>
 
-        <div className="flex flex-col h-full">
-          <div className="flex-grow overflow-y-auto py-6">
+          {/* Content */}
+          <div className="flex-grow overflow-y-auto p-6">
             {cartItems.length === 0 ? (
-              <p className="text-center text-muted-foreground">Twój koszyk jest pusty</p>
+              <div className="flex flex-col items-center justify-center h-full text-center space-y-4">
+                <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center">
+                  <ShoppingBag className="w-10 h-10 text-gray-400" />
+                </div>
+                <div>
+                  <p className="text-lg font-medium text-gray-900 mb-2">Twój koszyk jest pusty</p>
+                  <p className="text-gray-500">Dodaj produkty, aby kontynuować zakupy</p>
+                </div>
+              </div>
             ) : (
               <div className="space-y-4">
                 {cartItems.map((item) => (
-                  <div key={item.id} className="flex gap-4 items-center">
-                    <div className="relative h-20 w-20 rounded-md overflow-hidden bg-white">
-                      <Image
-                        src={item.imagePath}
-                        alt={item.name}
-                        fill
-                        className="object-contain p-1"
-                      />
-                    </div>
-                    <div className="flex-grow">
-                      <h3 className="font-medium">{item.name}</h3>
-                      <p className="text-sm text-muted-foreground">
-                        {formatPrice(item.priceInCents)}
-                      </p>
-                      <div className="flex items-center gap-2 mt-2">
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          className="h-8 w-8"
-                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                        >
-                          <Minus className="h-4 w-4" />
-                        </Button>
-                        <span className="w-8 text-center">{item.quantity}</span>
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          className="h-8 w-8"
-                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                        >
-                          <Plus className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 ml-2"
-                          onClick={() => removeItem(item.id)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                  <div
+                    key={item.id}
+                    className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200"
+                  >
+                    <div className="flex gap-4 items-center">
+                      <div className="relative h-20 w-20 rounded-xl overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 flex-shrink-0">
+                        <Image
+                          src={item.imagePath}
+                          alt={item.name}
+                          fill
+                          className="object-contain p-2"
+                        />
+                      </div>
+
+                      <div className="flex-grow min-w-0">
+                        <h3 className="font-semibold text-gray-900 truncate">{item.name}</h3>
+                        <p className="text-primary font-medium text-lg">
+                          {formatPrice(item.priceInCents)}
+                        </p>
+
+                        <div className="flex items-center gap-3 mt-3">
+                          <div className="flex items-center gap-2 bg-gray-50 rounded-lg p-1">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 hover:bg-white"
+                              onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                            >
+                              <Minus className="h-4 w-4" />
+                            </Button>
+                            <span className="w-8 text-center font-medium">{item.quantity}</span>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 hover:bg-white"
+                              onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                            >
+                              <Plus className="h-4 w-4" />
+                            </Button>
+                          </div>
+
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50"
+                            onClick={() => removeItem(item.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+
+                      <div className="text-right">
+                        <p className="font-bold text-lg text-gray-900">
+                          {formatPrice(item.priceInCents * item.quantity)}
+                        </p>
                       </div>
                     </div>
-                    <p className="font-medium">{formatPrice(item.priceInCents * item.quantity)}</p>
                   </div>
                 ))}
               </div>
             )}
           </div>
 
+          {/* Footer */}
           {cartItems.length > 0 && (
-            <div className="border-t pt-4">
-              <div className="flex justify-between mb-4">
-                <span className="font-medium">Suma</span>
-                <span className="font-medium">{formatPrice(subtotal)}</span>
+            <div className="p-6 border-t border-stone-200/50 bg-white/50 backdrop-blur-sm rounded-t-2xl">
+              <div className="space-y-4">
+                {/* Subtotal */}
+                <div className="flex justify-between items-center">
+                  <span className="text-lg font-medium text-gray-700">Suma</span>
+                  <span className="text-2xl font-bold text-primary">{formatPrice(subtotal)}</span>
+                </div>
+
+                {/* Features */}
+                <div className="flex flex-wrap gap-3 text-xs text-gray-600">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-primary rounded-full"></div>
+                    Darmowa dostawa
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-primary rounded-full"></div>
+                    Bezpieczne płatności
+                  </div>
+                </div>
+
+                {/* Checkout Button */}
+                <Button
+                  className="w-full bg-primary hover:bg-primary/90 text-white py-3 rounded-xl text-lg font-semibold transition-all duration-200 flex items-center justify-center gap-2"
+                  onClick={handleCheckout}
+                >
+                  <Sparkles className="w-5 h-5" />
+                  Przejdź do kasy
+                </Button>
               </div>
-              <Button className="w-full" onClick={handleCheckout}>
-                Przejdź do kasy
-              </Button>
             </div>
           )}
         </div>
