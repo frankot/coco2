@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetOverlay } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import Image from "next/image";
@@ -72,7 +72,8 @@ export function CartSheet({ isOpen, onClose }: CartSheetProps) {
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent className="w-full  p-8 md:p-16 sm:max-w-lg">
+      <SheetOverlay className="bg-black/20" />
+      <SheetContent className="w-full p-8 md:p-16 sm:max-w-lg bg-stone-50">
         <SheetHeader>
           <SheetTitle>Koszyk</SheetTitle>
         </SheetHeader>
@@ -85,8 +86,13 @@ export function CartSheet({ isOpen, onClose }: CartSheetProps) {
               <div className="space-y-4">
                 {cartItems.map((item) => (
                   <div key={item.id} className="flex gap-4 items-center">
-                    <div className="relative h-20 w-20 rounded-md overflow-hidden">
-                      <Image src={item.imagePath} alt={item.name} fill className="object-cover" />
+                    <div className="relative h-20 w-20 rounded-md overflow-hidden bg-white">
+                      <Image
+                        src={item.imagePath}
+                        alt={item.name}
+                        fill
+                        className="object-contain p-1"
+                      />
                     </div>
                     <div className="flex-grow">
                       <h3 className="font-medium">{item.name}</h3>

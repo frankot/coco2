@@ -167,7 +167,7 @@ export default function FeaturedProduct({
       {/* Product information */}
       <div className={`flex flex-col justify-between p-6 ${contentOrderClass} relative`}>
         <div className="z-10">
-          <Link href={`/product/${product.id}`} className="group">
+          <Link href={`/sklep/${product.id}`} className="group">
             <h2 className="text-3xl font-galindo mb-3 text-primary group-hover:text-primary/80 transition-colors">
               {product.name}
             </h2>

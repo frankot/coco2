@@ -1,91 +1,296 @@
-import { Suspense } from "react";
-import { PrismaClient } from "@/app/generated/prisma";
-import FeaturedProduct, { ProductCardSkeleton } from "@/components/ui/ProductCard";
-import { Loader2 } from "lucide-react";
+"use client";
 
-// Loading component to display while data is fetching
-function ProductsLoading() {
+import { useState, useEffect } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { Heart, Star, ShoppingBag, Search, Filter, Grid, List } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { formatPLN } from "@/lib/formatter";
+import { useCart } from "@/app/(customFacing)/components/Cart";
+import { toast } from "sonner";
+
+type Product = {
+  id: string;
+  name: string;
+  priceInCents: number;
+  description: string;
+  imagePath: string;
+  isAvailable: boolean;
+  createdAt: string;
+};
+
+// Product Card Component
+function ProductCard({ product }: { product: Product }) {
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const { addToCart } = useCart();
+
+  const handleAddToCart = async () => {
+    if (!product.isAvailable) return;
+
+    setIsAddingToCart(true);
+    try {
+      await addToCart(product, 1);
+      toast.success(`Dodano ${product.name} do koszyka`);
+    } catch (error) {
+      toast.error("Nie udało się dodać produktu do koszyka");
+    } finally {
+      setIsAddingToCart(false);
+    }
+  };
+
+  const toggleFavorite = () => {
+    setIsFavorite(!isFavorite);
+    toast.success(isFavorite ? "Usunięto z ulubionych" : "Dodano do ulubionych");
+  };
+
   return (
-    <div className="container mx-auto px-4 py-12">
-      <div className="flex items-center justify-center mb-8">
-        <Loader2 className="animate-spin mr-2 h-6 w-6 text-primary" />
-        <h1 className="text-2xl font-medium">Wczytywanie produktów...</h1>
+    <div className="group bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden border border-gray-100">
+      {/* Product Image */}
+      <div className="relative aspect-square overflow-hidden bg-gray-50">
+        <Link href={`/sklep/${product.id}`}>
+          <Image
+            src={product.imagePath}
+            alt={product.name}
+            fill
+            className="object-contain group-hover:scale-105 transition-transform duration-300"
+          />
+        </Link>
+
+        {/* Favorite Button */}
+        <button
+          onClick={toggleFavorite}
+          className="absolute top-3 right-3 p-2 bg-white/80 hover:bg-white rounded-full shadow-sm transition-colors"
+        >
+          <Heart
+            className={`w-5 h-5 ${isFavorite ? "fill-red-500 text-red-500" : "text-gray-600"}`}
+          />
+        </button>
+
+        {/* Availability Badge */}
+        {!product.isAvailable && (
+          <div className="absolute top-3 left-3 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-medium">
+            Niedostępny
+          </div>
+        )}
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <ProductCardSkeleton key={i} />
-        ))}
+
+      {/* Product Info */}
+      <div className="p-4">
+        <Link href={`/sklep/${product.id}`}>
+          <h3 className="text-lg font-semibold text-gray-900 hover:text-primary transition-colors line-clamp-2 mb-2">
+            {product.name}
+          </h3>
+        </Link>
+
+        {/* Rating */}
+        <div className="flex items-center space-x-1 mb-2">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <Star key={star} className="w-4 h-4 text-yellow-400 fill-current" />
+          ))}
+          <span className="text-sm text-gray-500 ml-1">(4.8)</span>
+        </div>
+
+        {/* Description */}
+        <p className="text-gray-600 text-sm line-clamp-2 mb-4">{product.description}</p>
+
+        {/* Price and Actions */}
+        <div className="flex items-center justify-between">
+          <div className="text-xl font-bold text-primary">{formatPLN(product.priceInCents)}</div>
+
+          <Button
+            onClick={handleAddToCart}
+            disabled={!product.isAvailable || isAddingToCart}
+            className="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-full text-sm font-medium transition-colors"
+          >
+            <ShoppingBag className="w-4 h-4 mr-1" />
+            {isAddingToCart ? "Dodawanie..." : "Dodaj"}
+          </Button>
+        </div>
       </div>
     </div>
   );
 }
 
-// Function to fetch products from database
-async function getProducts() {
-  const prisma = new PrismaClient();
+// Loading Skeleton Component
+function ProductCardSkeleton() {
+  return (
+    <div className="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-100 animate-pulse">
+      <div className="aspect-square bg-gray-200"></div>
+      <div className="p-4">
+        <div className="h-6 bg-gray-200 rounded mb-2"></div>
+        <div className="flex items-center space-x-1 mb-2">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <div key={star} className="w-4 h-4 bg-gray-200 rounded"></div>
+          ))}
+        </div>
+        <div className="h-4 bg-gray-200 rounded mb-2"></div>
+        <div className="h-4 bg-gray-200 rounded w-3/4 mb-4"></div>
+        <div className="flex items-center justify-between">
+          <div className="h-6 bg-gray-200 rounded w-20"></div>
+          <div className="h-8 bg-gray-200 rounded w-24"></div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
-  try {
-    const products = await prisma.product.findMany({
-      where: {
-        isAvailable: true,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
+export default function ShopPage() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [sortBy, setSortBy] = useState<"newest" | "price-low" | "price-high" | "name">("newest");
+
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        const response = await fetch("/api/products");
+        if (response.ok) {
+          const data = await response.json();
+          setProducts(data);
+        }
+      } catch (error) {
+        console.error("Error fetching products:", error);
+        toast.error("Nie udało się załadować produktów");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchProducts();
+  }, []);
+
+  // Filter and sort products
+  const filteredAndSortedProducts = products
+    .filter(
+      (product) =>
+        product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.description.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .sort((a, b) => {
+      switch (sortBy) {
+        case "price-low":
+          return a.priceInCents - b.priceInCents;
+        case "price-high":
+          return b.priceInCents - a.priceInCents;
+        case "name":
+          return a.name.localeCompare(b.name);
+        case "newest":
+        default:
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      }
     });
 
-    return products;
-  } catch (error) {
-    console.error("Failed to fetch products:", error);
-    return [];
-  } finally {
-    await prisma.$disconnect();
-  }
-}
-
-// Products listing component
-async function ProductsList() {
-  const products = await getProducts();
-
-  if (products.length === 0) {
-    return (
-      <div className="text-center py-12">
-        <h2 className="text-2xl font-bold mb-4">Brak produktów</h2>
-        <p className="text-muted-foreground">Aktualnie nie mamy żadnych produktów w ofercie.</p>
-      </div>
-    );
-  }
-
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-      {products.map((product, index) => (
-        <FeaturedProduct
-          key={product.id}
-          product={product}
-          imageOnLeft={index % 2 === 0}
-          backgroundColor={
-            index % 2 === 0 ? "hsl(var(--primary) / 0.1)" : "hsl(var(--secondary) / 0.1)"
-          }
-        />
-      ))}
-    </div>
-  );
-}
+    <div className="min-h-screen mt-20 bg-gray-50/30">
+      {/* Header */}
+      {/* <div className="bg-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="text-center">
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">Sklep</h1>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Odkryj naszą kolekcję wysokiej jakości produktów kokosowych. Wszystkie naturalne,
+              organiczne i pełne dobroci.
+            </p>
+          </div>
+        </div>
+      </div> */}
 
-export default function ProductsPage() {
-  return (
-    <div className="container mx-auto px-4 py-12">
-      <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-primary mb-4">Nasze Produkty</h1>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          Odkryj naszą kolekcję wysokiej jakości produktów kokosowych. Wszystkie naturalne,
-          organiczne i pełne dobroci.
-        </p>
+      {/* Filters and Search */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="flex flex-col sm:flex-row gap-4 items-center justify-between mb-8">
+          {/* Search */}
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <Input
+              type="text"
+              placeholder="Szukaj produktów..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 bg-white border-gray-200 focus:border-primary focus:ring-primary"
+            />
+          </div>
+
+          {/* Sort and View Options */}
+          <div className="flex items-center gap-4">
+            {/* Sort Dropdown */}
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as any)}
+              className="px-4 py-2 border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+            >
+              <option value="newest">Najnowsze</option>
+              <option value="price-low">Cena: od najniższej</option>
+              <option value="price-high">Cena: od najwyższej</option>
+              <option value="name">Nazwa A-Z</option>
+            </select>
+
+            {/* View Mode Toggle */}
+            <div className="flex bg-gray-100 rounded-lg p-1">
+              <button
+                onClick={() => setViewMode("grid")}
+                className={`p-2 rounded-md transition-colors ${
+                  viewMode === "grid"
+                    ? "bg-white text-primary shadow-sm"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+              >
+                <Grid className="w-5 h-5" />
+              </button>
+              <button
+                onClick={() => setViewMode("list")}
+                className={`p-2 rounded-md transition-colors ${
+                  viewMode === "list"
+                    ? "bg-white text-primary shadow-sm"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+              >
+                <List className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Products Count */}
+        <div className="mb-6">
+          <p className="text-gray-600">
+            {loading ? "Ładowanie..." : `Znaleziono ${filteredAndSortedProducts.length} produktów`}
+          </p>
+        </div>
+
+        {/* Products Grid */}
+        {loading ? (
+          <div
+            className={`grid ${viewMode === "grid" ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" : "grid-cols-1"} gap-6`}
+          >
+            {Array.from({ length: 8 }).map((_, i) => (
+              <ProductCardSkeleton key={i} />
+            ))}
+          </div>
+        ) : filteredAndSortedProducts.length === 0 ? (
+          <div className="text-center py-12">
+            <div className="text-gray-400 mb-4">
+              <Search className="w-16 h-16 mx-auto" />
+            </div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">Brak produktów</h3>
+            <p className="text-gray-600">
+              {searchTerm
+                ? `Nie znaleziono produktów dla "${searchTerm}"`
+                : "Aktualnie nie mamy żadnych produktów w ofercie."}
+            </p>
+          </div>
+        ) : (
+          <div
+            className={`grid ${viewMode === "grid" ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" : "grid-cols-1"} gap-6`}
+          >
+            {filteredAndSortedProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        )}
       </div>
-
-      <Suspense fallback={<ProductsLoading />}>
-        <ProductsList />
-      </Suspense>
     </div>
   );
 }

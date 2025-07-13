@@ -63,7 +63,7 @@ export function InstaCaru() {
   }, [isHovering]);
 
   return (
-    <section className="py-10 pt-32 bg-secondary/5">
+    <section className="py-10 pt-32">
       <div className="container mx-auto px-4">
         {/* Instagram Carousel */}
         <div
