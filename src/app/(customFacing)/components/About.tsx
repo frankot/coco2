@@ -106,17 +106,19 @@ export function About() {
                 {nutritionFacts.map((fact, index) => (
                   <motion.div
                     key={fact.label}
-                    className="text-center p-4 bg-gray-50 rounded-xl hover:bg-primary/5 transition-colors"
+                    className="relative text-center p-4 bg-gray-50 rounded-xl hover:bg-primary/5 transition-colors overflow-hidden"
                     variants={fadeInUp}
                   >
-                    <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                      <fact.icon className="w-6 h-6 text-primary" />
+                    <div className="absolute -top-3 -left-3 size-24  flex items-center justify-center">
+                      <fact.icon className="size-16 text-primary/30" />
                     </div>
-                    <div className="text-2xl lg:text-3xl font-bold text-primary mb-1">
-                      {fact.value}
-                      <span className="text-sm font-normal text-gray-600 ml-1">{fact.unit}</span>
+                    <div className="relative z-10 mt-4">
+                      <div className="text-2xl lg:text-3xl font-bold text-primary mb-1">
+                        {fact.value}
+                        <span className="text-sm font-normal text-gray-600 ml-1">{fact.unit}</span>
+                      </div>
+                      <div className="text-sm text-gray-600">{fact.label}</div>
                     </div>
-                    <div className="text-sm text-gray-600">{fact.label}</div>
                   </motion.div>
                 ))}
               </div>

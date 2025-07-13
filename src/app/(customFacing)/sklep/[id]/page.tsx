@@ -287,17 +287,19 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col mt-20 relative">
-      {/* Back Button */}
-      <Link href="/sklep" className="absolute top-4 left-20 z-50">
-        <Button  size="sm" className="flex text-white tems-center gap-2">
-          <ArrowLeft className="w-4 h-4" />
-          Wróć
-        </Button>
-      </Link>
-
+    <div className="min-h-screen bg-white flex flex-col mt-20">
       <main className="flex-grow flex flex-col justify-between py-12">
         <div className="w-[90%] lg:w-[80%] mx-auto">
+          {/* Back Button */}
+          <div className="mb-8">
+            <Link href="/sklep">
+              <Button size="sm" className="flex text-white items-center gap-2">
+                <ArrowLeft className="w-4 h-4" />
+                Wróć
+              </Button>
+            </Link>
+          </div>
+
           <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-12 lg:gap-16">
             {/* Product Image */}
             <div className="lg:w-1/2 order-1 lg:order-1 sticky top-24">
