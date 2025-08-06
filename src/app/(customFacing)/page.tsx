@@ -8,6 +8,8 @@ import { Newsletter } from "./components/Newsletter";
 import { FeaturedArticles } from "./components/FeaturedArticles";
 import Hero3 from "./components/Hero3";
 import { BackgroundWrapper } from "./components/BackgroundWrapper";
+import FeaturedProducts from "./components/FeaturedProducts";
+import { Divider } from "@/components/ui/divider";
 
 export default function Home() {
   return (
@@ -16,13 +18,20 @@ export default function Home() {
         <main>
           {/* <Hero3 />
           <Hero2 /> */}
-          <Hero/>
+          <Hero />
+    
+          <FeaturedProducts />
+          <Divider variant="logo" size="lg" className="my-10" />
           <About />
+          <Divider variant="logo" size="lg" className="my-20" />
           <Faq />
-          <FeaturedArticles />
 
+          <FeaturedArticles />
+          <Divider variant="logo" size="lg" className="my-20" />
           <InstaCaru />
+
           <Features />
+
           <Newsletter />
         </main>
       </div>

@@ -25,6 +25,8 @@ export const authOptions: NextAuthOptions = {
           }
 
           console.log("Verifying admin credentials for:", credentials.username);
+          console.log("Expected username:", process.env.ADMIN_USERNAME);
+          console.log("Expected password:", process.env.ADMIN_PASSWORD ? "***" : "NOT SET");
 
           // Check if credentials match the admin credentials in .env
           const isValidUsername = credentials.username === process.env.ADMIN_USERNAME;

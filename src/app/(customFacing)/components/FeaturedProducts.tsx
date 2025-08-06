@@ -1,43 +1,37 @@
 import prisma from "@/db";
-import FeaturedProduct from "../../../components/ui/ProductCard";
+import ProductCard from "../../../components/ui/ProductCard";
 
-// Array of background colors to alternate between
-const BACKGROUND_COLORS = ["#f0f9ff", "#fffbeb"];
-
-async function getLatestProducts() {
+async function getSecondProduct() {
   const products = await prisma.product.findMany({
     where: {
       isAvailable: true,
     },
     orderBy: {
-      id: "desc", // Assuming newer products have higher IDs, adjust if needed
+      id: "desc",
     },
     take: 2,
   });
 
-  return products;
+  // Return the second product (index 1) or the first if only one exists
+  return products[1] || products[0];
 }
 
 export default async function FeaturedProducts() {
-  const products = await getLatestProducts();
+  const product = await getSecondProduct();
 
-  if (products.length === 0) {
-    return null; // Don't render anything if no products are available
+  if (!product) {
+    return null;
   }
+
+  // Create an array with the same product repeated 4 times
+  const products = Array(4).fill(product);
 
   return (
     <section className="py-12">
-      <div className="container px-4 mx-auto ">
-    
-
-        <div className="space-y-20">
+      <div className="container px-4 mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {products.map((product, index) => (
-            <FeaturedProduct
-              key={product.id}
-              product={product}
-              backgroundColor={BACKGROUND_COLORS[index % BACKGROUND_COLORS.length]}
-              imageOnLeft={index % 2 === 0}
-            />
+            <ProductCard key={`${product.id}-${index}`} product={product} />
           ))}
         </div>
       </div>
