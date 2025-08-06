@@ -69,8 +69,6 @@ function UserAccountMenu() {
 export function Nav({ children }: { children: React.ReactNode }) {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-  const pathname = usePathname();
 
   // Load cart items
   useEffect(() => {
@@ -111,60 +109,21 @@ export function Nav({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  // Handle scroll for navbar background - only on home page
-  useEffect(() => {
-    const isHomePage = pathname === "/";
-
-    if (!isHomePage) {
-      setIsScrolled(true);
-      return;
-    }
-
-    const handleScroll = () => {
-      const scrollThreshold = 50;
-      setIsScrolled(window.scrollY > scrollThreshold);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [pathname]);
-
   const cartItemCount = cartItems?.reduce((sum, item) => sum + (item?.quantity || 0), 0) || 0;
 
   return (
     <>
       {/* Desktop Navigation */}
-      <nav
-        className={cn(
-          "hidden lg:block w-full fixed top-0 left-0 right-0 z-50 py-3 transition-all duration-300",
-          isScrolled
-            ? "bg-stone-50 border-b border-gray-200 shadow-xs"
-            : "bg-transparent border-b border-transparent"
-        )}
-      >
+      <nav className="hidden lg:block w-full fixed top-0 left-0 right-0 z-50 py-3 bg-stone-50 border-b border-gray-200 shadow-xs ">
         <div className="container mx-auto max-w-7xl px-4 ">
           <div className="flex h-14 items-center">
             {/* Left side - Navigation */}
             <div className="flex-1 flex items-center space-x-8">{children}</div>
 
             {/* Center - Logo */}
-            <div
-              className={cn(
-                "flex-shrink-0  transition-all duration-300",
-                isScrolled ? "bg-stone-50" : "bg-transparent"
-              )}
-            >
+            <div className="flex-shrink-0">
               <Link href="/">
-                <Image
-                  src="/logo.png"
-                  alt="Logo"
-                  width={80}
-                  height={80}
-                  className={cn(
-                    "w-auto transition-all duration-300",
-                    isScrolled ? "h-16 " : "h-32 mt-12"
-                  )}
-                />
+                <Image src="/logo.png" alt="Logo" width={80} height={80} className="w-auto h-16" />
               </Link>
             </div>
 

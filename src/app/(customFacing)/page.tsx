@@ -14,8 +14,8 @@ export default function Home() {
     <BackgroundWrapper>
       <div className="min-h-[200vh] flex flex-col overflow-x-hidden">
         <main>
-          <Hero3 />
-          <Hero2 />
+          {/* <Hero3 />
+          <Hero2 /> */}
           <Hero/>
           <About />
           <Faq />
