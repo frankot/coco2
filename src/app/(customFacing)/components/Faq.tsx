@@ -50,7 +50,7 @@ export function Faq() {
   return (
     <section className="relative py-24 overflow-hidden">
 
-      <div className="container mx-auto px-4">
+      <div className="container max-w-7xl mx-auto px-4">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Left Side - Features */}
           <motion.div
