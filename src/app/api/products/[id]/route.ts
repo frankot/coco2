@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const { id } = params;
+    const { id } = await params;
 
     const product = await prisma.product.findUnique({
       where: {
