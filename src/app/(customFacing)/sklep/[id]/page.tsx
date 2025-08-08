@@ -17,7 +17,7 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const [productId, setProductId] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
-  const [activeSection, setActiveSection] = useState<string | null>(null);
+  const [activeSection, setActiveSection] = useState<string>("description");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const { addToCart } = useCart();
@@ -235,166 +235,133 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
             {/* Product Description */}
             <div className="border-b border-primary/20 pb-1">
               <button
-                onClick={() =>
-                  setActiveSection(activeSection === "description" ? null : "description")
-                }
+                onClick={() => setActiveSection("description")}
                 className="flex cursor-pointer items-center justify-between w-full text-sm tracking-wider uppercase py-3"
               >
                 <span>OPIS PRODUKTU</span>
-                <span
-                  className={`text-base transition-transform ${activeSection === "description" ? "rotate-180" : ""}`}
-                >
-                  ⌄
-                </span>
+                <span className={`text-base transition-transform ${activeSection === "description" ? "rotate-180" : ""}`}>⌄</span>
               </button>
-              {activeSection === "description" && (
-                <div className="mt-4 text-sm leading-relaxed text-gray-600 space-y-3">
-                  <p>
-                    Naturalna woda kokosowa Dr.Coco to czysty, orzeźwiający napój pozyskiwany z
-                    młodych zielonych kokosów. Bogata w elektrolity, minerały i witaminy, stanowi
-                    idealny naturalny izotonik dla sportowców i osób prowadzących aktywny tryb
-                    życia.
-                  </p>
-                  <p>
-                    Każda butelka zawiera 100% naturalną wodę kokosową bez dodatków cukru,
-                    konserwantów czy sztucznych barwników. Produkt jest pozyskiwany z młodych,
-                    zielonych kokosów, które zawierają najwyższe stężenie składników odżywczych.
-                  </p>
-                  <p>
-                    Woda kokosowa Dr.Coco to doskonałe źródło potasu, magnezu i innych elektrolitów,
-                    które pomagają w nawodnieniu organizmu i wspierają prawidłowe funkcjonowanie
-                    mięśni.
-                  </p>
-                </div>
-              )}
+              <motion.div
+                initial="collapsed"
+                animate={activeSection === "description" ? "open" : "collapsed"}
+                exit="collapsed"
+                variants={{ open: { height: "auto", opacity: 1 }, collapsed: { height: 0, opacity: 0 } }}
+                transition={{ duration: 0.4, ease: "easeInOut" }}
+                style={{ overflow: "hidden" }}
+              >
+                {activeSection === "description" && (
+                  <div className="mt-4 text-sm leading-relaxed text-gray-600 space-y-3">
+                    <p>Naturalna woda kokosowa Dr.Coco to czysty, orzeźwiający napój pozyskiwany z młodych zielonych kokosów. Bogata w elektrolity, minerały i witaminy, stanowi idealny naturalny izotonik dla sportowców i osób prowadzących aktywny tryb życia.</p>
+                    <p>Każda butelka zawiera 100% naturalną wodę kokosową bez dodatków cukru, konserwantów czy sztucznych barwników. Produkt jest pozyskiwany z młodych, zielonych kokosów, które zawierają najwyższe stężenie składników odżywczych.</p>
+                    <p>Woda kokosowa Dr.Coco to doskonałe źródło potasu, magnezu i innych elektrolitów, które pomagają w nawodnieniu organizmu i wspierają prawidłowe funkcjonowanie mięśni.</p>
+                  </div>
+                )}
+              </motion.div>
             </div>
 
             {/* Product Details */}
             <div className="border-b border-primary/20 pb-1">
               <button
-                onClick={() => setActiveSection(activeSection === "details" ? null : "details")}
+                onClick={() => setActiveSection("details")}
                 className="flex cursor-pointer items-center justify-between w-full text-sm tracking-wider uppercase py-3"
               >
                 <span>SZCZEGÓŁY PRODUKTU</span>
-                <span
-                  className={`text-base transition-transform ${activeSection === "details" ? "rotate-180" : ""}`}
-                >
-                  ⌄
-                </span>
+                <span className={`text-base transition-transform ${activeSection === "details" ? "rotate-180" : ""}`}>⌄</span>
               </button>
-              {activeSection === "details" && (
-                <div className="mt-4 text-sm leading-relaxed text-gray-600">
-                  <ul className="space-y-2">
-                    <li>• 100% naturalna woda kokosowa z młodych zielonych kokosów</li>
-                    <li>• Bez dodatku cukru, słodzików czy sztucznych substancji</li>
-                    <li>• Bogata w elektrolity: potas, magnez, sód, wapń</li>
-                    <li>• Naturalne źródło potasu - 250mg w 100ml</li>
-                    <li>• Bez konserwantów, barwników i aromatów</li>
-                    <li>• Opakowanie przyjazne środowisku - 100% recyklingowalne</li>
-                    <li>• Pasteryzowana w niskiej temperaturze dla zachowania składników</li>
-                    <li>• Odpowiednia dla wegan i osób na diecie bezglutenowej</li>
-                    <li>• Certyfikowana jako produkt organiczny</li>
-                  </ul>
-                </div>
-              )}
+              <motion.div
+                initial="collapsed"
+                animate={activeSection === "details" ? "open" : "collapsed"}
+                exit="collapsed"
+                variants={{ open: { height: "auto", opacity: 1 }, collapsed: { height: 0, opacity: 0 } }}
+                transition={{ duration: 0.4, ease: "easeInOut" }}
+                style={{ overflow: "hidden" }}
+              >
+                {activeSection === "details" && (
+                  <div className="mt-4 text-sm leading-relaxed text-gray-600">
+                    <ul className="space-y-2">
+                      <li>• 100% naturalna woda kokosowa z młodych zielonych kokosów</li>
+                      <li>• Bez dodatku cukru, słodzików czy sztucznych substancji</li>
+                      <li>• Bogata w elektrolity: potas, magnez, sód, wapń</li>
+                      <li>• Naturalne źródło potasu - 250mg w 100ml</li>
+                      <li>• Bez konserwantów, barwników i aromatów</li>
+                      <li>• Opakowanie przyjazne środowisku - 100% recyklingowalne</li>
+                      <li>• Pasteryzowana w niskiej temperaturze dla zachowania składników</li>
+                      <li>• Odpowiednia dla wegan i osób na diecie bezglutenowej</li>
+                      <li>• Certyfikowana jako produkt organiczny</li>
+                    </ul>
+                  </div>
+                )}
+              </motion.div>
             </div>
 
             {/* Nutritional Information */}
             <div className="border-b border-primary/20 pb-1">
               <button
-                onClick={() => setActiveSection(activeSection === "nutrition" ? null : "nutrition")}
+                onClick={() => setActiveSection("nutrition")}
                 className="flex cursor-pointer items-center justify-between w-full text-sm tracking-wider uppercase py-3"
               >
                 <span>WARTOŚCI ODŻYWCZE</span>
-                <span
-                  className={`text-base transition-transform ${activeSection === "nutrition" ? "rotate-180" : ""}`}
-                >
-                  ⌄
-                </span>
+                <span className={`text-base transition-transform ${activeSection === "nutrition" ? "rotate-180" : ""}`}>⌄</span>
               </button>
-              {activeSection === "nutrition" && (
-                <div className="mt-4 text-sm leading-relaxed text-gray-600">
-                  <ul className="space-y-2">
-                    <li>
-                      • <strong>Kalorie:</strong> 45 kcal/100ml
-                    </li>
-                    <li>
-                      • <strong>Białko:</strong> 0.5g/100ml
-                    </li>
-                    <li>
-                      • <strong>Węglowodany:</strong> 9g/100ml (w tym cukry naturalne: 6g)
-                    </li>
-                    <li>
-                      • <strong>Tłuszcze:</strong> 0g/100ml
-                    </li>
-                    <li>
-                      • <strong>Błonnik:</strong> 0.5g/100ml
-                    </li>
-                    <li>
-                      • <strong>Potas:</strong> 250mg/100ml (12% dziennego zapotrzebowania)
-                    </li>
-                    <li>
-                      • <strong>Magnez:</strong> 25mg/100ml (6% dziennego zapotrzebowania)
-                    </li>
-                    <li>
-                      • <strong>Sód:</strong> 105mg/100ml (5% dziennego zapotrzebowania)
-                    </li>
-                    <li>
-                      • <strong>Wapń:</strong> 24mg/100ml (2% dziennego zapotrzebowania)
-                    </li>
-                    <li>
-                      • <strong>Witamina C:</strong> 2.4mg/100ml (3% dziennego zapotrzebowania)
-                    </li>
-                  </ul>
-                </div>
-              )}
+              <motion.div
+                initial="collapsed"
+                animate={activeSection === "nutrition" ? "open" : "collapsed"}
+                exit="collapsed"
+                variants={{ open: { height: "auto", opacity: 1 }, collapsed: { height: 0, opacity: 0 } }}
+                transition={{ duration: 0.4, ease: "easeInOut" }}
+                style={{ overflow: "hidden" }}
+              >
+                {activeSection === "nutrition" && (
+                  <div className="mt-4 text-sm leading-relaxed text-gray-600">
+                    <ul className="space-y-2">
+                      <li>• <strong>Kalorie:</strong> 45 kcal/100ml</li>
+                      <li>• <strong>Białko:</strong> 0.5g/100ml</li>
+                      <li>• <strong>Węglowodany:</strong> 9g/100ml (w tym cukry naturalne: 6g)</li>
+                      <li>• <strong>Tłuszcze:</strong> 0g/100ml</li>
+                      <li>• <strong>Błonnik:</strong> 0.5g/100ml</li>
+                      <li>• <strong>Potas:</strong> 250mg/100ml (12% dziennego zapotrzebowania)</li>
+                      <li>• <strong>Magnez:</strong> 25mg/100ml (6% dziennego zapotrzebowania)</li>
+                      <li>• <strong>Sód:</strong> 105mg/100ml (5% dziennego zapotrzebowania)</li>
+                      <li>• <strong>Wapń:</strong> 24mg/100ml (2% dziennego zapotrzebowania)</li>
+                      <li>• <strong>Witamina C:</strong> 2.4mg/100ml (3% dziennego zapotrzebowania)</li>
+                    </ul>
+                  </div>
+                )}
+              </motion.div>
             </div>
 
             {/* Storage Instructions */}
             <div className="border-b border-primary/20 pb-1">
               <button
-                onClick={() => setActiveSection(activeSection === "storage" ? null : "storage")}
+                onClick={() => setActiveSection("storage")}
                 className="flex cursor-pointer items-center justify-between w-full text-sm tracking-wider uppercase py-3"
               >
                 <span>PRZECHOWYWANIE</span>
-                <span
-                  className={`text-base transition-transform ${activeSection === "storage" ? "rotate-180" : ""}`}
-                >
-                  ⌄
-                </span>
+                <span className={`text-base transition-transform ${activeSection === "storage" ? "rotate-180" : ""}`}>⌄</span>
               </button>
-              {activeSection === "storage" && (
-                <div className="mt-4 text-sm leading-relaxed text-gray-600">
-                  <ul className="space-y-2">
-                    <li>
-                      • <strong>Przed otwarciem:</strong> Przechowywać w suchym i chłodnym miejscu
-                      (temperatura pokojowa)
-                    </li>
-                    <li>
-                      • <strong>Ochrona przed światłem:</strong> Chronić przed bezpośrednim światłem
-                      słonecznym
-                    </li>
-                    <li>
-                      • <strong>Po otwarciu:</strong> Przechowywać w lodówce w temperaturze 2-8°C
-                    </li>
-                    <li>
-                      • <strong>Czas spożycia:</strong> Spożyć w ciągu 24 godzin po otwarciu
-                    </li>
-                    <li>
-                      • <strong>Termin przydatności:</strong> 12 miesięcy od daty produkcji
-                    </li>
-                    <li>
-                      • <strong>Data produkcji:</strong> Widoczna na opakowaniu
-                    </li>
-                    <li>
-                      • <strong>Nie zamrażać:</strong> Produkt nie nadaje się do zamrażania
-                    </li>
-                    <li>
-                      • <strong>Przechowywanie:</strong> Utrzymywać opakowanie w pozycji pionowej
-                    </li>
-                  </ul>
-                </div>
-              )}
+              <motion.div
+                initial="collapsed"
+                animate={activeSection === "storage" ? "open" : "collapsed"}
+                exit="collapsed"
+                variants={{ open: { height: "auto", opacity: 1 }, collapsed: { height: 0, opacity: 0 } }}
+                transition={{ duration: 0.4, ease: "easeInOut" }}
+                style={{ overflow: "hidden" }}
+              >
+                {activeSection === "storage" && (
+                  <div className="mt-4 text-sm leading-relaxed text-gray-600">
+                    <ul className="space-y-2">
+                      <li>• <strong>Przed otwarciem:</strong> Przechowywać w suchym i chłodnym miejscu (temperatura pokojowa)</li>
+                      <li>• <strong>Ochrona przed światłem:</strong> Chronić przed bezpośrednim światłem słonecznym</li>
+                      <li>• <strong>Po otwarciu:</strong> Przechowywać w lodówce w temperaturze 2-8°C</li>
+                      <li>• <strong>Czas spożycia:</strong> Spożyć w ciągu 24 godzin po otwarciu</li>
+                      <li>• <strong>Termin przydatności:</strong> 12 miesięcy od daty produkcji</li>
+                      <li>• <strong>Data produkcji:</strong> Widoczna na opakowaniu</li>
+                      <li>• <strong>Nie zamrażać:</strong> Produkt nie nadaje się do zamrażania</li>
+                      <li>• <strong>Przechowywanie:</strong> Utrzymywać opakowanie w pozycji pionowej</li>
+                    </ul>
+                  </div>
+                )}
+              </motion.div>
             </div>
           </div>
         </div>
