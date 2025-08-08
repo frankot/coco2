@@ -1,41 +1,20 @@
-import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import prisma from "@/db";
+import { createRouteHandler, ApiError } from "@/lib/api";
 
-export async function GET() {
-  try {
-    const session = await getServerSession(authOptions);
-
-    if (!session?.user?.email) {
-      return new NextResponse("Unauthorized", { status: 401 });
-    }
-
-    const orders = await prisma.order.findMany({
-      where: {
-        user: {
-          email: session.user.email,
-        },
-      },
+export const GET = createRouteHandler(
+  async ({ session }) => {
+    if (!session?.user?.email) throw new ApiError("Unauthorized", 401);
+    return prisma.order.findMany({
+      where: { user: { email: session.user.email } },
       select: {
         id: true,
         pricePaidInCents: true,
         createdAt: true,
         status: true,
-        _count: {
-          select: {
-            orderItems: true,
-          },
-        },
+        _count: { select: { orderItems: true } },
       },
-      orderBy: {
-        createdAt: "desc",
-      },
+      orderBy: { createdAt: "desc" },
     });
-
-    return NextResponse.json(orders);
-  } catch (error) {
-    console.error("[USER_ORDERS_GET]", error);
-    return new NextResponse("Internal error", { status: 500 });
-  }
-}
+  },
+  { auth: "user" }
+);

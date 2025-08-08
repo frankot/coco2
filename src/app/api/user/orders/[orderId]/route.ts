@@ -1,22 +1,14 @@
-import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import prisma from "@/db";
+import { createRouteHandler, ApiError, getRequiredParam } from "@/lib/api";
 
-export async function GET(req: Request, { params }: { params: { orderId: string } }) {
-  try {
-    const session = await getServerSession(authOptions);
-
-    if (!session?.user?.email) {
-      return new NextResponse("Unauthorized", { status: 401 });
-    }
-
+export const GET = createRouteHandler(
+  async ({ session, params }) => {
+    if (!session?.user?.email) throw new ApiError("Unauthorized", 401);
+    const orderId = getRequiredParam(params as any, "orderId");
     const order = await prisma.order.findFirst({
       where: {
-        id: params.orderId,
-        user: {
-          email: session.user.email,
-        },
+        id: orderId,
+        user: { email: session.user.email },
       },
       select: {
         id: true,
@@ -42,14 +34,8 @@ export async function GET(req: Request, { params }: { params: { orderId: string 
         },
       },
     });
-
-    if (!order) {
-      return new NextResponse("Order not found", { status: 404 });
-    }
-
-    return NextResponse.json(order);
-  } catch (error) {
-    console.error("[USER_ORDER_GET]", error);
-    return new NextResponse("Internal error", { status: 500 });
-  }
-}
+    if (!order) throw new ApiError("Order not found", 404);
+    return order;
+  },
+  { auth: "user" }
+);
