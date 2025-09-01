@@ -111,7 +111,7 @@ export function InstaCaru() {
             href="https://www.instagram.com/dr.coco/"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-primary hover:underline flex items-center justify-center gap-2 font-galindo text-2xl"
+            className="text-primary hover:underline flex items-center justify-center gap-2  text-2xl"
           >
             Zobacz więcej na Instagramie
             <ExternalLink className="size-6" />

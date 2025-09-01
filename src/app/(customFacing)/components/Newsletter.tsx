@@ -19,7 +19,7 @@ export function Newsletter() {
             <span className="text-yellow-300 text-sm font-medium tracking-wider uppercase">
               NEWSLETTER DR.COCO®
             </span>
-            <h2 className="mt-4 text-4xl font-galindo text-white">
+            <h2 className="mt-4 text-4xl text-white">
               Dołącz do Kokosowej Społeczności
             </h2>
             <p className="mt-4 text-lg text-white/80">
@@ -50,7 +50,7 @@ export function Newsletter() {
               <div className="rounded-xl bg-white/5 p-3 ring-1 ring-white/10 group">
                 <CalendarCheck className="size-6 text-yellow-300 group-hover:scale-110 transition-transform duration-300" />
               </div>
-              <dt className="mt-4 text-lg font-galindo text-white">Cotygodniowe Nowości</dt>
+              <dt className="mt-4 text-lg text-white">Cotygodniowe Nowości</dt>
               <dd className="mt-2 text-base leading-7 text-white/70">
                 Bądź na bieżąco z najnowszymi produktami, przepisami i poradami dotyczącymi zdrowego
                 stylu życia z Dr.Coco.
@@ -60,7 +60,7 @@ export function Newsletter() {
               <div className="rounded-xl bg-white/5 p-3 ring-1 ring-white/10 group">
                 <ShieldCheck className="size-6 text-yellow-300 group-hover:scale-110 transition-transform duration-300" />
               </div>
-              <dt className="mt-4 text-lg font-galindo text-white">Gwarancja Jakości</dt>
+              <dt className="mt-4 text-lg text-white">Gwarancja Jakości</dt>
               <dd className="mt-2 text-base leading-7 text-white/70">
                 Tylko wartościowe treści i oferty specjalne. Szanujemy Twoją prywatność i nie
                 wysyłamy spamu.

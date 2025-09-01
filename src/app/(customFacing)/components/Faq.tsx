@@ -65,7 +65,7 @@ export function Faq() {
                 <Sparkles className="w-4 h-4" />
                 DLACZEGO DR.COCO®
               </div>
-              <h2 className="text-3xl font-galindo lg:text-4xl font-bold text-gray-900">
+              <h2 className="text-3xl  lg:text-4xl font-bold text-gray-900">
                 Poznaj Moc
                 <span className="text-primary "> Kokosa</span>
               </h2>

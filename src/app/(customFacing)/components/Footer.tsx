@@ -61,7 +61,7 @@ export function Footer() {
 
           {/* Quick Links */}
           <motion.div variants={fadeInUp} className="space-y-6">
-            <h3 className="text-lg font-galindo text-primary font-semibold mb-4">Szybkie linki</h3>
+            <h3 className="text-lg text-primary font-semibold mb-4">Szybkie linki</h3>
             <ul className="space-y-3">
               <li>
                 <Link href="/" className="text-gray-600 hover:text-primary transition-colors">
@@ -96,7 +96,7 @@ export function Footer() {
 
           {/* Contact Info */}
           <motion.div variants={fadeInUp} className="space-y-6">
-            <h3 className="text-lg font-galindo text-primary font-semibold mb-4">Kontakt</h3>
+            <h3 className="text-lg text-primary font-semibold mb-4">Kontakt</h3>
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
                 <MapPin className="text-primary flex-shrink-0 mt-0.5" size={18} />
@@ -129,7 +129,7 @@ export function Footer() {
 
           {/* Social Media and Newsletter */}
           <motion.div variants={fadeInUp} className="space-y-6">
-            <h3 className="text-lg font-galindo text-primary font-semibold mb-4">Śledź nas</h3>
+            <h3 className="text-lg text-primary font-semibold mb-4">Śledź nas</h3>
             <div className="flex gap-4">
               <a
                 href="https://instagram.com/dr.coco"

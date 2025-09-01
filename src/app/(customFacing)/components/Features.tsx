@@ -37,7 +37,7 @@ const FeatureCard = ({ icon: Icon, title }: { icon: React.ElementType; title: st
           <Icon className="h-10 w-10 text-primary" strokeWidth={1.5} />
         </div>
       </div>
-      <h3 className="text-lg font-galindo text-primary">{title}</h3>
+      <h3 className="text-lg  text-primary">{title}</h3>
     </div>
   </motion.div>
 );

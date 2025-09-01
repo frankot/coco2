@@ -118,7 +118,7 @@ export function HeroClient({ products }: HeroClientProps) {
                     {/* Title */}
                     <h1 className="text-4xl lg:text-5xl xl:text-6xl font-bold text-white leading-tight">
                       {slide.title}
-                      <span className="block text-3xl lg:text-4xl xl:text-5xl font-galindo">
+                      <span className="block text-3xl lg:text-4xl xl:text-5xl">
                         {slide.subtitle}
                       </span>
                     </h1>
