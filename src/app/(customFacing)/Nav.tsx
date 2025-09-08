@@ -69,6 +69,7 @@ function UserAccountMenu() {
 export function Nav({ children }: { children: React.ReactNode }) {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [scrollY, setScrollY] = useState(0);
 
   // Load cart items
   useEffect(() => {
@@ -109,7 +110,25 @@ export function Nav({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
+  // Handle scroll for logo animation
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollY(window.scrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   const cartItemCount = cartItems?.reduce((sum, item) => sum + (item?.quantity || 0), 0) || 0;
+
+  // Calculate logo scale and margin based on scroll
+  const maxScroll = 150; // Maximum scroll distance for animation
+  const scrollProgress = Math.min(scrollY / maxScroll, 1); // 0 to 1
+  const logoScale = 1.8 - (scrollProgress * 1.1); // Scale from 1.8 to 0.7
+  const logoMarginTop = 48 - (scrollProgress * 48); // Margin from 48px to 0px
+  const logoPadding = 8 - (scrollProgress * 8); // Padding from 8px to 0px
+  const logoHeight = 80 - (scrollProgress * 24); // Height from 80px to 56px
 
   return (
     <>
@@ -121,7 +140,14 @@ export function Nav({ children }: { children: React.ReactNode }) {
             <div className="flex-1 flex items-center space-x-8">{children}</div>
 
             {/* Center - Logo */}
-            <div className="flex-shrink-0 overflow-visible rounded-full bg-stone-50 p-2  mt-12 z-20">
+            <div 
+              className="flex-shrink-0 overflow-visible rounded-full bg-stone-50 p-2 z-20 transition-all duration-300 ease-out"
+              style={{
+                marginTop: `${logoMarginTop}px`,
+                transform: `scale(${logoScale})`,
+                transformOrigin: 'center'
+              }}
+            >
               <Link href="/">
                 <Image src="/logo.png" alt="Logo" width={80} height={80} className="w-auto h-20" />
               </Link>
