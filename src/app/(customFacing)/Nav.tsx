@@ -125,10 +125,9 @@ export function Nav({ children }: { children: React.ReactNode }) {
   // Calculate logo scale and margin based on scroll
   const maxScroll = 150; // Maximum scroll distance for animation
   const scrollProgress = Math.min(scrollY / maxScroll, 1); // 0 to 1
-  const logoScale = 1.8 - (scrollProgress * 1.1); // Scale from 1.8 to 0.7
+  const logoScale = 1 - (scrollProgress * 0.3); // Scale from 1.0 to 0.7 (scaling down instead of up)
   const logoMarginTop = 48 - (scrollProgress * 48); // Margin from 48px to 0px
   const logoPadding = 8 - (scrollProgress * 8); // Padding from 8px to 0px
-  const logoHeight = 80 - (scrollProgress * 24); // Height from 80px to 56px
 
   return (
     <>
@@ -141,15 +140,24 @@ export function Nav({ children }: { children: React.ReactNode }) {
 
             {/* Center - Logo */}
             <div 
-              className="flex-shrink-0 overflow-visible rounded-full bg-stone-50 p-2 z-20 transition-all duration-300 ease-out"
+              className="flex-shrink-0 overflow-visible z-20 transition-all duration-300 ease-out"
               style={{
                 marginTop: `${logoMarginTop}px`,
                 transform: `scale(${logoScale})`,
-                transformOrigin: 'center'
+                transformOrigin: 'center',
+                borderRadius: `${scrollProgress < 1 ? '50%' : '0'}`,
+                backgroundColor: scrollProgress < 1 ? 'rgb(250 250 249)' : 'transparent',
+                padding: `${logoPadding}px`
               }}
             >
               <Link href="/">
-                <Image src="/logo.png" alt="Logo" width={80} height={80} className="w-auto h-20" />
+                <Image 
+                  src="/logo.png" 
+                  alt="Logo" 
+                  width={144} 
+                  height={144} 
+                  className="w-auto h-36 transition-all duration-300 ease-out"
+                />
               </Link>
             </div>
 
