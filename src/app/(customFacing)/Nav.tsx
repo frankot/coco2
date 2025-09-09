@@ -125,7 +125,7 @@ export function Nav({ children }: { children: React.ReactNode }) {
   // Calculate logo scale and margin based on scroll
   const maxScroll = 150; // Maximum scroll distance for animation
   const scrollProgress = Math.min(scrollY / maxScroll, 1); // 0 to 1
-  const logoScale = 1 - (scrollProgress * 0.3); // Scale from 1.0 to 0.7 (scaling down instead of up)
+  const logoScale = 1 - (scrollProgress * 0.4); // Scale from 1.0 to 0.7 (scaling down instead of up)
   const logoMarginTop = 48 - (scrollProgress * 48); // Margin from 48px to 0px
   const logoPadding = 8 - (scrollProgress * 8); // Padding from 8px to 0px
 
