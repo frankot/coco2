@@ -70,6 +70,10 @@ export function Nav({ children }: { children: React.ReactNode }) {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [scrollY, setScrollY] = useState(0);
+  const pathname = usePathname();
+
+  // Check if we're on the main page
+  const isMainPage = pathname === "/";
 
   // Load cart items
   useEffect(() => {
@@ -110,24 +114,28 @@ export function Nav({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  // Handle scroll for logo animation
+  // Handle scroll for logo animation (only on main page)
   useEffect(() => {
+    if (!isMainPage) return;
+
     const handleScroll = () => {
       setScrollY(window.scrollY);
     };
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [isMainPage]);
 
   const cartItemCount = cartItems?.reduce((sum, item) => sum + (item?.quantity || 0), 0) || 0;
 
-  // Calculate logo scale and margin based on scroll
-  const maxScroll = 150; // Maximum scroll distance for animation
-  const scrollProgress = Math.min(scrollY / maxScroll, 1); // 0 to 1
-  const logoScale = 1 - (scrollProgress * 0.4); // Scale from 1.0 to 0.7 (scaling down instead of up)
-  const logoMarginTop = 48 - (scrollProgress * 48); // Margin from 48px to 0px
-  const logoPadding = 8 - (scrollProgress * 8); // Padding from 8px to 0px
+  // Simplified logo sizing - use same height for consistency
+  const maxScroll = 150;
+  const scrollProgress = isMainPage ? Math.min(scrollY / maxScroll, 1) : 1;
+  const logoMarginTop = isMainPage ? 48 - scrollProgress * 48 : 0;
+  const logoPadding = isMainPage ? 8 - scrollProgress * 8 : 0;
+
+  // Use same height class for both states to ensure consistency
+  const logoHeight = isMainPage && scrollProgress < 1 ? "h-36" : "h-20";
 
   return (
     <>
@@ -139,24 +147,24 @@ export function Nav({ children }: { children: React.ReactNode }) {
             <div className="flex-1 flex items-center space-x-8">{children}</div>
 
             {/* Center - Logo */}
-            <div 
+            <div
               className="flex-shrink-0 overflow-visible z-20 transition-all duration-300 ease-out"
               style={{
                 marginTop: `${logoMarginTop}px`,
-                transform: `scale(${logoScale})`,
-                transformOrigin: 'center',
-                borderRadius: `${scrollProgress < 1 ? '50%' : '0'}`,
-                backgroundColor: scrollProgress < 1 ? 'rgb(250 250 249)' : 'transparent',
-                padding: `${logoPadding}px`
+                transformOrigin: "center",
+                borderRadius: `${isMainPage && scrollProgress < 1 ? "50%" : "0"}`,
+                backgroundColor:
+                  isMainPage && scrollProgress < 1 ? "rgb(250 250 249)" : "transparent",
+                padding: `${logoPadding}px`,
               }}
             >
               <Link href="/">
-                <Image 
-                  src="/logo.png" 
-                  alt="Logo" 
-                  width={144} 
-                  height={144} 
-                  className="w-auto h-36 transition-all duration-300 ease-out"
+                <Image
+                  src="/logo.png"
+                  alt="Logo"
+                  width={144}
+                  height={144}
+                  className={`w-auto transition-all duration-300 ease-out ${logoHeight}`}
                 />
               </Link>
             </div>

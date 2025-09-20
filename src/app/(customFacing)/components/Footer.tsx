@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { Instagram, Facebook, Twitter, Youtube, Mail, Phone, MapPin } from "lucide-react";
@@ -8,42 +7,12 @@ import { Instagram, Facebook, Twitter, Youtube, Mail, Phone, MapPin } from "luci
 export function Footer() {
   const currentYear = new Date().getFullYear();
 
-  // Animation variants for staggered entrance
-  const staggerContainer = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2,
-      },
-    },
-  };
-
-  const fadeInUp = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.5,
-        ease: "easeOut",
-      },
-    },
-  };
-
   return (
-    <footer className=" mx-10 pt-16 pb-8">
+    <footer className="mx-10 pt-16 pb-8">
       <div className="container mx-auto px-4">
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.1 }}
-          variants={staggerContainer}
-        >
-          {/* Logo and About */}
-          <motion.div variants={fadeInUp} className="space-y-6">
+        <div className="flex flex-col lg:flex-row gap-10 lg:gap-16">
+          {/* Column 1: Logo, About & Social Links */}
+          <div className="flex-1 space-y-6">
             <Link href="/" className="block mb-4">
               <Image
                 src="/logo.png"
@@ -53,15 +22,50 @@ export function Footer() {
                 className="object-contain"
               />
             </Link>
-            <p className="text-sm/relaxed text-gray-600 pr-4">
-              Dr.Coco to naturalna woda kokosowa bez dodatku cukru i konserwantów. Nasze produkty są
-              bogate w elektrolity i minerały, idealne dla osób prowadzących aktywny tryb życia.
-            </p>
-          </motion.div>
 
-          {/* Quick Links */}
-          <motion.div variants={fadeInUp} className="space-y-6">
-            <h3 className="text-lg text-primary font-semibold mb-4">Szybkie linki</h3>
+            <div className="flex gap-4">
+              <a
+                href="https://instagram.com/dr.coco"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 rounded-full shadow-sm hover:bg-primary hover:text-white transition-colors"
+                aria-label="Instagram"
+              >
+                <Instagram size={20} />
+              </a>
+              <a
+                href="https://facebook.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 rounded-full shadow-sm hover:bg-primary hover:text-white transition-colors"
+                aria-label="Facebook"
+              >
+                <Facebook size={20} />
+              </a>
+              <a
+                href="https://twitter.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 rounded-full shadow-sm hover:bg-primary hover:text-white transition-colors"
+                aria-label="Twitter"
+              >
+                <Twitter size={20} />
+              </a>
+              <a
+                href="https://youtube.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 rounded-full shadow-sm hover:bg-primary hover:text-white transition-colors"
+                aria-label="YouTube"
+              >
+                <Youtube size={20} />
+              </a>
+            </div>
+          </div>
+
+          {/* Column 2: Quick Links */}
+          <div className="flex-1">
+            <h3 className="text-lg text-primary font-semibold mb-4">Linki</h3>
             <ul className="space-y-3">
               <li>
                 <Link href="/" className="text-gray-600 hover:text-primary transition-colors">
@@ -92,10 +96,10 @@ export function Footer() {
                 </Link>
               </li>
             </ul>
-          </motion.div>
+          </div>
 
-          {/* Contact Info */}
-          <motion.div variants={fadeInUp} className="space-y-6">
+          {/* Column 3: Contact Info */}
+          <div className="flex-1">
             <h3 className="text-lg text-primary font-semibold mb-4">Kontakt</h3>
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
@@ -125,84 +129,46 @@ export function Footer() {
                 </a>
               </li>
             </ul>
-          </motion.div>
+          </div>
 
-          {/* Social Media and Newsletter */}
-          <motion.div variants={fadeInUp} className="space-y-6">
-            <h3 className="text-lg text-primary font-semibold mb-4">Śledź nas</h3>
-            <div className="flex gap-4">
-              <a
-                href="https://instagram.com/dr.coco"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2 rounded-full shadow-sm hover:bg-primary hover:text-white transition-colors"
-                aria-label="Instagram"
-              >
-                <Instagram size={20} />
-              </a>
-              <a
-                href="https://facebook.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className=" p-2 rounded-full shadow-sm hover:bg-primary hover:text-white transition-colors"
-                aria-label="Facebook"
-              >
-                <Facebook size={20} />
-              </a>
-              <a
-                href="https://twitter.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className=" p-2 rounded-full shadow-sm hover:bg-primary hover:text-white transition-colors"
-                aria-label="Twitter"
-              >
-                <Twitter size={20} />
-              </a>
-              <a
-                href="https://youtube.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className=" p-2 rounded-full shadow-sm hover:bg-primary hover:text-white transition-colors"
-                aria-label="YouTube"
-              >
-                <Youtube size={20} />
-              </a>
-            </div>
-          </motion.div>
-        </motion.div>
+          {/* Column 4: Legal Links */}
+          <div className="flex-1">
+            <h3 className="text-lg text-primary font-semibold mb-4">Informacje prawne</h3>
+            <ul className="space-y-3">
+              <li>
+                <Link
+                  href="/privacy"
+                  className="text-gray-600 hover:text-primary transition-colors"
+                >
+                  Polityka prywatności
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/terms"
+                  className="text-gray-600 hover:text-primary transition-colors"
+                >
+                  Warunki użytkowania
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/cookies"
+                  className="text-gray-600 hover:text-primary transition-colors"
+                >
+                  Polityka cookies
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </div>
 
-        {/* Bottom area with copyright and policy links */}
-        <motion.div
-          className="mt-16 pt-8 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center gap-4"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.6 }}
-        >
+        {/* Bottom copyright */}
+        {/* <div className="mt-16 pt-8 border-t border-gray-200 text-center">
           <p className="text-sm text-gray-500">
             &copy; {currentYear} Dr.Coco. Wszystkie prawa zastrzeżone.
           </p>
-          <div className="flex gap-6">
-            <Link
-              href="/privacy"
-              className="text-sm text-gray-500 hover:text-primary transition-colors"
-            >
-              Polityka prywatności
-            </Link>
-            <Link
-              href="/terms"
-              className="text-sm text-gray-500 hover:text-primary transition-colors"
-            >
-              Warunki użytkowania
-            </Link>
-            <Link
-              href="/cookies"
-              className="text-sm text-gray-500 hover:text-primary transition-colors"
-            >
-              Polityka cookies
-            </Link>
-          </div>
-        </motion.div>
+        </div> */}
       </div>
     </footer>
   );

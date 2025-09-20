@@ -2,32 +2,22 @@ import { About } from "./components/About";
 import { InstaCaru } from "./components/InstaCaru2";
 import Features from "./components/Features";
 import { Hero } from "./components/Hero";
-import { Faq } from "@/app/(customFacing)/components/Faq";
-import { Hero2 } from "./components/Hero2";
 import { Newsletter } from "./components/Newsletter";
 import { FeaturedArticles } from "./components/FeaturedArticles";
-import Hero3 from "./components/Hero3";
 import { BackgroundWrapper } from "./components/BackgroundWrapper";
 import FeaturedProducts from "./components/FeaturedProducts";
-import { Divider } from "@/components/ui/divider";
 
 export default function Home() {
   return (
     <BackgroundWrapper>
       <div className="min-h-[200vh] flex flex-col overflow-x-hidden">
         <main>
-          {/* <Hero3 />
-          <Hero2 /> */}
           <Hero />
     
           <FeaturedProducts />
-          <Divider variant="logo" size="lg" className="my-10" />
           <About />
-          <Divider variant="logo" size="lg" className="my-20" />
-          <Faq />
 
           <FeaturedArticles />
-          <Divider variant="logo" size="lg" className="my-20" />
           <InstaCaru />
 
           <Features />
