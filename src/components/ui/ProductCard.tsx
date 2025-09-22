@@ -30,6 +30,7 @@ export function ProductCardSkeleton() {
 
 export default function ProductCard({ product }: ProductCardProps) {
   const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const { addToCart } = useCart();
 
   const handleAddToCart = async () => {
@@ -39,19 +40,44 @@ export default function ProductCard({ product }: ProductCardProps) {
     setIsAddingToCart(false);
   };
 
+  // Get the images to display
+  const mainImage = product.imagePaths[0] || "";
+  const hoverImage = product.imagePaths[1] || mainImage;
+  const hasMultipleImages = product.imagePaths.length > 1;
+
   return (
-    <div className="rounded-xl overflow-hidden hover:scale-[1.02] transition-all duration-300 group ">
+    <div 
+      className="rounded-xl overflow-hidden hover:scale-[1.02] transition-all duration-300 group"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       {/* Image container with centered badge */}
       <div className="relative">
         <div className="w-full h-80 relative overflow-visible">
+          {/* Main image */}
           <Image
-            src={product.imagePath}
+            src={mainImage}
             alt={product.name}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            className="object-contain p-4 group-hover:scale-105 transition-transform duration-300"
+            className={`object-contain p-4 group-hover:scale-105 transition-all duration-300 ${
+              hasMultipleImages && isHovered ? 'opacity-0' : 'opacity-100'
+            }`}
             priority
           />
+          
+          {/* Hover image (only rendered if multiple images exist) */}
+          {hasMultipleImages && (
+            <Image
+              src={hoverImage}
+              alt={`${product.name} - alternate view`}
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className={`object-contain p-4 group-hover:scale-105 transition-all duration-300 ${
+                isHovered ? 'opacity-100' : 'opacity-0'
+              }`}
+            />
+          )}
         </div>
 
         {/* Centered badge */}

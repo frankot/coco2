@@ -1582,12 +1582,10 @@ export namespace Prisma {
     name: string | null
     price: number | null
     priceInCents: number | null
-    imagePath: string | null
     description: string | null
     isAvailable: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
-    imagePublicId: string | null
   }
 
   export type ProductMaxAggregateOutputType = {
@@ -1595,12 +1593,10 @@ export namespace Prisma {
     name: string | null
     price: number | null
     priceInCents: number | null
-    imagePath: string | null
     description: string | null
     isAvailable: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
-    imagePublicId: string | null
   }
 
   export type ProductCountAggregateOutputType = {
@@ -1608,12 +1604,12 @@ export namespace Prisma {
     name: number
     price: number
     priceInCents: number
-    imagePath: number
+    imagePaths: number
     description: number
     isAvailable: number
     createdAt: number
     updatedAt: number
-    imagePublicId: number
+    imagePublicIds: number
     _all: number
   }
 
@@ -1633,12 +1629,10 @@ export namespace Prisma {
     name?: true
     price?: true
     priceInCents?: true
-    imagePath?: true
     description?: true
     isAvailable?: true
     createdAt?: true
     updatedAt?: true
-    imagePublicId?: true
   }
 
   export type ProductMaxAggregateInputType = {
@@ -1646,12 +1640,10 @@ export namespace Prisma {
     name?: true
     price?: true
     priceInCents?: true
-    imagePath?: true
     description?: true
     isAvailable?: true
     createdAt?: true
     updatedAt?: true
-    imagePublicId?: true
   }
 
   export type ProductCountAggregateInputType = {
@@ -1659,12 +1651,12 @@ export namespace Prisma {
     name?: true
     price?: true
     priceInCents?: true
-    imagePath?: true
+    imagePaths?: true
     description?: true
     isAvailable?: true
     createdAt?: true
     updatedAt?: true
-    imagePublicId?: true
+    imagePublicIds?: true
     _all?: true
   }
 
@@ -1759,12 +1751,12 @@ export namespace Prisma {
     name: string
     price: number
     priceInCents: number
-    imagePath: string
+    imagePaths: string[]
     description: string
     isAvailable: boolean
     createdAt: Date
     updatedAt: Date
-    imagePublicId: string | null
+    imagePublicIds: string[]
     _count: ProductCountAggregateOutputType | null
     _avg: ProductAvgAggregateOutputType | null
     _sum: ProductSumAggregateOutputType | null
@@ -1791,12 +1783,12 @@ export namespace Prisma {
     name?: boolean
     price?: boolean
     priceInCents?: boolean
-    imagePath?: boolean
+    imagePaths?: boolean
     description?: boolean
     isAvailable?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    imagePublicId?: boolean
+    imagePublicIds?: boolean
     orderItems?: boolean | Product$orderItemsArgs<ExtArgs>
     _count?: boolean | ProductCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["product"]>
@@ -1806,12 +1798,12 @@ export namespace Prisma {
     name?: boolean
     price?: boolean
     priceInCents?: boolean
-    imagePath?: boolean
+    imagePaths?: boolean
     description?: boolean
     isAvailable?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    imagePublicId?: boolean
+    imagePublicIds?: boolean
   }, ExtArgs["result"]["product"]>
 
   export type ProductSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -1819,12 +1811,12 @@ export namespace Prisma {
     name?: boolean
     price?: boolean
     priceInCents?: boolean
-    imagePath?: boolean
+    imagePaths?: boolean
     description?: boolean
     isAvailable?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    imagePublicId?: boolean
+    imagePublicIds?: boolean
   }, ExtArgs["result"]["product"]>
 
   export type ProductSelectScalar = {
@@ -1832,15 +1824,15 @@ export namespace Prisma {
     name?: boolean
     price?: boolean
     priceInCents?: boolean
-    imagePath?: boolean
+    imagePaths?: boolean
     description?: boolean
     isAvailable?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    imagePublicId?: boolean
+    imagePublicIds?: boolean
   }
 
-  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "price" | "priceInCents" | "imagePath" | "description" | "isAvailable" | "createdAt" | "updatedAt" | "imagePublicId", ExtArgs["result"]["product"]>
+  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "price" | "priceInCents" | "imagePaths" | "description" | "isAvailable" | "createdAt" | "updatedAt" | "imagePublicIds", ExtArgs["result"]["product"]>
   export type ProductInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     orderItems?: boolean | Product$orderItemsArgs<ExtArgs>
     _count?: boolean | ProductCountOutputTypeDefaultArgs<ExtArgs>
@@ -1858,12 +1850,12 @@ export namespace Prisma {
       name: string
       price: number
       priceInCents: number
-      imagePath: string
+      imagePaths: string[]
       description: string
       isAvailable: boolean
       createdAt: Date
       updatedAt: Date
-      imagePublicId: string | null
+      imagePublicIds: string[]
     }, ExtArgs["result"]["product"]>
     composites: {}
   }
@@ -2292,12 +2284,12 @@ export namespace Prisma {
     readonly name: FieldRef<"Product", 'String'>
     readonly price: FieldRef<"Product", 'Int'>
     readonly priceInCents: FieldRef<"Product", 'Int'>
-    readonly imagePath: FieldRef<"Product", 'String'>
+    readonly imagePaths: FieldRef<"Product", 'String[]'>
     readonly description: FieldRef<"Product", 'String'>
     readonly isAvailable: FieldRef<"Product", 'Boolean'>
     readonly createdAt: FieldRef<"Product", 'DateTime'>
     readonly updatedAt: FieldRef<"Product", 'DateTime'>
-    readonly imagePublicId: FieldRef<"Product", 'String'>
+    readonly imagePublicIds: FieldRef<"Product", 'String[]'>
   }
     
 
@@ -8640,12 +8632,12 @@ export namespace Prisma {
     name: 'name',
     price: 'price',
     priceInCents: 'priceInCents',
-    imagePath: 'imagePath',
+    imagePaths: 'imagePaths',
     description: 'description',
     isAvailable: 'isAvailable',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
-    imagePublicId: 'imagePublicId'
+    imagePublicIds: 'imagePublicIds'
   };
 
   export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeof ProductScalarFieldEnum]
@@ -8900,12 +8892,12 @@ export namespace Prisma {
     name?: StringFilter<"Product"> | string
     price?: IntFilter<"Product"> | number
     priceInCents?: IntFilter<"Product"> | number
-    imagePath?: StringFilter<"Product"> | string
+    imagePaths?: StringNullableListFilter<"Product">
     description?: StringFilter<"Product"> | string
     isAvailable?: BoolFilter<"Product"> | boolean
     createdAt?: DateTimeFilter<"Product"> | Date | string
     updatedAt?: DateTimeFilter<"Product"> | Date | string
-    imagePublicId?: StringNullableFilter<"Product"> | string | null
+    imagePublicIds?: StringNullableListFilter<"Product">
     orderItems?: OrderItemListRelationFilter
   }
 
@@ -8914,12 +8906,12 @@ export namespace Prisma {
     name?: SortOrder
     price?: SortOrder
     priceInCents?: SortOrder
-    imagePath?: SortOrder
+    imagePaths?: SortOrder
     description?: SortOrder
     isAvailable?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    imagePublicId?: SortOrderInput | SortOrder
+    imagePublicIds?: SortOrder
     orderItems?: OrderItemOrderByRelationAggregateInput
   }
 
@@ -8931,12 +8923,12 @@ export namespace Prisma {
     name?: StringFilter<"Product"> | string
     price?: IntFilter<"Product"> | number
     priceInCents?: IntFilter<"Product"> | number
-    imagePath?: StringFilter<"Product"> | string
+    imagePaths?: StringNullableListFilter<"Product">
     description?: StringFilter<"Product"> | string
     isAvailable?: BoolFilter<"Product"> | boolean
     createdAt?: DateTimeFilter<"Product"> | Date | string
     updatedAt?: DateTimeFilter<"Product"> | Date | string
-    imagePublicId?: StringNullableFilter<"Product"> | string | null
+    imagePublicIds?: StringNullableListFilter<"Product">
     orderItems?: OrderItemListRelationFilter
   }, "id">
 
@@ -8945,12 +8937,12 @@ export namespace Prisma {
     name?: SortOrder
     price?: SortOrder
     priceInCents?: SortOrder
-    imagePath?: SortOrder
+    imagePaths?: SortOrder
     description?: SortOrder
     isAvailable?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    imagePublicId?: SortOrderInput | SortOrder
+    imagePublicIds?: SortOrder
     _count?: ProductCountOrderByAggregateInput
     _avg?: ProductAvgOrderByAggregateInput
     _max?: ProductMaxOrderByAggregateInput
@@ -8966,12 +8958,12 @@ export namespace Prisma {
     name?: StringWithAggregatesFilter<"Product"> | string
     price?: IntWithAggregatesFilter<"Product"> | number
     priceInCents?: IntWithAggregatesFilter<"Product"> | number
-    imagePath?: StringWithAggregatesFilter<"Product"> | string
+    imagePaths?: StringNullableListFilter<"Product">
     description?: StringWithAggregatesFilter<"Product"> | string
     isAvailable?: BoolWithAggregatesFilter<"Product"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"Product"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Product"> | Date | string
-    imagePublicId?: StringNullableWithAggregatesFilter<"Product"> | string | null
+    imagePublicIds?: StringNullableListFilter<"Product">
   }
 
   export type UserWhereInput = {
@@ -9395,12 +9387,12 @@ export namespace Prisma {
     name: string
     price: number
     priceInCents: number
-    imagePath: string
+    imagePaths?: ProductCreateimagePathsInput | string[]
     description: string
     isAvailable?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
-    imagePublicId?: string | null
+    imagePublicIds?: ProductCreateimagePublicIdsInput | string[]
     orderItems?: OrderItemCreateNestedManyWithoutProductInput
   }
 
@@ -9409,12 +9401,12 @@ export namespace Prisma {
     name: string
     price: number
     priceInCents: number
-    imagePath: string
+    imagePaths?: ProductCreateimagePathsInput | string[]
     description: string
     isAvailable?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
-    imagePublicId?: string | null
+    imagePublicIds?: ProductCreateimagePublicIdsInput | string[]
     orderItems?: OrderItemUncheckedCreateNestedManyWithoutProductInput
   }
 
@@ -9423,12 +9415,12 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     price?: IntFieldUpdateOperationsInput | number
     priceInCents?: IntFieldUpdateOperationsInput | number
-    imagePath?: StringFieldUpdateOperationsInput | string
+    imagePaths?: ProductUpdateimagePathsInput | string[]
     description?: StringFieldUpdateOperationsInput | string
     isAvailable?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    imagePublicId?: NullableStringFieldUpdateOperationsInput | string | null
+    imagePublicIds?: ProductUpdateimagePublicIdsInput | string[]
     orderItems?: OrderItemUpdateManyWithoutProductNestedInput
   }
 
@@ -9437,12 +9429,12 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     price?: IntFieldUpdateOperationsInput | number
     priceInCents?: IntFieldUpdateOperationsInput | number
-    imagePath?: StringFieldUpdateOperationsInput | string
+    imagePaths?: ProductUpdateimagePathsInput | string[]
     description?: StringFieldUpdateOperationsInput | string
     isAvailable?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    imagePublicId?: NullableStringFieldUpdateOperationsInput | string | null
+    imagePublicIds?: ProductUpdateimagePublicIdsInput | string[]
     orderItems?: OrderItemUncheckedUpdateManyWithoutProductNestedInput
   }
 
@@ -9451,12 +9443,12 @@ export namespace Prisma {
     name: string
     price: number
     priceInCents: number
-    imagePath: string
+    imagePaths?: ProductCreateimagePathsInput | string[]
     description: string
     isAvailable?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
-    imagePublicId?: string | null
+    imagePublicIds?: ProductCreateimagePublicIdsInput | string[]
   }
 
   export type ProductUpdateManyMutationInput = {
@@ -9464,12 +9456,12 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     price?: IntFieldUpdateOperationsInput | number
     priceInCents?: IntFieldUpdateOperationsInput | number
-    imagePath?: StringFieldUpdateOperationsInput | string
+    imagePaths?: ProductUpdateimagePathsInput | string[]
     description?: StringFieldUpdateOperationsInput | string
     isAvailable?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    imagePublicId?: NullableStringFieldUpdateOperationsInput | string | null
+    imagePublicIds?: ProductUpdateimagePublicIdsInput | string[]
   }
 
   export type ProductUncheckedUpdateManyInput = {
@@ -9477,12 +9469,12 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     price?: IntFieldUpdateOperationsInput | number
     priceInCents?: IntFieldUpdateOperationsInput | number
-    imagePath?: StringFieldUpdateOperationsInput | string
+    imagePaths?: ProductUpdateimagePathsInput | string[]
     description?: StringFieldUpdateOperationsInput | string
     isAvailable?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    imagePublicId?: NullableStringFieldUpdateOperationsInput | string | null
+    imagePublicIds?: ProductUpdateimagePublicIdsInput | string[]
   }
 
   export type UserCreateInput = {
@@ -9958,6 +9950,14 @@ export namespace Prisma {
     not?: NestedIntFilter<$PrismaModel> | number
   }
 
+  export type StringNullableListFilter<$PrismaModel = never> = {
+    equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    has?: string | StringFieldRefInput<$PrismaModel> | null
+    hasEvery?: string[] | ListStringFieldRefInput<$PrismaModel>
+    hasSome?: string[] | ListStringFieldRefInput<$PrismaModel>
+    isEmpty?: boolean
+  }
+
   export type BoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
@@ -9974,30 +9974,10 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
-  export type StringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
-  }
-
   export type OrderItemListRelationFilter = {
     every?: OrderItemWhereInput
     some?: OrderItemWhereInput
     none?: OrderItemWhereInput
-  }
-
-  export type SortOrderInput = {
-    sort: SortOrder
-    nulls?: NullsOrder
   }
 
   export type OrderItemOrderByRelationAggregateInput = {
@@ -10009,12 +9989,12 @@ export namespace Prisma {
     name?: SortOrder
     price?: SortOrder
     priceInCents?: SortOrder
-    imagePath?: SortOrder
+    imagePaths?: SortOrder
     description?: SortOrder
     isAvailable?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    imagePublicId?: SortOrder
+    imagePublicIds?: SortOrder
   }
 
   export type ProductAvgOrderByAggregateInput = {
@@ -10027,12 +10007,10 @@ export namespace Prisma {
     name?: SortOrder
     price?: SortOrder
     priceInCents?: SortOrder
-    imagePath?: SortOrder
     description?: SortOrder
     isAvailable?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    imagePublicId?: SortOrder
   }
 
   export type ProductMinOrderByAggregateInput = {
@@ -10040,12 +10018,10 @@ export namespace Prisma {
     name?: SortOrder
     price?: SortOrder
     priceInCents?: SortOrder
-    imagePath?: SortOrder
     description?: SortOrder
     isAvailable?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    imagePublicId?: SortOrder
   }
 
   export type ProductSumOrderByAggregateInput = {
@@ -10109,7 +10085,7 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
-  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
+  export type StringNullableFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
     notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -10121,10 +10097,7 @@ export namespace Prisma {
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     mode?: QueryMode
-    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
   export type EnumAccountTypeFilter<$PrismaModel = never> = {
@@ -10150,6 +10123,11 @@ export namespace Prisma {
     every?: PaymentWhereInput
     some?: PaymentWhereInput
     none?: PaymentWhereInput
+  }
+
+  export type SortOrderInput = {
+    sort: SortOrder
+    nulls?: NullsOrder
   }
 
   export type OrderOrderByRelationAggregateInput = {
@@ -10198,6 +10176,24 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     accountType?: SortOrder
+  }
+
+  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type EnumAccountTypeWithAggregatesFilter<$PrismaModel = never> = {
@@ -10475,6 +10471,14 @@ export namespace Prisma {
     _max?: NestedEnumPaymentStatusFilter<$PrismaModel>
   }
 
+  export type ProductCreateimagePathsInput = {
+    set: string[]
+  }
+
+  export type ProductCreateimagePublicIdsInput = {
+    set: string[]
+  }
+
   export type OrderItemCreateNestedManyWithoutProductInput = {
     create?: XOR<OrderItemCreateWithoutProductInput, OrderItemUncheckedCreateWithoutProductInput> | OrderItemCreateWithoutProductInput[] | OrderItemUncheckedCreateWithoutProductInput[]
     connectOrCreate?: OrderItemCreateOrConnectWithoutProductInput | OrderItemCreateOrConnectWithoutProductInput[]
@@ -10501,6 +10505,11 @@ export namespace Prisma {
     divide?: number
   }
 
+  export type ProductUpdateimagePathsInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
   export type BoolFieldUpdateOperationsInput = {
     set?: boolean
   }
@@ -10509,8 +10518,9 @@ export namespace Prisma {
     set?: Date | string
   }
 
-  export type NullableStringFieldUpdateOperationsInput = {
-    set?: string | null
+  export type ProductUpdateimagePublicIdsInput = {
+    set?: string[]
+    push?: string | string[]
   }
 
   export type OrderItemUpdateManyWithoutProductNestedInput = {
@@ -10581,6 +10591,10 @@ export namespace Prisma {
     connectOrCreate?: PaymentCreateOrConnectWithoutUserInput | PaymentCreateOrConnectWithoutUserInput[]
     createMany?: PaymentCreateManyUserInputEnvelope
     connect?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+  }
+
+  export type NullableStringFieldUpdateOperationsInput = {
+    set?: string | null
   }
 
   export type EnumAccountTypeFieldUpdateOperationsInput = {
@@ -11008,20 +11022,6 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
-  export type NestedStringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
-  }
-
   export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -11088,6 +11088,27 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type NestedStringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type NestedEnumAccountTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.AccountType | EnumAccountTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.AccountType[] | ListEnumAccountTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.AccountType[] | ListEnumAccountTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumAccountTypeFilter<$PrismaModel> | $Enums.AccountType
+  }
+
   export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -11114,13 +11135,6 @@ export namespace Prisma {
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
-  }
-
-  export type NestedEnumAccountTypeFilter<$PrismaModel = never> = {
-    equals?: $Enums.AccountType | EnumAccountTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.AccountType[] | ListEnumAccountTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.AccountType[] | ListEnumAccountTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumAccountTypeFilter<$PrismaModel> | $Enums.AccountType
   }
 
   export type NestedEnumAccountTypeWithAggregatesFilter<$PrismaModel = never> = {
@@ -11996,12 +12010,12 @@ export namespace Prisma {
     name: string
     price: number
     priceInCents: number
-    imagePath: string
+    imagePaths?: ProductCreateimagePathsInput | string[]
     description: string
     isAvailable?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
-    imagePublicId?: string | null
+    imagePublicIds?: ProductCreateimagePublicIdsInput | string[]
   }
 
   export type ProductUncheckedCreateWithoutOrderItemsInput = {
@@ -12009,12 +12023,12 @@ export namespace Prisma {
     name: string
     price: number
     priceInCents: number
-    imagePath: string
+    imagePaths?: ProductCreateimagePathsInput | string[]
     description: string
     isAvailable?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
-    imagePublicId?: string | null
+    imagePublicIds?: ProductCreateimagePublicIdsInput | string[]
   }
 
   export type ProductCreateOrConnectWithoutOrderItemsInput = {
@@ -12079,12 +12093,12 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     price?: IntFieldUpdateOperationsInput | number
     priceInCents?: IntFieldUpdateOperationsInput | number
-    imagePath?: StringFieldUpdateOperationsInput | string
+    imagePaths?: ProductUpdateimagePathsInput | string[]
     description?: StringFieldUpdateOperationsInput | string
     isAvailable?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    imagePublicId?: NullableStringFieldUpdateOperationsInput | string | null
+    imagePublicIds?: ProductUpdateimagePublicIdsInput | string[]
   }
 
   export type ProductUncheckedUpdateWithoutOrderItemsInput = {
@@ -12092,12 +12106,12 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     price?: IntFieldUpdateOperationsInput | number
     priceInCents?: IntFieldUpdateOperationsInput | number
-    imagePath?: StringFieldUpdateOperationsInput | string
+    imagePaths?: ProductUpdateimagePathsInput | string[]
     description?: StringFieldUpdateOperationsInput | string
     isAvailable?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    imagePublicId?: NullableStringFieldUpdateOperationsInput | string | null
+    imagePublicIds?: ProductUpdateimagePublicIdsInput | string[]
   }
 
   export type OrderCreateWithoutPaymentsInput = {

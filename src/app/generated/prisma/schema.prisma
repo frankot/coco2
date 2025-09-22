@@ -41,17 +41,17 @@ enum AddressType {
 }
 
 model Product {
-  id            String      @id @default(uuid())
-  name          String
-  price         Int
-  priceInCents  Int
-  imagePath     String
-  description   String
-  isAvailable   Boolean     @default(true)
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
-  imagePublicId String?
-  orderItems    OrderItem[]
+  id             String      @id @default(uuid())
+  name           String
+  price          Int
+  priceInCents   Int
+  imagePaths     String[]
+  description    String
+  isAvailable    Boolean     @default(true)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  imagePublicIds String[]
+  orderItems     OrderItem[]
 }
 
 model User {

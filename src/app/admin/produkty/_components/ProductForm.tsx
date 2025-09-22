@@ -10,12 +10,14 @@ import { addProduct, updateProduct } from "../../_actions/products";
 import type { Product } from "@/app/generated/prisma/client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { X, Plus } from "lucide-react";
 
 export default function ProductForm({ product }: { product?: Product | null }) {
   const formRef = useRef<HTMLFormElement>(null);
   const [priceInCents, setPriceInCents] = useState<string>(product?.priceInCents?.toString() || "");
-  const [fileName, setFileName] = useState<string>(product?.imagePath || "");
   const [description, setDescription] = useState<string>(product?.description || "");
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [existingImages, setExistingImages] = useState<string[]>(product?.imagePaths || []);
   const router = useRouter();
 
   const initialState = { error: {} };
@@ -33,8 +35,39 @@ export default function ProductForm({ product }: { product?: Product | null }) {
     router.refresh();
   }
 
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const files = Array.from(e.target.files);
+      setSelectedFiles(prev => [...prev, ...files]);
+      // Reset the input so the same file can be selected again
+      e.target.value = '';
+    }
+  };
+
+  const removeSelectedFile = (index: number) => {
+    setSelectedFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const removeExistingImage = (index: number) => {
+    setExistingImages(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const customFormAction = (formData: FormData) => {
+    // Add selected files to FormData
+    selectedFiles.forEach((file, index) => {
+      formData.append(`newImages`, file);
+    });
+    
+    // Add existing images that weren't removed
+    existingImages.forEach((imagePath) => {
+      formData.append('existingImages', imagePath);
+    });
+
+    formAction(formData);
+  };
+
   return (
-    <form ref={formRef} action={formAction} className="space-y-8">
+    <form ref={formRef} action={customFormAction} className="space-y-8">
       <div className="space-y-2">
         <Label htmlFor="name">Nazwa</Label>
         <Input type="text" id="name" name="name" required defaultValue={product?.name || ""} />
@@ -70,43 +103,96 @@ export default function ProductForm({ product }: { product?: Product | null }) {
           <div className="text-destructive">{state.error.description}</div>
         )}
       </div>
-      <div className="space-y-2">
-        <Label htmlFor="image">Zdjęcie</Label>
-        {product?.imagePath && (
-          <div className="mb-4">
-            <Image
-              src={product.imagePath}
-              alt={product.name || "Product image"}
-              width={200}
-              height={200}
-              className="rounded-md object-cover"
-            />
-            <p className="text-sm text-muted-foreground mt-1">
-              Aktualne zdjęcie produktu. Wybierz nowe zdjęcie tylko jeśli chcesz je zmienić.
-            </p>
+      
+      {/* Images Section */}
+      <div className="space-y-4">
+        <Label>Zdjęcia produktu</Label>
+        
+        {/* Existing Images */}
+        {existingImages.length > 0 && (
+          <div>
+            <h4 className="text-sm font-medium mb-2">Aktualne zdjęcia:</h4>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+              {existingImages.map((imagePath, index) => (
+                <div key={index} className="relative group">
+                  <Image
+                    src={imagePath}
+                    alt={`Product image ${index + 1}`}
+                    width={150}
+                    height={150}
+                    className="rounded-md object-cover w-full h-32"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeExistingImage(index)}
+                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <X size={16} />
+                  </button>
+                  {index === 0 && (
+                    <div className="absolute bottom-1 left-1 bg-blue-500 text-white text-xs px-2 py-1 rounded">
+                      Główne
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
         )}
-        <div className="flex gap-2 items-center">
-          <Input
-            type="file"
-            id="image"
-            name="image"
-            accept="image/*"
-            required={!product}
-            onChange={(e) => {
-              if (e.target.files && e.target.files[0]) {
-                setFileName(e.target.files[0].name);
-              } else {
-                setFileName("");
-              }
-            }}
-          />
-          {fileName && !product?.imagePath && (
-            <span className="text-sm text-muted-foreground">{fileName}</span>
-          )}
+
+        {/* New Images Preview */}
+        {selectedFiles.length > 0 && (
+          <div>
+            <h4 className="text-sm font-medium mb-2">Nowe zdjęcia:</h4>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+              {selectedFiles.map((file, index) => (
+                <div key={index} className="relative group">
+                  <Image
+                    src={URL.createObjectURL(file)}
+                    alt={`New image ${index + 1}`}
+                    width={150}
+                    height={150}
+                    className="rounded-md object-cover w-full h-32"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeSelectedFile(index)}
+                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Add Images Button */}
+        <div className="flex items-center gap-4">
+          <label className="cursor-pointer">
+            <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors">
+              <Plus size={32} className="mx-auto mb-2 text-gray-400" />
+              <span className="text-sm text-gray-600">Dodaj zdjęcia</span>
+            </div>
+            <Input
+              type="file"
+              accept="image/*"
+              multiple
+              className="hidden"
+              onChange={handleFileSelect}
+            />
+          </label>
         </div>
+
+        {!product && existingImages.length === 0 && selectedFiles.length === 0 && (
+          <p className="text-sm text-muted-foreground">
+            Musisz dodać przynajmniej jedno zdjęcie produktu.
+          </p>
+        )}
+
         {state?.error?.image && <div className="text-destructive">{state.error.image}</div>}
       </div>
+
       {state?.error?._form && <div className="text-destructive">{state.error._form}</div>}
       <div className="flex gap-4">
         <Button type="submit" disabled={isPending}>

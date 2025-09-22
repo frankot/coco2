@@ -11,15 +11,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
+// Import Product type from Prisma
+import type { Product as PrismaProduct } from "@/app/generated/prisma";
+
 // Define types for cart
-export type Product = {
-  id: string;
-  name: string;
-  priceInCents: number;
-  description: string;
-  imagePath: string;
-  isAvailable: boolean;
-};
+export type Product = PrismaProduct;
 
 export type CartItem = {
   id: string;
@@ -521,7 +517,7 @@ export const useCart = () => {
           name: product.name,
           priceInCents: product.priceInCents,
           quantity: quantity,
-          imagePath: product.imagePath,
+          imagePath: product.imagePaths[0] || "",
         });
       }
 

@@ -23,7 +23,7 @@ const addSchema = z.object({
     .int("Cena musi być liczbą całkowitą")
     .min(1, "Cena musi być większa niż 0"),
   description: z.string().min(1, "Opis jest wymagany"),
-  image: fileSchema,
+  newImages: z.array(fileSchema).optional(),
 });
 
 // Define error type
@@ -40,59 +40,53 @@ type FormState = {
 
 export async function addProduct(prevState: FormState, formData: FormData): Promise<FormState> {
   try {
-    // Log what we received for debugging
-    const entries = Object.fromEntries(formData);
-    console.log("Form data received:", {
-      name: entries.name,
-      priceInCents: entries.priceInCents,
-      description: entries.description,
-      // Don't log the whole file for security
-      image:
-        entries.image instanceof File
-          ? {
-              name: entries.image.name,
-              size: entries.image.size,
-              type: entries.image.type,
-            }
-          : "Not a file",
+    // Extract and validate basic data
+    const name = formData.get("name") as string;
+    const priceInCents = parseInt(formData.get("priceInCents") as string);
+    const description = formData.get("description") as string;
+    
+    // Get all new image files
+    const newImages = formData.getAll("newImages") as File[];
+    
+    // Validate required fields
+    if (!name || !priceInCents || !description) {
+      return { error: { _form: ["Wszystkie pola są wymagane"] } };
+    }
+    
+    if (newImages.length === 0 || newImages.some(file => !(file instanceof File) || file.size === 0)) {
+      return { error: { image: ["Musisz dodać przynajmniej jedno zdjęcie"] } };
+    }
+
+    // Upload all images to Cloudinary
+    const uploadPromises = newImages.map(async (file) => {
+      const imageBuffer = Buffer.from(await file.arrayBuffer());
+      return uploadImage(imageBuffer, file.name);
     });
 
-    const result = addSchema.safeParse(entries);
-    if (!result.success) {
-      console.error("Validation error:", result.error.flatten().fieldErrors);
-      return { error: result.error.flatten().fieldErrors };
-    }
+    const cloudinaryResults = await Promise.all(uploadPromises);
 
-    const data = result.data;
-
-    // Validate the file again explicitly
-    if (!(data.image instanceof File) || data.image.size === 0) {
-      return { error: { image: ["Zdjęcie jest wymagane"] } };
-    }
-
-    // Convert file to buffer for upload
-    const imageBuffer = Buffer.from(await data.image.arrayBuffer());
-
-    // Upload image to Cloudinary
-    const cloudinaryResult = await uploadImage(imageBuffer, data.image.name);
-
-    if (!cloudinaryResult || !cloudinaryResult.secure_url) {
+    // Check if all uploads were successful
+    if (cloudinaryResults.some(result => !result || !result.secure_url)) {
       return {
         error: {
-          _form: ["Wystąpił błąd podczas przesyłania zdjęcia. Spróbuj ponownie."],
+          _form: ["Wystąpił błąd podczas przesyłania zdjęć. Spróbuj ponownie."],
         },
       };
     }
 
-    // Create product in database with Cloudinary URL
+    // Extract URLs and public IDs
+    const imagePaths = cloudinaryResults.map(result => result!.secure_url);
+    const imagePublicIds = cloudinaryResults.map(result => result!.public_id);
+
+    // Create product in database with Cloudinary URLs
     await prisma.product.create({
       data: {
-        name: data.name,
-        price: data.priceInCents / 100,
-        priceInCents: data.priceInCents,
-        description: data.description,
-        imagePath: cloudinaryResult.secure_url,
-        imagePublicId: cloudinaryResult.public_id,
+        name,
+        price: priceInCents / 100,
+        priceInCents,
+        description,
+        imagePaths,
+        imagePublicIds,
         isAvailable: true,
       },
     });
@@ -115,8 +109,15 @@ export async function addProduct(prevState: FormState, formData: FormData): Prom
   return { success: true };
 }
 
-const editSchema = addSchema.extend({
-  image: fileSchema.optional(),
+const editSchema = z.object({
+  name: z.string().min(1, "Nazwa jest wymagana"),
+  priceInCents: z.coerce
+    .number()
+    .int("Cena musi być liczbą całkowitą")
+    .min(1, "Cena musi być większa niż 0"),
+  description: z.string().min(1, "Opis jest wymagany"),
+  newImages: z.array(fileSchema).optional(),
+  existingImages: z.array(z.string()).optional(),
 });
 
 export async function updateProduct(
@@ -125,35 +126,18 @@ export async function updateProduct(
   formData: FormData
 ): Promise<FormState> {
   try {
-    // Log what we received for debugging
-    const entries = Object.fromEntries(formData);
-    console.log("Form data received:", {
-      name: entries.name,
-      priceInCents: entries.priceInCents,
-      description: entries.description,
-      // Don't log the whole file for security
-      image:
-        entries.image instanceof File && entries.image.size > 0
-          ? {
-              name: entries.image.name,
-              size: entries.image.size,
-              type: entries.image.type,
-            }
-          : "Empty or not a file",
-    });
-
-    // Special handling for empty file input in edit mode
-    if (entries.image instanceof File && entries.image.size === 0) {
-      delete entries.image;
+    // Extract data from FormData
+    const name = formData.get("name") as string;
+    const priceInCents = parseInt(formData.get("priceInCents") as string);
+    const description = formData.get("description") as string;
+    const newImages = formData.getAll("newImages") as File[];
+    const existingImages = formData.getAll("existingImages") as string[];
+    
+    // Validate required fields
+    if (!name || !priceInCents || !description) {
+      return { error: { _form: ["Wszystkie pola są wymagane"] } };
     }
 
-    const result = editSchema.safeParse(entries);
-    if (!result.success) {
-      console.error("Validation error:", result.error.flatten().fieldErrors);
-      return { error: result.error.flatten().fieldErrors };
-    }
-
-    const data = result.data;
     const product = await prisma.product.findUnique({
       where: { id: productId },
     });
@@ -164,39 +148,73 @@ export async function updateProduct(
 
     // Prepare update data
     const updateData: any = {
-      name: data.name,
-      price: data.priceInCents / 100,
-      priceInCents: data.priceInCents,
-      description: data.description,
+      name,
+      price: priceInCents / 100,
+      priceInCents,
+      description,
     };
 
-    // Handle image update if a new image was provided
-    if (data.image instanceof File && data.image.size > 0) {
-      // Convert file to buffer for upload
-      const imageBuffer = Buffer.from(await data.image.arrayBuffer());
+    // Handle images
+    const finalImagePaths: string[] = [...existingImages];
+    const finalImagePublicIds: string[] = [];
 
-      // Upload image to Cloudinary
-      const cloudinaryResult = await uploadImage(imageBuffer, data.image.name);
+    // Add existing image public IDs for images we're keeping
+    for (let i = 0; i < existingImages.length; i++) {
+      const existingIndex = product.imagePaths.indexOf(existingImages[i]);
+      if (existingIndex !== -1 && existingIndex < product.imagePublicIds.length) {
+        finalImagePublicIds.push(product.imagePublicIds[existingIndex]);
+      }
+    }
 
-      if (!cloudinaryResult || !cloudinaryResult.secure_url) {
+    // Upload new images if any
+    if (newImages.length > 0 && newImages.some(file => file instanceof File && file.size > 0)) {
+      const validNewImages = newImages.filter(file => file instanceof File && file.size > 0);
+      
+      const uploadPromises = validNewImages.map(async (file) => {
+        const imageBuffer = Buffer.from(await file.arrayBuffer());
+        return uploadImage(imageBuffer, file.name);
+      });
+
+      const cloudinaryResults = await Promise.all(uploadPromises);
+
+      // Check if all uploads were successful
+      if (cloudinaryResults.some(result => !result || !result.secure_url)) {
         return {
           error: {
-            _form: ["Wystąpił błąd podczas przesyłania zdjęcia. Spróbuj ponownie."],
+            _form: ["Wystąpił błąd podczas przesyłania nowych zdjęć. Spróbuj ponownie."],
           },
         };
       }
 
-      // Delete old image if it exists
-      if (product.imagePublicId) {
-        await deleteImage(product.imagePublicId);
-      }
+      // Add new images to the arrays
+      cloudinaryResults.forEach(result => {
+        if (result) {
+          finalImagePaths.push(result.secure_url);
+          finalImagePublicIds.push(result.public_id);
+        }
+      });
+    }
 
-      // Add new image data to update
-      updateData.imagePath = cloudinaryResult.secure_url;
-      updateData.imagePublicId = cloudinaryResult.public_id;
+    // Delete old images that are no longer used
+    const imagesToDelete = product.imagePublicIds.filter(
+      (_, index) => !existingImages.includes(product.imagePaths[index])
+    );
+
+    for (const publicId of imagesToDelete) {
+      if (publicId) {
+        await deleteImage(publicId);
+      }
+    }
+
+    // Ensure we have at least one image
+    if (finalImagePaths.length === 0) {
+      return { error: { image: ["Produkt musi mieć przynajmniej jedno zdjęcie"] } };
     }
 
     // Update product in database
+    updateData.imagePaths = finalImagePaths;
+    updateData.imagePublicIds = finalImagePublicIds;
+
     await prisma.product.update({
       where: { id: productId },
       data: updateData,
@@ -221,25 +239,27 @@ export async function updateProduct(
 }
 
 /**
- * Delete a product and its associated image from Cloudinary
+ * Delete a product and its associated images from Cloudinary
  */
 export async function deleteProduct(
   productId: string
 ): Promise<{ success: boolean; message: string }> {
   try {
-    // First get the product to find the image public ID
+    // First get the product to find the image public IDs
     const product = await prisma.product.findUnique({
       where: { id: productId },
-      select: { imagePublicId: true },
+      select: { imagePublicIds: true },
     });
 
     if (!product) {
       return { success: false, message: "Produkt nie został znaleziony" };
     }
 
-    // Delete from Cloudinary if we have a public ID
-    if (product.imagePublicId) {
-      await deleteImage(product.imagePublicId);
+    // Delete all images from Cloudinary if we have public IDs
+    if (product.imagePublicIds && product.imagePublicIds.length > 0) {
+      await Promise.all(
+        product.imagePublicIds.map(publicId => publicId ? deleteImage(publicId) : Promise.resolve())
+      );
     }
 
     // Delete the product from the database
