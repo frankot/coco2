@@ -52,6 +52,17 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
     fetchProduct();
   }, [productId]);
 
+  // Reset selected image if it's out of bounds when product changes
+  useEffect(() => {
+    if (product && product.imagePaths) {
+      const productImages = product.imagePaths.filter(Boolean) || [];
+      const displayImages = productImages.length > 0 ? productImages : ["/hero.webp"];
+      if (selectedImage >= displayImages.length) {
+        setSelectedImage(0);
+      }
+    }
+  }, [product, selectedImage]);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-white">
@@ -104,14 +115,10 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
     }
   };
 
-  // Mock multiple product images - in real app, these would come from the product data
-  const productImages = [
-    product.imagePath,
-    product.imagePath,
-    product.imagePath,
-    product.imagePath,
-  ];
-
+  // Get product images, filter out empty ones, and provide fallback
+  const productImages = product.imagePaths?.filter(Boolean) || [];
+  const hasImages = productImages.length > 0;
+  const displayImages = hasImages ? productImages : ["/hero.webp"]; // fallback to a default image
   const pricePerUnit = product.priceInCents / 100; // Assuming single unit for now
 
   return (
@@ -136,36 +143,50 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
           <div className="space-y-4">
             {/* Main image */}
             <div className="relative aspect-square bg-gray-50 rounded-lg overflow-hidden">
-              <Image
-                src={productImages[selectedImage]}
-                alt={product.name}
-                fill
-                className="object-contain p-8"
-                sizes="(max-width: 768px) 100vw, 50vw"
-                priority
-              />
+              {displayImages[selectedImage] ? (
+                <Image
+                  src={displayImages[selectedImage]}
+                  alt={product.name}
+                  fill
+                  className="object-contain p-8"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  priority
+                />
+              ) : (
+                <div className="flex items-center justify-center h-full text-gray-400">
+                  Brak zdjęcia
+                </div>
+              )}
             </div>
 
-            {/* Thumbnail images */}
-            <div className="flex gap-2 overflow-x-auto">
-              {productImages.map((image, index) => (
-                <button
-                  key={index}
-                  onClick={() => setSelectedImage(index)}
-                  className={`flex-shrink-0 w-20 h-20 relative bg-gray-50 rounded-lg overflow-hidden border-2 transition-colors ${
-                    selectedImage === index ? "border-primary" : "border-gray-200"
-                  }`}
-                >
-                  <Image
-                    src={image}
-                    alt={`${product.name} ${index + 1}`}
-                    fill
-                    className="object-contain p-2"
-                    sizes="80px"
-                  />
-                </button>
-              ))}
-            </div>
+            {/* Thumbnail images - only show if there are multiple images */}
+            {displayImages.length > 1 && (
+              <div className="flex gap-2 overflow-x-auto">
+                {displayImages.map((image: string, index: number) => (
+                  <button
+                    key={index}
+                    onClick={() => setSelectedImage(index)}
+                    className={`flex-shrink-0 w-20 h-20 relative bg-gray-50 rounded-lg overflow-hidden border-2 transition-colors ${
+                      selectedImage === index ? "border-primary" : "border-gray-200"
+                    }`}
+                  >
+                    {image ? (
+                      <Image
+                        src={image}
+                        alt={`${product.name} ${index + 1}`}
+                        fill
+                        className="object-contain p-2"
+                        sizes="80px"
+                      />
+                    ) : (
+                      <div className="flex items-center justify-center h-full text-gray-400 text-xs">
+                        Brak
+                      </div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Right side - Product Info */}

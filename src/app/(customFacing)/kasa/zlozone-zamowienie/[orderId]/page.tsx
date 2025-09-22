@@ -11,11 +11,12 @@ export default async function OrderConfirmationPage({
   params,
   searchParams,
 }: {
-  params: { orderId: string };
-  searchParams: { success?: string; session_id?: string };
+  params: Promise<{ orderId: string }>;
+  searchParams: Promise<{ success?: string; session_id?: string }>;
 }) {
+  const { orderId } = await params;
   const order = await prisma.order.findUnique({
-    where: { id: params.orderId },
+    where: { id: orderId },
     include: {
       orderItems: {
         include: {
