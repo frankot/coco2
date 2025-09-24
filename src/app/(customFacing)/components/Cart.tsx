@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback, memo } from "react";
+import { useState, useEffect, useCallback, memo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, Minus, Trash2, X, ShoppingBag, Check } from "lucide-react";
@@ -9,7 +9,7 @@ import Link from "next/link";
 import { formatPLN } from "@/lib/formatter";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
+
 
 // Import Product type from Prisma
 import type { Product as PrismaProduct } from "@/app/generated/prisma";
@@ -508,7 +508,7 @@ export const useCart = () => {
     try {
       const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
       const existingItemIndex = existingCart.findIndex((item: CartItem) => item.id === product.id);
-      
+
       // Check if cart was empty before adding
       const wasCartEmpty = existingCart.length === 0;
 
@@ -526,7 +526,7 @@ export const useCart = () => {
 
       localStorage.setItem("cart", JSON.stringify(existingCart));
       window.dispatchEvent(new Event("cartUpdated"));
-      
+
       // If cart was empty and we just added the first item, open cart sheet
       if (wasCartEmpty) {
         window.dispatchEvent(new Event("openCartSheet"));
