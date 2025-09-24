@@ -24,9 +24,9 @@ function ProductCard({ product }: { product: Product }) {
     setIsAddingToCart(true);
     try {
       await addToCart(product, 1);
-      toast.success(`Dodano ${product.name} do koszyka`);
     } catch (error) {
-      toast.error("Nie udało się dodać produktu do koszyka");
+      // Error toast is already handled by useCart().addToCart()
+      console.error("Error adding product to cart:", error);
     } finally {
       setIsAddingToCart(false);
     }

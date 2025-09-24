@@ -44,16 +44,19 @@ export async function addProduct(prevState: FormState, formData: FormData): Prom
     const name = formData.get("name") as string;
     const priceInCents = parseInt(formData.get("priceInCents") as string);
     const description = formData.get("description") as string;
-    
+
     // Get all new image files
     const newImages = formData.getAll("newImages") as File[];
-    
+
     // Validate required fields
     if (!name || !priceInCents || !description) {
       return { error: { _form: ["Wszystkie pola są wymagane"] } };
     }
-    
-    if (newImages.length === 0 || newImages.some(file => !(file instanceof File) || file.size === 0)) {
+
+    if (
+      newImages.length === 0 ||
+      newImages.some((file) => !(file instanceof File) || file.size === 0)
+    ) {
       return { error: { image: ["Musisz dodać przynajmniej jedno zdjęcie"] } };
     }
 
@@ -66,7 +69,7 @@ export async function addProduct(prevState: FormState, formData: FormData): Prom
     const cloudinaryResults = await Promise.all(uploadPromises);
 
     // Check if all uploads were successful
-    if (cloudinaryResults.some(result => !result || !result.secure_url)) {
+    if (cloudinaryResults.some((result) => !result || !result.secure_url)) {
       return {
         error: {
           _form: ["Wystąpił błąd podczas przesyłania zdjęć. Spróbuj ponownie."],
@@ -75,8 +78,8 @@ export async function addProduct(prevState: FormState, formData: FormData): Prom
     }
 
     // Extract URLs and public IDs
-    const imagePaths = cloudinaryResults.map(result => result!.secure_url);
-    const imagePublicIds = cloudinaryResults.map(result => result!.public_id);
+    const imagePaths = cloudinaryResults.map((result) => result!.secure_url);
+    const imagePublicIds = cloudinaryResults.map((result) => result!.public_id);
 
     // Create product in database with Cloudinary URLs
     await prisma.product.create({
@@ -132,7 +135,7 @@ export async function updateProduct(
     const description = formData.get("description") as string;
     const newImages = formData.getAll("newImages") as File[];
     const existingImages = formData.getAll("existingImages") as string[];
-    
+
     // Validate required fields
     if (!name || !priceInCents || !description) {
       return { error: { _form: ["Wszystkie pola są wymagane"] } };
@@ -167,9 +170,9 @@ export async function updateProduct(
     }
 
     // Upload new images if any
-    if (newImages.length > 0 && newImages.some(file => file instanceof File && file.size > 0)) {
-      const validNewImages = newImages.filter(file => file instanceof File && file.size > 0);
-      
+    if (newImages.length > 0 && newImages.some((file) => file instanceof File && file.size > 0)) {
+      const validNewImages = newImages.filter((file) => file instanceof File && file.size > 0);
+
       const uploadPromises = validNewImages.map(async (file) => {
         const imageBuffer = Buffer.from(await file.arrayBuffer());
         return uploadImage(imageBuffer, file.name);
@@ -178,7 +181,7 @@ export async function updateProduct(
       const cloudinaryResults = await Promise.all(uploadPromises);
 
       // Check if all uploads were successful
-      if (cloudinaryResults.some(result => !result || !result.secure_url)) {
+      if (cloudinaryResults.some((result) => !result || !result.secure_url)) {
         return {
           error: {
             _form: ["Wystąpił błąd podczas przesyłania nowych zdjęć. Spróbuj ponownie."],
@@ -187,7 +190,7 @@ export async function updateProduct(
       }
 
       // Add new images to the arrays
-      cloudinaryResults.forEach(result => {
+      cloudinaryResults.forEach((result) => {
         if (result) {
           finalImagePaths.push(result.secure_url);
           finalImagePublicIds.push(result.public_id);
@@ -258,7 +261,9 @@ export async function deleteProduct(
     // Delete all images from Cloudinary if we have public IDs
     if (product.imagePublicIds && product.imagePublicIds.length > 0) {
       await Promise.all(
-        product.imagePublicIds.map(publicId => publicId ? deleteImage(publicId) : Promise.resolve())
+        product.imagePublicIds.map((publicId) =>
+          publicId ? deleteImage(publicId) : Promise.resolve()
+        )
       );
     }
 

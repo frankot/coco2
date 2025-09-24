@@ -38,18 +38,18 @@ export default function ProductForm({ product }: { product?: Product | null }) {
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const files = Array.from(e.target.files);
-      setSelectedFiles(prev => [...prev, ...files]);
+      setSelectedFiles((prev) => [...prev, ...files]);
       // Reset the input so the same file can be selected again
-      e.target.value = '';
+      e.target.value = "";
     }
   };
 
   const removeSelectedFile = (index: number) => {
-    setSelectedFiles(prev => prev.filter((_, i) => i !== index));
+    setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
   const removeExistingImage = (index: number) => {
-    setExistingImages(prev => prev.filter((_, i) => i !== index));
+    setExistingImages((prev) => prev.filter((_, i) => i !== index));
   };
 
   const customFormAction = (formData: FormData) => {
@@ -57,10 +57,10 @@ export default function ProductForm({ product }: { product?: Product | null }) {
     selectedFiles.forEach((file, index) => {
       formData.append(`newImages`, file);
     });
-    
+
     // Add existing images that weren't removed
     existingImages.forEach((imagePath) => {
-      formData.append('existingImages', imagePath);
+      formData.append("existingImages", imagePath);
     });
 
     formAction(formData);
@@ -103,11 +103,11 @@ export default function ProductForm({ product }: { product?: Product | null }) {
           <div className="text-destructive">{state.error.description}</div>
         )}
       </div>
-      
+
       {/* Images Section */}
       <div className="space-y-4">
         <Label>Zdjęcia produktu</Label>
-        
+
         {/* Existing Images */}
         {existingImages.length > 0 && (
           <div>

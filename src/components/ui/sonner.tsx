@@ -15,10 +15,10 @@ const Toaster = ({ className, ...props }: ToasterProps) => {
       className={cn(
         "toaster group",
         "[&>*]:!font-outfit [&>*]:!rounded-lg [&>*]:!shadow-lg",
-        "[&>*]:!bg-white [&>*]:!border [&>*]:!border-primary",
+        "[&>*]:!bg-primary [&>*]:!text-white [&>*]:!border-0",
         "[&_div[role=status]]:!gap-3",
+        "[&_button]:!bg-primary [&_button]:!text-white [&_button]:!border [&_button]:!border-white",
         "[&_button]:!transition-opacity [&_button:hover]:!opacity-70",
-        "[&>*]:!text-foreground",
         className
       )}
       {...props}

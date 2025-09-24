@@ -46,7 +46,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   const hasMultipleImages = product.imagePaths.length > 1;
 
   return (
-    <div 
+    <div
       className="rounded-xl overflow-hidden hover:scale-[1.02] transition-all duration-300 group"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -61,11 +61,11 @@ export default function ProductCard({ product }: ProductCardProps) {
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             className={`object-contain p-4 group-hover:scale-105 transition-all duration-300 ${
-              hasMultipleImages && isHovered ? 'opacity-0' : 'opacity-100'
+              hasMultipleImages && isHovered ? "opacity-0" : "opacity-100"
             }`}
             priority
           />
-          
+
           {/* Hover image (only rendered if multiple images exist) */}
           {hasMultipleImages && (
             <Image
@@ -74,7 +74,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               className={`object-contain p-4 group-hover:scale-105 transition-all duration-300 ${
-                isHovered ? 'opacity-100' : 'opacity-0'
+                isHovered ? "opacity-100" : "opacity-0"
               }`}
             />
           )}

@@ -100,17 +100,23 @@ export function Nav({ children }: { children: React.ReactNode }) {
       loadCart();
     };
 
+    const handleOpenCartSheet = () => {
+      setIsCartOpen(true);
+    };
+
     // Initial load
     loadCart();
 
     // Add event listeners
     window.addEventListener("storage", handleStorageChange);
     window.addEventListener("cartUpdated", handleCartUpdate);
+    window.addEventListener("openCartSheet", handleOpenCartSheet);
 
     // Cleanup
     return () => {
       window.removeEventListener("storage", handleStorageChange);
       window.removeEventListener("cartUpdated", handleCartUpdate);
+      window.removeEventListener("openCartSheet", handleOpenCartSheet);
     };
   }, []);
 

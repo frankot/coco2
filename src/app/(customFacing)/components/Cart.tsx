@@ -496,9 +496,9 @@ export default function Cart({ isOpen, onClose, navbarHeight, onOpenCart }: Cart
 // Add toast styles
 const toastStyles = {
   style: {
-    background: "hsl(var(--background))",
-    border: "1px solid hsl(var(--primary))",
-    color: "hsl(var(--foreground))",
+    background: "hsl(var(--primary))",
+    border: "none",
+    color: "white",
   },
   position: "bottom-right" as const,
 };
@@ -508,6 +508,9 @@ export const useCart = () => {
     try {
       const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
       const existingItemIndex = existingCart.findIndex((item: CartItem) => item.id === product.id);
+      
+      // Check if cart was empty before adding
+      const wasCartEmpty = existingCart.length === 0;
 
       if (existingItemIndex >= 0) {
         existingCart[existingItemIndex].quantity += quantity;
@@ -523,39 +526,29 @@ export const useCart = () => {
 
       localStorage.setItem("cart", JSON.stringify(existingCart));
       window.dispatchEvent(new Event("cartUpdated"));
+      
+      // If cart was empty and we just added the first item, open cart sheet
+      if (wasCartEmpty) {
+        window.dispatchEvent(new Event("openCartSheet"));
+      }
 
-      toast.success(
-        <div className="flex items-center gap-2">
-          <Check className="h-4 w-4 text-primary" />
-          <div>
-            <p className="font-medium">Dodano do koszyka</p>
-            <p className="text-sm text-muted-foreground">
-              {quantity} × {product.name}
-            </p>
-          </div>
-        </div>,
-        {
-          ...toastStyles,
-          duration: 3000,
-        }
-      );
+      toast.success(`Dodano ${quantity} × ${product.name} do koszyka`, {
+        ...toastStyles,
+        duration: 3000,
+      });
 
       return true;
     } catch (error) {
       console.error("Failed to add item to cart:", error);
-      toast.error(
-        <div className="flex items-center gap-2">
-          <X className="h-4 w-4 text-destructive" />
-          <div>
-            <p className="font-medium">Błąd</p>
-            <p className="text-sm text-muted-foreground">Nie udało się dodać produktu do koszyka</p>
-          </div>
-        </div>,
-        {
-          ...toastStyles,
-          duration: 3000,
-        }
-      );
+      toast.error("Nie udało się dodać produktu do koszyka", {
+        style: {
+          background: "hsl(var(--destructive))",
+          border: "none",
+          color: "white",
+        },
+        position: "bottom-right" as const,
+        duration: 3000,
+      });
       return false;
     }
   }, []);
