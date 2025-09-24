@@ -41,14 +41,14 @@ export function About() {
             {/* Description text */}
             <div className="space-y-4 text-gray-600 leading-relaxed">
               <p>
-                Woda kokosowa COCONAUT® to naturalny izotonik, który w ciągu kilku lat podbił
+                Woda kokosowa Dr.Coco® to naturalny izotonik, który w ciągu kilku lat podbił
                 polski rynek, stając się znacznie zdrowszą alternatywą dla kolorowych napojów
                 izotonicznych zawierających sztuczne dodatki. Nasza woda pochodzi z organicznych
                 farm z regionu Bến Tre - stolicy wody kokosowej, gdzie kokosy żywane są co kilka
                 tygodni.
               </p>
               <p>
-                COCONAUT® to doskonały element codziennej diety niezależnie od wieku. To naturalne
+                Dr.Coco® to doskonały element codziennej diety niezależnie od wieku. To naturalne
                 źródło minerałów i mikroelementów dla aktywnych, a także tych, którzy chcą zadbać o
                 swoje zdrowie.
               </p>
@@ -69,7 +69,7 @@ export function About() {
             {/* CTA Button */}
             <div className="">
               <button className="bg-primary hover:bg-primary/90 text-white px-8 py-4 rounded-full font-semibold text-lg transition-colors">
-                Poznaj produkty COCONAUT
+                Poznaj produkty Dr.Coco
               </button>
             </div>
           </div>

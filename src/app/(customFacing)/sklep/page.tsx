@@ -9,21 +9,13 @@ import { Input } from "@/components/ui/input";
 import { formatPLN } from "@/lib/formatter";
 import { useCart } from "@/app/(customFacing)/components/Cart";
 import { toast } from "sonner";
-
-type Product = {
-  id: string;
-  name: string;
-  priceInCents: number;
-  description: string;
-  imagePath: string;
-  isAvailable: boolean;
-  createdAt: string;
-};
+import type { Product } from "@/app/(customFacing)/components/Cart";
 
 // Product Card Component
 function ProductCard({ product }: { product: Product }) {
   const [isFavorite, setIsFavorite] = useState(false);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const { addToCart } = useCart();
 
   const handleAddToCart = async () => {
@@ -45,17 +37,44 @@ function ProductCard({ product }: { product: Product }) {
     toast.success(isFavorite ? "Usunięto z ulubionych" : "Dodano do ulubionych");
   };
 
+  // Get the images to display
+  const mainImage = product.imagePaths[0] || "";
+  const hoverImage = product.imagePaths[1] || mainImage;
+  const hasMultipleImages = product.imagePaths.length > 1;
+
   return (
-    <div className="group bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden border border-gray-100">
+    <div 
+      className="group bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden border border-gray-100"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       {/* Product Image */}
       <div className="relative aspect-square overflow-hidden bg-gray-50">
         <Link href={`/sklep/${product.id}`}>
-          <Image
-            src={product.imagePath}
-            alt={product.name}
-            fill
-            className="object-contain group-hover:scale-105 transition-transform duration-300"
-          />
+          {mainImage && (
+            <>
+              {/* Main Image */}
+              <Image
+                src={mainImage}
+                alt={product.name}
+                fill
+                className={`object-contain group-hover:scale-105 transition-all duration-300 ${
+                  hasMultipleImages && isHovered ? 'opacity-0' : 'opacity-100'
+                }`}
+              />
+              {/* Hover Image (if exists) */}
+              {hasMultipleImages && hoverImage && (
+                <Image
+                  src={hoverImage}
+                  alt={`${product.name} - second view`}
+                  fill
+                  className={`object-contain group-hover:scale-105 transition-all duration-300 absolute inset-0 ${
+                    isHovered ? 'opacity-100' : 'opacity-0'
+                  }`}
+                />
+              )}
+            </>
+          )}
         </Link>
 
         {/* Favorite Button */}

@@ -129,7 +129,7 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
           <Link href="/sklep">
             <Button
               variant="ghost"
-              className="flex items-center gap-2 text-gray-600 hover:text-primary"
+              className="flex items-center gap-2 text-gray-600  hover:bg-secondary/50"
             >
               <ArrowLeft className="w-4 h-4" />
               Wróć do sklepu
@@ -330,12 +330,12 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
                 <div>
                   <h3 className="text-lg font-semibold mb-3">Prosty i naturalny skład</h3>
                   <p className="text-gray-700 mb-4">
-                    COCONAUT® to wyłącznie naturalna woda kokosowa produkowana w Wietnamie z
+                    Dr.Coco® to wyłącznie naturalna woda kokosowa produkowana w Wietnamie z
                     najlepszych młodych kokosów.
                   </p>
-
+  
                   <p className="text-gray-700 mb-4">
-                    Nasza woda kokosowa COCONAUT® to produkt odpowiedni dla wegan, co gwarantuje
+                    Nasza woda kokosowa Dr.Coco® to produkt odpowiedni dla wegan, co gwarantuje
                     certyfikat V-label.
                   </p>
 
