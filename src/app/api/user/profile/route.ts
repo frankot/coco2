@@ -11,7 +11,6 @@ export const GET = createRouteHandler(
         email: true,
         firstName: true,
         lastName: true,
-        phoneNumber: true,
         accountType: true,
         createdAt: true,
         addresses: {
@@ -21,6 +20,7 @@ export const GET = createRouteHandler(
             city: true,
             postalCode: true,
             country: true,
+            phoneNumber: true,
             isDefault: true,
             addressType: true,
             createdAt: true,

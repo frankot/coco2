@@ -2736,7 +2736,6 @@ export namespace Prisma {
     password: string | null
     firstName: string | null
     lastName: string | null
-    phoneNumber: string | null
     createdAt: Date | null
     updatedAt: Date | null
     accountType: $Enums.AccountType | null
@@ -2748,7 +2747,6 @@ export namespace Prisma {
     password: string | null
     firstName: string | null
     lastName: string | null
-    phoneNumber: string | null
     createdAt: Date | null
     updatedAt: Date | null
     accountType: $Enums.AccountType | null
@@ -2760,7 +2758,6 @@ export namespace Prisma {
     password: number
     firstName: number
     lastName: number
-    phoneNumber: number
     createdAt: number
     updatedAt: number
     accountType: number
@@ -2774,7 +2771,6 @@ export namespace Prisma {
     password?: true
     firstName?: true
     lastName?: true
-    phoneNumber?: true
     createdAt?: true
     updatedAt?: true
     accountType?: true
@@ -2786,7 +2782,6 @@ export namespace Prisma {
     password?: true
     firstName?: true
     lastName?: true
-    phoneNumber?: true
     createdAt?: true
     updatedAt?: true
     accountType?: true
@@ -2798,7 +2793,6 @@ export namespace Prisma {
     password?: true
     firstName?: true
     lastName?: true
-    phoneNumber?: true
     createdAt?: true
     updatedAt?: true
     accountType?: true
@@ -2883,7 +2877,6 @@ export namespace Prisma {
     password: string
     firstName: string | null
     lastName: string | null
-    phoneNumber: string | null
     createdAt: Date
     updatedAt: Date
     accountType: $Enums.AccountType
@@ -2912,7 +2905,6 @@ export namespace Prisma {
     password?: boolean
     firstName?: boolean
     lastName?: boolean
-    phoneNumber?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     accountType?: boolean
@@ -2928,7 +2920,6 @@ export namespace Prisma {
     password?: boolean
     firstName?: boolean
     lastName?: boolean
-    phoneNumber?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     accountType?: boolean
@@ -2940,7 +2931,6 @@ export namespace Prisma {
     password?: boolean
     firstName?: boolean
     lastName?: boolean
-    phoneNumber?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     accountType?: boolean
@@ -2952,13 +2942,12 @@ export namespace Prisma {
     password?: boolean
     firstName?: boolean
     lastName?: boolean
-    phoneNumber?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     accountType?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "password" | "firstName" | "lastName" | "phoneNumber" | "createdAt" | "updatedAt" | "accountType", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "password" | "firstName" | "lastName" | "createdAt" | "updatedAt" | "accountType", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     orders?: boolean | User$ordersArgs<ExtArgs>
     addresses?: boolean | User$addressesArgs<ExtArgs>
@@ -2981,7 +2970,6 @@ export namespace Prisma {
       password: string
       firstName: string | null
       lastName: string | null
-      phoneNumber: string | null
       createdAt: Date
       updatedAt: Date
       accountType: $Enums.AccountType
@@ -3416,7 +3404,6 @@ export namespace Prisma {
     readonly password: FieldRef<"User", 'String'>
     readonly firstName: FieldRef<"User", 'String'>
     readonly lastName: FieldRef<"User", 'String'>
-    readonly phoneNumber: FieldRef<"User", 'String'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
     readonly accountType: FieldRef<"User", 'AccountType'>
@@ -3915,6 +3902,7 @@ export namespace Prisma {
     city: string | null
     postalCode: string | null
     country: string | null
+    phoneNumber: string | null
     isDefault: boolean | null
     addressType: $Enums.AddressType | null
     createdAt: Date | null
@@ -3928,6 +3916,7 @@ export namespace Prisma {
     city: string | null
     postalCode: string | null
     country: string | null
+    phoneNumber: string | null
     isDefault: boolean | null
     addressType: $Enums.AddressType | null
     createdAt: Date | null
@@ -3941,6 +3930,7 @@ export namespace Prisma {
     city: number
     postalCode: number
     country: number
+    phoneNumber: number
     isDefault: number
     addressType: number
     createdAt: number
@@ -3956,6 +3946,7 @@ export namespace Prisma {
     city?: true
     postalCode?: true
     country?: true
+    phoneNumber?: true
     isDefault?: true
     addressType?: true
     createdAt?: true
@@ -3969,6 +3960,7 @@ export namespace Prisma {
     city?: true
     postalCode?: true
     country?: true
+    phoneNumber?: true
     isDefault?: true
     addressType?: true
     createdAt?: true
@@ -3982,6 +3974,7 @@ export namespace Prisma {
     city?: true
     postalCode?: true
     country?: true
+    phoneNumber?: true
     isDefault?: true
     addressType?: true
     createdAt?: true
@@ -4068,6 +4061,7 @@ export namespace Prisma {
     city: string
     postalCode: string
     country: string
+    phoneNumber: string | null
     isDefault: boolean
     addressType: $Enums.AddressType
     createdAt: Date
@@ -4098,6 +4092,7 @@ export namespace Prisma {
     city?: boolean
     postalCode?: boolean
     country?: boolean
+    phoneNumber?: boolean
     isDefault?: boolean
     addressType?: boolean
     createdAt?: boolean
@@ -4115,6 +4110,7 @@ export namespace Prisma {
     city?: boolean
     postalCode?: boolean
     country?: boolean
+    phoneNumber?: boolean
     isDefault?: boolean
     addressType?: boolean
     createdAt?: boolean
@@ -4129,6 +4125,7 @@ export namespace Prisma {
     city?: boolean
     postalCode?: boolean
     country?: boolean
+    phoneNumber?: boolean
     isDefault?: boolean
     addressType?: boolean
     createdAt?: boolean
@@ -4143,13 +4140,14 @@ export namespace Prisma {
     city?: boolean
     postalCode?: boolean
     country?: boolean
+    phoneNumber?: boolean
     isDefault?: boolean
     addressType?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type AddressOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "street" | "city" | "postalCode" | "country" | "isDefault" | "addressType" | "createdAt" | "updatedAt", ExtArgs["result"]["address"]>
+  export type AddressOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "street" | "city" | "postalCode" | "country" | "phoneNumber" | "isDefault" | "addressType" | "createdAt" | "updatedAt", ExtArgs["result"]["address"]>
   export type AddressInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     billingOrders?: boolean | Address$billingOrdersArgs<ExtArgs>
@@ -4177,6 +4175,7 @@ export namespace Prisma {
       city: string
       postalCode: string
       country: string
+      phoneNumber: string | null
       isDefault: boolean
       addressType: $Enums.AddressType
       createdAt: Date
@@ -4613,6 +4612,7 @@ export namespace Prisma {
     readonly city: FieldRef<"Address", 'String'>
     readonly postalCode: FieldRef<"Address", 'String'>
     readonly country: FieldRef<"Address", 'String'>
+    readonly phoneNumber: FieldRef<"Address", 'String'>
     readonly isDefault: FieldRef<"Address", 'Boolean'>
     readonly addressType: FieldRef<"Address", 'AddressType'>
     readonly createdAt: FieldRef<"Address", 'DateTime'>
@@ -8649,7 +8649,6 @@ export namespace Prisma {
     password: 'password',
     firstName: 'firstName',
     lastName: 'lastName',
-    phoneNumber: 'phoneNumber',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
     accountType: 'accountType'
@@ -8665,6 +8664,7 @@ export namespace Prisma {
     city: 'city',
     postalCode: 'postalCode',
     country: 'country',
+    phoneNumber: 'phoneNumber',
     isDefault: 'isDefault',
     addressType: 'addressType',
     createdAt: 'createdAt',
@@ -8975,7 +8975,6 @@ export namespace Prisma {
     password?: StringFilter<"User"> | string
     firstName?: StringNullableFilter<"User"> | string | null
     lastName?: StringNullableFilter<"User"> | string | null
-    phoneNumber?: StringNullableFilter<"User"> | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     accountType?: EnumAccountTypeFilter<"User"> | $Enums.AccountType
@@ -8990,7 +8989,6 @@ export namespace Prisma {
     password?: SortOrder
     firstName?: SortOrderInput | SortOrder
     lastName?: SortOrderInput | SortOrder
-    phoneNumber?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     accountType?: SortOrder
@@ -9008,7 +9006,6 @@ export namespace Prisma {
     password?: StringFilter<"User"> | string
     firstName?: StringNullableFilter<"User"> | string | null
     lastName?: StringNullableFilter<"User"> | string | null
-    phoneNumber?: StringNullableFilter<"User"> | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     accountType?: EnumAccountTypeFilter<"User"> | $Enums.AccountType
@@ -9023,7 +9020,6 @@ export namespace Prisma {
     password?: SortOrder
     firstName?: SortOrderInput | SortOrder
     lastName?: SortOrderInput | SortOrder
-    phoneNumber?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     accountType?: SortOrder
@@ -9041,7 +9037,6 @@ export namespace Prisma {
     password?: StringWithAggregatesFilter<"User"> | string
     firstName?: StringNullableWithAggregatesFilter<"User"> | string | null
     lastName?: StringNullableWithAggregatesFilter<"User"> | string | null
-    phoneNumber?: StringNullableWithAggregatesFilter<"User"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     accountType?: EnumAccountTypeWithAggregatesFilter<"User"> | $Enums.AccountType
@@ -9057,6 +9052,7 @@ export namespace Prisma {
     city?: StringFilter<"Address"> | string
     postalCode?: StringFilter<"Address"> | string
     country?: StringFilter<"Address"> | string
+    phoneNumber?: StringNullableFilter<"Address"> | string | null
     isDefault?: BoolFilter<"Address"> | boolean
     addressType?: EnumAddressTypeFilter<"Address"> | $Enums.AddressType
     createdAt?: DateTimeFilter<"Address"> | Date | string
@@ -9073,6 +9069,7 @@ export namespace Prisma {
     city?: SortOrder
     postalCode?: SortOrder
     country?: SortOrder
+    phoneNumber?: SortOrderInput | SortOrder
     isDefault?: SortOrder
     addressType?: SortOrder
     createdAt?: SortOrder
@@ -9092,6 +9089,7 @@ export namespace Prisma {
     city?: StringFilter<"Address"> | string
     postalCode?: StringFilter<"Address"> | string
     country?: StringFilter<"Address"> | string
+    phoneNumber?: StringNullableFilter<"Address"> | string | null
     isDefault?: BoolFilter<"Address"> | boolean
     addressType?: EnumAddressTypeFilter<"Address"> | $Enums.AddressType
     createdAt?: DateTimeFilter<"Address"> | Date | string
@@ -9108,6 +9106,7 @@ export namespace Prisma {
     city?: SortOrder
     postalCode?: SortOrder
     country?: SortOrder
+    phoneNumber?: SortOrderInput | SortOrder
     isDefault?: SortOrder
     addressType?: SortOrder
     createdAt?: SortOrder
@@ -9127,6 +9126,7 @@ export namespace Prisma {
     city?: StringWithAggregatesFilter<"Address"> | string
     postalCode?: StringWithAggregatesFilter<"Address"> | string
     country?: StringWithAggregatesFilter<"Address"> | string
+    phoneNumber?: StringNullableWithAggregatesFilter<"Address"> | string | null
     isDefault?: BoolWithAggregatesFilter<"Address"> | boolean
     addressType?: EnumAddressTypeWithAggregatesFilter<"Address"> | $Enums.AddressType
     createdAt?: DateTimeWithAggregatesFilter<"Address"> | Date | string
@@ -9483,7 +9483,6 @@ export namespace Prisma {
     password: string
     firstName?: string | null
     lastName?: string | null
-    phoneNumber?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     accountType?: $Enums.AccountType
@@ -9498,7 +9497,6 @@ export namespace Prisma {
     password: string
     firstName?: string | null
     lastName?: string | null
-    phoneNumber?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     accountType?: $Enums.AccountType
@@ -9513,7 +9511,6 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accountType?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
@@ -9528,7 +9525,6 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accountType?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
@@ -9543,7 +9539,6 @@ export namespace Prisma {
     password: string
     firstName?: string | null
     lastName?: string | null
-    phoneNumber?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     accountType?: $Enums.AccountType
@@ -9555,7 +9550,6 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accountType?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
@@ -9567,7 +9561,6 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accountType?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
@@ -9579,6 +9572,7 @@ export namespace Prisma {
     city: string
     postalCode: string
     country: string
+    phoneNumber?: string | null
     isDefault?: boolean
     addressType?: $Enums.AddressType
     createdAt?: Date | string
@@ -9595,6 +9589,7 @@ export namespace Prisma {
     city: string
     postalCode: string
     country: string
+    phoneNumber?: string | null
     isDefault?: boolean
     addressType?: $Enums.AddressType
     createdAt?: Date | string
@@ -9609,6 +9604,7 @@ export namespace Prisma {
     city?: StringFieldUpdateOperationsInput | string
     postalCode?: StringFieldUpdateOperationsInput | string
     country?: StringFieldUpdateOperationsInput | string
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     addressType?: EnumAddressTypeFieldUpdateOperationsInput | $Enums.AddressType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9625,6 +9621,7 @@ export namespace Prisma {
     city?: StringFieldUpdateOperationsInput | string
     postalCode?: StringFieldUpdateOperationsInput | string
     country?: StringFieldUpdateOperationsInput | string
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     addressType?: EnumAddressTypeFieldUpdateOperationsInput | $Enums.AddressType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9640,6 +9637,7 @@ export namespace Prisma {
     city: string
     postalCode: string
     country: string
+    phoneNumber?: string | null
     isDefault?: boolean
     addressType?: $Enums.AddressType
     createdAt?: Date | string
@@ -9652,6 +9650,7 @@ export namespace Prisma {
     city?: StringFieldUpdateOperationsInput | string
     postalCode?: StringFieldUpdateOperationsInput | string
     country?: StringFieldUpdateOperationsInput | string
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     addressType?: EnumAddressTypeFieldUpdateOperationsInput | $Enums.AddressType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9665,6 +9664,7 @@ export namespace Prisma {
     city?: StringFieldUpdateOperationsInput | string
     postalCode?: StringFieldUpdateOperationsInput | string
     country?: StringFieldUpdateOperationsInput | string
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     addressType?: EnumAddressTypeFieldUpdateOperationsInput | $Enums.AddressType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10148,7 +10148,6 @@ export namespace Prisma {
     password?: SortOrder
     firstName?: SortOrder
     lastName?: SortOrder
-    phoneNumber?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     accountType?: SortOrder
@@ -10160,7 +10159,6 @@ export namespace Prisma {
     password?: SortOrder
     firstName?: SortOrder
     lastName?: SortOrder
-    phoneNumber?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     accountType?: SortOrder
@@ -10172,7 +10170,6 @@ export namespace Prisma {
     password?: SortOrder
     firstName?: SortOrder
     lastName?: SortOrder
-    phoneNumber?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     accountType?: SortOrder
@@ -10225,6 +10222,7 @@ export namespace Prisma {
     city?: SortOrder
     postalCode?: SortOrder
     country?: SortOrder
+    phoneNumber?: SortOrder
     isDefault?: SortOrder
     addressType?: SortOrder
     createdAt?: SortOrder
@@ -10238,6 +10236,7 @@ export namespace Prisma {
     city?: SortOrder
     postalCode?: SortOrder
     country?: SortOrder
+    phoneNumber?: SortOrder
     isDefault?: SortOrder
     addressType?: SortOrder
     createdAt?: SortOrder
@@ -10251,6 +10250,7 @@ export namespace Prisma {
     city?: SortOrder
     postalCode?: SortOrder
     country?: SortOrder
+    phoneNumber?: SortOrder
     isDefault?: SortOrder
     addressType?: SortOrder
     createdAt?: SortOrder
@@ -11315,6 +11315,7 @@ export namespace Prisma {
     city: string
     postalCode: string
     country: string
+    phoneNumber?: string | null
     isDefault?: boolean
     addressType?: $Enums.AddressType
     createdAt?: Date | string
@@ -11329,6 +11330,7 @@ export namespace Prisma {
     city: string
     postalCode: string
     country: string
+    phoneNumber?: string | null
     isDefault?: boolean
     addressType?: $Enums.AddressType
     createdAt?: Date | string
@@ -11440,6 +11442,7 @@ export namespace Prisma {
     city?: StringFilter<"Address"> | string
     postalCode?: StringFilter<"Address"> | string
     country?: StringFilter<"Address"> | string
+    phoneNumber?: StringNullableFilter<"Address"> | string | null
     isDefault?: BoolFilter<"Address"> | boolean
     addressType?: EnumAddressTypeFilter<"Address"> | $Enums.AddressType
     createdAt?: DateTimeFilter<"Address"> | Date | string
@@ -11484,7 +11487,6 @@ export namespace Prisma {
     password: string
     firstName?: string | null
     lastName?: string | null
-    phoneNumber?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     accountType?: $Enums.AccountType
@@ -11498,7 +11500,6 @@ export namespace Prisma {
     password: string
     firstName?: string | null
     lastName?: string | null
-    phoneNumber?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     accountType?: $Enums.AccountType
@@ -11608,7 +11609,6 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accountType?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
@@ -11622,7 +11622,6 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accountType?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
@@ -11668,7 +11667,6 @@ export namespace Prisma {
     password: string
     firstName?: string | null
     lastName?: string | null
-    phoneNumber?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     accountType?: $Enums.AccountType
@@ -11682,7 +11680,6 @@ export namespace Prisma {
     password: string
     firstName?: string | null
     lastName?: string | null
-    phoneNumber?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     accountType?: $Enums.AccountType
@@ -11701,6 +11698,7 @@ export namespace Prisma {
     city: string
     postalCode: string
     country: string
+    phoneNumber?: string | null
     isDefault?: boolean
     addressType?: $Enums.AddressType
     createdAt?: Date | string
@@ -11716,6 +11714,7 @@ export namespace Prisma {
     city: string
     postalCode: string
     country: string
+    phoneNumber?: string | null
     isDefault?: boolean
     addressType?: $Enums.AddressType
     createdAt?: Date | string
@@ -11734,6 +11733,7 @@ export namespace Prisma {
     city: string
     postalCode: string
     country: string
+    phoneNumber?: string | null
     isDefault?: boolean
     addressType?: $Enums.AddressType
     createdAt?: Date | string
@@ -11749,6 +11749,7 @@ export namespace Prisma {
     city: string
     postalCode: string
     country: string
+    phoneNumber?: string | null
     isDefault?: boolean
     addressType?: $Enums.AddressType
     createdAt?: Date | string
@@ -11838,7 +11839,6 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accountType?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
@@ -11852,7 +11852,6 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accountType?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
@@ -11877,6 +11876,7 @@ export namespace Prisma {
     city?: StringFieldUpdateOperationsInput | string
     postalCode?: StringFieldUpdateOperationsInput | string
     country?: StringFieldUpdateOperationsInput | string
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     addressType?: EnumAddressTypeFieldUpdateOperationsInput | $Enums.AddressType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11892,6 +11892,7 @@ export namespace Prisma {
     city?: StringFieldUpdateOperationsInput | string
     postalCode?: StringFieldUpdateOperationsInput | string
     country?: StringFieldUpdateOperationsInput | string
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     addressType?: EnumAddressTypeFieldUpdateOperationsInput | $Enums.AddressType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11916,6 +11917,7 @@ export namespace Prisma {
     city?: StringFieldUpdateOperationsInput | string
     postalCode?: StringFieldUpdateOperationsInput | string
     country?: StringFieldUpdateOperationsInput | string
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     addressType?: EnumAddressTypeFieldUpdateOperationsInput | $Enums.AddressType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11931,6 +11933,7 @@ export namespace Prisma {
     city?: StringFieldUpdateOperationsInput | string
     postalCode?: StringFieldUpdateOperationsInput | string
     country?: StringFieldUpdateOperationsInput | string
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     addressType?: EnumAddressTypeFieldUpdateOperationsInput | $Enums.AddressType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -12155,7 +12158,6 @@ export namespace Prisma {
     password: string
     firstName?: string | null
     lastName?: string | null
-    phoneNumber?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     accountType?: $Enums.AccountType
@@ -12169,7 +12171,6 @@ export namespace Prisma {
     password: string
     firstName?: string | null
     lastName?: string | null
-    phoneNumber?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     accountType?: $Enums.AccountType
@@ -12240,7 +12241,6 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accountType?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
@@ -12254,7 +12254,6 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     firstName?: NullableStringFieldUpdateOperationsInput | string | null
     lastName?: NullableStringFieldUpdateOperationsInput | string | null
-    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accountType?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
@@ -12313,6 +12312,7 @@ export namespace Prisma {
     city: string
     postalCode: string
     country: string
+    phoneNumber?: string | null
     isDefault?: boolean
     addressType?: $Enums.AddressType
     createdAt?: Date | string
@@ -12380,6 +12380,7 @@ export namespace Prisma {
     city?: StringFieldUpdateOperationsInput | string
     postalCode?: StringFieldUpdateOperationsInput | string
     country?: StringFieldUpdateOperationsInput | string
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     addressType?: EnumAddressTypeFieldUpdateOperationsInput | $Enums.AddressType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -12394,6 +12395,7 @@ export namespace Prisma {
     city?: StringFieldUpdateOperationsInput | string
     postalCode?: StringFieldUpdateOperationsInput | string
     country?: StringFieldUpdateOperationsInput | string
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     addressType?: EnumAddressTypeFieldUpdateOperationsInput | $Enums.AddressType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -12408,6 +12410,7 @@ export namespace Prisma {
     city?: StringFieldUpdateOperationsInput | string
     postalCode?: StringFieldUpdateOperationsInput | string
     country?: StringFieldUpdateOperationsInput | string
+    phoneNumber?: NullableStringFieldUpdateOperationsInput | string | null
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     addressType?: EnumAddressTypeFieldUpdateOperationsInput | $Enums.AddressType
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string

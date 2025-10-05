@@ -60,7 +60,6 @@ model User {
   password    String
   firstName   String?
   lastName    String?
-  phoneNumber String?
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
   accountType AccountType @default(DETAL)
@@ -76,6 +75,7 @@ model Address {
   city              String
   postalCode        String
   country           String
+  phoneNumber       String?
   isDefault         Boolean     @default(false)
   addressType       AddressType @default(BOTH)
   createdAt         DateTime    @default(now())

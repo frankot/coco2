@@ -42,7 +42,6 @@ type UserData = {
   email: string;
   firstName: string | null;
   lastName: string | null;
-  phoneNumber: string | null;
   accountType: string;
   createdAt: string;
   addresses?: Address[];
@@ -54,6 +53,7 @@ type Address = {
   city: string;
   postalCode: string;
   country: string;
+  phoneNumber?: string | null;
   isDefault: boolean;
   addressType: "BILLING" | "SHIPPING" | "BOTH";
   createdAt: string;
@@ -75,6 +75,7 @@ export default function UserProfilePage() {
     city: "",
     postalCode: "",
     country: "Polska",
+    phoneNumber: "",
     isDefault: false,
     addressType: "BOTH" as "BILLING" | "SHIPPING" | "BOTH",
   });
@@ -88,8 +89,8 @@ export default function UserProfilePage() {
 
   useEffect(() => {
     // Sync active tab from URL param
-    const tab = (searchParams.get("tab") as "profile" | "orders" | "addresses" | null) ||
-      (undefined as any);
+    const tab =
+      (searchParams.get("tab") as "profile" | "orders" | "addresses" | null) || (undefined as any);
     if (tab && ["profile", "orders", "addresses"].includes(tab)) {
       setActiveTab(tab as any);
     }
@@ -163,6 +164,7 @@ export default function UserProfilePage() {
         city: "",
         postalCode: "",
         country: "Polska",
+        phoneNumber: "",
         isDefault: false,
         addressType: "BOTH",
       });
@@ -208,6 +210,7 @@ export default function UserProfilePage() {
       city: a.city,
       postalCode: a.postalCode,
       country: a.country,
+      phoneNumber: a.phoneNumber || "",
       addressType: a.addressType,
     });
   };
@@ -378,10 +381,7 @@ export default function UserProfilePage() {
                     <p className="text-sm text-muted-foreground">Nazwisko</p>
                     <p className="font-medium">{userData?.lastName || "—"}</p>
                   </div>
-                  <div className="space-y-1">
-                    <p className="text-sm text-muted-foreground">Telefon</p>
-                    <p className="font-medium">{userData?.phoneNumber || "—"}</p>
-                  </div>
+                  {/* Telefon przeniesiony do adresu */}
                   <div className="space-y-1">
                     <p className="text-sm text-muted-foreground">Data utworzenia konta</p>
                     <p className="font-medium">
@@ -521,6 +521,15 @@ export default function UserProfilePage() {
                                   <option value="BILLING">Rozliczeniowy</option>
                                 </select>
                               </div>
+                              <div className="col-span-2">
+                                <Label>Telefon (dla kuriera)</Label>
+                                <Input
+                                  value={(editForm.phoneNumber as string) || ""}
+                                  onChange={(e) =>
+                                    setEditForm({ ...editForm, phoneNumber: e.target.value })
+                                  }
+                                />
+                              </div>
                             </div>
                             <div className="flex gap-2">
                               <Button type="submit" size="sm">
@@ -544,6 +553,11 @@ export default function UserProfilePage() {
                                 {a.postalCode} {a.city}, {a.country}
                               </div>
                               <div className="text-xs mt-1">Typ: {a.addressType}</div>
+                              {a.phoneNumber && (
+                                <div className="text-xs mt-1 text-muted-foreground">
+                                  Telefon: {a.phoneNumber}
+                                </div>
+                              )}
                             </div>
                             <div className="flex gap-2">
                               <Button size="sm" variant="outline" onClick={() => startEdit(a)}>
@@ -613,6 +627,15 @@ export default function UserProfilePage() {
                           setAddressForm({ ...addressForm, country: e.target.value })
                         }
                         required
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label>Telefon (dla kuriera)</Label>
+                      <Input
+                        value={addressForm.phoneNumber}
+                        onChange={(e) =>
+                          setAddressForm({ ...addressForm, phoneNumber: e.target.value })
+                        }
                       />
                     </div>
                     <Separator />

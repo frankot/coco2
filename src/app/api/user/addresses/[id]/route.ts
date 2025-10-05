@@ -7,6 +7,7 @@ const addressUpdateSchema = z.object({
   city: z.string().min(1, "Miasto jest wymagane").optional(),
   postalCode: z.string().min(1, "Kod pocztowy jest wymagany").optional(),
   country: z.string().min(1, "Kraj jest wymagany").optional(),
+  phoneNumber: z.string().optional(),
   isDefault: z.boolean().optional(),
   addressType: z.enum(["BILLING", "SHIPPING", "BOTH"]).optional(),
 });

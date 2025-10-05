@@ -30,7 +30,6 @@ export async function findUserByEmail(email: string) {
       password: true,
       firstName: true,
       lastName: true,
-      phoneNumber: true,
       accountType: true,
     },
   });
@@ -44,7 +43,6 @@ export async function createUser(userData: {
   password: string;
   firstName?: string | null;
   lastName?: string | null;
-  phoneNumber?: string | null;
   accountType?: string;
 }) {
   console.log(`Creating new user with email: ${userData.email}`);
@@ -57,7 +55,6 @@ export async function createUser(userData: {
         password: hashedPassword,
         firstName: userData.firstName || null,
         lastName: userData.lastName || null,
-        phoneNumber: userData.phoneNumber || null,
         // accountType defaults to DETAL in the Prisma schema
       },
     });
@@ -76,7 +73,6 @@ export async function updateUser(
   userData: {
     firstName?: string | null;
     lastName?: string | null;
-    phoneNumber?: string | null;
   }
 ) {
   console.log(`Updating user with ID: ${userId}`);

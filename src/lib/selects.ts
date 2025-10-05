@@ -45,7 +45,6 @@ export const ORDER_DETAIL_INCLUDE = {
       email: true,
       firstName: true,
       lastName: true,
-      phoneNumber: true,
       accountType: true,
     },
   },

@@ -139,7 +139,6 @@ exports.Prisma.UserScalarFieldEnum = {
   password: 'password',
   firstName: 'firstName',
   lastName: 'lastName',
-  phoneNumber: 'phoneNumber',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   accountType: 'accountType'
@@ -152,6 +151,7 @@ exports.Prisma.AddressScalarFieldEnum = {
   city: 'city',
   postalCode: 'postalCode',
   country: 'country',
+  phoneNumber: 'phoneNumber',
   isDefault: 'isDefault',
   addressType: 'addressType',
   createdAt: 'createdAt',

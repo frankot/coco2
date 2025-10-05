@@ -24,7 +24,6 @@ function RegisterForm() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -49,7 +48,6 @@ function RegisterForm() {
         password,
         firstName,
         lastName,
-        phoneNumber,
       });
       if (!validationResult.success) {
         const errorMessages = validationResult.error.errors.map((err) => err.message).join(", ");
@@ -64,7 +62,7 @@ function RegisterForm() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password, firstName, lastName, phoneNumber }),
+        body: JSON.stringify({ email, password, firstName, lastName }),
       });
 
       const data = await response.json();
@@ -134,18 +132,7 @@ function RegisterForm() {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="phoneNumber">Telefon</Label>
-              <Input
-                id="phoneNumber"
-                type="tel"
-                required
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
-                placeholder="123 456 789"
-                disabled={isLoading}
-              />
-            </div>
+            {/* Telefon przeniesiony do adresu przy dodawaniu adresu */}
 
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>

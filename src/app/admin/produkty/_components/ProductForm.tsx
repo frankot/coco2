@@ -14,7 +14,10 @@ import { X, Plus } from "lucide-react";
 
 export default function ProductForm({ product }: { product?: Product | null }) {
   const formRef = useRef<HTMLFormElement>(null);
-  const [priceInCents, setPriceInCents] = useState<string>(product?.priceInCents?.toString() || "");
+  // Store price as PLN string in the input, convert to grosze on submit
+  const [pricePln, setPricePln] = useState<string>(
+    product?.priceInCents != null ? (product.priceInCents / 100).toFixed(2) : ""
+  );
   const [description, setDescription] = useState<string>(product?.description || "");
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [existingImages, setExistingImages] = useState<string[]>(product?.imagePaths || []);
@@ -53,6 +56,31 @@ export default function ProductForm({ product }: { product?: Product | null }) {
   };
 
   const customFormAction = (formData: FormData) => {
+    // Helper: Convert PLN string to grosze (integer)
+    const toCents = (input: string | null | undefined) => {
+      const raw = (input ?? "").trim();
+      if (!raw) return 0;
+      // Normalize spaces (including non-breaking space)
+      let s = raw.replace(/[\u00A0\s]/g, "");
+      // If comma present, treat '.' as thousand separator and remove them
+      if (s.includes(",")) {
+        s = s.replace(/\./g, "");
+        s = s.replace(",", ".");
+      }
+      // Now s should use '.' as decimal separator
+      const num = parseFloat(s);
+      return Number.isFinite(num) ? Math.round(num * 100) : 0;
+    };
+
+    // Convert PLN string to grosze and set as priceInCents for server actions
+    const rawPln = (formData.get("pricePln") as string) ?? pricePln;
+    const cents = toCents(rawPln);
+
+    // Ensure the server receives the expected field
+    formData.set("priceInCents", String(cents));
+    // Optionally remove UI-only field
+    formData.delete("pricePln");
+
     // Add selected files to FormData
     selectedFiles.forEach((file, index) => {
       formData.append(`newImages`, file);
@@ -74,20 +102,32 @@ export default function ProductForm({ product }: { product?: Product | null }) {
         {state?.error?.name && <div className="text-destructive">{state.error.name}</div>}
       </div>
       <div className="space-y-2">
-        <Label htmlFor="priceInCents">Cena w groszach</Label>
+        <Label htmlFor="pricePln">Cena (PLN)</Label>
         <Input
-          type="number"
-          id="priceInCents"
-          name="priceInCents"
+          type="text"
+          id="pricePln"
+          name="pricePln"
+          inputMode="decimal"
           required
-          value={priceInCents}
-          onChange={(e) => setPriceInCents(e.target.value)}
+          value={pricePln}
+          onChange={(e) => setPricePln(e.target.value)}
         />
         {state?.error?.priceInCents && (
           <div className="text-destructive">{state.error.priceInCents}</div>
         )}
         <div className="text-sm text-muted-foreground">
-          {formatPLN(priceInCents ? Number(priceInCents) : 0)}
+          {/* Live preview: parse the PLN value and show formatted PLN */}
+          {(() => {
+            // Keep parsing logic in sync with submit
+            let s = (pricePln || "").replace(/[\u00A0\s]/g, "");
+            if (s.includes(",")) {
+              s = s.replace(/\./g, "");
+              s = s.replace(",", ".");
+            }
+            const num = parseFloat(s);
+            const cents = Number.isFinite(num) ? Math.round(num * 100) : 0;
+            return formatPLN(cents);
+          })()}
         </div>
       </div>
       <div className="space-y-2">

@@ -16,7 +16,6 @@ export const userRegistrationSchema = z.object({
   password: z.string().min(6, "Hasło musi mieć co najmniej 6 znaków"),
   firstName: z.string().min(1, "Imię jest wymagane"),
   lastName: z.string().min(1, "Nazwisko jest wymagane"),
-  phoneNumber: z.string().min(1, "Numer telefonu jest wymagany"),
 });
 
 export const userLoginSchema = z.object({
@@ -50,7 +49,6 @@ export async function registerUser(userData: UserRegistrationData) {
       password: validatedData.password,
       firstName: validatedData.firstName || null,
       lastName: validatedData.lastName || null,
-      phoneNumber: validatedData.phoneNumber || null,
     });
 
     return {
@@ -72,7 +70,6 @@ export async function createOrUpdateUser(userData: {
   password?: string;
   firstName?: string;
   lastName?: string;
-  phoneNumber?: string;
 }) {
   try {
     // Check if user already exists
@@ -83,8 +80,6 @@ export async function createOrUpdateUser(userData: {
       const updatedUser = await updateUser(existingUser.id, {
         firstName: userData.firstName !== undefined ? userData.firstName : existingUser.firstName,
         lastName: userData.lastName !== undefined ? userData.lastName : existingUser.lastName,
-        phoneNumber:
-          userData.phoneNumber !== undefined ? userData.phoneNumber : existingUser.phoneNumber,
       });
 
       return {
@@ -109,7 +104,6 @@ export async function createOrUpdateUser(userData: {
       password: userPassword,
       firstName: userData.firstName || null,
       lastName: userData.lastName || null,
-      phoneNumber: userData.phoneNumber || null,
     });
 
     return {

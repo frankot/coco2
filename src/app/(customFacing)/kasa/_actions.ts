@@ -105,14 +105,12 @@ export async function createOrder(formData: OrderFormData) {
         email: validatedData.email,
         firstName: validatedData.firstName,
         lastName: validatedData.lastName,
-        phoneNumber: validatedData.phoneNumber,
       });
 
       const userResult = await createOrUpdateUser({
         email: validatedData.email,
         firstName: validatedData.firstName,
         lastName: validatedData.lastName,
-        phoneNumber: validatedData.phoneNumber,
       });
 
       console.log("User creation/update result:", userResult);
@@ -150,6 +148,7 @@ export async function createOrder(formData: OrderFormData) {
           city: validatedData.city,
           postalCode: validatedData.postalCode,
           country: validatedData.country,
+          phoneNumber: validatedData.phoneNumber,
           isDefault: true,
           addressType: "BOTH",
         },

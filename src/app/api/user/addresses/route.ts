@@ -7,6 +7,7 @@ const addressSchema = z.object({
   city: z.string().min(1, "Miasto jest wymagane"),
   postalCode: z.string().min(1, "Kod pocztowy jest wymagany"),
   country: z.string().min(1, "Kraj jest wymagany"),
+  phoneNumber: z.string().optional(),
   isDefault: z.boolean().optional().default(false),
   addressType: z.enum(["BILLING", "SHIPPING", "BOTH"]).optional().default("BOTH"),
 });
@@ -32,6 +33,15 @@ export const POST = createRouteHandler(
       throw new ApiError("Nieprawidłowe dane adresu", 400, result.error.flatten());
     const data = result.data;
 
+    // Ensure the user exists (after a dev DB reset, a stale session may exist)
+    const userExists = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { id: true },
+    });
+    if (!userExists) {
+      throw new ApiError("Użytkownik nie istnieje. Zaloguj się ponownie.", 401);
+    }
+
     // If setting default, unset previous defaults of same type
     if (data.isDefault) {
       await prisma.address.updateMany({
@@ -47,6 +57,7 @@ export const POST = createRouteHandler(
         city: data.city,
         postalCode: data.postalCode,
         country: data.country,
+        phoneNumber: data.phoneNumber || null,
         isDefault: data.isDefault,
         addressType: data.addressType,
       },
