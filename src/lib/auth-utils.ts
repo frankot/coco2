@@ -14,9 +14,9 @@ const prisma = new PrismaClient();
 export const userRegistrationSchema = z.object({
   email: z.string().email("Niepoprawny adres email"),
   password: z.string().min(6, "Hasło musi mieć co najmniej 6 znaków"),
-  firstName: z.string().optional(),
-  lastName: z.string().optional(),
-  phoneNumber: z.string().optional(),
+  firstName: z.string().min(1, "Imię jest wymagane"),
+  lastName: z.string().min(1, "Nazwisko jest wymagane"),
+  phoneNumber: z.string().min(1, "Numer telefonu jest wymagany"),
 });
 
 export const userLoginSchema = z.object({

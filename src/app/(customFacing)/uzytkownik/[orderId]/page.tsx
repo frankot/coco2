@@ -18,6 +18,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { ShoppingBag, ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type OrderStatus = "PENDING" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED";
 
@@ -117,8 +118,74 @@ export default function OrderDetailsPage() {
     }
   };
 
+  const OrderSkeleton = () => (
+    <div className="container py-10 space-y-6 mt-44 mx-auto">
+      <div className="flex justify-between items-center">
+        <div className="flex items-center gap-2">
+          <Skeleton className="h-6 w-6 rounded-full" />
+          <Skeleton className="h-6 w-56" />
+        </div>
+        <Skeleton className="h-9 w-40" />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Card>
+          <CardHeader>
+            <Skeleton className="h-5 w-40" />
+            <Skeleton className="h-4 w-64 mt-2" />
+          </CardHeader>
+          <CardContent className="grid grid-cols-2 gap-2">
+            {Array.from({ length: 10 }).map((_, i) => (
+              <Skeleton key={i} className="h-4 w-40" />
+            ))}
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <Skeleton className="h-5 w-40" />
+            <Skeleton className="h-4 w-64 mt-2" />
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {Array.from({ length: 2 }).map((_, i) => (
+              <div key={i} className="space-y-1">
+                <Skeleton className="h-4 w-48" />
+                <Skeleton className="h-4 w-56" />
+                <Skeleton className="h-4 w-40" />
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <Skeleton className="h-5 w-32" />
+          <Skeleton className="h-4 w-64 mt-2" />
+        </CardHeader>
+        <CardContent className="space-y-2">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="grid grid-cols-4 gap-4 items-center">
+              <Skeleton className="h-4 w-48" />
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-4 w-12" />
+              <Skeleton className="h-4 w-24 justify-self-end" />
+            </div>
+          ))}
+          <div className="grid grid-cols-4 gap-4 items-center mt-4">
+            <div className="col-span-3 text-right">
+              <Skeleton className="h-4 w-32 ml-auto" />
+            </div>
+            <div className="justify-self-end">
+              <Skeleton className="h-4 w-24" />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+
   if (status === "loading" || loading) {
-    return <div>Ładowanie...</div>;
+    return <OrderSkeleton />;
   }
 
   if (!order) {

@@ -58,7 +58,10 @@ function UserAccountMenu() {
         <DropdownMenuLabel>Moje konto</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link href="/user/settings">Ustawienia</Link>
+          <Link href="/uzytkownik">Profil</Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href={{ pathname: "/uzytkownik", query: { tab: "orders" } }}>Zamówienia</Link>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => signOut({ callbackUrl: "/" })}>Wyloguj</DropdownMenuItem>
       </DropdownMenuContent>

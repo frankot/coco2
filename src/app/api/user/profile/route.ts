@@ -14,6 +14,20 @@ export const GET = createRouteHandler(
         phoneNumber: true,
         accountType: true,
         createdAt: true,
+        addresses: {
+          select: {
+            id: true,
+            street: true,
+            city: true,
+            postalCode: true,
+            country: true,
+            isDefault: true,
+            addressType: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+          orderBy: { createdAt: "desc" },
+        },
       },
     });
     if (!user) throw new ApiError("User not found", 404);

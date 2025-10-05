@@ -26,7 +26,6 @@ export const GET = createRouteHandler(
               select: {
                 id: true,
                 name: true,
-                imagePath: true,
                 priceInCents: true,
               },
             },

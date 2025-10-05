@@ -30,6 +30,7 @@ export async function findUserByEmail(email: string) {
       password: true,
       firstName: true,
       lastName: true,
+      phoneNumber: true,
       accountType: true,
     },
   });
@@ -57,7 +58,7 @@ export async function createUser(userData: {
         firstName: userData.firstName || null,
         lastName: userData.lastName || null,
         phoneNumber: userData.phoneNumber || null,
-        accountType: userData.accountType || "DETAL",
+        // accountType defaults to DETAL in the Prisma schema
       },
     });
 
