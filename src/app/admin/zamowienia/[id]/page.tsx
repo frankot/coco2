@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -63,6 +63,7 @@ type Order = {
 
 export default function OrderDetailsPage() {
   const { id } = useParams();
+  const router = useRouter();
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -100,6 +101,14 @@ export default function OrderDetailsPage() {
 
       if (response.ok) {
         const updatedOrder = await response.json();
+        // If cancelled from details page, redirect back to orders list
+        if (status === "CANCELLED") {
+          toast.success(`Zamówienie zostało anulowane`);
+          // navigate back to orders list
+          const router = useRouter();
+          router.push("/admin/zamowienia");
+          return;
+        }
         setOrder(updatedOrder);
         toast.success(`Status zamówienia został zmieniony na ${getStatusDisplayName(status)}`);
       } else {
@@ -133,15 +142,15 @@ export default function OrderDetailsPage() {
   const getStatusBadgeVariant = (status: OrderStatus) => {
     switch (status) {
       case "PENDING":
-        return "secondary"; // Gray
+        return "secondary";
       case "PROCESSING":
-        return "default"; // Blue
+        return "default";
       case "SHIPPED":
-        return "warning"; // Yellow/Orange
+        return "outline";
       case "DELIVERED":
-        return "success"; // Green
+        return "default";
       case "CANCELLED":
-        return "destructive"; // Red
+        return "destructive";
       default:
         return "secondary";
     }

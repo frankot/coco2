@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 import PageHeader from "../_components/pageHeader";
 import Link from "next/link";
 import { deleteAllOrders } from "../_actions/clean-db";
@@ -102,7 +103,9 @@ export default function AdminOrdersPage() {
                 const res = await confirmAllApaczka(true);
                 const created = res.created?.length || 0;
                 const failed = res.failed?.length || 0;
-                alert(`Utworzono w Apaczka: ${created}, błędy: ${failed}`);
+                // show toast instead of alert
+                toast.success(`Utworzono w Apaczka: ${created}, błędy: ${failed}`);
+                console.info("confirmAllApaczka result:", { created: res.created, failed: res.failed, turnIn: res.turnIn });
                 if (res.turnIn) {
                   // Download base64 PDF
                   const link = document.createElement("a");
@@ -112,11 +115,45 @@ export default function AdminOrdersPage() {
                 }
                 window.location.reload();
               } catch (e: any) {
-                alert(`Błąd potwierdzania Apaczka: ${e?.message ?? e}`);
+                toast.error(`Błąd potwierdzania Apaczka: ${e?.message ?? e}`);
+                console.error("confirmAllApaczka error:", e);
               }
             }}
           >
             Potwierdź wszystkie w Apaczka
+          </Button>
+          <Button
+            variant="outline"
+            onClick={async () => {
+              try {
+                const resp = await fetch(`/api/admin/shipping/apaczka/sync-all`, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({}),
+                });
+                const data = await resp.json();
+                console.info("sync-all response:", data);
+                if (!resp.ok || !data.success) {
+                  toast.error(`Błąd synchronizacji: ${data.message || "Błąd API"}`);
+                  console.error("sync-all failed response:", data);
+                  return;
+                }
+                const updated = data.results?.filter((r: any) => r.ok).length ?? 0;
+                const failed = data.results?.filter((r: any) => !r.ok).length ?? 0;
+                toast.success(`Zsynchronizowano: ${updated}, błędy: ${failed}`);
+                // print detailed errors for failed items
+                if (data.results && Array.isArray(data.results)) {
+                  const failures = data.results.filter((r: any) => !r.ok);
+                  if (failures.length) console.error("sync-all failures:", failures);
+                }
+                window.location.reload();
+              } catch (e: any) {
+                toast.error(`Błąd synchronizacji: ${e?.message ?? e}`);
+                console.error("sync-all error:", e);
+              }
+            }}
+          >
+            Synchronizuj statusy Apaczka
           </Button>
         </div>
       </div>

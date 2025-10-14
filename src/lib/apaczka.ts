@@ -91,6 +91,23 @@ export const Apaczka = {
       };
     }>("order_send/", { order });
   },
+  // Fetch order details/status by Apaczka order id
+  getOrder(orderId: string) {
+    // Use the documented order details endpoint: /order/:order_id/
+    // The endpoint returns { response: { order: { ... } } }
+    return post<{
+      order: {
+        id: string;
+        supplier?: string;
+        service_id: string;
+        service_name: string;
+        waybill_number?: string;
+        tracking_url?: string;
+        status: string;
+        shipments_count?: number;
+      };
+    }>(`order/${orderId}/`, {});
+  },
   waybill(orderId: string) {
     return post<{ waybill: string; type: string }>(`waybill/${orderId}/`, {});
   },

@@ -11,6 +11,17 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
+import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 // View order details
 export function ViewOrderDropdownItem({ id }: { id: string }) {
@@ -99,13 +110,10 @@ export function CancelOrderDropdownItem({
   id: string;
   disabled?: boolean;
 }) {
-  const cancelOrder = async () => {
+  const [open, setOpen] = useState(false);
+
+  const confirmCancel = async () => {
     if (disabled) return;
-
-    if (!confirm("Czy na pewno chcesz anulować to zamówienie?")) {
-      return;
-    }
-
     try {
       const response = await fetch(`/api/admin/orders/${id}`, {
         method: "PATCH",
@@ -117,28 +125,54 @@ export function CancelOrderDropdownItem({
 
       if (response.ok) {
         toast.success("Zamówienie zostało anulowane");
+        setOpen(false);
         // Refresh page to show updated status
         window.location.reload();
       } else {
+        const text = await response.text();
         toast.error("Nie udało się anulować zamówienia");
+        console.error("Cancel order failed", { id, status: response.status, body: text });
       }
     } catch (error) {
       toast.error("Wystąpił błąd podczas anulowania zamówienia");
-      console.error(error);
+      console.error("Cancel order error", { id, error });
     }
   };
 
   return (
-    <DropdownMenuItem
-      className={`${
-        disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer text-destructive"
-      }`}
-      onClick={cancelOrder}
-      disabled={disabled}
-    >
-      <XCircle className="mr-2 h-4 w-4" />
-      <span>Anuluj zamówienie</span>
-    </DropdownMenuItem>
+    <>
+      <DropdownMenuItem
+        className={`${
+          disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer text-destructive"
+        }`}
+        onClick={() => !disabled && setOpen(true)}
+        disabled={disabled}
+      >
+        <XCircle className="mr-2 h-4 w-4" />
+        <span>Anuluj zamówienie</span>
+      </DropdownMenuItem>
+
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Anulować zamówienie?</DialogTitle>
+            <DialogDescription>
+              Czy na pewno chcesz anulować to zamówienie? Operacja spowoduje oznaczenie
+              zamówienia jako anulowane i może powiadomić klienta (jeśli macie taką logikę).
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setOpen(false)}>
+              Anuluj
+            </Button>
+            <Button variant="destructive" onClick={confirmCancel}>
+              Potwierdź anulowanie
+            </Button>
+          </DialogFooter>
+          <DialogClose />
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
 
