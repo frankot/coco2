@@ -18,7 +18,7 @@ export function About() {
           <div className="order-2 lg:order-1">
             <div className="relative">
               <Image
-                src="/about1.jpg"
+                src="/ab2.jpg"
                 alt="Woda kokosowa z młodych kokosów"
                 width={600}
                 height={700}

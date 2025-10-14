@@ -1,0 +1,47 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "typecheck-and-build",
+			"type": "shell",
+			"command": "npm run -s build",
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "build"
+		},
+		{
+			"label": "build-after-pickup-change",
+			"type": "shell",
+			"command": "npm run -s build",
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "build"
+		},
+		{
+			"label": "build-debug-logs",
+			"type": "shell",
+			"command": "npm run -s build",
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "build"
+		},
+		{
+			"label": "build-after-diagnostics",
+			"type": "shell",
+			"command": "npm run -s build",
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "build"
+		},
+		{
+			"label": "build-after-diagnostics",
+			"type": "shell",
+			"command": "npm run -s build",
+			"group": "build"
+		}
+	]
+}

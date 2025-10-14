@@ -20,7 +20,7 @@ import { ShoppingBag, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
 
-type OrderStatus = "PENDING" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED";
+type OrderStatus = "PENDING" | "PAID" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED";
 
 type OrderItem = {
   id: string;
@@ -87,6 +87,8 @@ export default function OrderDetailsPage() {
     switch (status) {
       case "PENDING":
         return "Oczekujące";
+      case "PAID":
+        return "Opłacone";
       case "PROCESSING":
         return "W realizacji";
       case "SHIPPED":

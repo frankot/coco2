@@ -59,6 +59,7 @@ export type AccountType = (typeof AccountType)[keyof typeof AccountType]
 
 export const OrderStatus: {
   PENDING: 'PENDING',
+  PAID: 'PAID',
   PROCESSING: 'PROCESSING',
   SHIPPED: 'SHIPPED',
   DELIVERED: 'DELIVERED',
@@ -70,6 +71,7 @@ export type OrderStatus = (typeof OrderStatus)[keyof typeof OrderStatus]
 
 export const PaymentMethod: {
   BANK_TRANSFER: 'BANK_TRANSFER',
+  COD: 'COD',
   STRIPE: 'STRIPE'
 };
 
@@ -5120,6 +5122,8 @@ export namespace Prisma {
     apaczkaTrackingUrl: string | null
     apaczkaStatus: string | null
     apaczkaConfirmedAt: Date | null
+    apaczkaPointId: string | null
+    apaczkaPointSupplier: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -5141,6 +5145,8 @@ export namespace Prisma {
     apaczkaTrackingUrl: string | null
     apaczkaStatus: string | null
     apaczkaConfirmedAt: Date | null
+    apaczkaPointId: string | null
+    apaczkaPointSupplier: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -5162,6 +5168,8 @@ export namespace Prisma {
     apaczkaTrackingUrl: number
     apaczkaStatus: number
     apaczkaConfirmedAt: number
+    apaczkaPointId: number
+    apaczkaPointSupplier: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -5197,6 +5205,8 @@ export namespace Prisma {
     apaczkaTrackingUrl?: true
     apaczkaStatus?: true
     apaczkaConfirmedAt?: true
+    apaczkaPointId?: true
+    apaczkaPointSupplier?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -5218,6 +5228,8 @@ export namespace Prisma {
     apaczkaTrackingUrl?: true
     apaczkaStatus?: true
     apaczkaConfirmedAt?: true
+    apaczkaPointId?: true
+    apaczkaPointSupplier?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -5239,6 +5251,8 @@ export namespace Prisma {
     apaczkaTrackingUrl?: true
     apaczkaStatus?: true
     apaczkaConfirmedAt?: true
+    apaczkaPointId?: true
+    apaczkaPointSupplier?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -5347,6 +5361,8 @@ export namespace Prisma {
     apaczkaTrackingUrl: string | null
     apaczkaStatus: string | null
     apaczkaConfirmedAt: Date | null
+    apaczkaPointId: string | null
+    apaczkaPointSupplier: string | null
     createdAt: Date
     updatedAt: Date
     _count: OrderCountAggregateOutputType | null
@@ -5387,6 +5403,8 @@ export namespace Prisma {
     apaczkaTrackingUrl?: boolean
     apaczkaStatus?: boolean
     apaczkaConfirmedAt?: boolean
+    apaczkaPointId?: boolean
+    apaczkaPointSupplier?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -5414,6 +5432,8 @@ export namespace Prisma {
     apaczkaTrackingUrl?: boolean
     apaczkaStatus?: boolean
     apaczkaConfirmedAt?: boolean
+    apaczkaPointId?: boolean
+    apaczkaPointSupplier?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -5438,6 +5458,8 @@ export namespace Prisma {
     apaczkaTrackingUrl?: boolean
     apaczkaStatus?: boolean
     apaczkaConfirmedAt?: boolean
+    apaczkaPointId?: boolean
+    apaczkaPointSupplier?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -5462,11 +5484,13 @@ export namespace Prisma {
     apaczkaTrackingUrl?: boolean
     apaczkaStatus?: boolean
     apaczkaConfirmedAt?: boolean
+    apaczkaPointId?: boolean
+    apaczkaPointSupplier?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type OrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "status" | "paymentMethod" | "pricePaidInCents" | "subtotalInCents" | "shippingCostInCents" | "billingAddressId" | "shippingAddressId" | "shippingServiceId" | "shippingServiceName" | "apaczkaOrderId" | "apaczkaWaybillNumber" | "apaczkaTrackingUrl" | "apaczkaStatus" | "apaczkaConfirmedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
+  export type OrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "status" | "paymentMethod" | "pricePaidInCents" | "subtotalInCents" | "shippingCostInCents" | "billingAddressId" | "shippingAddressId" | "shippingServiceId" | "shippingServiceName" | "apaczkaOrderId" | "apaczkaWaybillNumber" | "apaczkaTrackingUrl" | "apaczkaStatus" | "apaczkaConfirmedAt" | "apaczkaPointId" | "apaczkaPointSupplier" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
   export type OrderInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     billingAddress?: boolean | AddressDefaultArgs<ExtArgs>
@@ -5512,6 +5536,8 @@ export namespace Prisma {
       apaczkaTrackingUrl: string | null
       apaczkaStatus: string | null
       apaczkaConfirmedAt: Date | null
+      apaczkaPointId: string | null
+      apaczkaPointSupplier: string | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["order"]>
@@ -5958,6 +5984,8 @@ export namespace Prisma {
     readonly apaczkaTrackingUrl: FieldRef<"Order", 'String'>
     readonly apaczkaStatus: FieldRef<"Order", 'String'>
     readonly apaczkaConfirmedAt: FieldRef<"Order", 'DateTime'>
+    readonly apaczkaPointId: FieldRef<"Order", 'String'>
+    readonly apaczkaPointSupplier: FieldRef<"Order", 'String'>
     readonly createdAt: FieldRef<"Order", 'DateTime'>
     readonly updatedAt: FieldRef<"Order", 'DateTime'>
   }
@@ -8782,6 +8810,8 @@ export namespace Prisma {
     apaczkaTrackingUrl: 'apaczkaTrackingUrl',
     apaczkaStatus: 'apaczkaStatus',
     apaczkaConfirmedAt: 'apaczkaConfirmedAt',
+    apaczkaPointId: 'apaczkaPointId',
+    apaczkaPointSupplier: 'apaczkaPointSupplier',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -9251,6 +9281,8 @@ export namespace Prisma {
     apaczkaTrackingUrl?: StringNullableFilter<"Order"> | string | null
     apaczkaStatus?: StringNullableFilter<"Order"> | string | null
     apaczkaConfirmedAt?: DateTimeNullableFilter<"Order"> | Date | string | null
+    apaczkaPointId?: StringNullableFilter<"Order"> | string | null
+    apaczkaPointSupplier?: StringNullableFilter<"Order"> | string | null
     createdAt?: DateTimeFilter<"Order"> | Date | string
     updatedAt?: DateTimeFilter<"Order"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -9277,6 +9309,8 @@ export namespace Prisma {
     apaczkaTrackingUrl?: SortOrderInput | SortOrder
     apaczkaStatus?: SortOrderInput | SortOrder
     apaczkaConfirmedAt?: SortOrderInput | SortOrder
+    apaczkaPointId?: SortOrderInput | SortOrder
+    apaczkaPointSupplier?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     user?: UserOrderByWithRelationInput
@@ -9306,6 +9340,8 @@ export namespace Prisma {
     apaczkaTrackingUrl?: StringNullableFilter<"Order"> | string | null
     apaczkaStatus?: StringNullableFilter<"Order"> | string | null
     apaczkaConfirmedAt?: DateTimeNullableFilter<"Order"> | Date | string | null
+    apaczkaPointId?: StringNullableFilter<"Order"> | string | null
+    apaczkaPointSupplier?: StringNullableFilter<"Order"> | string | null
     createdAt?: DateTimeFilter<"Order"> | Date | string
     updatedAt?: DateTimeFilter<"Order"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -9332,6 +9368,8 @@ export namespace Prisma {
     apaczkaTrackingUrl?: SortOrderInput | SortOrder
     apaczkaStatus?: SortOrderInput | SortOrder
     apaczkaConfirmedAt?: SortOrderInput | SortOrder
+    apaczkaPointId?: SortOrderInput | SortOrder
+    apaczkaPointSupplier?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: OrderCountOrderByAggregateInput
@@ -9361,6 +9399,8 @@ export namespace Prisma {
     apaczkaTrackingUrl?: StringNullableWithAggregatesFilter<"Order"> | string | null
     apaczkaStatus?: StringNullableWithAggregatesFilter<"Order"> | string | null
     apaczkaConfirmedAt?: DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
+    apaczkaPointId?: StringNullableWithAggregatesFilter<"Order"> | string | null
+    apaczkaPointSupplier?: StringNullableWithAggregatesFilter<"Order"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Order"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Order"> | Date | string
   }
@@ -9818,6 +9858,8 @@ export namespace Prisma {
     apaczkaTrackingUrl?: string | null
     apaczkaStatus?: string | null
     apaczkaConfirmedAt?: Date | string | null
+    apaczkaPointId?: string | null
+    apaczkaPointSupplier?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutOrdersInput
@@ -9844,6 +9886,8 @@ export namespace Prisma {
     apaczkaTrackingUrl?: string | null
     apaczkaStatus?: string | null
     apaczkaConfirmedAt?: Date | string | null
+    apaczkaPointId?: string | null
+    apaczkaPointSupplier?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     orderItems?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
@@ -9864,6 +9908,8 @@ export namespace Prisma {
     apaczkaTrackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     apaczkaStatus?: NullableStringFieldUpdateOperationsInput | string | null
     apaczkaConfirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    apaczkaPointId?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaPointSupplier?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutOrdersNestedInput
@@ -9890,6 +9936,8 @@ export namespace Prisma {
     apaczkaTrackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     apaczkaStatus?: NullableStringFieldUpdateOperationsInput | string | null
     apaczkaConfirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    apaczkaPointId?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaPointSupplier?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     orderItems?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
@@ -9913,6 +9961,8 @@ export namespace Prisma {
     apaczkaTrackingUrl?: string | null
     apaczkaStatus?: string | null
     apaczkaConfirmedAt?: Date | string | null
+    apaczkaPointId?: string | null
+    apaczkaPointSupplier?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -9931,6 +9981,8 @@ export namespace Prisma {
     apaczkaTrackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     apaczkaStatus?: NullableStringFieldUpdateOperationsInput | string | null
     apaczkaConfirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    apaczkaPointId?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaPointSupplier?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -9952,6 +10004,8 @@ export namespace Prisma {
     apaczkaTrackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     apaczkaStatus?: NullableStringFieldUpdateOperationsInput | string | null
     apaczkaConfirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    apaczkaPointId?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaPointSupplier?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -10496,6 +10550,8 @@ export namespace Prisma {
     apaczkaTrackingUrl?: SortOrder
     apaczkaStatus?: SortOrder
     apaczkaConfirmedAt?: SortOrder
+    apaczkaPointId?: SortOrder
+    apaczkaPointSupplier?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -10523,6 +10579,8 @@ export namespace Prisma {
     apaczkaTrackingUrl?: SortOrder
     apaczkaStatus?: SortOrder
     apaczkaConfirmedAt?: SortOrder
+    apaczkaPointId?: SortOrder
+    apaczkaPointSupplier?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -10544,6 +10602,8 @@ export namespace Prisma {
     apaczkaTrackingUrl?: SortOrder
     apaczkaStatus?: SortOrder
     apaczkaConfirmedAt?: SortOrder
+    apaczkaPointId?: SortOrder
+    apaczkaPointSupplier?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -11540,6 +11600,8 @@ export namespace Prisma {
     apaczkaTrackingUrl?: string | null
     apaczkaStatus?: string | null
     apaczkaConfirmedAt?: Date | string | null
+    apaczkaPointId?: string | null
+    apaczkaPointSupplier?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     billingAddress: AddressCreateNestedOneWithoutBillingOrdersInput
@@ -11564,6 +11626,8 @@ export namespace Prisma {
     apaczkaTrackingUrl?: string | null
     apaczkaStatus?: string | null
     apaczkaConfirmedAt?: Date | string | null
+    apaczkaPointId?: string | null
+    apaczkaPointSupplier?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     orderItems?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
@@ -11690,6 +11754,8 @@ export namespace Prisma {
     apaczkaTrackingUrl?: StringNullableFilter<"Order"> | string | null
     apaczkaStatus?: StringNullableFilter<"Order"> | string | null
     apaczkaConfirmedAt?: DateTimeNullableFilter<"Order"> | Date | string | null
+    apaczkaPointId?: StringNullableFilter<"Order"> | string | null
+    apaczkaPointSupplier?: StringNullableFilter<"Order"> | string | null
     createdAt?: DateTimeFilter<"Order"> | Date | string
     updatedAt?: DateTimeFilter<"Order"> | Date | string
   }
@@ -11804,6 +11870,8 @@ export namespace Prisma {
     apaczkaTrackingUrl?: string | null
     apaczkaStatus?: string | null
     apaczkaConfirmedAt?: Date | string | null
+    apaczkaPointId?: string | null
+    apaczkaPointSupplier?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutOrdersInput
@@ -11828,6 +11896,8 @@ export namespace Prisma {
     apaczkaTrackingUrl?: string | null
     apaczkaStatus?: string | null
     apaczkaConfirmedAt?: Date | string | null
+    apaczkaPointId?: string | null
+    apaczkaPointSupplier?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     orderItems?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
@@ -11858,6 +11928,8 @@ export namespace Prisma {
     apaczkaTrackingUrl?: string | null
     apaczkaStatus?: string | null
     apaczkaConfirmedAt?: Date | string | null
+    apaczkaPointId?: string | null
+    apaczkaPointSupplier?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutOrdersInput
@@ -11882,6 +11954,8 @@ export namespace Prisma {
     apaczkaTrackingUrl?: string | null
     apaczkaStatus?: string | null
     apaczkaConfirmedAt?: Date | string | null
+    apaczkaPointId?: string | null
+    apaczkaPointSupplier?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     orderItems?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
@@ -12293,6 +12367,8 @@ export namespace Prisma {
     apaczkaTrackingUrl?: string | null
     apaczkaStatus?: string | null
     apaczkaConfirmedAt?: Date | string | null
+    apaczkaPointId?: string | null
+    apaczkaPointSupplier?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutOrdersInput
@@ -12318,6 +12394,8 @@ export namespace Prisma {
     apaczkaTrackingUrl?: string | null
     apaczkaStatus?: string | null
     apaczkaConfirmedAt?: Date | string | null
+    apaczkaPointId?: string | null
+    apaczkaPointSupplier?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     payments?: PaymentUncheckedCreateNestedManyWithoutOrderInput
@@ -12384,6 +12462,8 @@ export namespace Prisma {
     apaczkaTrackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     apaczkaStatus?: NullableStringFieldUpdateOperationsInput | string | null
     apaczkaConfirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    apaczkaPointId?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaPointSupplier?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutOrdersNestedInput
@@ -12409,6 +12489,8 @@ export namespace Prisma {
     apaczkaTrackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     apaczkaStatus?: NullableStringFieldUpdateOperationsInput | string | null
     apaczkaConfirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    apaczkaPointId?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaPointSupplier?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     payments?: PaymentUncheckedUpdateManyWithoutOrderNestedInput
@@ -12465,6 +12547,8 @@ export namespace Prisma {
     apaczkaTrackingUrl?: string | null
     apaczkaStatus?: string | null
     apaczkaConfirmedAt?: Date | string | null
+    apaczkaPointId?: string | null
+    apaczkaPointSupplier?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutOrdersInput
@@ -12490,6 +12574,8 @@ export namespace Prisma {
     apaczkaTrackingUrl?: string | null
     apaczkaStatus?: string | null
     apaczkaConfirmedAt?: Date | string | null
+    apaczkaPointId?: string | null
+    apaczkaPointSupplier?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     orderItems?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
@@ -12556,6 +12642,8 @@ export namespace Prisma {
     apaczkaTrackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     apaczkaStatus?: NullableStringFieldUpdateOperationsInput | string | null
     apaczkaConfirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    apaczkaPointId?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaPointSupplier?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutOrdersNestedInput
@@ -12581,6 +12669,8 @@ export namespace Prisma {
     apaczkaTrackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     apaczkaStatus?: NullableStringFieldUpdateOperationsInput | string | null
     apaczkaConfirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    apaczkaPointId?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaPointSupplier?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     orderItems?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
@@ -12671,6 +12761,8 @@ export namespace Prisma {
     apaczkaTrackingUrl?: string | null
     apaczkaStatus?: string | null
     apaczkaConfirmedAt?: Date | string | null
+    apaczkaPointId?: string | null
+    apaczkaPointSupplier?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -12714,6 +12806,8 @@ export namespace Prisma {
     apaczkaTrackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     apaczkaStatus?: NullableStringFieldUpdateOperationsInput | string | null
     apaczkaConfirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    apaczkaPointId?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaPointSupplier?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     billingAddress?: AddressUpdateOneRequiredWithoutBillingOrdersNestedInput
@@ -12738,6 +12832,8 @@ export namespace Prisma {
     apaczkaTrackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     apaczkaStatus?: NullableStringFieldUpdateOperationsInput | string | null
     apaczkaConfirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    apaczkaPointId?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaPointSupplier?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     orderItems?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
@@ -12760,6 +12856,8 @@ export namespace Prisma {
     apaczkaTrackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     apaczkaStatus?: NullableStringFieldUpdateOperationsInput | string | null
     apaczkaConfirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    apaczkaPointId?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaPointSupplier?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -12859,6 +12957,8 @@ export namespace Prisma {
     apaczkaTrackingUrl?: string | null
     apaczkaStatus?: string | null
     apaczkaConfirmedAt?: Date | string | null
+    apaczkaPointId?: string | null
+    apaczkaPointSupplier?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -12879,6 +12979,8 @@ export namespace Prisma {
     apaczkaTrackingUrl?: string | null
     apaczkaStatus?: string | null
     apaczkaConfirmedAt?: Date | string | null
+    apaczkaPointId?: string | null
+    apaczkaPointSupplier?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -12897,6 +12999,8 @@ export namespace Prisma {
     apaczkaTrackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     apaczkaStatus?: NullableStringFieldUpdateOperationsInput | string | null
     apaczkaConfirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    apaczkaPointId?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaPointSupplier?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutOrdersNestedInput
@@ -12921,6 +13025,8 @@ export namespace Prisma {
     apaczkaTrackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     apaczkaStatus?: NullableStringFieldUpdateOperationsInput | string | null
     apaczkaConfirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    apaczkaPointId?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaPointSupplier?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     orderItems?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
@@ -12943,6 +13049,8 @@ export namespace Prisma {
     apaczkaTrackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     apaczkaStatus?: NullableStringFieldUpdateOperationsInput | string | null
     apaczkaConfirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    apaczkaPointId?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaPointSupplier?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -12961,6 +13069,8 @@ export namespace Prisma {
     apaczkaTrackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     apaczkaStatus?: NullableStringFieldUpdateOperationsInput | string | null
     apaczkaConfirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    apaczkaPointId?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaPointSupplier?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutOrdersNestedInput
@@ -12985,6 +13095,8 @@ export namespace Prisma {
     apaczkaTrackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     apaczkaStatus?: NullableStringFieldUpdateOperationsInput | string | null
     apaczkaConfirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    apaczkaPointId?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaPointSupplier?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     orderItems?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
@@ -13007,6 +13119,8 @@ export namespace Prisma {
     apaczkaTrackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
     apaczkaStatus?: NullableStringFieldUpdateOperationsInput | string | null
     apaczkaConfirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    apaczkaPointId?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaPointSupplier?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

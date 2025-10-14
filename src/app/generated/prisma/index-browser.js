@@ -175,6 +175,8 @@ exports.Prisma.OrderScalarFieldEnum = {
   apaczkaTrackingUrl: 'apaczkaTrackingUrl',
   apaczkaStatus: 'apaczkaStatus',
   apaczkaConfirmedAt: 'apaczkaConfirmedAt',
+  apaczkaPointId: 'apaczkaPointId',
+  apaczkaPointSupplier: 'apaczkaPointSupplier',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -229,6 +231,7 @@ exports.AddressType = exports.$Enums.AddressType = {
 
 exports.OrderStatus = exports.$Enums.OrderStatus = {
   PENDING: 'PENDING',
+  PAID: 'PAID',
   PROCESSING: 'PROCESSING',
   SHIPPED: 'SHIPPED',
   DELIVERED: 'DELIVERED',
@@ -237,6 +240,7 @@ exports.OrderStatus = exports.$Enums.OrderStatus = {
 
 exports.PaymentMethod = exports.$Enums.PaymentMethod = {
   BANK_TRANSFER: 'BANK_TRANSFER',
+  COD: 'COD',
   STRIPE: 'STRIPE'
 };
 

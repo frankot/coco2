@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -25,7 +25,7 @@ type CartItem = {
 };
 
 // Payment method type to match schema
-type PaymentMethod = "BANK_TRANSFER" | "STRIPE";
+type PaymentMethod = "COD" | "STRIPE";
 
 export default function CheckoutPage() {
   const { data: session, status } = useSession();
@@ -39,6 +39,13 @@ export default function CheckoutPage() {
   const [selectedShippingMethod, setSelectedShippingMethod] = useState<string | null>(null);
   const [isLoadingShipping, setIsLoadingShipping] = useState(false);
   const [shippingError, setShippingError] = useState<string | null>(null);
+  // Apaczka pickup point selection (for door-to-point services)
+  const [selectedPointId, setSelectedPointId] = useState("");
+  const [selectedSupplier, setSelectedSupplier] = useState("");
+  const [selectedPointType, setSelectedPointType] = useState("");
+  const pointInputRef = useRef<HTMLInputElement | null>(null);
+  const supplierInputRef = useRef<HTMLInputElement | null>(null);
+  const apaczkaMapRef = useRef<any>(null);
 
   const [formData, setFormData] = useState({
     firstName: session?.user?.name?.split(" ")[0] || "",
@@ -49,7 +56,7 @@ export default function CheckoutPage() {
     city: "",
     postalCode: "",
     country: "Polska",
-    paymentMethod: "BANK_TRANSFER" as PaymentMethod,
+    paymentMethod: "COD" as PaymentMethod,
     shippingMethodId: "",
   });
 
@@ -66,6 +73,148 @@ export default function CheckoutPage() {
       console.error("Failed to parse cart from localStorage:", e);
     }
   }, []);
+
+  // Load Apaczka map widget for pickup points
+  useEffect(() => {
+    // Only needed if user can choose a door-to-point method
+    const hasDoorToPoint = shippingMethods.some((s) => s.door_to_point === "1");
+    if (!hasDoorToPoint) return;
+
+    const scriptId = "apaczka-map-js";
+    if (document.getElementById(scriptId)) {
+      // already loaded; initialize combobox if inputs exist
+      try {
+        // @ts-ignore
+        const ApaczkaMap = (window as any).ApaczkaMap;
+        if (ApaczkaMap && !apaczkaMapRef.current) {
+          apaczkaMapRef.current = new ApaczkaMap({
+            app_id: process.env.NEXT_PUBLIC_APACZKA_MAP_APP_ID || "",
+            onChange: (record: any) => {
+              if (!record) return;
+              const id = record.foreign_access_point_id || "";
+              const supplier = record.supplier || "";
+              const ptype =
+                record.access_point_type ||
+                record.point_type ||
+                record.type ||
+                record.points_type ||
+                "";
+              setSelectedPointId(id);
+              setSelectedSupplier(supplier);
+              setSelectedPointType(ptype);
+              if (pointInputRef.current) pointInputRef.current.value = id;
+              if (supplierInputRef.current) supplierInputRef.current.value = supplier;
+            },
+          });
+        }
+        if (apaczkaMapRef.current && pointInputRef.current) {
+          try {
+            apaczkaMapRef.current.combobox({
+              point_id: pointInputRef.current.id,
+              supplier_id: supplierInputRef.current?.id,
+              placeholder: "Wybierz punkt dostawy...",
+            });
+          } catch (e) {
+            console.warn("Apaczka combobox init failed", e);
+          }
+        }
+      } catch (e) {
+        console.warn("Apaczka map init error", e);
+      }
+      return;
+    }
+    const s = document.createElement("script");
+    s.id = scriptId;
+    s.src = "https://mapa.apaczka.pl/client/apaczka.map.js";
+    s.async = true;
+    s.onload = () => {
+      try {
+        // @ts-ignore
+        const ApaczkaMap = (window as any).ApaczkaMap;
+        if (!ApaczkaMap) return;
+        apaczkaMapRef.current = new ApaczkaMap({
+          app_id: process.env.NEXT_PUBLIC_APACZKA_MAP_APP_ID || "",
+          onChange: (record: any) => {
+            if (!record) return;
+            const id = record.foreign_access_point_id || "";
+            const supplier = record.supplier || "";
+            const ptype =
+              record.access_point_type ||
+              record.point_type ||
+              record.type ||
+              record.points_type ||
+              "";
+            setSelectedPointId(id);
+            setSelectedSupplier(supplier);
+            setSelectedPointType(ptype);
+            if (pointInputRef.current) pointInputRef.current.value = id;
+            if (supplierInputRef.current) supplierInputRef.current.value = supplier;
+          },
+        });
+        // Restrict suppliers on the map widget to match our allowed suppliers
+        try {
+          apaczkaMapRef.current.setFilterSupplierAllowed(
+            ["DHL_PARCEL", "DPD", "INPOST"],
+            [ "DPD", "INPOST"]
+          );
+        } catch (e) {
+          // Some widget versions may not support setFilterSupplierAllowed
+          console.warn("Could not set supplier filter on Apaczka map", e);
+        }
+        if (pointInputRef.current) {
+          // Try to attach combobox to hidden inputs for backwards compatibility
+          try {
+            apaczkaMapRef.current.combobox({
+              point_id: pointInputRef.current.id,
+              supplier_id: supplierInputRef.current?.id,
+              placeholder: "Wybierz punkt dostawy...",
+            });
+          } catch (e) {
+            console.warn("Apaczka combobox not available", e);
+          }
+        }
+
+        // If there is an embedded container, try to render the map inline into it.
+        try {
+          const container = document.getElementById("apaczka-map-container");
+          if (container && apaczkaMapRef.current) {
+            // Some widget versions support show({ target: element }) or show({ target: 'elementId' })
+            // We'll try both patterns and fallback to default show() which opens a modal.
+            try {
+              apaczkaMapRef.current.show({
+                target: container,
+                address: {
+                  street:
+                    (document.getElementById("street") as HTMLInputElement)?.value ||
+                    formData.street,
+                  city:
+                    (document.getElementById("city") as HTMLInputElement)?.value || formData.city,
+                },
+              });
+            } catch (err) {
+              try {
+                // Try passing element id
+                apaczkaMapRef.current.show({
+                  target: "apaczka-map-container",
+                  address: { street: formData.street, city: formData.city },
+                });
+              } catch (err2) {
+                // Final fallback: open modal map
+                apaczkaMapRef.current.show({
+                  address: { street: formData.street, city: formData.city },
+                });
+              }
+            }
+          }
+        } catch (e) {
+          console.warn("Could not render apaczka map in container", e);
+        }
+      } catch (e) {
+        console.warn("Apaczka map onload error", e);
+      }
+    };
+    document.body.appendChild(s);
+  }, [shippingMethods]);
 
   // Update form when session changes
   useEffect(() => {
@@ -120,6 +269,175 @@ export default function CheckoutPage() {
     fetchShippingMethods();
   }, []);
 
+  // Compute visible services depending on selected payment method
+  const visibleServices = (() => {
+    const allowedSuppliers = ["DPD", "INPOST", "DHL"];
+    // Keep only allowed suppliers from the fetched list
+    const allowed = shippingMethods.filter((s) => allowedSuppliers.includes(s.supplier));
+
+    // Helper selectors
+    const preferName = (s: ApaczkaService, names: string[]) =>
+      names.some((n) => s.name.toLowerCase() === n.toLowerCase());
+    const badName = (s: ApaczkaService) => {
+      const n = s.name.toLowerCase();
+      return (
+        n.includes("allegro") ||
+        n.includes("smart") ||
+        n.includes("europa") ||
+        n.includes("max") ||
+        /\bdo\s*\d{1,2}:\d{2}/.test(n) // time-window services
+      );
+    };
+    const pickCanonical = (
+      supplier: string,
+      list: ApaczkaService[],
+      predicate: (s: ApaczkaService) => boolean,
+      preferredNames: string[]
+    ) => {
+      const pool = list.filter((s) => s.supplier === supplier && predicate(s) && !badName(s));
+      if (pool.length === 0) return undefined;
+      const exact = pool.find((s) => preferName(s, preferredNames));
+      if (exact) return exact;
+      // fallback: pick the shortest name as the most generic
+      return pool.sort((a, b) => a.name.length - b.name.length)[0];
+    };
+
+    // If a supplier doesn't have an exact door_to_door match, fallback to any available non-bad service
+    const pickAnyFallback = (supplier: string) => {
+      const pool = allowed.filter((s) => s.supplier === supplier && !badName(s));
+      if (pool.length === 0) return undefined;
+      return pool.sort((a, b) => a.name.length - b.name.length)[0];
+    };
+
+    const suppliers = ["DPD", "INPOST", "DHL"] as const;
+
+    if (formData.paymentMethod === "COD") {
+      // Exactly 3 door-to-door: create a synthetic 'Pobranie' entry per supplier
+      const picks = suppliers
+        .map((sup) =>
+          pickCanonical(
+            sup,
+            allowed,
+            (s) => s.door_to_door === "1",
+            sup === "DPD"
+              ? ["DPD Kurier"]
+              : sup === "INPOST"
+                ? ["InPost Kurier"]
+                : ["DHL Parcel Kurier", "DHL Kurier"]
+          )
+        )
+        .filter(Boolean) as ApaczkaService[];
+      // Map to synthetic COD-only entries
+      return picks.map(
+        (d) =>
+          ({
+            service_id: `${d.service_id}_COD`,
+            name: `${d.name} - Pobranie`,
+            supplier: d.supplier,
+            delivery_time: d.delivery_time,
+            door_to_door: d.door_to_door,
+            door_to_point: d.door_to_point,
+            point_to_point: d.point_to_point,
+            // underlying id for API calls
+            underlying_service_id: d.service_id,
+          }) as any as ApaczkaService
+      );
+    }
+
+    // STRIPE: 3 door-to-door + 3 door-to-point + 1 point-to-point (e.g., Paczkomaty)
+    const d2d = suppliers
+      .map((sup) =>
+        pickCanonical(
+          sup,
+          allowed,
+          (s) => s.door_to_door === "1",
+          sup === "DPD"
+            ? ["DPD Kurier"]
+            : sup === "INPOST"
+              ? ["InPost Kurier"]
+              : ["DHL Parcel Kurier", "DHL Kurier"]
+        )
+      )
+      .filter(Boolean) as ApaczkaService[];
+
+    const d2p = suppliers
+      .map((sup) =>
+        pickCanonical(
+          sup,
+          allowed,
+          (s) => s.door_to_point === "1",
+          sup === "DPD"
+            ? ["DPD Pickup", "DPD Punkt"]
+            : sup === "INPOST"
+              ? ["InPost Punkt Odbioru"]
+              : ["DHL Parcelshop", "DHL Punkt"]
+        )
+      )
+      .filter(Boolean) as ApaczkaService[];
+
+    // One point-to-point, prefer INPOST Paczkomaty
+    const p2pPreferred = pickCanonical("INPOST", allowed, (s) => s.point_to_point === "1", [
+      "InPost Paczkomaty",
+      "Paczkomaty",
+    ]);
+    const p2pFallback = suppliers
+      .map((sup) => pickCanonical(sup, allowed, (s) => s.point_to_point === "1", []))
+      .find(Boolean);
+    const p2p = p2pPreferred || p2pFallback;
+
+    // For STRIPE construct synthetic entries: for each supplier create a prepaid row only (card)
+    const result: ApaczkaService[] = [];
+    suppliers.forEach((sup) => {
+      const d = pickCanonical(
+        sup,
+        allowed,
+        (s) => s.door_to_door === "1",
+        sup === "DPD"
+          ? ["DPD Kurier"]
+          : sup === "INPOST"
+            ? ["InPost Kurier"]
+            : ["DHL Parcel Kurier", "DHL Kurier"]
+      );
+      if (d) {
+        // Prepaid (card) row only
+        result.push({
+          service_id: `${d.service_id}_PREPAID`,
+          name: `${d.name}`,
+          supplier: d.supplier,
+          delivery_time: d.delivery_time,
+          door_to_door: d.door_to_door,
+          door_to_point: d.door_to_point,
+          point_to_point: d.point_to_point,
+          underlying_service_id: d.service_id,
+        } as any as ApaczkaService);
+      }
+    });
+
+    // Do not add per-supplier door-to-point entries. Instead expose a single generic
+    // 'Dostawa do punktu' option that opens the Apaczka map. The map will return
+    // both supplier and point id which we persist on the order.
+    if (p2p || d2p.length > 0) {
+      const synthetic: any = {
+        service_id: "APACZKA_MAP",
+        name: "Dostawa do punktu",
+        supplier: "APACZKA_MAP",
+        delivery_time: "",
+        underlying_service_id: null,
+      };
+      result.push(synthetic as ApaczkaService);
+    }
+
+    return result;
+  })();
+
+  // Set default selection when visibleServices change
+  useEffect(() => {
+    if (!selectedShippingMethod && visibleServices.length > 0) {
+      setSelectedShippingMethod(visibleServices[0].service_id);
+      setFormData((prev) => ({ ...prev, shippingMethodId: visibleServices[0].service_id }));
+    }
+  }, [visibleServices, selectedShippingMethod, setFormData]);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({
@@ -143,15 +461,78 @@ export default function CheckoutPage() {
       return;
     }
 
+    // If door-to-point selected, ensure a point is chosen
+    const selected = shippingMethods.find((m) => m.service_id === selectedShippingMethod);
+    const requiresPoint = selected?.door_to_point === "1";
+    if (requiresPoint && !selectedPointId) {
+      setError("Dla dostawy DPD punkt wymagany jest wybór punktu odbioru");
+      return;
+    }
+
     setIsSubmitting(true);
     setError(null);
 
     try {
+      // Resolve synthetic service ids to real Apaczka service ids
+      let resolvedServiceId = formData.shippingMethodId;
+      // If synthetic (ends with _COD, _PREPAID, _D2P) strip suffix and find underlying id
+      if (resolvedServiceId && resolvedServiceId.endsWith("_COD")) {
+        resolvedServiceId = resolvedServiceId.replace(/_COD$/, "");
+      } else if (resolvedServiceId && resolvedServiceId.endsWith("_PREPAID")) {
+        resolvedServiceId = resolvedServiceId.replace(/_PREPAID$/, "");
+      } else if (resolvedServiceId && resolvedServiceId.endsWith("_D2P")) {
+        resolvedServiceId = resolvedServiceId.replace(/_D2P$/, "");
+      }
+
+      // If user picked the generic APACZKA_MAP option, resolve by selectedSupplier
+      if (formData.shippingMethodId === "APACZKA_MAP") {
+        if (!selectedSupplier) {
+          setError("Wybierz dostawcę punktu na mapie");
+          setIsSubmitting(false);
+          return;
+        }
+        // find a door_to_point service for that supplier with basic type heuristics
+        const candidates = shippingMethods.filter(
+          (s) => s.supplier === selectedSupplier && s.door_to_point === "1"
+        );
+        let match = candidates[0];
+        if (selectedSupplier.toUpperCase() === "INPOST" && candidates.length > 1) {
+          if (selectedPointId?.startsWith("POP-")) {
+            match =
+              candidates.find((s) => /punkt/i.test(s.name)) ||
+              candidates.find((s) => /parcelshop|pickup/i.test(s.name)) ||
+              match;
+          } else {
+            match =
+              candidates.find((s) => /paczkomat/i.test(s.name) || /paczkomaty/i.test(s.name)) ||
+              match;
+          }
+        }
+        if (!match) {
+          setError("Nie znaleziono usługi punktowej dla wybranego przewoźnika");
+          setIsSubmitting(false);
+          return;
+        }
+        resolvedServiceId = match.service_id;
+      }
+
+      // If the selected (resolved) service supports door_to_point, ensure a point is selected
+      const serviceMeta = shippingMethods.find((s) => s.service_id === resolvedServiceId);
+      if (serviceMeta?.door_to_point === "1" && !selectedPointId) {
+        setError("Wybierz punkt odbioru dla tej metody dostawy");
+        setIsSubmitting(false);
+        return;
+      }
+
       // Prepare order data
       const orderData = {
         ...formData,
         cartItems,
         userId: session?.user?.id,
+        // supply the resolved numeric service id for server-side processing
+        shippingMethodId: resolvedServiceId,
+        apaczkaPointId: selectedPointId || undefined,
+        apaczkaPointSupplier: selectedSupplier || undefined,
       };
 
       // Submit order to server action
@@ -169,6 +550,7 @@ export default function CheckoutPage() {
               orderId: result.orderId,
               items: cartItems,
               totalAmount: total,
+              email: formData.email,
             }),
           });
 
@@ -390,16 +772,7 @@ export default function CheckoutPage() {
                       required
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="phoneNumber">Telefon</Label>
-                    <Input
-                      id="phoneNumber"
-                      name="phoneNumber"
-                      value={formData.phoneNumber}
-                      onChange={handleInputChange}
-                      required
-                    />
-                  </div>
+                  {/* phone moved to shipping address section */}
                 </div>
               </Card>
 
@@ -413,6 +786,16 @@ export default function CheckoutPage() {
                       id="street"
                       name="street"
                       value={formData.street}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="phoneNumber">Telefon</Label>
+                    <Input
+                      id="phoneNumber"
+                      name="phoneNumber"
+                      value={formData.phoneNumber}
                       onChange={handleInputChange}
                       required
                     />
@@ -461,16 +844,16 @@ export default function CheckoutPage() {
                   className="space-y-3"
                 >
                   <div className="flex items-center space-x-3 rounded-md border p-3">
-                    <RadioGroupItem id="bank-transfer" value="BANK_TRANSFER" />
+                    <RadioGroupItem id="cod" value="COD" />
                     <Label
-                      htmlFor="bank-transfer"
+                      htmlFor="cod"
                       className="flex items-center gap-2 font-normal w-full cursor-pointer"
                     >
                       <BanknoteIcon className="h-5 w-5" />
                       <div className="grid gap-0.5">
-                        <span className="font-medium">Przelew bankowy</span>
+                        <span className="font-medium">Pobranie (COD)</span>
                         <span className="text-muted-foreground text-sm">
-                          Dane do przelewu otrzymasz po złożeniu zamówienia
+                          Zapłać kurierowi przy odbiorze
                         </span>
                       </div>
                     </Label>
@@ -511,19 +894,126 @@ export default function CheckoutPage() {
                         ...prev,
                         shippingMethodId: value,
                       }));
+                      // Reset point selection when method changes
+                      setSelectedPointId("");
+                      setSelectedSupplier("");
+
+                      // If user selected the generic 'Dostawa do punktu', open the Apaczka map immediately
+                      if (value === "APACZKA_MAP") {
+                        try {
+                          apaczkaMapRef.current?.setFilterSupplierAllowed?.([
+                            
+                            "DPD",
+                            "INPOST",
+                          ]);
+                          apaczkaMapRef.current?.show?.({
+                            address: { street: formData.street, city: formData.city },
+                          });
+                        } catch (e) {
+                          console.warn("Could not open Apaczka map on selection", e);
+                        }
+                      }
                     }}
                   >
-                    {shippingMethods.map((method) => (
-                      <div key={method.service_id} className="flex items-center space-x-2">
-                        <RadioGroupItem
-                          value={method.service_id}
-                          id={`shipping-${method.service_id}`}
-                        />
-                        <Label htmlFor={`shipping-${method.service_id}`}>
-                          {method.name} - {method.delivery_time}
-                        </Label>
+                    {visibleServices.length === 0 ? (
+                      <div className="text-sm text-muted-foreground">
+                        Brak dostępnych metod dostawy dla wybranej metody płatności
                       </div>
-                    ))}
+                    ) : (
+                      visibleServices.map((method) => {
+                        const isDoorToPoint =
+                          method.door_to_point === "1" || method.service_id === "APACZKA_MAP";
+                        const isActive = selectedShippingMethod === method.service_id;
+                        const label =
+                          method.service_id === "APACZKA_MAP" ? method.name : method.name;
+                        return (
+                          <div
+                            key={method.service_id}
+                            className="flex flex-col gap-2 border rounded-md p-3"
+                          >
+                            <div className="flex items-center space-x-2">
+                              <RadioGroupItem
+                                value={method.service_id}
+                                id={`shipping-${method.service_id}`}
+                              />
+                              <Label htmlFor={`shipping-${method.service_id}`}>
+                                {label} {method.delivery_time ? ` - ${method.delivery_time}` : ""}
+                              </Label>
+                            </div>
+                            {isDoorToPoint && isActive && (
+                              <div className="pl-7 mt-2 space-y-2">
+                                <div className="text-sm text-muted-foreground">
+                                  Wybierz punkt dostawy na mapie poniżej.
+                                </div>
+
+                                {/* Show a simple button that opens the Apaczka map modal. The widget will update
+                                    the hidden inputs `apaczka_point_id` and `apaczka_supplier` when a point is selected. */}
+                                <div>
+                                  <div className="flex items-center gap-2">
+                                    <Button
+                                      type="button"
+                                      variant="outline"
+                                      onClick={() => {
+                                        try {
+                                          setSelectedShippingMethod("APACZKA_MAP");
+                                          setFormData((prev) => ({
+                                            ...prev,
+                                            shippingMethodId: "APACZKA_MAP",
+                                          }));
+                                          apaczkaMapRef.current?.setFilterSupplierAllowed?.([
+                                            "DHL_PARCEL",
+                                            "DPD",
+                                            "INPOST",
+                                          ]);
+                                          // open the map modal centered on address
+                                          apaczkaMapRef.current?.show?.({
+                                            address: {
+                                              street: formData.street,
+                                              city: formData.city,
+                                            },
+                                          });
+                                        } catch (e) {
+                                          console.warn("Could not open Apaczka map", e);
+                                        }
+                                      }}
+                                    >
+                                      Wybierz punkt na mapie
+                                    </Button>
+                                  </div>
+
+                                  {/* Hidden inputs for widget to write selection into */}
+                                  <input id="apaczka_point_id" ref={pointInputRef} type="hidden" />
+                                  <input
+                                    id="apaczka_supplier"
+                                    ref={supplierInputRef}
+                                    type="hidden"
+                                  />
+                                  <input
+                                    id="apaczka_point_type"
+                                    type="hidden"
+                                    value={selectedPointType}
+                                    readOnly
+                                  />
+                                </div>
+
+                                <div className="text-xs text-muted-foreground">
+                                  {selectedPointId ? (
+                                    <>
+                                      Wybrany punkt: {selectedPointId}{" "}
+                                      {selectedSupplier && `( ${selectedSupplier} )`}
+                                    </>
+                                  ) : (
+                                    <span className="text-red-500">
+                                      Wybór punktu jest wymagany dla tej metody
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })
+                    )}
                   </RadioGroup>
                 )}
               </div>

@@ -4,6 +4,7 @@ import { CheckCircle2, Loader2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import VerifySessionClient from "../verifyClient";
 
 const prisma = new PrismaClient();
 
@@ -29,7 +30,7 @@ export default async function OrderConfirmationPage({
 
   if (!order) {
     return (
-      <div className="container max-w-3xl py-10">
+      <div className="container max-w-3xl py-10 ">
         <Card className="p-6">
           <div className="text-center">
             <h1 className="text-2xl font-bold mb-4">Zamówienie nie znalezione</h1>
@@ -48,9 +49,11 @@ export default async function OrderConfirmationPage({
   const isStripePayment = order.paymentMethod === "STRIPE";
   const payment = order.payments[0];
   const isPaymentCompleted = payment?.status === "COMPLETED";
+  const search = await searchParams;
+  const sessionId = search?.session_id;
 
   return (
-    <div className="container max-w-3xl py-10">
+    <div className="container max-w-3xl py-10 mt-10">
       <Card className="p-6">
         <div className="text-center mb-6">
           <div className="flex justify-center mb-4">
@@ -71,6 +74,7 @@ export default async function OrderConfirmationPage({
         </div>
 
         <div className="space-y-6">
+          {sessionId ? <VerifySessionClient sessionId={sessionId} orderId={orderId} /> : null}
           <div>
             <h2 className="font-semibold mb-2">Numer zamówienia</h2>
             <p className="font-mono">{order.id}</p>

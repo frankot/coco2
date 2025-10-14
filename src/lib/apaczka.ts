@@ -78,6 +78,46 @@ export const Apaczka = {
       { order }
     );
   },
+  // Fetch points list for a given type (type comes from service_structure / points_type)
+  points(type: string, country_code?: string, subtype?: string) {
+    const payload: any = {};
+    if (country_code) payload.country_code = country_code;
+    if (subtype) payload.subtype = subtype;
+    return post<{ points: Record<string, any> }>(`points/${type}/`, payload);
+  },
+  // Attempt to resolve a supplier map code (foreign_access_point_id) to the
+  // internal Apaczka point id. It will query service_structure to get the
+  // available points_type candidates, query points/:type for each and try
+  // to match the provided code against known fields.
+  async resolvePoint(supplier: string, code: string, country_code = "PL") {
+    if (!supplier || !code) throw new Error("supplier and code required");
+    const ss = await post<any>("service_structure/", {});
+    const pointsTypes: string[] = ss.response?.points_type || [];
+    // Try an explicit supplier name first
+    const candidates = [supplier.toUpperCase(), ...pointsTypes];
+    const tried: Record<string, any> = {};
+    for (const t of candidates) {
+      try {
+        const pts = await post<{ points: Record<string, any> }>(`points/${t}/`, { country_code });
+        const map = pts.response?.points || {};
+        tried[t] = Object.keys(map).slice(0, 5);
+        for (const [key, val] of Object.entries(map)) {
+          const p: any = val as any;
+          const fav =
+            p?.foreign_access_point_id ||
+            p?.address?.foreign_access_point_id ||
+            p?.code ||
+            p?.external_id;
+          if (fav && String(fav).toUpperCase() === String(code).toUpperCase()) {
+            return { type: t, internalId: key, point: p };
+          }
+        }
+      } catch (e) {
+        // ignore and continue
+      }
+    }
+    return { found: false, tried };
+  },
   sendOrder(order: OrderPayload) {
     return post<{
       order: {

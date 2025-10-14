@@ -33,7 +33,7 @@ import {
 } from "./_components/OrderActions";
 
 // Type definitions
-type OrderStatus = "PENDING" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED";
+type OrderStatus = "PENDING" | "PAID" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED";
 
 type OrderItem = {
   quantity: number;
@@ -221,10 +221,11 @@ function OrdersTable() {
       case "status":
         const statusOrder = {
           PENDING: 0,
-          PROCESSING: 1,
-          SHIPPED: 2,
-          DELIVERED: 3,
-          CANCELLED: 4,
+          PAID: 1,
+          PROCESSING: 2,
+          SHIPPED: 3,
+          DELIVERED: 4,
+          CANCELLED: 5,
         };
         return multiplier * (statusOrder[a.status] - statusOrder[b.status]);
 
@@ -256,6 +257,8 @@ function OrdersTable() {
     switch (status) {
       case "PENDING":
         return "secondary"; // Gray
+      case "PAID":
+        return "default"; // Use default style for paid
       case "PROCESSING":
         return "default"; // Default
       case "SHIPPED":
@@ -274,6 +277,8 @@ function OrdersTable() {
     switch (status) {
       case "PENDING":
         return "Oczekujące";
+      case "PAID":
+        return "Opłacone";
       case "PROCESSING":
         return "W realizacji";
       case "SHIPPED":

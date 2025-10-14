@@ -23,12 +23,13 @@ function filterCourierServices(response: ApaczkaServiceResponse): ApaczkaService
     return response;
   }
 
+  // Only keep services for the allowed suppliers and types we support
+  const allowedSuppliers = ["DPD", "INPOST", "DHL"];
   const filteredServices = response.response.services.filter((service: ApaczkaService) => {
-    // Only get DPD Kurier and InPost Kurier services
-    const isDPDKurier = service.name === "DPD Kurier" && service.service_id === "21";
-    const isInPostKurier = service.name === "InPost Kurier" && service.service_id === "42";
-
-    return (isDPDKurier || isInPostKurier) && service.door_to_door === "1";
+    if (!allowedSuppliers.includes(service.supplier)) return false;
+    // Keep if door-to-door or door-to-point is supported for that service
+    const keep = service.door_to_door === "1" || service.door_to_point === "1";
+    return keep;
   });
 
   return {

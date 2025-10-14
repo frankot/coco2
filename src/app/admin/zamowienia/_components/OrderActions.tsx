@@ -36,7 +36,7 @@ export function ViewOrderDropdownItem({ id }: { id: string }) {
 }
 
 // Order status update
-type OrderStatus = "PENDING" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED";
+type OrderStatus = "PENDING" | "PAID" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED";
 
 export function UpdateStatusDropdownItem({
   id,
@@ -71,6 +71,8 @@ export function UpdateStatusDropdownItem({
   // Show different status update options based on current status
   switch (currentStatus) {
     case "PENDING":
+    case "PAID":
+      // For PAID orders, admin can also confirm to Apaczka or start processing
       return (
         <>
           <DropdownMenuItem className="cursor-pointer" onClick={() => updateStatus("PROCESSING")}>
@@ -156,10 +158,7 @@ export function CancelOrderDropdownItem({
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Anulować zamówienie?</DialogTitle>
-            <DialogDescription>
-              Czy na pewno chcesz anulować to zamówienie? Operacja spowoduje oznaczenie zamówienia
-              jako anulowane i może powiadomić klienta (jeśli macie taką logikę).
-            </DialogDescription>
+            <DialogDescription>Czy na pewno chcesz anulować to zamówienie? ``</DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="ghost" onClick={() => setOpen(false)}>

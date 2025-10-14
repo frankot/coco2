@@ -4,6 +4,7 @@ import { createRouteHandler, ApiError, readJson } from "@/lib/api";
 export const POST = createRouteHandler(async ({ req }) => {
   const body = await readJson(req);
   const { orderId, items } = body;
+  const customerEmail = body.email as string | undefined;
   const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
   const origin = process.env.NEXT_PUBLIC_URL || `${protocol}://localhost:3000`;
   if (!origin) throw new ApiError("No origin header or NEXT_PUBLIC_URL found", 500);
@@ -19,6 +20,10 @@ export const POST = createRouteHandler(async ({ req }) => {
       },
       quantity: item.quantity,
     })),
+    // include customer email so Stripe can send a receipt to the customer in test mode
+    ...(customerEmail
+      ? { customer_email: customerEmail, payment_intent_data: { receipt_email: customerEmail } }
+      : {}),
     success_url: `${origin}/kasa/zlozone-zamowienie/${orderId}?success=true&session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${origin}/kasa?canceled=true`,
     metadata: { orderId },

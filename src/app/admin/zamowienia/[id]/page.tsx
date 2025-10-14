@@ -21,11 +21,12 @@ import AdminLoading from "../../loading";
 import { toast } from "sonner";
 
 // Type definitions
-type OrderStatus = "PENDING" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED";
+type OrderStatus = "PENDING" | "PAID" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED";
 
 type Address = {
   id: string;
   street: string;
+  phoneNumber?: string | null;
   city: string;
   postalCode: string;
   country: string;
@@ -59,6 +60,16 @@ type Order = {
   billingAddress: Address;
   shippingAddress: Address;
   orderItems: OrderItem[];
+  // Apaczka / pickup metadata
+  apaczkaOrderId?: string | null;
+  apaczkaWaybillNumber?: string | null;
+  apaczkaTrackingUrl?: string | null;
+  apaczkaStatus?: string | null;
+  apaczkaConfirmedAt?: string | null;
+  apaczkaPointId?: string | null;
+  apaczkaPointSupplier?: string | null;
+  shippingServiceId?: string | null;
+  shippingServiceName?: string | null;
 };
 
 export default function OrderDetailsPage() {
@@ -192,7 +203,7 @@ export default function OrderDetailsPage() {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
         {/* Order details */}
         <Card>
           <CardHeader>
@@ -228,7 +239,7 @@ export default function OrderDetailsPage() {
             <div className="space-y-2">
               <h3 className="font-medium">Zmień status</h3>
               <div className="flex flex-wrap gap-2">
-                {order.status === "PENDING" && (
+                {(order.status === "PENDING" || order.status === "PAID") && (
                   <Button
                     variant="outline"
                     size="sm"
@@ -291,9 +302,6 @@ export default function OrderDetailsPage() {
               <div className="text-sm text-muted-foreground">Nazwisko:</div>
               <div className="text-sm font-medium">{order.user.lastName || "—"}</div>
 
-              <div className="text-sm text-muted-foreground">Telefon:</div>
-              <div className="text-sm font-medium">{order.user.phoneNumber || "—"}</div>
-
               <div className="text-sm text-muted-foreground">Typ konta:</div>
               <div className="text-sm font-medium">
                 {order.user.accountType === "DETAL"
@@ -351,6 +359,7 @@ export default function OrderDetailsPage() {
                 </span>
               </div>
               <div className="text-sm">{order.shippingAddress.street}</div>
+              <div className="text-sm">{order.shippingAddress.phoneNumber || "—"}</div>
               <div className="text-sm">
                 {order.shippingAddress.postalCode} {order.shippingAddress.city}
               </div>
@@ -358,6 +367,39 @@ export default function OrderDetailsPage() {
             </div>
           </CardContent>
         </Card>
+        {/* Apaczka pickup point (if used) */}
+        {(order.apaczkaPointId || order.apaczkaPointSupplier) && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Dostawa do punktu (Apaczka)</CardTitle>
+              <CardDescription>Wybrany punkt odbioru / informacje Apaczka</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <div className="grid grid-cols-1 gap-1">
+                <div className="text-sm">
+                  <span className="font-medium">Dostawca punktu:</span>
+                  <div className="mt-1">{order.apaczkaPointSupplier || "—"}</div>
+                </div>
+                <div className="text-sm">
+                  <span className="font-medium">ID punktu:</span>
+                  <div className="mt-1">{order.apaczkaPointId || "—"}</div>
+                </div>
+                <div className="text-sm">
+                  <span className="font-medium">Numer listu przewozowego:</span>
+                  <div className="mt-1">{order.apaczkaWaybillNumber || "—"}</div>
+                </div>
+                <div className="text-sm">
+                  <span className="font-medium">Status Apaczka:</span>
+                  <div className="mt-1">{order.apaczkaStatus || "—"}</div>
+                </div>
+                <div className="text-sm">
+                  <span className="font-medium">Telefon do odbioru (użyty):</span>
+                  <div className="mt-1">{order.shippingAddress.phoneNumber || "—"}</div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
 
       {/* Order items */}

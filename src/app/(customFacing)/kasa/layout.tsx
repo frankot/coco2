@@ -6,5 +6,5 @@ export const metadata: Metadata = {
 };
 
 export default function CheckoutLayout({ children }: { children: React.ReactNode }) {
-  return <div className="min-h-screen flex justify-center w-fullf">{children}</div>;
+  return <div className="min-h-screen flex justify-center w-full lg:mt-20">{children}</div>;
 }
