@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { notFound } from "next/navigation";
 import { formatPLN } from "@/lib/formatter";
 import { useCart } from "@/app/(customFacing)/components/Cart";
-import { toast } from "sonner";
+// Toasts are handled inside useCart().addToCart
 
 export default function ProductPage({ params }: { params: Promise<{ id: string }> }) {
   const [product, setProduct] = useState<any>(null);
@@ -106,10 +106,10 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
 
     setIsAddingToCart(true);
     try {
+      // Notifications are shown by addToCart itself
       await addToCart(product, quantity);
-      toast.success(`Dodano ${quantity} x ${product.name} do koszyka`);
     } catch (error) {
-      toast.error("Nie udało się dodać produktu do koszyka");
+      // Error notification is handled by addToCart
     } finally {
       setIsAddingToCart(false);
     }
@@ -333,7 +333,7 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
                     Dr.Coco® to wyłącznie naturalna woda kokosowa produkowana w Wietnamie z
                     najlepszych młodych kokosów.
                   </p>
-  
+
                   <p className="text-gray-700 mb-4">
                     Nasza woda kokosowa Dr.Coco® to produkt odpowiedni dla wegan, co gwarantuje
                     certyfikat V-label.
