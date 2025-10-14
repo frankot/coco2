@@ -47,7 +47,6 @@ export default async function BlogDetail({ params }: Props) {
             )}
           </div>
         </div>
-        
       </div>
     </section>
   );

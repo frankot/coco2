@@ -9,7 +9,7 @@ import FeaturedProducts from "./components/FeaturedProducts";
 
 export default function Home() {
   return (
-    <BackgroundWrapper>
+
       <div className="min-h-[200vh] flex flex-col overflow-x-hidden">
         <main>
           <Hero />
@@ -25,6 +25,6 @@ export default function Home() {
           <Newsletter />
         </main>
       </div>
-    </BackgroundWrapper>
+
   );
 }

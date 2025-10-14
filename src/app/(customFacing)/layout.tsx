@@ -1,11 +1,12 @@
 import { Nav, NavLink } from "./Nav";
+import { BackgroundWrapper } from "./components/BackgroundWrapper";
 import { Footer } from "./components/Footer";
 
 export const dynamic = "force-dynamic";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="bg-white">
+    <BackgroundWrapper>
       <Nav>
         <NavLink href="/sklep">Sklep</NavLink>
         <NavLink href="/kontakt">Kontakt</NavLink>
@@ -15,6 +16,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       </Nav>
       <div className="">{children}</div>
       <Footer />
-    </div>
+    </BackgroundWrapper>
   );
 }
