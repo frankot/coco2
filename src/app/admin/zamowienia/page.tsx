@@ -105,7 +105,11 @@ export default function AdminOrdersPage() {
                 const failed = res.failed?.length || 0;
                 // show toast instead of alert
                 toast.success(`Utworzono w Apaczka: ${created}, błędy: ${failed}`);
-                console.info("confirmAllApaczka result:", { created: res.created, failed: res.failed, turnIn: res.turnIn });
+                console.info("confirmAllApaczka result:", {
+                  created: res.created,
+                  failed: res.failed,
+                  turnIn: res.turnIn,
+                });
                 if (res.turnIn) {
                   // Download base64 PDF
                   const link = document.createElement("a");

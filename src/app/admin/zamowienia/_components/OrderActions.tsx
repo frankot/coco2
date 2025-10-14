@@ -157,8 +157,8 @@ export function CancelOrderDropdownItem({
           <DialogHeader>
             <DialogTitle>Anulować zamówienie?</DialogTitle>
             <DialogDescription>
-              Czy na pewno chcesz anulować to zamówienie? Operacja spowoduje oznaczenie
-              zamówienia jako anulowane i może powiadomić klienta (jeśli macie taką logikę).
+              Czy na pewno chcesz anulować to zamówienie? Operacja spowoduje oznaczenie zamówienia
+              jako anulowane i może powiadomić klienta (jeśli macie taką logikę).
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
