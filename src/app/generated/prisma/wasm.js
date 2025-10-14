@@ -168,6 +168,13 @@ exports.Prisma.OrderScalarFieldEnum = {
   shippingCostInCents: 'shippingCostInCents',
   billingAddressId: 'billingAddressId',
   shippingAddressId: 'shippingAddressId',
+  shippingServiceId: 'shippingServiceId',
+  shippingServiceName: 'shippingServiceName',
+  apaczkaOrderId: 'apaczkaOrderId',
+  apaczkaWaybillNumber: 'apaczkaWaybillNumber',
+  apaczkaTrackingUrl: 'apaczkaTrackingUrl',
+  apaczkaStatus: 'apaczkaStatus',
+  apaczkaConfirmedAt: 'apaczkaConfirmedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };

@@ -21,6 +21,7 @@ const orderFormSchema = z.object({
   postalCode: z.string().min(1, "Kod pocztowy jest wymagany"),
   country: z.string().default("Polska"),
   paymentMethod: z.enum(["BANK_TRANSFER", "STRIPE"]),
+  shippingMethodId: z.string().min(1, "Wybierz metodę dostawy"),
   cartItems: z.array(
     z.object({
       id: z.string(),
@@ -86,7 +87,8 @@ export async function createOrder(formData: OrderFormData) {
     );
 
     // Set default values for required fields
-    const shippingCostInCents = 0; // Free shipping
+    // TODO: integrate Apaczka order_valuation to compute exact price.
+    const shippingCostInCents = 1500; // Placeholder: 15 PLN in cents
     const totalPriceInCents = subtotalInCents + shippingCostInCents;
 
     // Handle user - first check if a userId was provided or if there's a logged in user
@@ -172,6 +174,7 @@ export async function createOrder(formData: OrderFormData) {
           shippingCostInCents: shippingCostInCents,
           billingAddressId: address.id,
           shippingAddressId: address.id,
+          shippingServiceId: validatedData.shippingMethodId,
           orderItems: {
             create: validatedData.cartItems.map((item) => ({
               productId: item.id,

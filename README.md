@@ -107,3 +107,32 @@ All functions use Zod schemas for validation:
 
 - `userRegistrationSchema` - Validates registration data
 - `userLoginSchema` - Validates login credentials
+
+## Shipping: Apaczka.pl Integration
+
+This project integrates with Apaczka Web API v2 to:
+
+- Fetch available courier services during checkout (filtered to DPD Kurier and InPost Kurier)
+- Save the selected service on the order without sending data to Apaczka immediately
+- Allow admins to manually confirm orders to Apaczka (single or bulk), generate labels and an optional Turn-In PDF for pickup
+
+Environment variables required:
+
+- `APACZKA_APP_ID` – App ID from Apaczka Web API
+- `APACZKA_APP_SECRET` – App Secret from Apaczka Web API
+- `SENDER_NAME`, `SENDER_CONTACT_PERSON` – Sender info
+- `SENDER_LINE1`, `SENDER_LINE2`, `SENDER_CITY`, `SENDER_POSTAL_CODE`, `SENDER_STATE_CODE`, `SENDER_COUNTRY_CODE` – Sender address fields
+- `SENDER_EMAIL`, `SENDER_PHONE` – Sender contact details
+
+Admin workflow:
+
+1. Orders created by customers include `shippingServiceId` selected at checkout.
+2. In Admin > Zamówienia, use:
+   - Per-order menu → "Potwierdź w Apaczka" to create an Apaczka order for that order
+   - Toolbar button "Potwierdź wszystkie w Apaczka" to create Apaczka orders for all pending ones; it also downloads a Turn-In PDF (base64) if creation succeeded
+3. After confirmation, order is updated with `apaczkaOrderId`, `waybill`, `tracking_url` and moves to PROCESSING.
+
+Notes:
+
+- Label fetching and storage can be added via `/api/v2/waybill/:order_id/` if you need to store PDFs.
+- Shipping valuation endpoint is available (`order_valuation/`); current implementation uses a placeholder shipping cost.

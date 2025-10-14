@@ -27,6 +27,8 @@ import {
   ViewOrderDropdownItem,
   UpdateStatusDropdownItem,
   CancelOrderDropdownItem,
+  confirmAllApaczka,
+  DownloadLabelDropdownItem,
 } from "./_components/OrderActions";
 
 // Type definitions
@@ -45,6 +47,8 @@ type Order = {
   pricePaidInCents: number;
   createdAt: string;
   status: OrderStatus;
+  apaczkaOrderId?: string | null;
+  apaczkaWaybillNumber?: string | null;
   user: {
     id: string;
     email: string;
@@ -90,6 +94,31 @@ export default function AdminOrdersPage() {
     <>
       <div className="flex justify-between items-center gap-4">
         <PageHeader>Zamówienia</PageHeader>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="default"
+            onClick={async () => {
+              try {
+                const res = await confirmAllApaczka(true);
+                const created = res.created?.length || 0;
+                const failed = res.failed?.length || 0;
+                alert(`Utworzono w Apaczka: ${created}, błędy: ${failed}`);
+                if (res.turnIn) {
+                  // Download base64 PDF
+                  const link = document.createElement("a");
+                  link.href = `data:application/pdf;base64,${res.turnIn}`;
+                  link.download = `Zbiorcze_Potwierdzenie_Nadan_${Date.now()}.pdf`;
+                  link.click();
+                }
+                window.location.reload();
+              } catch (e: any) {
+                alert(`Błąd potwierdzania Apaczka: ${e?.message ?? e}`);
+              }
+            }}
+          >
+            Potwierdź wszystkie w Apaczka
+          </Button>
+        </div>
       </div>
       <OrdersTable />
     </>
@@ -187,11 +216,11 @@ function OrdersTable() {
       case "PENDING":
         return "secondary"; // Gray
       case "PROCESSING":
-        return "default"; // Blue
+        return "default"; // Default
       case "SHIPPED":
-        return "warning"; // Yellow/Orange
+        return "outline"; // Outline as info
       case "DELIVERED":
-        return "success"; // Green
+        return "default"; // Use default; custom colors could be added later
       case "CANCELLED":
         return "destructive"; // Red
       default:
@@ -296,6 +325,9 @@ function OrdersTable() {
                     <DropdownMenuContent>
                       <ViewOrderDropdownItem id={order.id} />
                       <UpdateStatusDropdownItem id={order.id} currentStatus={order.status} />
+                      {order.apaczkaOrderId ? (
+                        <DownloadLabelDropdownItem id={order.id} />
+                      ) : null}
                       <DropdownMenuSeparator />
                       <CancelOrderDropdownItem
                         id={order.id}

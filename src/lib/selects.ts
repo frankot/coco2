@@ -27,6 +27,8 @@ export const ORDER_LIST_SELECT = {
   pricePaidInCents: true,
   createdAt: true,
   status: true,
+  apaczkaOrderId: true,
+  apaczkaWaybillNumber: true,
   user: { select: { id: true, email: true, accountType: true } },
   orderItems: {
     select: {

@@ -5113,6 +5113,13 @@ export namespace Prisma {
     shippingCostInCents: number | null
     billingAddressId: string | null
     shippingAddressId: string | null
+    shippingServiceId: string | null
+    shippingServiceName: string | null
+    apaczkaOrderId: string | null
+    apaczkaWaybillNumber: string | null
+    apaczkaTrackingUrl: string | null
+    apaczkaStatus: string | null
+    apaczkaConfirmedAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -5127,6 +5134,13 @@ export namespace Prisma {
     shippingCostInCents: number | null
     billingAddressId: string | null
     shippingAddressId: string | null
+    shippingServiceId: string | null
+    shippingServiceName: string | null
+    apaczkaOrderId: string | null
+    apaczkaWaybillNumber: string | null
+    apaczkaTrackingUrl: string | null
+    apaczkaStatus: string | null
+    apaczkaConfirmedAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -5141,6 +5155,13 @@ export namespace Prisma {
     shippingCostInCents: number
     billingAddressId: number
     shippingAddressId: number
+    shippingServiceId: number
+    shippingServiceName: number
+    apaczkaOrderId: number
+    apaczkaWaybillNumber: number
+    apaczkaTrackingUrl: number
+    apaczkaStatus: number
+    apaczkaConfirmedAt: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -5169,6 +5190,13 @@ export namespace Prisma {
     shippingCostInCents?: true
     billingAddressId?: true
     shippingAddressId?: true
+    shippingServiceId?: true
+    shippingServiceName?: true
+    apaczkaOrderId?: true
+    apaczkaWaybillNumber?: true
+    apaczkaTrackingUrl?: true
+    apaczkaStatus?: true
+    apaczkaConfirmedAt?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -5183,6 +5211,13 @@ export namespace Prisma {
     shippingCostInCents?: true
     billingAddressId?: true
     shippingAddressId?: true
+    shippingServiceId?: true
+    shippingServiceName?: true
+    apaczkaOrderId?: true
+    apaczkaWaybillNumber?: true
+    apaczkaTrackingUrl?: true
+    apaczkaStatus?: true
+    apaczkaConfirmedAt?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -5197,6 +5232,13 @@ export namespace Prisma {
     shippingCostInCents?: true
     billingAddressId?: true
     shippingAddressId?: true
+    shippingServiceId?: true
+    shippingServiceName?: true
+    apaczkaOrderId?: true
+    apaczkaWaybillNumber?: true
+    apaczkaTrackingUrl?: true
+    apaczkaStatus?: true
+    apaczkaConfirmedAt?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -5298,6 +5340,13 @@ export namespace Prisma {
     shippingCostInCents: number
     billingAddressId: string
     shippingAddressId: string
+    shippingServiceId: string | null
+    shippingServiceName: string | null
+    apaczkaOrderId: string | null
+    apaczkaWaybillNumber: string | null
+    apaczkaTrackingUrl: string | null
+    apaczkaStatus: string | null
+    apaczkaConfirmedAt: Date | null
     createdAt: Date
     updatedAt: Date
     _count: OrderCountAggregateOutputType | null
@@ -5331,6 +5380,13 @@ export namespace Prisma {
     shippingCostInCents?: boolean
     billingAddressId?: boolean
     shippingAddressId?: boolean
+    shippingServiceId?: boolean
+    shippingServiceName?: boolean
+    apaczkaOrderId?: boolean
+    apaczkaWaybillNumber?: boolean
+    apaczkaTrackingUrl?: boolean
+    apaczkaStatus?: boolean
+    apaczkaConfirmedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -5351,6 +5407,13 @@ export namespace Prisma {
     shippingCostInCents?: boolean
     billingAddressId?: boolean
     shippingAddressId?: boolean
+    shippingServiceId?: boolean
+    shippingServiceName?: boolean
+    apaczkaOrderId?: boolean
+    apaczkaWaybillNumber?: boolean
+    apaczkaTrackingUrl?: boolean
+    apaczkaStatus?: boolean
+    apaczkaConfirmedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -5368,6 +5431,13 @@ export namespace Prisma {
     shippingCostInCents?: boolean
     billingAddressId?: boolean
     shippingAddressId?: boolean
+    shippingServiceId?: boolean
+    shippingServiceName?: boolean
+    apaczkaOrderId?: boolean
+    apaczkaWaybillNumber?: boolean
+    apaczkaTrackingUrl?: boolean
+    apaczkaStatus?: boolean
+    apaczkaConfirmedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -5385,11 +5455,18 @@ export namespace Prisma {
     shippingCostInCents?: boolean
     billingAddressId?: boolean
     shippingAddressId?: boolean
+    shippingServiceId?: boolean
+    shippingServiceName?: boolean
+    apaczkaOrderId?: boolean
+    apaczkaWaybillNumber?: boolean
+    apaczkaTrackingUrl?: boolean
+    apaczkaStatus?: boolean
+    apaczkaConfirmedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type OrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "status" | "paymentMethod" | "pricePaidInCents" | "subtotalInCents" | "shippingCostInCents" | "billingAddressId" | "shippingAddressId" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
+  export type OrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "status" | "paymentMethod" | "pricePaidInCents" | "subtotalInCents" | "shippingCostInCents" | "billingAddressId" | "shippingAddressId" | "shippingServiceId" | "shippingServiceName" | "apaczkaOrderId" | "apaczkaWaybillNumber" | "apaczkaTrackingUrl" | "apaczkaStatus" | "apaczkaConfirmedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
   export type OrderInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     billingAddress?: boolean | AddressDefaultArgs<ExtArgs>
@@ -5428,6 +5505,13 @@ export namespace Prisma {
       shippingCostInCents: number
       billingAddressId: string
       shippingAddressId: string
+      shippingServiceId: string | null
+      shippingServiceName: string | null
+      apaczkaOrderId: string | null
+      apaczkaWaybillNumber: string | null
+      apaczkaTrackingUrl: string | null
+      apaczkaStatus: string | null
+      apaczkaConfirmedAt: Date | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["order"]>
@@ -5867,6 +5951,13 @@ export namespace Prisma {
     readonly shippingCostInCents: FieldRef<"Order", 'Int'>
     readonly billingAddressId: FieldRef<"Order", 'String'>
     readonly shippingAddressId: FieldRef<"Order", 'String'>
+    readonly shippingServiceId: FieldRef<"Order", 'String'>
+    readonly shippingServiceName: FieldRef<"Order", 'String'>
+    readonly apaczkaOrderId: FieldRef<"Order", 'String'>
+    readonly apaczkaWaybillNumber: FieldRef<"Order", 'String'>
+    readonly apaczkaTrackingUrl: FieldRef<"Order", 'String'>
+    readonly apaczkaStatus: FieldRef<"Order", 'String'>
+    readonly apaczkaConfirmedAt: FieldRef<"Order", 'DateTime'>
     readonly createdAt: FieldRef<"Order", 'DateTime'>
     readonly updatedAt: FieldRef<"Order", 'DateTime'>
   }
@@ -8684,6 +8775,13 @@ export namespace Prisma {
     shippingCostInCents: 'shippingCostInCents',
     billingAddressId: 'billingAddressId',
     shippingAddressId: 'shippingAddressId',
+    shippingServiceId: 'shippingServiceId',
+    shippingServiceName: 'shippingServiceName',
+    apaczkaOrderId: 'apaczkaOrderId',
+    apaczkaWaybillNumber: 'apaczkaWaybillNumber',
+    apaczkaTrackingUrl: 'apaczkaTrackingUrl',
+    apaczkaStatus: 'apaczkaStatus',
+    apaczkaConfirmedAt: 'apaczkaConfirmedAt',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -9146,6 +9244,13 @@ export namespace Prisma {
     shippingCostInCents?: IntFilter<"Order"> | number
     billingAddressId?: StringFilter<"Order"> | string
     shippingAddressId?: StringFilter<"Order"> | string
+    shippingServiceId?: StringNullableFilter<"Order"> | string | null
+    shippingServiceName?: StringNullableFilter<"Order"> | string | null
+    apaczkaOrderId?: StringNullableFilter<"Order"> | string | null
+    apaczkaWaybillNumber?: StringNullableFilter<"Order"> | string | null
+    apaczkaTrackingUrl?: StringNullableFilter<"Order"> | string | null
+    apaczkaStatus?: StringNullableFilter<"Order"> | string | null
+    apaczkaConfirmedAt?: DateTimeNullableFilter<"Order"> | Date | string | null
     createdAt?: DateTimeFilter<"Order"> | Date | string
     updatedAt?: DateTimeFilter<"Order"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -9165,6 +9270,13 @@ export namespace Prisma {
     shippingCostInCents?: SortOrder
     billingAddressId?: SortOrder
     shippingAddressId?: SortOrder
+    shippingServiceId?: SortOrderInput | SortOrder
+    shippingServiceName?: SortOrderInput | SortOrder
+    apaczkaOrderId?: SortOrderInput | SortOrder
+    apaczkaWaybillNumber?: SortOrderInput | SortOrder
+    apaczkaTrackingUrl?: SortOrderInput | SortOrder
+    apaczkaStatus?: SortOrderInput | SortOrder
+    apaczkaConfirmedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     user?: UserOrderByWithRelationInput
@@ -9187,6 +9299,13 @@ export namespace Prisma {
     shippingCostInCents?: IntFilter<"Order"> | number
     billingAddressId?: StringFilter<"Order"> | string
     shippingAddressId?: StringFilter<"Order"> | string
+    shippingServiceId?: StringNullableFilter<"Order"> | string | null
+    shippingServiceName?: StringNullableFilter<"Order"> | string | null
+    apaczkaOrderId?: StringNullableFilter<"Order"> | string | null
+    apaczkaWaybillNumber?: StringNullableFilter<"Order"> | string | null
+    apaczkaTrackingUrl?: StringNullableFilter<"Order"> | string | null
+    apaczkaStatus?: StringNullableFilter<"Order"> | string | null
+    apaczkaConfirmedAt?: DateTimeNullableFilter<"Order"> | Date | string | null
     createdAt?: DateTimeFilter<"Order"> | Date | string
     updatedAt?: DateTimeFilter<"Order"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -9206,6 +9325,13 @@ export namespace Prisma {
     shippingCostInCents?: SortOrder
     billingAddressId?: SortOrder
     shippingAddressId?: SortOrder
+    shippingServiceId?: SortOrderInput | SortOrder
+    shippingServiceName?: SortOrderInput | SortOrder
+    apaczkaOrderId?: SortOrderInput | SortOrder
+    apaczkaWaybillNumber?: SortOrderInput | SortOrder
+    apaczkaTrackingUrl?: SortOrderInput | SortOrder
+    apaczkaStatus?: SortOrderInput | SortOrder
+    apaczkaConfirmedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: OrderCountOrderByAggregateInput
@@ -9228,6 +9354,13 @@ export namespace Prisma {
     shippingCostInCents?: IntWithAggregatesFilter<"Order"> | number
     billingAddressId?: StringWithAggregatesFilter<"Order"> | string
     shippingAddressId?: StringWithAggregatesFilter<"Order"> | string
+    shippingServiceId?: StringNullableWithAggregatesFilter<"Order"> | string | null
+    shippingServiceName?: StringNullableWithAggregatesFilter<"Order"> | string | null
+    apaczkaOrderId?: StringNullableWithAggregatesFilter<"Order"> | string | null
+    apaczkaWaybillNumber?: StringNullableWithAggregatesFilter<"Order"> | string | null
+    apaczkaTrackingUrl?: StringNullableWithAggregatesFilter<"Order"> | string | null
+    apaczkaStatus?: StringNullableWithAggregatesFilter<"Order"> | string | null
+    apaczkaConfirmedAt?: DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Order"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Order"> | Date | string
   }
@@ -9678,6 +9811,13 @@ export namespace Prisma {
     pricePaidInCents: number
     subtotalInCents: number
     shippingCostInCents: number
+    shippingServiceId?: string | null
+    shippingServiceName?: string | null
+    apaczkaOrderId?: string | null
+    apaczkaWaybillNumber?: string | null
+    apaczkaTrackingUrl?: string | null
+    apaczkaStatus?: string | null
+    apaczkaConfirmedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutOrdersInput
@@ -9697,6 +9837,13 @@ export namespace Prisma {
     shippingCostInCents: number
     billingAddressId: string
     shippingAddressId: string
+    shippingServiceId?: string | null
+    shippingServiceName?: string | null
+    apaczkaOrderId?: string | null
+    apaczkaWaybillNumber?: string | null
+    apaczkaTrackingUrl?: string | null
+    apaczkaStatus?: string | null
+    apaczkaConfirmedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     orderItems?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
@@ -9710,6 +9857,13 @@ export namespace Prisma {
     pricePaidInCents?: IntFieldUpdateOperationsInput | number
     subtotalInCents?: IntFieldUpdateOperationsInput | number
     shippingCostInCents?: IntFieldUpdateOperationsInput | number
+    shippingServiceId?: NullableStringFieldUpdateOperationsInput | string | null
+    shippingServiceName?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaOrderId?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaWaybillNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaTrackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaStatus?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaConfirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutOrdersNestedInput
@@ -9729,6 +9883,13 @@ export namespace Prisma {
     shippingCostInCents?: IntFieldUpdateOperationsInput | number
     billingAddressId?: StringFieldUpdateOperationsInput | string
     shippingAddressId?: StringFieldUpdateOperationsInput | string
+    shippingServiceId?: NullableStringFieldUpdateOperationsInput | string | null
+    shippingServiceName?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaOrderId?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaWaybillNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaTrackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaStatus?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaConfirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     orderItems?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
@@ -9745,6 +9906,13 @@ export namespace Prisma {
     shippingCostInCents: number
     billingAddressId: string
     shippingAddressId: string
+    shippingServiceId?: string | null
+    shippingServiceName?: string | null
+    apaczkaOrderId?: string | null
+    apaczkaWaybillNumber?: string | null
+    apaczkaTrackingUrl?: string | null
+    apaczkaStatus?: string | null
+    apaczkaConfirmedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -9756,6 +9924,13 @@ export namespace Prisma {
     pricePaidInCents?: IntFieldUpdateOperationsInput | number
     subtotalInCents?: IntFieldUpdateOperationsInput | number
     shippingCostInCents?: IntFieldUpdateOperationsInput | number
+    shippingServiceId?: NullableStringFieldUpdateOperationsInput | string | null
+    shippingServiceName?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaOrderId?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaWaybillNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaTrackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaStatus?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaConfirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -9770,6 +9945,13 @@ export namespace Prisma {
     shippingCostInCents?: IntFieldUpdateOperationsInput | number
     billingAddressId?: StringFieldUpdateOperationsInput | string
     shippingAddressId?: StringFieldUpdateOperationsInput | string
+    shippingServiceId?: NullableStringFieldUpdateOperationsInput | string | null
+    shippingServiceName?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaOrderId?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaWaybillNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaTrackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaStatus?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaConfirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -10281,6 +10463,17 @@ export namespace Prisma {
     not?: NestedEnumPaymentMethodFilter<$PrismaModel> | $Enums.PaymentMethod
   }
 
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
   export type AddressScalarRelationFilter = {
     is?: AddressWhereInput
     isNot?: AddressWhereInput
@@ -10296,6 +10489,13 @@ export namespace Prisma {
     shippingCostInCents?: SortOrder
     billingAddressId?: SortOrder
     shippingAddressId?: SortOrder
+    shippingServiceId?: SortOrder
+    shippingServiceName?: SortOrder
+    apaczkaOrderId?: SortOrder
+    apaczkaWaybillNumber?: SortOrder
+    apaczkaTrackingUrl?: SortOrder
+    apaczkaStatus?: SortOrder
+    apaczkaConfirmedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -10316,6 +10516,13 @@ export namespace Prisma {
     shippingCostInCents?: SortOrder
     billingAddressId?: SortOrder
     shippingAddressId?: SortOrder
+    shippingServiceId?: SortOrder
+    shippingServiceName?: SortOrder
+    apaczkaOrderId?: SortOrder
+    apaczkaWaybillNumber?: SortOrder
+    apaczkaTrackingUrl?: SortOrder
+    apaczkaStatus?: SortOrder
+    apaczkaConfirmedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -10330,6 +10537,13 @@ export namespace Prisma {
     shippingCostInCents?: SortOrder
     billingAddressId?: SortOrder
     shippingAddressId?: SortOrder
+    shippingServiceId?: SortOrder
+    shippingServiceName?: SortOrder
+    apaczkaOrderId?: SortOrder
+    apaczkaWaybillNumber?: SortOrder
+    apaczkaTrackingUrl?: SortOrder
+    apaczkaStatus?: SortOrder
+    apaczkaConfirmedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -10358,6 +10572,20 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumPaymentMethodFilter<$PrismaModel>
     _max?: NestedEnumPaymentMethodFilter<$PrismaModel>
+  }
+
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type OrderScalarRelationFilter = {
@@ -10841,6 +11069,10 @@ export namespace Prisma {
     set?: $Enums.PaymentMethod
   }
 
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
+  }
+
   export type UserUpdateOneRequiredWithoutOrdersNestedInput = {
     create?: XOR<UserCreateWithoutOrdersInput, UserUncheckedCreateWithoutOrdersInput>
     connectOrCreate?: UserCreateOrConnectWithoutOrdersInput
@@ -11178,6 +11410,17 @@ export namespace Prisma {
     not?: NestedEnumPaymentMethodFilter<$PrismaModel> | $Enums.PaymentMethod
   }
 
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
   export type NestedEnumOrderStatusWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.OrderStatus | EnumOrderStatusFieldRefInput<$PrismaModel>
     in?: $Enums.OrderStatus[] | ListEnumOrderStatusFieldRefInput<$PrismaModel>
@@ -11196,6 +11439,20 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumPaymentMethodFilter<$PrismaModel>
     _max?: NestedEnumPaymentMethodFilter<$PrismaModel>
+  }
+
+  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type NestedEnumPaymentStatusFilter<$PrismaModel = never> = {
@@ -11276,6 +11533,13 @@ export namespace Prisma {
     pricePaidInCents: number
     subtotalInCents: number
     shippingCostInCents: number
+    shippingServiceId?: string | null
+    shippingServiceName?: string | null
+    apaczkaOrderId?: string | null
+    apaczkaWaybillNumber?: string | null
+    apaczkaTrackingUrl?: string | null
+    apaczkaStatus?: string | null
+    apaczkaConfirmedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     billingAddress: AddressCreateNestedOneWithoutBillingOrdersInput
@@ -11293,6 +11557,13 @@ export namespace Prisma {
     shippingCostInCents: number
     billingAddressId: string
     shippingAddressId: string
+    shippingServiceId?: string | null
+    shippingServiceName?: string | null
+    apaczkaOrderId?: string | null
+    apaczkaWaybillNumber?: string | null
+    apaczkaTrackingUrl?: string | null
+    apaczkaStatus?: string | null
+    apaczkaConfirmedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     orderItems?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
@@ -11412,6 +11683,13 @@ export namespace Prisma {
     shippingCostInCents?: IntFilter<"Order"> | number
     billingAddressId?: StringFilter<"Order"> | string
     shippingAddressId?: StringFilter<"Order"> | string
+    shippingServiceId?: StringNullableFilter<"Order"> | string | null
+    shippingServiceName?: StringNullableFilter<"Order"> | string | null
+    apaczkaOrderId?: StringNullableFilter<"Order"> | string | null
+    apaczkaWaybillNumber?: StringNullableFilter<"Order"> | string | null
+    apaczkaTrackingUrl?: StringNullableFilter<"Order"> | string | null
+    apaczkaStatus?: StringNullableFilter<"Order"> | string | null
+    apaczkaConfirmedAt?: DateTimeNullableFilter<"Order"> | Date | string | null
     createdAt?: DateTimeFilter<"Order"> | Date | string
     updatedAt?: DateTimeFilter<"Order"> | Date | string
   }
@@ -11519,6 +11797,13 @@ export namespace Prisma {
     pricePaidInCents: number
     subtotalInCents: number
     shippingCostInCents: number
+    shippingServiceId?: string | null
+    shippingServiceName?: string | null
+    apaczkaOrderId?: string | null
+    apaczkaWaybillNumber?: string | null
+    apaczkaTrackingUrl?: string | null
+    apaczkaStatus?: string | null
+    apaczkaConfirmedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutOrdersInput
@@ -11536,6 +11821,13 @@ export namespace Prisma {
     subtotalInCents: number
     shippingCostInCents: number
     shippingAddressId: string
+    shippingServiceId?: string | null
+    shippingServiceName?: string | null
+    apaczkaOrderId?: string | null
+    apaczkaWaybillNumber?: string | null
+    apaczkaTrackingUrl?: string | null
+    apaczkaStatus?: string | null
+    apaczkaConfirmedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     orderItems?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
@@ -11559,6 +11851,13 @@ export namespace Prisma {
     pricePaidInCents: number
     subtotalInCents: number
     shippingCostInCents: number
+    shippingServiceId?: string | null
+    shippingServiceName?: string | null
+    apaczkaOrderId?: string | null
+    apaczkaWaybillNumber?: string | null
+    apaczkaTrackingUrl?: string | null
+    apaczkaStatus?: string | null
+    apaczkaConfirmedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutOrdersInput
@@ -11576,6 +11875,13 @@ export namespace Prisma {
     subtotalInCents: number
     shippingCostInCents: number
     billingAddressId: string
+    shippingServiceId?: string | null
+    shippingServiceName?: string | null
+    apaczkaOrderId?: string | null
+    apaczkaWaybillNumber?: string | null
+    apaczkaTrackingUrl?: string | null
+    apaczkaStatus?: string | null
+    apaczkaConfirmedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     orderItems?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
@@ -11980,6 +12286,13 @@ export namespace Prisma {
     pricePaidInCents: number
     subtotalInCents: number
     shippingCostInCents: number
+    shippingServiceId?: string | null
+    shippingServiceName?: string | null
+    apaczkaOrderId?: string | null
+    apaczkaWaybillNumber?: string | null
+    apaczkaTrackingUrl?: string | null
+    apaczkaStatus?: string | null
+    apaczkaConfirmedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutOrdersInput
@@ -11998,6 +12311,13 @@ export namespace Prisma {
     shippingCostInCents: number
     billingAddressId: string
     shippingAddressId: string
+    shippingServiceId?: string | null
+    shippingServiceName?: string | null
+    apaczkaOrderId?: string | null
+    apaczkaWaybillNumber?: string | null
+    apaczkaTrackingUrl?: string | null
+    apaczkaStatus?: string | null
+    apaczkaConfirmedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     payments?: PaymentUncheckedCreateNestedManyWithoutOrderInput
@@ -12057,6 +12377,13 @@ export namespace Prisma {
     pricePaidInCents?: IntFieldUpdateOperationsInput | number
     subtotalInCents?: IntFieldUpdateOperationsInput | number
     shippingCostInCents?: IntFieldUpdateOperationsInput | number
+    shippingServiceId?: NullableStringFieldUpdateOperationsInput | string | null
+    shippingServiceName?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaOrderId?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaWaybillNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaTrackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaStatus?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaConfirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutOrdersNestedInput
@@ -12075,6 +12402,13 @@ export namespace Prisma {
     shippingCostInCents?: IntFieldUpdateOperationsInput | number
     billingAddressId?: StringFieldUpdateOperationsInput | string
     shippingAddressId?: StringFieldUpdateOperationsInput | string
+    shippingServiceId?: NullableStringFieldUpdateOperationsInput | string | null
+    shippingServiceName?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaOrderId?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaWaybillNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaTrackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaStatus?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaConfirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     payments?: PaymentUncheckedUpdateManyWithoutOrderNestedInput
@@ -12124,6 +12458,13 @@ export namespace Prisma {
     pricePaidInCents: number
     subtotalInCents: number
     shippingCostInCents: number
+    shippingServiceId?: string | null
+    shippingServiceName?: string | null
+    apaczkaOrderId?: string | null
+    apaczkaWaybillNumber?: string | null
+    apaczkaTrackingUrl?: string | null
+    apaczkaStatus?: string | null
+    apaczkaConfirmedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutOrdersInput
@@ -12142,6 +12483,13 @@ export namespace Prisma {
     shippingCostInCents: number
     billingAddressId: string
     shippingAddressId: string
+    shippingServiceId?: string | null
+    shippingServiceName?: string | null
+    apaczkaOrderId?: string | null
+    apaczkaWaybillNumber?: string | null
+    apaczkaTrackingUrl?: string | null
+    apaczkaStatus?: string | null
+    apaczkaConfirmedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     orderItems?: OrderItemUncheckedCreateNestedManyWithoutOrderInput
@@ -12201,6 +12549,13 @@ export namespace Prisma {
     pricePaidInCents?: IntFieldUpdateOperationsInput | number
     subtotalInCents?: IntFieldUpdateOperationsInput | number
     shippingCostInCents?: IntFieldUpdateOperationsInput | number
+    shippingServiceId?: NullableStringFieldUpdateOperationsInput | string | null
+    shippingServiceName?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaOrderId?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaWaybillNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaTrackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaStatus?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaConfirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutOrdersNestedInput
@@ -12219,6 +12574,13 @@ export namespace Prisma {
     shippingCostInCents?: IntFieldUpdateOperationsInput | number
     billingAddressId?: StringFieldUpdateOperationsInput | string
     shippingAddressId?: StringFieldUpdateOperationsInput | string
+    shippingServiceId?: NullableStringFieldUpdateOperationsInput | string | null
+    shippingServiceName?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaOrderId?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaWaybillNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaTrackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaStatus?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaConfirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     orderItems?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
@@ -12302,6 +12664,13 @@ export namespace Prisma {
     shippingCostInCents: number
     billingAddressId: string
     shippingAddressId: string
+    shippingServiceId?: string | null
+    shippingServiceName?: string | null
+    apaczkaOrderId?: string | null
+    apaczkaWaybillNumber?: string | null
+    apaczkaTrackingUrl?: string | null
+    apaczkaStatus?: string | null
+    apaczkaConfirmedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -12338,6 +12707,13 @@ export namespace Prisma {
     pricePaidInCents?: IntFieldUpdateOperationsInput | number
     subtotalInCents?: IntFieldUpdateOperationsInput | number
     shippingCostInCents?: IntFieldUpdateOperationsInput | number
+    shippingServiceId?: NullableStringFieldUpdateOperationsInput | string | null
+    shippingServiceName?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaOrderId?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaWaybillNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaTrackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaStatus?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaConfirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     billingAddress?: AddressUpdateOneRequiredWithoutBillingOrdersNestedInput
@@ -12355,6 +12731,13 @@ export namespace Prisma {
     shippingCostInCents?: IntFieldUpdateOperationsInput | number
     billingAddressId?: StringFieldUpdateOperationsInput | string
     shippingAddressId?: StringFieldUpdateOperationsInput | string
+    shippingServiceId?: NullableStringFieldUpdateOperationsInput | string | null
+    shippingServiceName?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaOrderId?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaWaybillNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaTrackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaStatus?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaConfirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     orderItems?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
@@ -12370,6 +12753,13 @@ export namespace Prisma {
     shippingCostInCents?: IntFieldUpdateOperationsInput | number
     billingAddressId?: StringFieldUpdateOperationsInput | string
     shippingAddressId?: StringFieldUpdateOperationsInput | string
+    shippingServiceId?: NullableStringFieldUpdateOperationsInput | string | null
+    shippingServiceName?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaOrderId?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaWaybillNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaTrackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaStatus?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaConfirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -12462,6 +12852,13 @@ export namespace Prisma {
     subtotalInCents: number
     shippingCostInCents: number
     shippingAddressId: string
+    shippingServiceId?: string | null
+    shippingServiceName?: string | null
+    apaczkaOrderId?: string | null
+    apaczkaWaybillNumber?: string | null
+    apaczkaTrackingUrl?: string | null
+    apaczkaStatus?: string | null
+    apaczkaConfirmedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -12475,6 +12872,13 @@ export namespace Prisma {
     subtotalInCents: number
     shippingCostInCents: number
     billingAddressId: string
+    shippingServiceId?: string | null
+    shippingServiceName?: string | null
+    apaczkaOrderId?: string | null
+    apaczkaWaybillNumber?: string | null
+    apaczkaTrackingUrl?: string | null
+    apaczkaStatus?: string | null
+    apaczkaConfirmedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -12486,6 +12890,13 @@ export namespace Prisma {
     pricePaidInCents?: IntFieldUpdateOperationsInput | number
     subtotalInCents?: IntFieldUpdateOperationsInput | number
     shippingCostInCents?: IntFieldUpdateOperationsInput | number
+    shippingServiceId?: NullableStringFieldUpdateOperationsInput | string | null
+    shippingServiceName?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaOrderId?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaWaybillNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaTrackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaStatus?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaConfirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutOrdersNestedInput
@@ -12503,6 +12914,13 @@ export namespace Prisma {
     subtotalInCents?: IntFieldUpdateOperationsInput | number
     shippingCostInCents?: IntFieldUpdateOperationsInput | number
     shippingAddressId?: StringFieldUpdateOperationsInput | string
+    shippingServiceId?: NullableStringFieldUpdateOperationsInput | string | null
+    shippingServiceName?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaOrderId?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaWaybillNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaTrackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaStatus?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaConfirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     orderItems?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
@@ -12518,6 +12936,13 @@ export namespace Prisma {
     subtotalInCents?: IntFieldUpdateOperationsInput | number
     shippingCostInCents?: IntFieldUpdateOperationsInput | number
     shippingAddressId?: StringFieldUpdateOperationsInput | string
+    shippingServiceId?: NullableStringFieldUpdateOperationsInput | string | null
+    shippingServiceName?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaOrderId?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaWaybillNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaTrackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaStatus?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaConfirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -12529,6 +12954,13 @@ export namespace Prisma {
     pricePaidInCents?: IntFieldUpdateOperationsInput | number
     subtotalInCents?: IntFieldUpdateOperationsInput | number
     shippingCostInCents?: IntFieldUpdateOperationsInput | number
+    shippingServiceId?: NullableStringFieldUpdateOperationsInput | string | null
+    shippingServiceName?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaOrderId?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaWaybillNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaTrackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaStatus?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaConfirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutOrdersNestedInput
@@ -12546,6 +12978,13 @@ export namespace Prisma {
     subtotalInCents?: IntFieldUpdateOperationsInput | number
     shippingCostInCents?: IntFieldUpdateOperationsInput | number
     billingAddressId?: StringFieldUpdateOperationsInput | string
+    shippingServiceId?: NullableStringFieldUpdateOperationsInput | string | null
+    shippingServiceName?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaOrderId?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaWaybillNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaTrackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaStatus?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaConfirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     orderItems?: OrderItemUncheckedUpdateManyWithoutOrderNestedInput
@@ -12561,6 +13000,13 @@ export namespace Prisma {
     subtotalInCents?: IntFieldUpdateOperationsInput | number
     shippingCostInCents?: IntFieldUpdateOperationsInput | number
     billingAddressId?: StringFieldUpdateOperationsInput | string
+    shippingServiceId?: NullableStringFieldUpdateOperationsInput | string | null
+    shippingServiceName?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaOrderId?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaWaybillNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaTrackingUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaStatus?: NullableStringFieldUpdateOperationsInput | string | null
+    apaczkaConfirmedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
