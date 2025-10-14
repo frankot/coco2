@@ -133,6 +133,17 @@ exports.Prisma.ProductScalarFieldEnum = {
   imagePublicIds: 'imagePublicIds'
 };
 
+exports.Prisma.BlogPostScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  slug: 'slug',
+  content: 'content',
+  imagePath: 'imagePath',
+  imagePublicId: 'imagePublicId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   email: 'email',
@@ -253,6 +264,7 @@ exports.PaymentStatus = exports.$Enums.PaymentStatus = {
 
 exports.Prisma.ModelName = {
   Product: 'Product',
+  BlogPost: 'BlogPost',
   User: 'User',
   Address: 'Address',
   Order: 'Order',

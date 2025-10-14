@@ -155,7 +155,7 @@ export default function CheckoutPage() {
         try {
           apaczkaMapRef.current.setFilterSupplierAllowed(
             ["DHL_PARCEL", "DPD", "INPOST"],
-            [ "DPD", "INPOST"]
+            ["DPD", "INPOST"]
           );
         } catch (e) {
           // Some widget versions may not support setFilterSupplierAllowed
@@ -226,6 +226,32 @@ export default function CheckoutPage() {
         email: session.user.email || prev.email,
       }));
     }
+  }, [session]);
+
+  // If logged in, fetch profile to prefill default address
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const res = await fetch("/api/user/profile");
+        if (!res.ok) return;
+        const data = await res.json();
+        const def = (data.addresses || []).find((a: any) => a.isDefault);
+        if (def) {
+          setFormData((prev) => ({
+            ...prev,
+            street: def.street || prev.street,
+            city: def.city || prev.city,
+            postalCode: def.postalCode || prev.postalCode,
+            country: def.country || prev.country,
+            phoneNumber: def.phoneNumber || prev.phoneNumber,
+          }));
+        }
+      } catch (e) {
+        // ignore
+      }
+    };
+
+    if (session?.user) fetchProfile();
   }, [session]);
 
   // Fetch shipping methods
@@ -901,11 +927,7 @@ export default function CheckoutPage() {
                       // If user selected the generic 'Dostawa do punktu', open the Apaczka map immediately
                       if (value === "APACZKA_MAP") {
                         try {
-                          apaczkaMapRef.current?.setFilterSupplierAllowed?.([
-                            
-                            "DPD",
-                            "INPOST",
-                          ]);
+                          apaczkaMapRef.current?.setFilterSupplierAllowed?.(["DPD", "INPOST"]);
                           apaczkaMapRef.current?.show?.({
                             address: { street: formData.street, city: formData.city },
                           });

@@ -68,19 +68,18 @@ export default function UserProfilePage() {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<"profile" | "orders" | "addresses">("profile");
+  const [activeTab, setActiveTab] = useState<"profile" | "orders">("profile");
   const [addresses, setAddresses] = useState<Address[]>([]);
-  const [addressForm, setAddressForm] = useState({
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [defaultAddress, setDefaultAddress] = useState<Address | null>(null);
+  const [editForm, setEditForm] = useState<Partial<Address>>({
     street: "",
     city: "",
     postalCode: "",
     country: "Polska",
     phoneNumber: "",
-    isDefault: false,
-    addressType: "BOTH" as "BILLING" | "SHIPPING" | "BOTH",
+    addressType: "BOTH",
   });
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [editForm, setEditForm] = useState<Partial<Address>>({});
 
   // Redirect if not authenticated
   if (status === "unauthenticated") {
@@ -89,9 +88,8 @@ export default function UserProfilePage() {
 
   useEffect(() => {
     // Sync active tab from URL param
-    const tab =
-      (searchParams.get("tab") as "profile" | "orders" | "addresses" | null) || (undefined as any);
-    if (tab && ["profile", "orders", "addresses"].includes(tab)) {
+    const tab = (searchParams.get("tab") as "profile" | "orders" | null) || (undefined as any);
+    if (tab && ["profile", "orders"].includes(tab)) {
       setActiveTab(tab as any);
     }
 
@@ -102,6 +100,23 @@ export default function UserProfilePage() {
           const data = await response.json();
           setUserData(data);
           setAddresses(data.addresses || []);
+          // Load default address into state but do not start edit mode automatically
+          const def = (data.addresses || []).find((a: Address) => a.isDefault) as
+            | Address
+            | undefined;
+          if (def) {
+            setDefaultAddress(def);
+            setEditForm({
+              street: def.street,
+              city: def.city,
+              postalCode: def.postalCode,
+              country: def.country,
+              phoneNumber: def.phoneNumber || "",
+              addressType: def.addressType,
+            });
+          } else {
+            setDefaultAddress(null);
+          }
         } else {
           toast.error("Nie udało się pobrać danych profilu");
         }
@@ -135,7 +150,7 @@ export default function UserProfilePage() {
   }, [session]);
 
   const onTabChange = (val: string) => {
-    const value = val as "profile" | "orders" | "addresses";
+    const value = val as "profile" | "orders";
     setActiveTab(value);
     const params = new URLSearchParams(searchParams.toString());
     params.set("tab", value);
@@ -145,32 +160,56 @@ export default function UserProfilePage() {
   const refreshAddresses = async () => {
     try {
       const res = await fetch("/api/user/addresses");
-      if (res.ok) setAddresses(await res.json());
+      if (res.ok) {
+        const list = await res.json();
+        setAddresses(list);
+        const def = list.find((a: Address) => a.isDefault) as Address | undefined;
+        if (def) {
+          setDefaultAddress(def);
+          setEditForm({
+            street: def.street,
+            city: def.city,
+            postalCode: def.postalCode,
+            country: def.country,
+            phoneNumber: def.phoneNumber || "",
+            addressType: def.addressType,
+          });
+        } else {
+          setDefaultAddress(null);
+          setEditForm({});
+        }
+      }
     } catch {}
   };
 
-  const submitAddress = async (e: React.FormEvent) => {
+  // We'll use edit form to create/update the single default address
+  const submitEdit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await fetch("/api/user/addresses", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(addressForm),
-      });
-      if (!res.ok) throw new Error("Nie udało się dodać adresu");
-      toast.success("Dodano adres");
-      setAddressForm({
-        street: "",
-        city: "",
-        postalCode: "",
-        country: "Polska",
-        phoneNumber: "",
-        isDefault: false,
-        addressType: "BOTH",
-      });
-      refreshAddresses();
+      // If editingId exists, PATCH; otherwise POST and set as default
+      if (editingId) {
+        const res = await fetch(`/api/user/addresses/${editingId}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(editForm),
+        });
+        if (!res.ok) throw new Error("Nie udało się zaktualizować adresu");
+        toast.success("Zaktualizowano adres");
+      } else {
+        const payload = { ...(editForm as any), isDefault: true };
+        const res = await fetch(`/api/user/addresses`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok) throw new Error("Nie udało się dodać adresu");
+        toast.success("Dodano adres");
+      }
+      // Ensure we refresh and reflect the new default address, then close edit UI
+      await refreshAddresses();
+      setEditingId(null);
     } catch (err: any) {
-      toast.error(err.message || "Błąd dodawania adresu");
+      toast.error(err.message || "Błąd zapisu adresu");
     }
   };
 
@@ -213,25 +252,6 @@ export default function UserProfilePage() {
       phoneNumber: a.phoneNumber || "",
       addressType: a.addressType,
     });
-  };
-
-  const submitEdit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!editingId) return;
-    try {
-      const res = await fetch(`/api/user/addresses/${editingId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(editForm),
-      });
-      if (!res.ok) throw new Error("Nie udało się zaktualizować adresu");
-      toast.success("Zaktualizowano adres");
-      setEditingId(null);
-      setEditForm({});
-      refreshAddresses();
-    } catch (err: any) {
-      toast.error(err.message || "Błąd aktualizacji adresu");
-    }
   };
 
   // Get status display name in Polish
@@ -348,10 +368,6 @@ export default function UserProfilePage() {
             <ShoppingBag className="h-4 w-4" />
             Zamówienia
           </TabsTrigger>
-          <TabsTrigger value="addresses" className="flex items-center gap-2">
-            <MapPin className="h-4 w-4" />
-            Adresy
-          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="profile">
@@ -392,6 +408,120 @@ export default function UserProfilePage() {
                         : "—"}
                     </p>
                   </div>
+                </div>
+                {/* Simple default address box */}
+                <div className="mt-4">
+                  <h3 className="text-lg font-medium mb-2">Adres dostawy</h3>
+                  {loading ? (
+                    <div className="p-4 border rounded-md text-sm text-muted-foreground">
+                      Ładowanie adresu...
+                    </div>
+                  ) : defaultAddress && !editingId ? (
+                    <div className="border rounded-md p-4 w-1/2 flex justify-between items-start">
+                      <div>
+                        <div className="font-medium">{defaultAddress.street}</div>
+                        <div className="text-sm text-muted-foreground">
+                          {defaultAddress.postalCode} {defaultAddress.city},{" "}
+                          {defaultAddress.country}
+                        </div>
+                        {defaultAddress.phoneNumber && (
+                          <div className="text-sm mt-1">Telefon: {defaultAddress.phoneNumber}</div>
+                        )}
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setEditingId(defaultAddress.id)}
+                        >
+                          Edytuj
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={() => deleteAddress(defaultAddress.id)}
+                        >
+                          Usuń
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    // Show inline form to add or edit address
+                    <form className="space-y-3 border rounded-md p-4" onSubmit={submitEdit}>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                          <Label>Ulica i numer</Label>
+                          <Input
+                            value={editForm.street || ""}
+                            onChange={(e) => setEditForm({ ...editForm, street: e.target.value })}
+                            required
+                          />
+                        </div>
+                        <div>
+                          <Label>Telefon</Label>
+                          <Input
+                            value={(editForm.phoneNumber as string) || ""}
+                            onChange={(e) =>
+                              setEditForm({ ...editForm, phoneNumber: e.target.value })
+                            }
+                            required
+                          />
+                        </div>
+                        <div>
+                          <Label>Miasto</Label>
+                          <Input
+                            value={editForm.city || ""}
+                            onChange={(e) => setEditForm({ ...editForm, city: e.target.value })}
+                            required
+                          />
+                        </div>
+                        <div>
+                          <Label>Kod pocztowy</Label>
+                          <Input
+                            value={editForm.postalCode || ""}
+                            onChange={(e) =>
+                              setEditForm({ ...editForm, postalCode: e.target.value })
+                            }
+                            required
+                          />
+                        </div>
+                        <div className="md:col-span-2">
+                          <Label>Kraj</Label>
+                          <Input
+                            value={editForm.country || "Polska"}
+                            onChange={(e) => setEditForm({ ...editForm, country: e.target.value })}
+                            required
+                          />
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button type="submit">Zapisz adres</Button>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => {
+                            // cancel editing
+                            setEditingId(null);
+                            // reset form to defaultAddress or empty
+                            if (defaultAddress) {
+                              setEditForm({
+                                street: defaultAddress.street,
+                                city: defaultAddress.city,
+                                postalCode: defaultAddress.postalCode,
+                                country: defaultAddress.country,
+                                phoneNumber: defaultAddress.phoneNumber || "",
+                                addressType: defaultAddress.addressType,
+                              });
+                            } else {
+                              setEditForm({});
+                            }
+                          }}
+                        >
+                          Anuluj
+                        </Button>
+                      </div>
+                    </form>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -447,228 +577,6 @@ export default function UserProfilePage() {
                     </TableBody>
                   </Table>
                 )}
-              </CardContent>
-            </Card>
-          )}
-        </TabsContent>
-
-        <TabsContent value="addresses">
-          {loading ? (
-            <AddressesSkeleton />
-          ) : (
-            <Card>
-              <CardHeader>
-                <CardTitle>Twoje adresy</CardTitle>
-                <CardDescription>Zarządzaj adresami dostawy i rozliczeniowymi</CardDescription>
-              </CardHeader>
-              <CardContent className="grid md:grid-cols-2 gap-8">
-                <div>
-                  <h3 className="font-medium mb-2">Zapisane adresy</h3>
-                  <div className="space-y-4">
-                    {addresses.length === 0 && (
-                      <p className="text-sm text-muted-foreground">Brak zapisanych adresów</p>
-                    )}
-                    {addresses.map((a) => (
-                      <div key={a.id} className="border rounded-md p-3">
-                        {editingId === a.id ? (
-                          <form className="space-y-2" onSubmit={submitEdit}>
-                            <div className="grid grid-cols-2 gap-2">
-                              <div>
-                                <Label>Ulica</Label>
-                                <Input
-                                  value={editForm.street || ""}
-                                  onChange={(e) =>
-                                    setEditForm({ ...editForm, street: e.target.value })
-                                  }
-                                />
-                              </div>
-                              <div>
-                                <Label>Miasto</Label>
-                                <Input
-                                  value={editForm.city || ""}
-                                  onChange={(e) =>
-                                    setEditForm({ ...editForm, city: e.target.value })
-                                  }
-                                />
-                              </div>
-                              <div>
-                                <Label>Kod pocztowy</Label>
-                                <Input
-                                  value={editForm.postalCode || ""}
-                                  onChange={(e) =>
-                                    setEditForm({ ...editForm, postalCode: e.target.value })
-                                  }
-                                />
-                              </div>
-                              <div>
-                                <Label>Kraj</Label>
-                                <Input
-                                  value={editForm.country || ""}
-                                  onChange={(e) =>
-                                    setEditForm({ ...editForm, country: e.target.value })
-                                  }
-                                />
-                              </div>
-                              <div className="col-span-2">
-                                <Label>Typ adresu</Label>
-                                <select
-                                  className="w-full border rounded-md h-9 px-3"
-                                  value={editForm.addressType || "BOTH"}
-                                  onChange={(e) =>
-                                    setEditForm({ ...editForm, addressType: e.target.value as any })
-                                  }
-                                >
-                                  <option value="BOTH">Oba</option>
-                                  <option value="SHIPPING">Dostawa</option>
-                                  <option value="BILLING">Rozliczeniowy</option>
-                                </select>
-                              </div>
-                              <div className="col-span-2">
-                                <Label>Telefon (dla kuriera)</Label>
-                                <Input
-                                  value={(editForm.phoneNumber as string) || ""}
-                                  onChange={(e) =>
-                                    setEditForm({ ...editForm, phoneNumber: e.target.value })
-                                  }
-                                />
-                              </div>
-                            </div>
-                            <div className="flex gap-2">
-                              <Button type="submit" size="sm">
-                                Zapisz
-                              </Button>
-                              <Button
-                                type="button"
-                                size="sm"
-                                variant="outline"
-                                onClick={() => setEditingId(null)}
-                              >
-                                Anuluj
-                              </Button>
-                            </div>
-                          </form>
-                        ) : (
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <div className="font-medium">{a.street}</div>
-                              <div className="text-sm text-muted-foreground">
-                                {a.postalCode} {a.city}, {a.country}
-                              </div>
-                              <div className="text-xs mt-1">Typ: {a.addressType}</div>
-                              {a.phoneNumber && (
-                                <div className="text-xs mt-1 text-muted-foreground">
-                                  Telefon: {a.phoneNumber}
-                                </div>
-                              )}
-                            </div>
-                            <div className="flex gap-2">
-                              <Button size="sm" variant="outline" onClick={() => startEdit(a)}>
-                                Edytuj
-                              </Button>
-                              {a.isDefault ? (
-                                <Badge>Domyślny</Badge>
-                              ) : (
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  onClick={() => makeDefault(a.id, a.addressType)}
-                                >
-                                  Ustaw domyślny
-                                </Button>
-                              )}
-                              <Button
-                                size="sm"
-                                variant="destructive"
-                                onClick={() => deleteAddress(a.id)}
-                              >
-                                Usuń
-                              </Button>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <h3 className="font-medium mb-2">Dodaj nowy adres</h3>
-                  <form className="space-y-3" onSubmit={submitAddress}>
-                    <div className="space-y-1">
-                      <Label>Ulica</Label>
-                      <Input
-                        value={addressForm.street}
-                        onChange={(e) => setAddressForm({ ...addressForm, street: e.target.value })}
-                        required
-                      />
-                    </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="space-y-1">
-                        <Label>Miasto</Label>
-                        <Input
-                          value={addressForm.city}
-                          onChange={(e) => setAddressForm({ ...addressForm, city: e.target.value })}
-                          required
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <Label>Kod pocztowy</Label>
-                        <Input
-                          value={addressForm.postalCode}
-                          onChange={(e) =>
-                            setAddressForm({ ...addressForm, postalCode: e.target.value })
-                          }
-                          required
-                        />
-                      </div>
-                    </div>
-                    <div className="space-y-1">
-                      <Label>Kraj</Label>
-                      <Input
-                        value={addressForm.country}
-                        onChange={(e) =>
-                          setAddressForm({ ...addressForm, country: e.target.value })
-                        }
-                        required
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <Label>Telefon (dla kuriera)</Label>
-                      <Input
-                        value={addressForm.phoneNumber}
-                        onChange={(e) =>
-                          setAddressForm({ ...addressForm, phoneNumber: e.target.value })
-                        }
-                      />
-                    </div>
-                    <Separator />
-                    <div className="flex items-center gap-2">
-                      <input
-                        id="default"
-                        type="checkbox"
-                        checked={addressForm.isDefault}
-                        onChange={(e) =>
-                          setAddressForm({ ...addressForm, isDefault: e.target.checked })
-                        }
-                      />
-                      <Label htmlFor="default">Ustaw jako domyślny</Label>
-                    </div>
-                    <div className="space-y-1">
-                      <Label>Typ adresu</Label>
-                      <select
-                        className="w-full border rounded-md h-9 px-3"
-                        value={addressForm.addressType}
-                        onChange={(e) =>
-                          setAddressForm({ ...addressForm, addressType: e.target.value as any })
-                        }
-                      >
-                        <option value="BOTH">Oba</option>
-                        <option value="SHIPPING">Dostawa</option>
-                        <option value="BILLING">Rozliczeniowy</option>
-                      </select>
-                    </div>
-                    <Button type="submit">Zapisz adres</Button>
-                  </form>
-                </div>
               </CardContent>
             </Card>
           )}

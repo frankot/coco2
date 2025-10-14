@@ -2,18 +2,18 @@
 @import "tw-animate-css";
 
 :root {
-  --background: #f0fdf4;
-  --foreground: oklch(0 0 0);
+  --background: #f7fdf8; /* slightly brighter */
+  --foreground: oklch(0.05 0.02 150); /* soft dark greenish */
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0 0 0);
+  --card-foreground: oklch(0.05 0.02 150);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0 0 0);
-  --primary: oklch(0.8 0.06 181.6);
+  --popover-foreground: oklch(0.05 0.02 150);
+  --primary: oklch(0.8 0.06 170); /* tune hue toward green/teal */
   --primary-foreground: oklch(0 0 0);
   --secondary: oklch(0.93 0.01 264.53);
   --secondary-foreground: oklch(0.32 0 0);
   --muted: oklch(0.68 0 0);
-  --muted-foreground: oklch(0.51 0 0);
+  --muted-foreground: #2b6a4b; /* friendly dark-green for muted text */
   --accent: oklch(0.65 0.05 200.89);
   --accent-foreground: oklch(1 0 0);
   --destructive: oklch(0.67 0.21 24.47);
@@ -113,6 +113,23 @@
 
 body {
   letter-spacing: var(--tracking-normal);
+}
+
+/* Tweak Radix Tabs look to be lighter and match our theme */
+[data-slot="tabs-list"] {
+  background: rgba(237, 249, 237, 0.9); /* pale green */
+  padding: 4px;
+}
+
+[data-slot="tabs-trigger"] {
+  color: var(--foreground);
+  background: transparent;
+}
+
+[data-slot="tabs-trigger"][data-state="active"] {
+  background: white;
+  box-shadow: var(--shadow-sm);
+  color: var(--primary-foreground);
 }
 
 /* Galindo Font Test - Remove after testing */

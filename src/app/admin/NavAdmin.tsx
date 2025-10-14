@@ -7,14 +7,15 @@ import { useSession } from "next-auth/react";
 
 export function Nav({ children }: { children: React.ReactNode }) {
   const { data: session } = useSession();
-  
+
   if (!session || session.user.role !== "ADMIN") {
     return null;
   }
-  
+
   return (
-    <nav className="bg-primary text-primary-foreground flex justify-center items-center px-4">
+    <nav className="bg-primary text-primary-foreground flex justify-center items-center px-4 gap-2">
       {children}
+      <NavLink href="/admin/blog">Blog</NavLink>
     </nav>
   );
 }

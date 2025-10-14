@@ -11,7 +11,11 @@ cloudinary.config({
  * @param file File object from form submission
  * @returns Promise with Cloudinary upload response
  */
-export async function uploadImage(imageBuffer: Buffer, fileName: string): Promise<any> {
+export async function uploadImage(
+  imageBuffer: Buffer,
+  fileName: string,
+  folder: string = "coco-products"
+): Promise<any> {
   try {
     // Convert buffer to base64
     const base64String = imageBuffer.toString("base64");
@@ -21,8 +25,8 @@ export async function uploadImage(imageBuffer: Buffer, fileName: string): Promis
       cloudinary.uploader.upload(
         `data:image/jpeg;base64,${base64String}`,
         {
-          folder: "coco-products",
-          public_id: `${Date.now()}-${fileName.split(".")[0]}`, // Generate unique name
+          folder,
+          public_id: `${Date.now()}-${fileName.split(".")[0]}`,
           resource_type: "image",
         },
         (error, result) => {

@@ -149,7 +149,7 @@ export function Nav({ children }: { children: React.ReactNode }) {
   return (
     <>
       {/* Desktop Navigation */}
-      <nav className="hidden lg:block w-full fixed top-0 left-0 right-0 z-50 py-2 bg-stone-50 border-b border-gray-200 shadow-xs ">
+      <nav className="hidden lg:block w-full fixed top-0 left-0 right-0 z-50 py-2 bg-stone-50 border-b border-gray-200 shadow-xs lg:mb-20">
         <div className="container mx-auto max-w-7xl px-4 ">
           <div className="flex h-14 items-center">
             {/* Left side - Navigation */}
