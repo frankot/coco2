@@ -43,7 +43,9 @@ export async function sendMail({
     return false;
   }
   const sender =
-    from || process.env.FROM_EMAIL || `no-reply@${process.env.NEXT_PUBLIC_URL?.replace(/^https?:\/\//, "") || "example.com"}`;
+    from ||
+    process.env.FROM_EMAIL ||
+    `no-reply@${process.env.NEXT_PUBLIC_URL?.replace(/^https?:\/\//, "") || "example.com"}`;
   try {
     await transporter.sendMail({ from: sender, to, subject, html, text, attachments });
     console.log("Sent email to", to, "subject=", subject);

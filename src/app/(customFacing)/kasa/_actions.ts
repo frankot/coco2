@@ -296,7 +296,8 @@ export async function createOrder(formData: OrderFormData) {
     try {
       const user = await prisma.user.findUnique({ where: { id: verifiedUserId } });
       if (user?.email) {
-        const siteUrl = process.env.NEXT_PUBLIC_URL || process.env.NEXTAUTH_URL || "http://localhost:3000";
+        const siteUrl =
+          process.env.NEXT_PUBLIC_URL || process.env.NEXTAUTH_URL || "http://localhost:3000";
         const orderUrl = `${siteUrl.replace(/\/$/, "")}/kasa/zlozone-zamowienie?orderId=${orderId}&payment=${validatedData.paymentMethod}`;
 
         const paymentLabel = validatedData.paymentMethod === "COD" ? "Pobranie" : "Online";
@@ -313,7 +314,7 @@ export async function createOrder(formData: OrderFormData) {
               <div style="background:#f8fafc;padding:12px;border-radius:6px;margin-bottom:18px;">
                 <strong>Szczegóły zamówienia</strong>
                 <div style="margin-top:8px;font-size:14px;color:#374151;">
-                  <div>Kwota: <strong>${(totalPriceInCents/100).toFixed(2)} PLN</strong></div>
+                  <div>Kwota: <strong>${(totalPriceInCents / 100).toFixed(2)} PLN</strong></div>
                   <div>Płatność: <strong>${paymentLabel}</strong></div>
                 </div>
               </div>
