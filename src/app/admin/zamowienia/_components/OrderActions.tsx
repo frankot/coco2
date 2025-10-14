@@ -1,5 +1,14 @@
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { Eye, Truck, Package, CheckCircle, XCircle, CheckSquare, Layers, Download } from "lucide-react";
+import {
+  Eye,
+  Truck,
+  Package,
+  CheckCircle,
+  XCircle,
+  CheckSquare,
+  Layers,
+  Download,
+} from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 
@@ -159,7 +168,13 @@ export function ConfirmApaczkaDropdownItem({ id }: { id: string }) {
 }
 
 // Download label if available
-export function DownloadLabelDropdownItem({ id, disabled = false }: { id: string; disabled?: boolean }) {
+export function DownloadLabelDropdownItem({
+  id,
+  disabled = false,
+}: {
+  id: string;
+  disabled?: boolean;
+}) {
   const download = async () => {
     if (disabled) return;
     try {
@@ -177,7 +192,11 @@ export function DownloadLabelDropdownItem({ id, disabled = false }: { id: string
     }
   };
   return (
-    <DropdownMenuItem className={`${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`} onClick={download} disabled={disabled}>
+    <DropdownMenuItem
+      className={`${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+      onClick={download}
+      disabled={disabled}
+    >
       <Download className="mr-2 h-4 w-4" />
       <span>Pobierz etykietę</span>
     </DropdownMenuItem>

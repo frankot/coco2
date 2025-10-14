@@ -22,9 +22,7 @@ function getCreds() {
 async function post<T>(route: string, body: any): Promise<ApiResponse<T>> {
   const { id: APP_ID, secret: APP_SECRET } = getCreds();
   if (!APP_ID || !APP_SECRET) {
-    throw new Error(
-      "Missing Apaczka credentials"
-    );
+    throw new Error("Missing Apaczka credentials");
   }
   const expires = Math.floor(Date.now() / 1000) + 300; // 5 minutes
   const data = JSON.stringify(body ?? {});

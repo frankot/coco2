@@ -325,9 +325,7 @@ function OrdersTable() {
                     <DropdownMenuContent>
                       <ViewOrderDropdownItem id={order.id} />
                       <UpdateStatusDropdownItem id={order.id} currentStatus={order.status} />
-                      {order.apaczkaOrderId ? (
-                        <DownloadLabelDropdownItem id={order.id} />
-                      ) : null}
+                      {order.apaczkaOrderId ? <DownloadLabelDropdownItem id={order.id} /> : null}
                       <DropdownMenuSeparator />
                       <CancelOrderDropdownItem
                         id={order.id}
