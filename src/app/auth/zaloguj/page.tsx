@@ -7,13 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-} from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import Loading from "@/components/ui/loading";
 
 function SignInForm() {
@@ -105,6 +99,11 @@ function SignInForm() {
                 placeholder="••••••••"
                 disabled={isLoading}
               />
+              <div className="text-right mt-1">
+                <Link href="/auth/forgot" className="text-sm text-primary hover:underline">
+                  Zapomniałeś hasła?
+                </Link>
+              </div>
             </div>
 
             <Button type="submit" className="w-full" disabled={isLoading}>
