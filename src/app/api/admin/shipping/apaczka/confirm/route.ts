@@ -1,6 +1,7 @@
 import { createRouteHandler, ApiError, readJson } from "@/lib/api";
 import prisma from "@/db";
 import Apaczka from "@/lib/apaczka";
+import mailer from "@/lib/mailer";
 function normalizePhonePL(input: string | null | undefined): string | undefined {
   if (!input) return undefined;
   const digits = input.replace(/\D+/g, "");
@@ -320,6 +321,23 @@ export const POST = createRouteHandler(
         status: "PROCESSING",
       },
     });
+
+    // Send shipment notification email to customer
+    try {
+      if (order.user?.email) {
+        const html = `<p>Dzień dobry ${order.user.firstName ?? ""},</p>
+          <p>Twoje zamówienie <strong>${order.id}</strong> zostało wysłane. Numer przesyłki: <strong>${ap.waybill_number}</strong>.</p>
+          <p>Śledź przesyłkę: <a href="${ap.tracking_url}">${ap.tracking_url}</a></p>
+          <p>Pozdrawiamy,<br/>Zespół</p>`;
+        await mailer.sendMail({
+          to: order.user.email,
+          subject: `Twoje zamówienie ${order.id} zostało wysłane`,
+          html,
+        });
+      }
+    } catch (e) {
+      console.error("Failed to send shipment email for order", order.id, e);
+    }
 
     return { success: true, apaczka: ap };
   },

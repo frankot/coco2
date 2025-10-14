@@ -1,0 +1,57 @@
+async function createTransporter() {
+  // Avoid static require so bundler doesn't fail when nodemailer isn't installed.
+  // Use eval to call require at runtime.
+  // eslint-disable-next-line no-eval
+  const req: any = eval("require");
+  const nodemailer = req("nodemailer");
+
+  const host = process.env.SMTP_HOST;
+  const port = process.env.SMTP_PORT ? Number(process.env.SMTP_PORT) : undefined;
+  const user = process.env.SMTP_USER;
+  const pass = process.env.SMTP_PASS;
+
+  if (!host || !port || !user || !pass) return null;
+
+  const options: any = {
+    host,
+    port,
+    secure: port === 465,
+    auth: { user, pass },
+  };
+
+  return nodemailer.createTransport(options);
+}
+
+export async function sendMail({
+  to,
+  subject,
+  html,
+  text,
+  from,
+  attachments,
+}: {
+  to: string;
+  subject: string;
+  html?: string;
+  text?: string;
+  from?: string;
+  attachments?: any[];
+}) {
+  const transporter = await createTransporter();
+  if (!transporter) {
+    console.log("SMTP not configured, skipping email to", to);
+    return false;
+  }
+  const sender =
+    from || process.env.FROM_EMAIL || `no-reply@${process.env.NEXT_PUBLIC_URL?.replace(/^https?:\/\//, "") || "example.com"}`;
+  try {
+    await transporter.sendMail({ from: sender, to, subject, html, text, attachments });
+    console.log("Sent email to", to, "subject=", subject);
+    return true;
+  } catch (e) {
+    console.error("Failed to send email to", to, e);
+    return false;
+  }
+}
+
+export default { sendMail };
