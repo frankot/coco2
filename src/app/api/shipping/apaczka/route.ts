@@ -1,13 +1,11 @@
-import { NextResponse } from "next/server";
 import { createRouteHandler, ApiError } from "@/lib/api";
 import { ApaczkaServiceResponse, ApaczkaError, ApaczkaService } from "@/types/apaczka";
 
-// Remove trailing slash as it might cause issues
+
 const APACZKA_API_URL = "https://www.apaczka.pl/api/v2";
 const APACZKA_APP_ID = process.env.APACZKA_APP_ID?.replace(/"/g, "") || "";
 const APACZKA_APP_SECRET = process.env.APACZKA_APP_SECRET?.replace(/"/g, "") || "";
 
-// Exactly matching the PHP example from documentation
 function stringToSign(appId: string, route: string, data: string, expires: number): string {
   return `${appId}:${route}:${data}:${expires}`;
 }
@@ -23,7 +21,6 @@ function filterCourierServices(response: ApaczkaServiceResponse): ApaczkaService
     return response;
   }
 
-  // Only keep services for the allowed suppliers and types we support
   const allowedSuppliers = ["DPD", "INPOST", "DHL"];
   const filteredServices = response.response.services.filter((service: ApaczkaService) => {
     if (!allowedSuppliers.includes(service.supplier)) return false;

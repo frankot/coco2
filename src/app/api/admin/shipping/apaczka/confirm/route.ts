@@ -115,7 +115,15 @@ export const POST = createRouteHandler(
       service_id: Number(order.shippingServiceId),
       address: { sender: SENDER, receiver },
       shipment_value: order.subtotalInCents, // grosze
-      // pickup: added below conditionally after checking service_structure
+      // Apaczka requires currency whenever shipment_value is provided
+      shipment_currency: process.env.APACZKA_CURRENCY || "PLN",
+      // Always order pickup from sender address (company courier pickup)
+      pickup: {
+        type: "COURIER",
+        date: new Date().toISOString().slice(0, 10),
+        hours_from: process.env.APACZKA_PICKUP_FROM || "09:00",
+        hours_to: process.env.APACZKA_PICKUP_TO || "17:00",
+      },
       shipment,
       comment: `Zamówienie [${order.id}]`,
       content: `Szkło! Proszę nie rzucać!`,
@@ -125,11 +133,11 @@ export const POST = createRouteHandler(
     // If this is a door-to-point delivery, include point info according to Apaczka schema
     if (order.apaczkaPointId && order.apaczkaPointSupplier) {
       const supplier = order.apaczkaPointSupplier.toUpperCase();
-      // Attach both fields: some parts of Apaczka expect 'foreign_access_point_id'
-      // (map widget) while the order structure/docs reference 'foreign_address_id'
-      // (points endpoint). Send both to maximize compatibility.
+
+      // Set map code as foreign_access_point_id; foreign_address_id will be replaced below when resolved to internal id
       apOrder.address.receiver.foreign_access_point_id = order.apaczkaPointId;
-      apOrder.address.receiver.foreign_address_id = order.apaczkaPointId;
+      // Avoid setting foreign_address_id to map code to prevent schema violations; keep empty until resolved
+      apOrder.address.receiver.foreign_address_id = "";
       // Map supplier to Apaczka expected codes when needed
       const supplierMap: Record<string, string> = {
         INPOST: "INPOST",
@@ -176,31 +184,7 @@ export const POST = createRouteHandler(
             );
             apOrder.service_id = Number(pick.service_id);
           }
-          // Decide whether pickup should be included. If the service requires
-          // courier pickup (pickup_courier === '2') or allows it ('1'), include
-          // the pickup object. If pickup_courier === '0' (not available) then
-          // omit pickup for point-to-point consignments as some carriers treat
-          // pickup + point together as an invalid method.
-          const pickupCourier =
-            pick.pickup_courier ??
-            svc.response?.services?.find(
-              (s: any) => String(s.service_id) === String(pick.service_id)
-            )?.pickup_courier;
-          if (pickupCourier === "2" || pickupCourier === "1") {
-            apOrder.pickup = {
-              type: "SELF",
-              date: new Date().toISOString().slice(0, 10),
-              hours_from: "09:00",
-              hours_to: "17:00",
-            };
-          } else {
-            // ensure no pickup present
-            delete apOrder.pickup;
-          }
-          // If the service entry includes a points_type we can try to resolve the
-          // map's foreign_access_point_id (e.g. "POP-WAW545") to the numeric
-          // internal id used by points/:type responses. This often should be
-          // provided in order.receiver.foreign_address_id.
+          // Pickup is always ordered from sender in our flow; leave apOrder.pickup as set
           try {
             // Prefer explicit pick.points_type. If not present, try to find a
             // points_type in the global list that matches the supplier name.
@@ -257,29 +241,7 @@ export const POST = createRouteHandler(
       } catch (e) {
         console.warn("Could not adjust service_id via service_structure", e);
       }
-      // Ensure pickup type correctness: if the chosen service supports/needs
-      // courier pickup (pickup_courier !== '0') then use COURIER. Otherwise
-      // omit pickup for point deliveries.
-      try {
-        const svcAll = await Apaczka.serviceStructure();
-        const svcEntry = (svcAll.response?.services || []).find(
-          (s: any) => String(s.service_id) === String(apOrder.service_id)
-        );
-        const pickupCourier = svcEntry?.pickup_courier;
-        if (pickupCourier === "1" || pickupCourier === "2") {
-          // Use COURIER when pickup is available or required — SELF caused errors for this service
-          apOrder.pickup = {
-            type: "COURIER",
-            date: new Date().toISOString().slice(0, 10),
-            hours_from: "09:00",
-            hours_to: "17:00",
-          };
-        } else {
-          delete apOrder.pickup;
-        }
-      } catch (e) {
-        // ignore pickup adjustment failures
-      }
+      // Pickup is always included; no further adjustment required
     }
 
     // If point delivery selected, ensure receiver phone is present
