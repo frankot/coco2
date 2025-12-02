@@ -1,9 +1,7 @@
 "use server";
 
 import { PrismaClient } from "@/app/generated/prisma";
-import Apaczka from "@/lib/apaczka";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { z } from "zod";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -190,30 +188,23 @@ export async function createOrder(formData: OrderFormData) {
     // Create the order
     let order;
     try {
-      // If a pickup point code was provided, try to resolve it server-side
-      // to an internal Apaczka point id so that confirm can send the
-      // correct foreign_address_id. We'll call the new internal resolve
-      // endpoint. This is optional: if resolution fails we'll still store
-      // the original code and let admin confirm handle errors.
-      let resolvedPointId: string | undefined = undefined;
+      // If this is a point delivery, resolve the correct service_id based on supplier and point code
+      let finalServiceId = validatedData.shippingMethodId;
       if (validatedData.apaczkaPointId && validatedData.apaczkaPointSupplier) {
         try {
-          const res = await Apaczka.resolvePoint(
+          const Apaczka = (await import("@/lib/apaczka")).default;
+          const correctServiceId = await Apaczka.findD2PService(
             validatedData.apaczkaPointSupplier,
-            validatedData.apaczkaPointId,
-            "PL"
+            validatedData.apaczkaPointId
           );
-          if ((res as any)?.internalId) {
-            resolvedPointId = (res as any).internalId;
-            console.log("Resolved apaczka point at order creation", resolvedPointId);
-          } else {
+          if (correctServiceId) {
             console.log(
-              "Point resolve returned no internal id; will store original code",
-              (res as any).tried || res
+              `Resolved D2P service for ${validatedData.apaczkaPointSupplier} point ${validatedData.apaczkaPointId}: ${finalServiceId} -> ${correctServiceId}`
             );
+            finalServiceId = String(correctServiceId);
           }
         } catch (e) {
-          console.warn("Point resolve call failed during order creation", String(e));
+          console.warn("Failed to resolve D2P service_id during order creation:", e);
         }
       }
 
@@ -229,10 +220,10 @@ export async function createOrder(formData: OrderFormData) {
           shippingCostInCents: shippingCostInCents,
           billingAddressId: address.id,
           shippingAddressId: address.id,
-          shippingServiceId: validatedData.shippingMethodId,
+          shippingServiceId: finalServiceId,
           // Normalize point id and supplier to avoid accidental whitespace / casing issues
-          // Prefer the resolved internal id if available; fall back to map code
-          apaczkaPointId: (resolvedPointId || validatedData.apaczkaPointId)?.trim() || undefined,
+          // Store the raw map code (e.g. POP-WAW640) as required by Apaczka API v2 for foreign_access_point_id
+          apaczkaPointId: validatedData.apaczkaPointId?.trim() || undefined,
           apaczkaPointSupplier: validatedData.apaczkaPointSupplier
             ? validatedData.apaczkaPointSupplier.trim().toUpperCase()
             : undefined,

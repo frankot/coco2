@@ -59,7 +59,8 @@ export const POST = createRouteHandler(
           postal_code: address?.postalCode ?? "",
           state_code: "",
           city: address?.city ?? "",
-          is_residential: 1,
+          // For D2P deliveries, is_residential should be 0 (point), for D2D it should be 1 (home)
+          is_residential: order.apaczkaPointId ? 0 : 1,
           contact_person:
             `${order.user.firstName ?? ""} ${order.user.lastName ?? ""}`.trim() || order.user.email,
           email: order.user.email,
@@ -100,13 +101,32 @@ export const POST = createRouteHandler(
         const dim2 = parseInt(process.env.APACZKA_DEFAULT_DIM2 || "25", 10);
         const dim3 = parseInt(process.env.APACZKA_DEFAULT_DIM3 || "15", 10);
         const weight = Number(process.env.APACZKA_DEFAULT_WEIGHT || "4");
+
+        // Calculate pickup date: next business day (Mon-Fri) if after 14:00, otherwise today if business day
+        const getPickupDate = () => {
+          const now = new Date();
+          const hour = now.getHours();
+          let pickup = new Date(now);
+
+          // If after 14:00, schedule for next day
+          if (hour >= 14) {
+            pickup.setDate(pickup.getDate() + 1);
+          }
+
+          // Skip weekends: if Saturday (6), move to Monday; if Sunday (0), move to Monday
+          while (pickup.getDay() === 0 || pickup.getDay() === 6) {
+            pickup.setDate(pickup.getDate() + 1);
+          }
+
+          return pickup.toISOString().slice(0, 10);
+        };
+
         const apOrder: any = {
           service_id: Number(order.shippingServiceId),
           address: { sender: SENDER, receiver },
-          shipment_value: order.subtotalInCents,
           pickup: {
-            type: "SELF",
-            date: new Date().toISOString().slice(0, 10),
+            type: "COURIER",
+            date: getPickupDate(),
             hours_from: "09:00",
             hours_to: "17:00",
           },
@@ -125,111 +145,35 @@ export const POST = createRouteHandler(
           is_zebra: 0,
         };
 
+        // Include declared value (insurance) only when explicitly enabled.
+        const declare = String(process.env.APACZKA_DECLARE_VALUE || "").toLowerCase();
+        const declareOn = declare === "1" || declare === "true" || declare === "yes";
+        if (declareOn && typeof order.subtotalInCents === "number" && order.subtotalInCents > 0) {
+          apOrder.shipment_value = order.subtotalInCents; // grosze
+          apOrder.shipment_currency = (process.env.APACZKA_CURRENCY || "PLN").toUpperCase();
+        } else {
+          // Remove shipment_value if insurance is disabled
+          delete apOrder.shipment_value;
+        }
+
         if (order.apaczkaPointId && order.apaczkaPointSupplier) {
-          // Send the map access point and attempt to resolve it to the
-          // internal Apaczka point id for this account. If resolution
-          // succeeds, use the internal id in foreign_address_id (required
-          // by Apaczka for point deliveries).
-          (apOrder.address.receiver as any).foreign_access_point_id = order.apaczkaPointId;
-          (apOrder.address.receiver as any).supplier =
-            ({ INPOST: "INPOST", DPD: "DPD", DHL: "DHL_PARCEL", DHL_PARCEL: "DHL_PARCEL" } as any)[
-              order.apaczkaPointSupplier.toUpperCase()
-            ] || order.apaczkaPointSupplier;
-          try {
-            const resolved = await Apaczka.resolvePoint(
-              (apOrder.address.receiver as any).supplier,
-              String(order.apaczkaPointId),
-              apOrder.address.receiver.country_code || "PL"
-            );
-            if ((resolved as any).internalId) {
-              (apOrder.address.receiver as any).foreign_address_id = (resolved as any).internalId;
-              console.log("Resolved point for order", order.id, "->", (resolved as any).internalId);
-            } else {
-              // keep the original map code in foreign_address_id for logging;
-              // Apaczka will likely reject; we'll let sendOrder handle it and
-              // surface a clear error to admin.
-              (apOrder.address.receiver as any).foreign_address_id = order.apaczkaPointId;
-              console.log(
-                "Could not resolve map point for order",
-                order.id,
-                "tried:",
-                (resolved as any).tried
-              );
-            }
-          } catch (e) {
-            console.warn("resolvePoint failed for order", order.id, String(e));
-            (apOrder.address.receiver as any).foreign_address_id = order.apaczkaPointId;
-          }
-          const supplier = order.apaczkaPointSupplier.toUpperCase();
-          const supplierMap: Record<string, string> = {
-            INPOST: "INPOST",
-            DPD: "DPD",
-            DHL: "DHL_PARCEL",
-            DHL_PARCEL: "DHL_PARCEL",
+          console.log(
+            `[Bulk] D2P delivery: supplier=${order.apaczkaPointSupplier}, point=${order.apaczkaPointId}, forcing service_id=41`
+          );
+
+          // Force service_id to 41 for ALL door-to-point deliveries (InPost, DPD, DHL)
+          apOrder.service_id = 41;
+
+          // Set point code in foreign_address_id (NOT foreign_access_point_id)
+          (apOrder.address.receiver as any).foreign_address_id = order.apaczkaPointId;
+
+          // Ensure COURIER pickup for D2P
+          apOrder.pickup = {
+            type: "COURIER",
+            date: getPickupDate(),
+            hours_from: "09:00",
+            hours_to: "17:00",
           };
-          (apOrder.address.receiver as any).supplier = supplierMap[supplier] || supplier;
-          // Ensure service_id is door_to_point for supplier; correct using service_structure when needed
-          try {
-            const svc = await Apaczka.serviceStructure();
-            const services = (svc as any).response?.services || [];
-            const candidates = services.filter(
-              (s: any) =>
-                s.supplier?.toUpperCase() ===
-                  (apOrder.address.receiver as any).supplier.toUpperCase() &&
-                s.door_to_point === "1"
-            );
-            if (candidates.length) {
-              let pick = candidates[0];
-              const pid = String(order.apaczkaPointId);
-              if (
-                ((apOrder.address.receiver as any).supplier as string).toUpperCase() === "INPOST" &&
-                candidates.length > 1
-              ) {
-                if (pid.startsWith("POP-")) {
-                  pick = candidates.find((s: any) => /punkt/i.test(s.name)) || pick;
-                } else {
-                  pick =
-                    candidates.find(
-                      (s: any) => /paczkomat/i.test(s.name) || /paczkomaty/i.test(s.name)
-                    ) || pick;
-                }
-              }
-              if (String(pick.service_id) !== String(apOrder.service_id)) {
-                console.log(
-                  "Adjusting service_id for point delivery:",
-                  apOrder.service_id,
-                  "->",
-                  pick.service_id,
-                  "name=",
-                  pick.name
-                );
-                apOrder.service_id = Number(pick.service_id);
-              }
-            }
-          } catch (e) {
-            console.warn("Could not adjust service_id via service_structure (bulk)", e);
-          }
-          // After service adjustment, ensure pickup type matches service requirements
-          try {
-            const svcAll = await Apaczka.serviceStructure();
-            const svcEntry = (svcAll as any).response?.services?.find(
-              (s: any) => String(s.service_id) === String(apOrder.service_id)
-            );
-            const pickupCourier = svcEntry?.pickup_courier;
-            if (pickupCourier === "1" || pickupCourier === "2") {
-              apOrder.pickup = {
-                type: "COURIER",
-                date: new Date().toISOString().slice(0, 10),
-                hours_from: "09:00",
-                hours_to: "17:00",
-              };
-            } else {
-              // keep existing SELF or remove if not appropriate
-              delete apOrder.pickup;
-            }
-          } catch (e) {
-            // ignore pickup adjustment failures
-          }
         }
 
         // If point delivery selected, ensure receiver phone is present
@@ -277,14 +221,52 @@ export const POST = createRouteHandler(
         // Try to notify customer by email about shipment
         try {
           if (order.user?.email) {
-            const html = `<p>Dzień dobry ${order.user.firstName ?? ""},</p>
-              <p>Twoje zamówienie <strong>${order.id}</strong> zostało wysłane. Numer przesyłki: <strong>${ap.waybill_number}</strong>.</p>
-              <p>Śledź przesyłkę: <a href="${ap.tracking_url}">${ap.tracking_url}</a></p>
-              <p>Pozdrawiamy,<br/>Zespół</p>`;
+            const html = `
+              <div style="font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; color:#111;">
+                <div style="max-width:600px;margin:0 auto;padding:24px;background:#ffffff;border-radius:8px;">
+                  <div style="text-align:center;margin-bottom:18px;">
+                    <img src="cid:logo.png" alt="Logo" style="height:56px;object-fit:contain;" onerror="this.style.display='none'" />
+                  </div>
+                  <h1 style="font-size:20px;margin:0 0 8px;color:#0f172a;text-align:center;">Twoja przesyłka jest w drodze!</h1>
+                  <p style="margin:0 0 18px;text-align:center;color:#6b7280;">Twoje zamówienie <strong style="font-family:monospace">${order.id}</strong> zostało nadane i jest w drodze do Ciebie.</p>
+
+                  <div style="background:#f8fafc;padding:12px;border-radius:6px;margin-bottom:18px;">
+                    <strong>Informacje o przesyłce</strong>
+                    <div style="margin-top:8px;font-size:14px;color:#374151;">
+                      <div>Numer przesyłki: <strong style="font-family:monospace">${ap.waybill_number}</strong></div>
+                      <div style="margin-top:4px;">Przewoźnik: <strong>${ap.service_name || 'Apaczka'}</strong></div>
+                    </div>
+                  </div>
+
+                  <div style="text-align:center;margin-bottom:18px;">
+                    <a href="${ap.tracking_url}" style="display:inline-block;background:#111827;color:#fff;padding:10px 18px;border-radius:6px;text-decoration:none;font-weight:600;">Śledź przesyłkę</a>
+                  </div>
+
+                  <p style="color:#6b7280;font-size:13px;margin:0;">Jeśli masz pytania, odpisz na tę wiadomość lub odwiedź naszą stronę.</p>
+
+                  <div style="margin-top:18px;color:#9ca3af;font-size:12px;text-align:center;">Pozdrawiamy,<br/>Zespół</div>
+                </div>
+              </div>
+            `;
+            
+            // Try to attach logo from public folder if present
+            const attachments: any[] = [];
+            try {
+              const logoPath = process.cwd() + "/public/logo.png";
+              // eslint-disable-next-line no-eval
+              const fs: any = eval("require")("fs");
+              if (fs.existsSync(logoPath)) {
+                attachments.push({ filename: "logo.png", path: logoPath, cid: "logo.png" });
+              }
+            } catch (e) {
+              // ignore attachment failures
+            }
+            
             await mailer.sendMail({
               to: order.user.email,
-              subject: `Twoje zamówienie ${order.id} zostało wysłane`,
+              subject: `Przesyłka nadana - Zamówienie ${order.id}`,
               html,
+              attachments: attachments.length ? attachments : undefined,
             });
           }
         } catch (e) {

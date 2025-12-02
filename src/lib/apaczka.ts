@@ -72,6 +72,58 @@ export const Apaczka = {
       points_type?: string[];
     }>("service_structure/", {});
   },
+  // Find the correct D2P service_id for a given supplier and point code
+  // Returns service_id that matches: door_to_point=1, domestic=1, and point type (Paczkomat vs Punkt for InPost)
+  async findD2PService(supplier: string, pointCode: string): Promise<number | null> {
+    try {
+      const svc = await this.serviceStructure();
+      const services = svc.response?.services || [];
+      const supplierUpper = supplier.toUpperCase();
+
+      // Map supplier to Apaczka API codes
+      const supplierMap: Record<string, string> = {
+        INPOST: "INPOST",
+        DPD: "DPD",
+        DHL: "DHL_PARCEL",
+        DHL_PARCEL: "DHL_PARCEL",
+      };
+      const mappedSupplier = supplierMap[supplierUpper] || supplierUpper;
+
+      // Filter for D2P domestic services for this supplier
+      const candidates = services.filter(
+        (s: any) =>
+          s.supplier?.toUpperCase() === mappedSupplier &&
+          s.door_to_point === "1" &&
+          s.domestic === "1"
+      );
+
+      if (candidates.length === 0) return null;
+
+      // For INPOST: distinguish between Paczkomat and Punkt based on point code
+      if (mappedSupplier === "INPOST") {
+        const pid = String(pointCode).toUpperCase();
+        if (pid.startsWith("POP-")) {
+          // POP- prefix = InPost Punkt (pickup point)
+          const punkt = candidates.find((s: any) => /punkt/i.test(s.name));
+          return punkt ? Number(punkt.service_id) : null;
+        } else {
+          // Regular code = Paczkomat (locker)
+          const paczkomat = candidates.find((s: any) => /paczkomat/i.test(s.name));
+          return paczkomat ? Number(paczkomat.service_id) : null;
+        }
+      } else if (mappedSupplier === "DPD") {
+        // For DPD: prefer "Pickup" service
+        const pickup = candidates.find((s: any) => /pickup/i.test(s.name));
+        return pickup ? Number(pickup.service_id) : Number(candidates[0].service_id);
+      }
+
+      // Default: return first candidate
+      return Number(candidates[0].service_id);
+    } catch (e) {
+      console.error("Failed to find D2P service:", e);
+      return null;
+    }
+  },
   orderValuation(order: OrderPayload) {
     return post<{ price_table: Record<string, { price: string; price_gross: string }> }>(
       "order_valuation/",
@@ -86,34 +138,91 @@ export const Apaczka = {
     return post<{ points: Record<string, any> }>(`points/${type}/`, payload);
   },
   // Attempt to resolve a supplier map code (foreign_access_point_id) to the
-  // internal Apaczka point id. It will query service_structure to get the
-  // available points_type candidates, query points/:type for each and try
-  // to match the provided code against known fields.
+  // internal Apaczka point id. It queries service_structure for points_type,
+  // and then points/:type, optionally trying subtype hints for suppliers like INPOST.
   async resolvePoint(supplier: string, code: string, country_code = "PL") {
     if (!supplier || !code) throw new Error("supplier and code required");
+    const supplierUpper = String(supplier).toUpperCase();
+
+    // Build candidate code variants to cope with supplier-specific prefixes
+    const raw = String(code).toUpperCase();
+    const variants = new Set<string>([raw]);
+    // Strip common prefixes like POP-
+    variants.add(raw.replace(/^POP-/, ""));
+    // Remove hyphens variant
+    variants.add(raw.replace(/-/g, ""));
+
     const ss = await post<any>("service_structure/", {});
     const pointsTypes: string[] = ss.response?.points_type || [];
-    // Try an explicit supplier name first
-    const candidates = [supplier.toUpperCase(), ...pointsTypes];
+    // Try explicit supplier type first, then any available points_type
+    const candidates = [supplierUpper, ...pointsTypes.filter((t) => t !== supplierUpper)];
+
+    // Subtype hints per supplier (best-effort)
+    const subtypeHints: Array<string | undefined> = (() => {
+      if (supplierUpper === "INPOST") {
+        // If code looks like a POP-*, try POP first, then APM, then no filter
+        if (/^POP-/.test(raw)) return ["POP", "APM", undefined];
+        return ["APM", "POP", undefined];
+      }
+      return [undefined];
+    })();
+
     const tried: Record<string, any> = {};
     for (const t of candidates) {
-      try {
-        const pts = await post<{ points: Record<string, any> }>(`points/${t}/`, { country_code });
-        const map = pts.response?.points || {};
-        tried[t] = Object.keys(map).slice(0, 5);
-        for (const [key, val] of Object.entries(map)) {
-          const p: any = val as any;
-          const fav =
-            p?.foreign_access_point_id ||
-            p?.address?.foreign_access_point_id ||
-            p?.code ||
-            p?.external_id;
-          if (fav && String(fav).toUpperCase() === String(code).toUpperCase()) {
-            return { type: t, internalId: key, point: p };
+      for (const sub of subtypeHints) {
+        try {
+          const payload: any = { country_code };
+          if (sub) payload.subtype = sub;
+          const pts = await post<{ points: Record<string, any> }>(`points/${t}/`, payload);
+          const map = pts.response?.points || {};
+          tried[`${t}${sub ? `:${sub}` : ""}`] = Object.keys(map).slice(0, 5);
+          for (const [key, val] of Object.entries(map)) {
+            const p: any = val as any;
+            const fields: Array<string | undefined> = [
+              p?.foreign_access_point_id,
+              p?.address?.foreign_access_point_id,
+              p?.code,
+              p?.external_id,
+            ];
+            for (const f of fields) {
+              if (!f) continue;
+              const fv = String(f).toUpperCase();
+              if (
+                variants.has(fv) ||
+                variants.has(fv.replace(/^POP-/, "")) ||
+                variants.has(fv.replace(/-/g, ""))
+              ) {
+                return { type: t, subtype: sub, internalId: key, point: p };
+              }
+            }
+            // Deep scan as last resort for unknown field names
+            const allStrings: string[] = [];
+            const stack: any[] = [p];
+            let depth = 0;
+            while (stack.length && depth < 5000) {
+              depth++;
+              const cur = stack.pop();
+              if (typeof cur === "string") {
+                allStrings.push(cur.toUpperCase());
+              } else if (Array.isArray(cur)) {
+                for (const v of cur) stack.push(v);
+              } else if (cur && typeof cur === "object") {
+                for (const v of Object.values(cur)) stack.push(v);
+              }
+            }
+            const foundLoose = allStrings.some(
+              (s) =>
+                variants.has(s) ||
+                variants.has(s.replace(/^POP-/, "")) ||
+                variants.has(s.replace(/-/g, ""))
+            );
+            if (foundLoose) {
+              return { type: t, subtype: sub, internalId: key, point: p };
+            }
           }
+        } catch (e) {
+          // ignore and continue to next subtype/type
         }
-      } catch (e) {
-        // ignore and continue
       }
     }
     return { found: false, tried };

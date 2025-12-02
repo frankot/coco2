@@ -49,7 +49,8 @@ export const POST = createRouteHandler(
       postal_code: address?.postalCode ?? "",
       state_code: "",
       city: address?.city ?? "",
-      is_residential: 1,
+      // For D2P deliveries, is_residential should be 0 (point), for D2D it should be 1 (home)
+      is_residential: order.apaczkaPointId ? 0 : 1,
       contact_person:
         `${order.user.firstName ?? ""} ${order.user.lastName ?? ""}`.trim() || order.user.email,
       email: order.user.email,
@@ -111,16 +112,32 @@ export const POST = createRouteHandler(
       },
     ];
 
+    // Calculate pickup date: next business day (Mon-Fri) if after 14:00, otherwise today if business day
+    const getPickupDate = () => {
+      const now = new Date();
+      const hour = now.getHours();
+      let pickup = new Date(now);
+
+      // If after 14:00, schedule for next day
+      if (hour >= 14) {
+        pickup.setDate(pickup.getDate() + 1);
+      }
+
+      // Skip weekends: if Saturday (6), move to Monday; if Sunday (0), move to Monday
+      while (pickup.getDay() === 0 || pickup.getDay() === 6) {
+        pickup.setDate(pickup.getDate() + 1);
+      }
+
+      return pickup.toISOString().slice(0, 10);
+    };
+
     const apOrder: any = {
       service_id: Number(order.shippingServiceId),
       address: { sender: SENDER, receiver },
-      shipment_value: order.subtotalInCents, // grosze
-      // Apaczka requires currency whenever shipment_value is provided
-      shipment_currency: process.env.APACZKA_CURRENCY || "PLN",
       // Always order pickup from sender address (company courier pickup)
       pickup: {
         type: "COURIER",
-        date: new Date().toISOString().slice(0, 10),
+        date: getPickupDate(),
         hours_from: process.env.APACZKA_PICKUP_FROM || "09:00",
         hours_to: process.env.APACZKA_PICKUP_TO || "17:00",
       },
@@ -130,118 +147,28 @@ export const POST = createRouteHandler(
       is_zebra: 0,
     };
 
-    // If this is a door-to-point delivery, include point info according to Apaczka schema
+    // Include declared value (insurance) only when explicitly enabled.
+    // Some services/accounts reject currency even for PLN unless configured.
+    const declare = String(process.env.APACZKA_DECLARE_VALUE || "").toLowerCase();
+    const declareOn = declare === "1" || declare === "true" || declare === "yes";
+    if (declareOn && typeof order.subtotalInCents === "number" && order.subtotalInCents > 0) {
+      apOrder.shipment_value = order.subtotalInCents; // grosze
+      apOrder.shipment_currency = (process.env.APACZKA_CURRENCY || "PLN").toUpperCase();
+    }
+
+    // If this is a door-to-point delivery, configure for service_id 41
+    // Per working WooCommerce integration: ALL D2P use service_id 41 with foreign_address_id
     if (order.apaczkaPointId && order.apaczkaPointSupplier) {
-      const supplier = order.apaczkaPointSupplier.toUpperCase();
+      console.log(
+        `D2P delivery detected: supplier=${order.apaczkaPointSupplier}, point=${order.apaczkaPointId}, forcing service_id=41`
+      );
 
-      // Set map code as foreign_access_point_id; foreign_address_id will be replaced below when resolved to internal id
-      apOrder.address.receiver.foreign_access_point_id = order.apaczkaPointId;
-      // Avoid setting foreign_address_id to map code to prevent schema violations; keep empty until resolved
-      apOrder.address.receiver.foreign_address_id = "";
-      // Map supplier to Apaczka expected codes when needed
-      const supplierMap: Record<string, string> = {
-        INPOST: "INPOST",
-        DPD: "DPD",
-        DHL: "DHL_PARCEL",
-        DHL_PARCEL: "DHL_PARCEL",
-      };
-      apOrder.address.receiver.supplier = supplierMap[supplier] || supplier;
-      // Apaczka may also require address.line1/line2 to reflect point name for some carriers; keep street as provided.
-      // Ensure service_id is a door_to_point service for the supplier. If not, correct it using service_structure.
-      try {
-        const svc = await Apaczka.serviceStructure();
-        const services = svc.response?.services || [];
-        const candidates = services.filter(
-          (s: any) =>
-            s.supplier?.toUpperCase() ===
-              (apOrder.address.receiver.supplier as string).toUpperCase() && s.door_to_point === "1"
-        );
-        if (candidates.length) {
-          let pick = candidates[0];
-          const pid = String(order.apaczkaPointId);
-          // INPOST heuristic: POP- means Punkt; otherwise Paczkomat
-          if (
-            (apOrder.address.receiver.supplier as string).toUpperCase() === "INPOST" &&
-            candidates.length > 1
-          ) {
-            if (pid.startsWith("POP-")) {
-              pick = candidates.find((s: any) => /punkt/i.test(s.name)) || pick;
-            } else {
-              pick =
-                candidates.find(
-                  (s: any) => /paczkomat/i.test(s.name) || /paczkomaty/i.test(s.name)
-                ) || pick;
-            }
-          }
-          if (String(pick.service_id) !== String(apOrder.service_id)) {
-            console.log(
-              "Adjusting service_id for point delivery:",
-              apOrder.service_id,
-              "->",
-              pick.service_id,
-              "name=",
-              pick.name
-            );
-            apOrder.service_id = Number(pick.service_id);
-          }
-          // Pickup is always ordered from sender in our flow; leave apOrder.pickup as set
-          try {
-            // Prefer explicit pick.points_type. If not present, try to find a
-            // points_type in the global list that matches the supplier name.
-            let pointsType = (pick.points_type as string) || undefined;
-            if (!pointsType && Array.isArray(svc.response?.points_type)) {
-              const pt = (svc.response.points_type as string[]).find(
-                (p: string) =>
-                  String(p).toUpperCase() ===
-                  String(apOrder.address.receiver.supplier).toUpperCase()
-              );
-              if (pt) pointsType = pt;
-            }
-            // fallback: try supplier code itself
-            if (!pointsType)
-              pointsType = String(apOrder.address.receiver.supplier || "").toUpperCase();
+      // Force service_id to 41 for ALL door-to-point deliveries (InPost, DPD, DHL)
+      apOrder.service_id = 41;
 
-            if (pointsType) {
-              const ptsRes = await Apaczka.points(
-                pointsType,
-                apOrder.address.receiver.country_code || "PL"
-              );
-              const pts = ptsRes.response?.points || {};
-              // Find a point where foreign_access_point_id matches our map id
-              const mapPid = String(order.apaczkaPointId);
-              for (const [key, val] of Object.entries(pts)) {
-                const p: any = val as any;
-                // Some points have foreign_access_point_id or a code in address
-                const fav =
-                  p.foreign_access_point_id ||
-                  p.address?.foreign_access_point_id ||
-                  p.code ||
-                  p.external_id;
-                if (fav && String(fav).toUpperCase() === mapPid.toUpperCase()) {
-                  // key is usually the internal numeric id string
-                  apOrder.address.receiver.foreign_address_id = key;
-                  // keep foreign_access_point_id too for safety
-                  apOrder.address.receiver.foreign_access_point_id = mapPid;
-                  console.log(
-                    "Resolved map foreign_access_point_id",
-                    mapPid,
-                    "to internal point id",
-                    key,
-                    "using points_type",
-                    pointsType
-                  );
-                  break;
-                }
-              }
-            }
-          } catch (e) {
-            console.warn("Could not resolve points for service to map foreign_access_point_id", e);
-          }
-        }
-      } catch (e) {
-        console.warn("Could not adjust service_id via service_structure", e);
-      }
-      // Pickup is always included; no further adjustment required
+      // Set point code in foreign_address_id (NOT foreign_access_point_id)
+      // This matches the working WooCommerce integration format
+      apOrder.address.receiver.foreign_address_id = order.apaczkaPointId;
     }
 
     // If point delivery selected, ensure receiver phone is present
@@ -287,14 +214,52 @@ export const POST = createRouteHandler(
     // Send shipment notification email to customer
     try {
       if (order.user?.email) {
-        const html = `<p>Dzień dobry ${order.user.firstName ?? ""},</p>
-          <p>Twoje zamówienie <strong>${order.id}</strong> zostało wysłane. Numer przesyłki: <strong>${ap.waybill_number}</strong>.</p>
-          <p>Śledź przesyłkę: <a href="${ap.tracking_url}">${ap.tracking_url}</a></p>
-          <p>Pozdrawiamy,<br/>Zespół</p>`;
+        const html = `
+          <div style="font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; color:#111;">
+            <div style="max-width:600px;margin:0 auto;padding:24px;background:#ffffff;border-radius:8px;">
+              <div style="text-align:center;margin-bottom:18px;">
+                <img src="cid:logo.png" alt="Logo" style="height:56px;object-fit:contain;" onerror="this.style.display='none'" />
+              </div>
+              <h1 style="font-size:20px;margin:0 0 8px;color:#0f172a;text-align:center;">Twoja przesyłka jest w drodze!</h1>
+              <p style="margin:0 0 18px;text-align:center;color:#6b7280;">Twoje zamówienie <strong style="font-family:monospace">${order.id}</strong> zostało nadane i jest w drodze do Ciebie.</p>
+
+              <div style="background:#f8fafc;padding:12px;border-radius:6px;margin-bottom:18px;">
+                <strong>Informacje o przesyłce</strong>
+                <div style="margin-top:8px;font-size:14px;color:#374151;">
+                  <div>Numer przesyłki: <strong style="font-family:monospace">${ap.waybill_number}</strong></div>
+                  <div style="margin-top:4px;">Przewoźnik: <strong>${ap.service_name || 'Apaczka'}</strong></div>
+                </div>
+              </div>
+
+              <div style="text-align:center;margin-bottom:18px;">
+                <a href="${ap.tracking_url}" style="display:inline-block;background:#111827;color:#fff;padding:10px 18px;border-radius:6px;text-decoration:none;font-weight:600;">Śledź przesyłkę</a>
+              </div>
+
+              <p style="color:#6b7280;font-size:13px;margin:0;">Jeśli masz pytania, odpisz na tę wiadomość lub odwiedź naszą stronę.</p>
+
+              <div style="margin-top:18px;color:#9ca3af;font-size:12px;text-align:center;">Pozdrawiamy,<br/>Zespół</div>
+            </div>
+          </div>
+        `;
+        
+        // Try to attach logo from public folder if present
+        const attachments: any[] = [];
+        try {
+          const logoPath = process.cwd() + "/public/logo.png";
+          // eslint-disable-next-line no-eval
+          const fs: any = eval("require")("fs");
+          if (fs.existsSync(logoPath)) {
+            attachments.push({ filename: "logo.png", path: logoPath, cid: "logo.png" });
+          }
+        } catch (e) {
+          // ignore attachment failures
+        }
+        
         await mailer.sendMail({
           to: order.user.email,
-          subject: `Twoje zamówienie ${order.id} zostało wysłane`,
+          subject: `Przesyłka nadana - Zamówienie ${order.id}`,
           html,
+          attachments: attachments.length ? attachments : undefined,
         });
       }
     } catch (e) {
