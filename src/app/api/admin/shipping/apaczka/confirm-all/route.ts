@@ -234,7 +234,7 @@ export const POST = createRouteHandler(
                     <strong>Informacje o przesyłce</strong>
                     <div style="margin-top:8px;font-size:14px;color:#374151;">
                       <div>Numer przesyłki: <strong style="font-family:monospace">${ap.waybill_number}</strong></div>
-                      <div style="margin-top:4px;">Przewoźnik: <strong>${ap.service_name || 'Apaczka'}</strong></div>
+                      <div style="margin-top:4px;">Przewoźnik: <strong>${ap.service_name || "Apaczka"}</strong></div>
                     </div>
                   </div>
 
@@ -248,7 +248,7 @@ export const POST = createRouteHandler(
                 </div>
               </div>
             `;
-            
+
             // Try to attach logo from public folder if present
             const attachments: any[] = [];
             try {
@@ -261,7 +261,7 @@ export const POST = createRouteHandler(
             } catch (e) {
               // ignore attachment failures
             }
-            
+
             await mailer.sendMail({
               to: order.user.email,
               subject: `Przesyłka nadana - Zamówienie ${order.id}`,
