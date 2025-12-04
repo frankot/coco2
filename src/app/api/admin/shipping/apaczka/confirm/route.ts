@@ -242,7 +242,19 @@ export const POST = createRouteHandler(
       // Attach payload to error for easier debugging in logs
       (e as any).payload = apOrder;
       console.error("Apaczka sendOrder failed:", e?.message, "payload:", apOrder);
-      throw e;
+      
+      // Extract detailed error info for admin panel
+      const errorDetails = e?.details || {};
+      const errorMessage = e?.message || "Nieznany błąd Apaczka";
+      const validationErrors = errorDetails?.response?.errors || [];
+      
+      // Build detailed error message
+      let detailedMsg = errorMessage;
+      if (validationErrors.length > 0) {
+        detailedMsg += ": " + validationErrors.join(", ");
+      }
+      
+      throw new ApiError(detailedMsg, e?.status || 500);
     }
 
     const ap = sent.response.order;

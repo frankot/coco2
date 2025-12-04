@@ -103,13 +103,32 @@ export default function AdminOrdersPage() {
                 const res = await confirmAllApaczka(true);
                 const created = res.created?.length || 0;
                 const failed = res.failed?.length || 0;
-                // show toast instead of alert
-                toast.success(`Utworzono w Apaczka: ${created}, błędy: ${failed}`);
+                
                 console.info("confirmAllApaczka result:", {
                   created: res.created,
                   failed: res.failed,
                   turnIn: res.turnIn,
                 });
+                
+                // Show success/failure summary
+                if (created > 0 && failed === 0) {
+                  toast.success(`Utworzono ${created} przesyłek w Apaczka`);
+                } else if (created > 0 && failed > 0) {
+                  toast.warning(`Utworzono: ${created}, błędy: ${failed}`, { duration: 6000 });
+                  // Show detailed error messages for failed orders
+                  res.failed.forEach((f: any) => {
+                    toast.error(`Zamówienie ${f.id}: ${f.error}`, { duration: 10000 });
+                  });
+                } else if (failed > 0) {
+                  toast.error(`Wszystkie przesyłki zakończyły się błędem (${failed})`, { duration: 6000 });
+                  // Show detailed error messages
+                  res.failed.forEach((f: any) => {
+                    toast.error(`Zamówienie ${f.id}: ${f.error}`, { duration: 10000 });
+                  });
+                } else {
+                  toast.info("Brak zamówień do potwierdzenia");
+                }
+                
                 if (res.turnIn) {
                   // Download base64 PDF
                   const link = document.createElement("a");
@@ -117,9 +136,12 @@ export default function AdminOrdersPage() {
                   link.download = `Zbiorcze_Potwierdzenie_Nadan_${Date.now()}.pdf`;
                   link.click();
                 }
-                window.location.reload();
+                
+                if (created > 0) {
+                  window.location.reload();
+                }
               } catch (e: any) {
-                toast.error(`Błąd potwierdzania Apaczka: ${e?.message ?? e}`);
+                toast.error(`Błąd potwierdzania Apaczka: ${e?.message ?? e}`, { duration: 6000 });
                 console.error("confirmAllApaczka error:", e);
               }
             }}

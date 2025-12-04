@@ -185,11 +185,15 @@ export function ConfirmApaczkaDropdownItem({ id }: { id: string }) {
         body: JSON.stringify({ orderId: id }),
       });
       const data = await res.json();
-      if (!res.ok || !data.success) throw new Error(data.error || data.message || "Błąd API");
+      if (!res.ok || !data.success) {
+        const errorMsg = data.error || data.message || "Błąd API";
+        toast.error(`Apaczka: ${errorMsg}`, { duration: 8000 });
+        return;
+      }
       toast.success("Zamówienie potwierdzone w Apaczka");
       window.location.reload();
     } catch (e: any) {
-      toast.error(`Nie udało się potwierdzić: ${e?.message ?? "Błąd"}`);
+      toast.error(`Błąd połączenia: ${e?.message ?? "Nieznany błąd"}`, { duration: 6000 });
     }
   };
   return (
