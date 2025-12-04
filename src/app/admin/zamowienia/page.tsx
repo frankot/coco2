@@ -103,13 +103,13 @@ export default function AdminOrdersPage() {
                 const res = await confirmAllApaczka(true);
                 const created = res.created?.length || 0;
                 const failed = res.failed?.length || 0;
-                
+
                 console.info("confirmAllApaczka result:", {
                   created: res.created,
                   failed: res.failed,
                   turnIn: res.turnIn,
                 });
-                
+
                 // Show success/failure summary
                 if (created > 0 && failed === 0) {
                   toast.success(`Utworzono ${created} przesyłek w Apaczka`);
@@ -120,7 +120,9 @@ export default function AdminOrdersPage() {
                     toast.error(`Zamówienie ${f.id}: ${f.error}`, { duration: 10000 });
                   });
                 } else if (failed > 0) {
-                  toast.error(`Wszystkie przesyłki zakończyły się błędem (${failed})`, { duration: 6000 });
+                  toast.error(`Wszystkie przesyłki zakończyły się błędem (${failed})`, {
+                    duration: 6000,
+                  });
                   // Show detailed error messages
                   res.failed.forEach((f: any) => {
                     toast.error(`Zamówienie ${f.id}: ${f.error}`, { duration: 10000 });
@@ -128,7 +130,7 @@ export default function AdminOrdersPage() {
                 } else {
                   toast.info("Brak zamówień do potwierdzenia");
                 }
-                
+
                 if (res.turnIn) {
                   // Download base64 PDF
                   const link = document.createElement("a");
@@ -136,7 +138,7 @@ export default function AdminOrdersPage() {
                   link.download = `Zbiorcze_Potwierdzenie_Nadan_${Date.now()}.pdf`;
                   link.click();
                 }
-                
+
                 if (created > 0) {
                   window.location.reload();
                 }

@@ -328,13 +328,13 @@ export const POST = createRouteHandler(
         const errorDetails = e?.details || {};
         const errorMessage = e?.message || String(e);
         const validationErrors = errorDetails?.response?.errors || [];
-        
+
         // Build detailed error message
         let detailedMsg = errorMessage;
         if (validationErrors.length > 0) {
           detailedMsg += ": " + validationErrors.join(", ");
         }
-        
+
         failed.push({ id: order.id, error: detailedMsg });
       }
     }
