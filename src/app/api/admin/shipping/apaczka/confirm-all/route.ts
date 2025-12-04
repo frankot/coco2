@@ -157,12 +157,62 @@ export const POST = createRouteHandler(
         }
 
         if (order.apaczkaPointId && order.apaczkaPointSupplier) {
+          const supplier = order.apaczkaPointSupplier.toUpperCase();
+          const supplierMap: Record<string, string> = {
+            INPOST: "INPOST",
+            DPD: "DPD",
+            DHL: "DHL_PARCEL",
+            DHL_PARCEL: "DHL_PARCEL",
+          };
+          const mappedSupplier = supplierMap[supplier] || supplier;
+
           console.log(
-            `[Bulk] D2P delivery: supplier=${order.apaczkaPointSupplier}, point=${order.apaczkaPointId}, forcing service_id=41`
+            `[Bulk] D2P delivery: supplier=${mappedSupplier}, point=${order.apaczkaPointId}, finding correct service_id`
           );
 
-          // Force service_id to 41 for ALL door-to-point deliveries (InPost, DPD, DHL)
-          apOrder.service_id = 41;
+          // Query service_structure to find the correct D2P service for this supplier
+          try {
+            const svc = await Apaczka.serviceStructure();
+            const services = (svc as any).response?.services || [];
+
+            // Filter for door_to_point services matching supplier
+            const candidates = services.filter(
+              (s: any) =>
+                s.supplier?.toUpperCase() === mappedSupplier &&
+                s.door_to_point === "1" &&
+                s.domestic === "1"
+            );
+
+            if (candidates.length > 0) {
+              // For INPOST: prefer Paczkomat (typically service_id 41)
+              let pick = candidates[0];
+              const pid = String(order.apaczkaPointId).toUpperCase();
+
+              if (mappedSupplier === "INPOST") {
+                if (pid.startsWith("POP-")) {
+                  // POP- prefix = Punkt (INPOST Punkt)
+                  pick = candidates.find((s: any) => /punkt/i.test(s.name)) || pick;
+                } else {
+                  // Regular locker code = Paczkomat
+                  pick = candidates.find((s: any) => /paczkomat/i.test(s.name)) || pick;
+                }
+              } else if (mappedSupplier === "DPD") {
+                // For DPD: prefer "Pickup" service
+                pick = candidates.find((s: any) => /pickup/i.test(s.name)) || candidates[0];
+              }
+
+              apOrder.service_id = Number(pick.service_id);
+              console.log(
+                `[Bulk] Found D2P service for ${mappedSupplier}: service_id=${pick.service_id} (${pick.name})`
+              );
+            } else {
+              console.warn(
+                `[Bulk] No D2P service found for ${mappedSupplier}, keeping service_id=${apOrder.service_id}`
+              );
+            }
+          } catch (e) {
+            console.warn("[Bulk] Could not query service_structure for D2P service_id:", e);
+          }
 
           // Set point code in foreign_address_id (NOT foreign_access_point_id)
           (apOrder.address.receiver as any).foreign_address_id = order.apaczkaPointId;
