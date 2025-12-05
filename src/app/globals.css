@@ -8,7 +8,7 @@
   --card-foreground: oklch(0.05 0.02 150);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.05 0.02 150);
-  --primary: oklch(0.8 0.06 170); /* tune hue toward green/teal */
+  --primary: #76c3c5;
   --primary-foreground: oklch(0 0 0);
   --secondary: oklch(0.93 0.01 264.53);
   --secondary-foreground: oklch(0.32 0 0);
