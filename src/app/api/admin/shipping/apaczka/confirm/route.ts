@@ -156,7 +156,9 @@ export const POST = createRouteHandler(
         bankaccount: process.env.APACZKA_COD_BANK_ACCOUNT || "", // only digits
         country: process.env.APACZKA_COD_COUNTRY || "PL",
       };
-      console.log(`COD delivery detected for order ${order.id}, amount: ${order.pricePaidInCents} groszy`);
+      console.log(
+        `COD delivery detected for order ${order.id}, amount: ${order.pricePaidInCents} groszy`
+      );
     }
 
     // Always declare shipment value for all orders (required for COD, recommended for others)
@@ -164,7 +166,9 @@ export const POST = createRouteHandler(
     if (typeof order.pricePaidInCents === "number" && order.pricePaidInCents > 0) {
       apOrder.shipment_value = order.pricePaidInCents; // grosze - total order value
       apOrder.shipment_currency = (process.env.APACZKA_CURRENCY || "PLN").toUpperCase();
-      console.log(`Declared shipment value: ${order.pricePaidInCents} groszy (${apOrder.shipment_currency})`);
+      console.log(
+        `Declared shipment value: ${order.pricePaidInCents} groszy (${apOrder.shipment_currency})`
+      );
     }
 
     // If this is a door-to-point delivery, find the correct service_id for the supplier
