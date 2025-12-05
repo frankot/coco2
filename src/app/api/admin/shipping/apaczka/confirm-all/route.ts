@@ -46,7 +46,9 @@ export const POST = createRouteHandler(
         "serviceId=",
         order.shippingServiceId,
         "phone=",
-        order.shippingAddress?.phoneNumber
+        order.shippingAddress?.phoneNumber,
+        "paymentMethod=",
+        order.paymentMethod
       );
       try {
         const address = order.shippingAddress;
@@ -145,15 +147,31 @@ export const POST = createRouteHandler(
           is_zebra: 0,
         };
 
-        // Include declared value (insurance) only when explicitly enabled.
-        const declare = String(process.env.APACZKA_DECLARE_VALUE || "").toLowerCase();
-        const declareOn = declare === "1" || declare === "true" || declare === "yes";
-        if (declareOn && typeof order.subtotalInCents === "number" && order.subtotalInCents > 0) {
-          apOrder.shipment_value = order.subtotalInCents; // grosze
+        // Always declare shipment value for all orders (required for COD, recommended for others)
+        // Use total price paid (including shipping) as the declared value
+        if (typeof order.pricePaidInCents === "number" && order.pricePaidInCents > 0) {
+          apOrder.shipment_value = order.pricePaidInCents; // grosze - total order value
           apOrder.shipment_currency = (process.env.APACZKA_CURRENCY || "PLN").toUpperCase();
+          console.log(
+            `[Bulk] Declared shipment value: ${order.pricePaidInCents} groszy (${apOrder.shipment_currency})`
+          );
         } else {
-          // Remove shipment_value if insurance is disabled
+          // Remove shipment_value if order has no price
           delete apOrder.shipment_value;
+        }
+
+        // Add COD (Cash on Delivery) if payment method is COD
+        // Note: shipment_value is also required at order level (see above)
+        if (order.paymentMethod === "COD" && order.pricePaidInCents && order.pricePaidInCents > 0) {
+          apOrder.cod = {
+            amount: order.pricePaidInCents, // value in groszy - must equal or be close to shipment_value
+            currency: process.env.APACZKA_CURRENCY || "PLN",
+            bankaccount: process.env.APACZKA_COD_BANK_ACCOUNT || "", // only digits
+            country: process.env.APACZKA_COD_COUNTRY || "PL",
+          };
+          console.log(
+            `[Bulk] COD delivery detected for order ${order.id}, amount: ${order.pricePaidInCents} groszy`
+          );
         }
 
         if (order.apaczkaPointId && order.apaczkaPointSupplier) {
