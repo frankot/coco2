@@ -28,7 +28,11 @@ export function ChangeTypeDropdownItem({ id, currentType }: { id: string; curren
         <DropdownMenuItem onSelect={(e) => e.preventDefault()}>Zmień typ konta</DropdownMenuItem>
       </DialogTrigger>
       <DialogContent>
-        <ChangeTypeDialogContent id={id} currentType={currentType} onClose={() => setIsOpen(false)} />
+        <ChangeTypeDialogContent
+          id={id}
+          currentType={currentType}
+          onClose={() => setIsOpen(false)}
+        />
       </DialogContent>
     </Dialog>
   );
@@ -49,7 +53,12 @@ export function DeleteDropdownItem({ id, disabled }: { id: string; disabled: boo
         </DropdownMenuItem>
       </DialogTrigger>
       <DialogContent>
-        <DeleteDialogContent id={id} disabled={disabled} onClose={() => setIsOpen(false)} redirectAfterDelete />
+        <DeleteDialogContent
+          id={id}
+          disabled={disabled}
+          onClose={() => setIsOpen(false)}
+          redirectAfterDelete
+        />
       </DialogContent>
     </Dialog>
   );
@@ -192,7 +201,11 @@ export function ChangeTypeButton({ id, currentType }: { id: string; currentType:
         <Button variant="outline">Zmień typ konta</Button>
       </DialogTrigger>
       <DialogContent>
-        <ChangeTypeDialogContent id={id} currentType={currentType} onClose={() => setIsOpen(false)} />
+        <ChangeTypeDialogContent
+          id={id}
+          currentType={currentType}
+          onClose={() => setIsOpen(false)}
+        />
       </DialogContent>
     </Dialog>
   );
@@ -209,7 +222,12 @@ export function DeleteButton({ id, disabled }: { id: string; disabled: boolean }
         </Button>
       </DialogTrigger>
       <DialogContent>
-        <DeleteDialogContent id={id} disabled={disabled} onClose={() => setIsOpen(false)} redirectAfterDelete />
+        <DeleteDialogContent
+          id={id}
+          disabled={disabled}
+          onClose={() => setIsOpen(false)}
+          redirectAfterDelete
+        />
       </DialogContent>
     </Dialog>
   );
