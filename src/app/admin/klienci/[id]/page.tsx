@@ -8,14 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, MoreVertical } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-  DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
-import { ChangeTypeDropdownItem, DeleteDropdownItem } from "../_components/ClientActions";
+import { ArrowLeft } from "lucide-react";
+import { ChangeTypeButton, DeleteButton } from "../_components/ClientActions";
 
 export default async function ClientDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -58,10 +52,7 @@ async function ClientDetailContent({ id }: { id: string }) {
     notFound();
   }
 
-  const totalSpent = client.orders.reduce(
-    (sum, order) => sum + (order.pricePaidInCents || 0),
-    0
-  );
+  const totalSpent = client.orders.reduce((sum, order) => sum + (order.pricePaidInCents || 0), 0);
 
   return (
     <div className="space-y-6">
@@ -74,19 +65,10 @@ async function ClientDetailContent({ id }: { id: string }) {
           </Button>
           <PageHeader>Szczegóły klienta</PageHeader>
         </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="icon">
-              <MoreVertical className="h-4 w-4" />
-              <span className="sr-only">Otwórz menu</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <ChangeTypeDropdownItem id={client.id} currentType={client.accountType} />
-            <DropdownMenuSeparator />
-            <DeleteDropdownItem id={client.id} disabled={client._count.orders > 0} />
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="flex items-center gap-2">
+          <ChangeTypeButton id={client.id} currentType={client.accountType} />
+          <DeleteButton id={client.id} disabled={client._count.orders > 0} />
+        </div>
       </div>
 
       {/* User Information Card */}
@@ -124,7 +106,9 @@ async function ClientDetailContent({ id }: { id: string }) {
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Data rejestracji</p>
-              <p className="font-medium">{format(new Date(client.createdAt), "dd.MM.yyyy HH:mm")}</p>
+              <p className="font-medium">
+                {format(new Date(client.createdAt), "dd.MM.yyyy HH:mm")}
+              </p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Łącznie wydane</p>
