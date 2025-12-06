@@ -123,7 +123,7 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="container mx-auto px-4 pt-20">
+      <div className="container mx-auto px-4  py-10 lg:py-20">
         {/* Back button */}
         <div className="mb-6">
           <Link href="/sklep">

@@ -23,7 +23,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   ChangeTypeDropdownItem,
   DeleteDropdownItem,
-  EditClientDropdownItem,
+  ViewClientDetailsDropdownItem,
 } from "./_components/ClientActions";
 import { useState, useEffect, useCallback } from "react";
 import AdminLoading from "../loading";
@@ -235,7 +235,7 @@ function ClientsTable() {
                       <span className="sr-only">Otwórz menu</span>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
-                      <EditClientDropdownItem id={client.id} />
+                      <ViewClientDetailsDropdownItem id={client.id} />
                       <ChangeTypeDropdownItem id={client.id} currentType={accountType} />
                       <DropdownMenuSeparator />
                       <DeleteDropdownItem id={client.id} disabled={client._count.orders > 0} />

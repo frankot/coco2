@@ -91,7 +91,8 @@ export function DeleteDropdownItem({ id, disabled }: { id: string; disabled: boo
       if (result.success) {
         toast.success(result.message);
         setIsOpen(false);
-        // Force refresh data
+        // Redirect to clients list
+        router.push("/admin/klienci");
         router.refresh();
         triggerRefresh(); // Trigger client-side refetch
       } else {
@@ -136,10 +137,10 @@ export function DeleteDropdownItem({ id, disabled }: { id: string; disabled: boo
   );
 }
 
-export function EditClientDropdownItem({ id }: { id: string }) {
+export function ViewClientDetailsDropdownItem({ id }: { id: string }) {
   return (
     <DropdownMenuItem asChild>
-      <Link href={`/admin/klienci/${id}`}>Edytuj</Link>
+      <Link href={`/admin/klienci/${id}`}>Szczegóły</Link>
     </DropdownMenuItem>
   );
 }

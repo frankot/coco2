@@ -157,7 +157,7 @@ export async function createOrder(formData: OrderFormData) {
     const verifiedUserId = userId as string;
     console.log("Verified userId:", verifiedUserId);
 
-    // Create the address with verified userId
+    // Find or create the address with verified userId
     let address;
     try {
       const normalizedPhone = normalizePhonePL(validatedData.phoneNumber);
@@ -167,19 +167,43 @@ export async function createOrder(formData: OrderFormData) {
           error: "Niepoprawny numer telefonu. Podaj 9 cyfr (PL) lub numer z prefiksem +48.",
         };
       }
-      address = await prisma.address.create({
-        data: {
+
+      // Check if address with same street, city, and postalCode already exists for this user
+      const existingAddress = await prisma.address.findFirst({
+        where: {
           userId: verifiedUserId,
           street: validatedData.street,
           city: validatedData.city,
           postalCode: validatedData.postalCode,
-          country: validatedData.country,
-          phoneNumber: normalizedPhone,
-          isDefault: true,
-          addressType: "BOTH",
         },
       });
-      console.log("Created address:", address.id);
+
+      if (existingAddress) {
+        // Reuse existing address, update phone if needed
+        address = await prisma.address.update({
+          where: { id: existingAddress.id },
+          data: {
+            phoneNumber: normalizedPhone,
+            country: validatedData.country, // Update country in case it changed
+          },
+        });
+        console.log("Reusing existing address:", address.id);
+      } else {
+        // Create new address
+        address = await prisma.address.create({
+          data: {
+            userId: verifiedUserId,
+            street: validatedData.street,
+            city: validatedData.city,
+            postalCode: validatedData.postalCode,
+            country: validatedData.country,
+            phoneNumber: normalizedPhone,
+            isDefault: true,
+            addressType: "BOTH",
+          },
+        });
+        console.log("Created new address:", address.id);
+      }
     } catch (error) {
       console.error("Failed to create address:", error);
       return { success: false, error: "Nie udało się utworzyć adresu" };

@@ -42,26 +42,51 @@ export const POST = createRouteHandler(
       throw new ApiError("Użytkownik nie istnieje. Zaloguj się ponownie.", 401);
     }
 
-    // If setting default, unset previous defaults of same type
-    if (data.isDefault) {
-      await prisma.address.updateMany({
-        where: { userId: session.user.id, addressType: data.addressType, isDefault: true },
-        data: { isDefault: false },
-      });
-    }
-
-    const address = await prisma.address.create({
-      data: {
+    // Check if address with same street, city, and postalCode already exists for this user
+    const existingAddress = await prisma.address.findFirst({
+      where: {
         userId: session.user.id,
         street: data.street,
         city: data.city,
         postalCode: data.postalCode,
-        country: data.country,
-        phoneNumber: data.phoneNumber || null,
-        isDefault: data.isDefault,
-        addressType: data.addressType,
       },
     });
+
+    let address;
+    if (existingAddress) {
+      // Reuse existing address, update other fields
+      address = await prisma.address.update({
+        where: { id: existingAddress.id },
+        data: {
+          country: data.country,
+          phoneNumber: data.phoneNumber || null,
+          isDefault: data.isDefault,
+          addressType: data.addressType,
+        },
+      });
+    } else {
+      // If setting default, unset previous defaults of same type
+      if (data.isDefault) {
+        await prisma.address.updateMany({
+          where: { userId: session.user.id, addressType: data.addressType, isDefault: true },
+          data: { isDefault: false },
+        });
+      }
+
+      // Create new address
+      address = await prisma.address.create({
+        data: {
+          userId: session.user.id,
+          street: data.street,
+          city: data.city,
+          postalCode: data.postalCode,
+          country: data.country,
+          phoneNumber: data.phoneNumber || null,
+          isDefault: data.isDefault,
+          addressType: data.addressType,
+        },
+      });
+    }
 
     return address;
   },
