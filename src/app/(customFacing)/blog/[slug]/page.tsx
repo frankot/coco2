@@ -2,10 +2,32 @@ import Image from "next/image";
 import prisma from "@/db";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import type { Metadata } from "next";
 
 type Props = { params: Promise<{ slug: string }> };
 
 export const revalidate = 60;
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const post = await prisma.blogPost.findUnique({ where: { slug } });
+  
+  if (!post) {
+    return {
+      title: "Dr.Coco | Blog",
+      description: "Artykuł nie został znaleziony.",
+    };
+  }
+
+  // Strip HTML tags for description
+  const plainText = post.content.replace(/<[^>]*>?/gm, "");
+  const description = plainText.slice(0, 160) + (plainText.length > 160 ? "..." : "");
+
+  return {
+    title: `Dr.Coco | ${post.title}`,
+    description,
+  };
+}
 
 export default async function BlogDetail({ params }: Props) {
   const { slug } = await params; // await params per Next.js dynamic route guidance

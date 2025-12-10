@@ -2,6 +2,12 @@ import Link from "next/link";
 import Image from "next/image";
 import prisma from "@/db";
 import { ArrowLeft } from "lucide-react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Dr.Coco | Blog",
+  description: "Czytaj najnowsze artykuły o zdrowym życiu, wodzie kokosowej i naszych produktach. Porady, przepisy i inspiracje od Dr.Coco.",
+};
 
 export const revalidate = 60;
 

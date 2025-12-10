@@ -1,5 +1,11 @@
 import Image from "next/image";
 import { Users, Target, Heart, TrendingUp } from "lucide-react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Dr.Coco | O nas",
+  description: "Poznaj historię Dr.Coco i ludzi, którzy tworzą najlepszą wodę kokosową w Polsce. Nasza misja to dostarczanie naturalnych produktów najwyższej jakości.",
+};
 
 export default function AboutUsPage() {
   const values = [
