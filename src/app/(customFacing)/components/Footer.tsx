@@ -23,6 +23,11 @@ export function Footer() {
                 className="object-contain"
               />
             </Link>
+            <div className="text-sm text-gray-600 space-y-1">
+              <p className="font-semibold">{contactInfo.company.name}</p>
+              <p>NIP: {contactInfo.company.nip}</p>
+              <p>REGON: {contactInfo.company.regon}</p>
+            </div>
 
             <div className="flex gap-4">
               <a

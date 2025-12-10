@@ -57,10 +57,15 @@ export default function ContactPage() {
             <div className="space-y-8">
               <div>
                 <h2 className="text-3xl font-bold mb-6 text-gray-900">Dane kontaktowe</h2>
-                <p className="text-gray-600 leading-relaxed mb-8">
+                <p className="text-gray-600 leading-relaxed mb-4">
                   Jesteśmy tu, aby pomóc! Skontaktuj się z nami w dowolny sposób, a nasz zespół
                   odpowie na wszystkie pytania dotyczące produktów Dr.Coco.
                 </p>
+                <div className="text-sm text-gray-700 space-y-1">
+                  <p className="font-semibold">{contactInfo.company.name}</p>
+                  <p>NIP: {contactInfo.company.nip}</p>
+                  <p>REGON: {contactInfo.company.regon}</p>
+                </div>
               </div>
 
               {/* Contact Info Cards */}

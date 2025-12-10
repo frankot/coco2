@@ -15,7 +15,6 @@ const carouselSlides = [
       "Czyste źródło natury - nic dodanego, nic odjętego. Wydobywamy ją bezpośrednio z młodych, zielonych kokosów.",
     ctaText: "Odkryj teraz",
     image: "/hero/slide0.webp",
-
   },
   {
     id: 2,
@@ -25,7 +24,6 @@ const carouselSlides = [
       "Poczuj smak tropików w każdym łyku. Naturalnie słodka, orzeźwiająca woda kokosowa prosto z palm.",
     ctaText: "Zamów teraz",
     image: "/hero/slide1.webp",
-
   },
   {
     id: 3,
@@ -35,7 +33,6 @@ const carouselSlides = [
       "Trójglicerydy średniołańcuchowe (MCT) zapewniają czystą, długotrwałą energię bez skoków cukru.",
     ctaText: "Poznaj więcej",
     image: "/hero/slide2.webp",
-
   },
 ];
 

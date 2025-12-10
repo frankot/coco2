@@ -43,17 +43,17 @@ export default function ProductForm({ product }: { product?: Product | null }) {
     if (e.target.files) {
       const files = Array.from(e.target.files);
       const maxSize = 2 * 1024 * 1024; // 2MB in bytes
-      
+
       // Check if any file exceeds 2MB
-      const oversizedFiles = files.filter(file => file.size > maxSize);
-      
+      const oversizedFiles = files.filter((file) => file.size > maxSize);
+
       if (oversizedFiles.length > 0) {
         // Show error for oversized files
         setImageError("Rozmiar zdjęcia przekracza dopuszczalne 2MB");
         e.target.value = "";
         return;
       }
-      
+
       // Clear any previous error
       setImageError(null);
       setSelectedFiles((prev) => [...prev, ...files]);

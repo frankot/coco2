@@ -1,10 +1,15 @@
 export const contactInfo = {
+  company: {
+    name: "New Age Food Sp. z o.o.",
+    nip: "701 101 51 38",
+    regon: "388004313",
+  },
   address: {
-    street: "ul. Kokosowa 123",
-    city: "00-001 Warszawa",
+    street: "ul. Modlińska 29a",
+    city: "05-110 Jabłonna",
     country: "Polska",
   },
-  phone: "+48 123 456 739",
+  phone: "798 865 865",
   email: "kontakt@drcoco.pl",
   social: {
     instagram: "https://instagram.com/dr.coco",

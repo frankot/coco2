@@ -138,12 +138,10 @@ export default function AboutUsPage() {
       {/* CTA Section */}
       <section className="py-12">
         <div className="container mx-auto px-6 max-w-3xl text-center">
-          <h2 className="text-2xl lg:text-3xl font-bold mb-4">
-            Dołącz do społeczności Dr.Coco
-          </h2>
+          <h2 className="text-2xl lg:text-3xl font-bold mb-4">Dołącz do społeczności Dr.Coco</h2>
           <p className="text-gray-600 mb-6">
-            Odkryj nasze produkty i przekonaj się, dlaczego tysiące Polaków wybiera Dr.Coco
-            każdego dnia
+            Odkryj nasze produkty i przekonaj się, dlaczego tysiące Polaków wybiera Dr.Coco każdego
+            dnia
           </p>
           <a
             href="/sklep"
