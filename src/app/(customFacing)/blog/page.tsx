@@ -6,7 +6,8 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Dr.Coco | Blog",
-  description: "Czytaj najnowsze artykuły o zdrowym życiu, wodzie kokosowej i naszych produktach. Porady, przepisy i inspiracje od Dr.Coco.",
+  description:
+    "Czytaj najnowsze artykuły o zdrowym życiu, wodzie kokosowej i naszych produktach. Porady, przepisy i inspiracje od Dr.Coco.",
 };
 
 export const revalidate = 60;
@@ -21,17 +22,15 @@ export default async function BlogListPage() {
 
   return (
     <section className="py-16 lg:mt-10">
-        
       <div className="container max-w-7xl mx-auto px-4 lg:px-6">
-                <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"
-          >
-            <ArrowLeft className="w-4 h-4" /> Wróć
-          </Link>
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"
+        >
+          <ArrowLeft className="w-4 h-4" /> Wróć
+        </Link>
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-bold">Blog</h1>
-  
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {posts.map((p) => (

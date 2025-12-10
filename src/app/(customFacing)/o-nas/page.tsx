@@ -4,7 +4,8 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Dr.Coco | O nas",
-  description: "Poznaj historię Dr.Coco i ludzi, którzy tworzą najlepszą wodę kokosową w Polsce. Nasza misja to dostarczanie naturalnych produktów najwyższej jakości.",
+  description:
+    "Poznaj historię Dr.Coco i ludzi, którzy tworzą najlepszą wodę kokosową w Polsce. Nasza misja to dostarczanie naturalnych produktów najwyższej jakości.",
 };
 
 export default function AboutUsPage() {
@@ -46,97 +47,84 @@ export default function AboutUsPage() {
 
       {/* Main Story Section */}
       <section className="py-12">
-        <div className="container mx-auto px-6 max-w-7xl">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-            {/* Left - Content */}
+        <div className="container mx-auto px-6 max-w-5xl">
+          {/* Floating image on the right */}
+          <div className="relative">
+            <Image
+              src="/o-nas.webp"
+              alt="O Dr.Coco"
+              width={500}
+              height={600}
+              className="hidden lg:block float-right ml-8 mb-6 w-[45%] h-auto object-cover rounded-2xl shadow-xl"
+            />
+            
+            {/* Mobile image */}
+            <div className="lg:hidden mb-8">
+              <Image
+                src="/o-nas.webp"
+                alt="O Dr.Coco"
+                width={600}
+                height={700}
+                className="w-full h-[400px] object-cover rounded-2xl shadow-xl"
+              />
+            </div>
+
             <div className="space-y-6">
-              <h2 className="text-4xl lg:text-5xl font-bold leading-tight">
-                <span className="text-gray-900">Nasza historia</span>
+              <h2 className="text-3xl lg:text-4xl font-bold leading-tight text-gray-900">
+                Z Wietnamu do Polski – historia Dr.Coco
               </h2>
 
-              <div className="space-y-4 text-gray-600 leading-relaxed text-lg">
+              <div className="space-y-5 text-gray-700 leading-relaxed text-base lg:text-lg">
                 <p>
-                  Dr.Coco powstało z pasji do zdrowego stylu życia i pragnienia dostarczenia Polakom
-                  napoju, który łączy w sobie wyjątkowy smak z niezwykłymi właściwościami
-                  zdrowotnymi. Wszystko zaczęło się od podróży do Wietnamu, gdzie odkryliśmy
-                  autentyczną wodę kokosową prosto z młodych, zielonych kokosów.
+                  Wszystko zaczęło się od podróży do regionu <strong>Bến Tre w Wietnamie</strong> – 
+                  miejsca, które nazywane jest stolicą wody kokosowej. To tam, wśród palm kokosowych 
+                  rosnących w idealnych warunkach tropikalnych, odkryliśmy prawdziwą esencję naturalnego 
+                  smaku i właściwości młodych, zielonych kokosów.
                 </p>
 
                 <p>
-                  Zachwyceni jej naturalnym smakiem i właściwościami, postanowiliśmy podzielić się
-                  tym odkryciem z Polską. Rozpoczęliśmy współpracę z lokalnymi farmami w regionie
-                  Bến Tre - uznawanej stolicy wody kokosowej w Wietnamie. To właśnie tam, w
-                  idealnych warunkach klimatycznych, rosną kokosy o najwyższej jakości.
+                  Zachwyceni tym, co oferuje natura, postanowiliśmy podzielić się tym smakiem z Polakami. 
+                  Nawiązaliśmy współpracę z lokalnymi farmami, które od pokoleń uprawiają kokosy, 
+                  dbając o ich najwyższą jakość. Każdy kokos jest zbierany ręcznie we właściwym czasie, 
+                  aby zachować pełnię wartości odżywczych i niepowtarzalny, delikatny smak.
                 </p>
 
                 <p>
-                  Dziś Dr.Coco to nie tylko marka - to społeczność ludzi dbających o swoje zdrowie,
-                  ceniących naturalność i autentyczność produktów. Każdego dnia dokładamy starań,
-                  aby nasza woda kokosowa trafiała do Was w najlepszej możliwej formie, zachowując
-                  wszystkie naturalne wartości odżywcze i niepowtarzalny smak.
+                  Dziś <strong>Dr.Coco</strong> to więcej niż marka – to wybór świadomych konsumentów, 
+                  którzy cenią naturalność, autentyczność i zdrowie. Bez dodatku cukru, bez konserwantów, 
+                  bez sztucznych dodatków. Tylko czysta woda kokosowa, bogata w elektrolity, potas 
+                  i magnez – idealny naturalny izotonik dla aktywnych.
                 </p>
 
-                <p>
-                  Wierzymy, że zdrowy styl życia nie musi być trudny ani pozbawiony przyjemności.
-                  Dlatego nasza misja to dostarczanie produktów, które są zarówno pyszne, jak i
-                  pełne naturalnych składników odżywczych. Dr.Coco to doskonały wybór dla każdego -
-                  sportowców, aktywnych rodziców, dzieci i wszystkich, którzy cenią sobie zdrowie.
+                <p className="text-primary font-medium italic">
+                  "Każdego dnia dokładamy starań, aby woda kokosowa Dr.Coco docierała do Was w formie, 
+                  w jakiej stworzyła ją natura."
                 </p>
               </div>
 
-              {/* Founders integrated below content */}
-              <div className="flex justify-start gap-12 pt-4">
-                {founders.map((founder, index) => (
-                  <div key={index} className="text-center">
-                    <div className="relative w-24 h-24 mx-auto mb-3 rounded-full overflow-hidden bg-gray-200">
-                      <Image
-                        src={founder.image}
-                        alt={founder.name}
-                        width={96}
-                        height={96}
-                        className="w-full h-full object-cover"
-                      />
+              {/* Founders inline */}
+              <div className="pt-8 border-t border-gray-200 mt-8">
+                <div className="flex flex-wrap gap-8 items-center">
+                  {founders.map((founder, index) => (
+                    <div key={index} className="flex items-center gap-4">
+                      <div className="relative w-16 h-16 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
+                        <Image
+                          src={founder.image}
+                          alt={founder.name}
+                          width={64}
+                          height={64}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-gray-900">{founder.name}</h3>
+                        <p className="text-sm text-gray-600">{founder.role}</p>
+                      </div>
                     </div>
-                    <h3 className="text-lg font-bold text-gray-900 mb-1">{founder.name}</h3>
-                    <p className="text-sm text-primary font-medium">{founder.role}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Right - Image */}
-            <div className="order-first lg:order-last">
-              <div className="relative">
-                <Image
-                  src="/o-nas.webp"
-                  alt="O Dr.Coco"
-                  width={600}
-                  height={700}
-                  className="w-full h-[600px] lg:h-[800px] object-cover rounded-lg shadow-lg"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Values Section */}
-      <section className="py-12">
-        <div className="container mx-auto px-6 max-w-6xl">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold mb-2">Nasze wartości</h2>
-            <p className="text-gray-600">Co nas wyróżnia i czym się kierujemy</p>
-          </div>
-
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-            {values.map((value, index) => (
-              <div key={index} className="text-center">
-                <div className="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <value.icon className="w-7 h-7 text-primary" />
+                  ))}
                 </div>
-                <h3 className="text-base font-semibold text-gray-900">{value.text}</h3>
               </div>
-            ))}
+            </div>
           </div>
         </div>
       </section>

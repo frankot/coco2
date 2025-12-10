@@ -8,7 +8,7 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
-  
+
   try {
     const product = await prisma.product.findUnique({
       where: { id },
@@ -24,7 +24,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
     return {
       title: `Dr.Coco | ${product.name}`,
-      description: product.description.slice(0, 160) + (product.description.length > 160 ? "..." : ""),
+      description:
+        product.description.slice(0, 160) + (product.description.length > 160 ? "..." : ""),
     };
   } catch (error) {
     return {
