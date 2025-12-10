@@ -32,6 +32,12 @@ const nextConfig: NextConfig = {
   // Empty turbopack config to silence the warning (most apps work without config)
   turbopack: {},
 
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "2mb",
+    },
+  },
+
   async headers() {
     return [
       {

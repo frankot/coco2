@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Instagram, Facebook, Twitter, Youtube, Mail, Phone, MapPin } from "lucide-react";
+import { contactInfo } from "../data";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -25,7 +26,7 @@ export function Footer() {
 
             <div className="flex gap-4">
               <a
-                href="https://instagram.com/dr.coco"
+                href={contactInfo.social.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2 rounded-full shadow-sm hover:bg-primary hover:text-white transition-colors"
@@ -34,7 +35,7 @@ export function Footer() {
                 <Instagram size={20} />
               </a>
               <a
-                href="https://facebook.com"
+                href={contactInfo.social.facebook}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2 rounded-full shadow-sm hover:bg-primary hover:text-white transition-colors"
@@ -43,7 +44,7 @@ export function Footer() {
                 <Facebook size={20} />
               </a>
               <a
-                href="https://twitter.com"
+                href={contactInfo.social.twitter}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2 rounded-full shadow-sm hover:bg-primary hover:text-white transition-colors"
@@ -52,7 +53,7 @@ export function Footer() {
                 <Twitter size={20} />
               </a>
               <a
-                href="https://youtube.com"
+                href={contactInfo.social.youtube}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2 rounded-full shadow-sm hover:bg-primary hover:text-white transition-colors"
@@ -105,27 +106,27 @@ export function Footer() {
               <li className="flex items-start gap-3">
                 <MapPin className="text-primary flex-shrink-0 mt-0.5" size={18} />
                 <span className="text-gray-600">
-                  ul. Kokosowa 123
+                  {contactInfo.address.street}
                   <br />
-                  00-001 Warszawa
+                  {contactInfo.address.city}
                 </span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="text-primary flex-shrink-0" size={18} />
                 <a
-                  href="tel:+48123456789"
+                  href={`tel:${contactInfo.phone}`}
                   className="text-gray-600 hover:text-primary transition-colors"
                 >
-                  +48 123 456 789
+                  {contactInfo.phone}
                 </a>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="text-primary flex-shrink-0" size={18} />
                 <a
-                  href="mailto:kontakt@drcoco.pl"
+                  href={`mailto:${contactInfo.email}`}
                   className="text-gray-600 hover:text-primary transition-colors"
                 >
-                  kontakt@drcoco.pl
+                  {contactInfo.email}
                 </a>
               </li>
             </ul>

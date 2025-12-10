@@ -14,8 +14,8 @@ const carouselSlides = [
     description:
       "Czyste źródło natury - nic dodanego, nic odjętego. Wydobywamy ją bezpośrednio z młodych, zielonych kokosów.",
     ctaText: "Odkryj teraz",
-    image: "/hero.webp",
-    gradient: "from-green-400/20 to-emerald-600/20",
+    image: "/hero/slide0.webp",
+
   },
   {
     id: 2,
@@ -24,8 +24,8 @@ const carouselSlides = [
     description:
       "Poczuj smak tropików w każdym łyku. Naturalnie słodka, orzeźwiająca woda kokosowa prosto z palm.",
     ctaText: "Zamów teraz",
-    image: "/about1.jpg",
-    gradient: "from-yellow-400/20 to-orange-500/20",
+    image: "/hero/slide1.webp",
+
   },
   {
     id: 3,
@@ -34,8 +34,8 @@ const carouselSlides = [
     description:
       "Trójglicerydy średniołańcuchowe (MCT) zapewniają czystą, długotrwałą energię bez skoków cukru.",
     ctaText: "Poznaj więcej",
-    image: "/about2.jpg",
-    gradient: "from-purple-400/20 to-indigo-500/20",
+    image: "/hero/slide2.webp",
+
   },
 ];
 
@@ -102,15 +102,15 @@ export function HeroClient({ products }: HeroClientProps) {
                   priority={index === 0}
                 />
                 {/* Overlay */}
-                <div className={`absolute inset-0 bg-gradient-to-r ${slide.gradient}`} />
+                <div className={`absolute inset-0 bg-black/20`} />
               </div>
 
               {/* Content */}
               <div className="relative z-10 h-full flex items-center justify-center">
                 <div className="container mx-auto px-4 max-w-4xl text-center">
-                  <div className="space-y-6">
+                  <div className=" space-y-6">
                     {/* Badge */}
-                    <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-medium">
+                    <div className="inline-flex items-center gap-2 bg-white/20 border border-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-medium">
                       <Leaf className="w-4 h-4" />
                       Dr.Coco
                     </div>
@@ -124,7 +124,7 @@ export function HeroClient({ products }: HeroClientProps) {
                     </h1>
 
                     {/* Description */}
-                    <p className="text-lg lg:text-xl text-white/90 leading-relaxed max-w-2xl mx-auto">
+                    <p className="text-lg lg:text-xl text-white/90 leading-relaxed max-w-2xl mx-auto bg-white/10 backdrop-blur-md rounded-3xl p-2 lg:p-6 border border-white/20 shadow-2xl">
                       {slide.description}
                     </p>
 

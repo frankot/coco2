@@ -21,6 +21,7 @@ export default function ProductForm({ product }: { product?: Product | null }) {
   const [description, setDescription] = useState<string>(product?.description || "");
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [existingImages, setExistingImages] = useState<string[]>(product?.imagePaths || []);
+  const [imageError, setImageError] = useState<string | null>(null);
   const router = useRouter();
 
   const initialState = { error: {} };
@@ -41,6 +42,20 @@ export default function ProductForm({ product }: { product?: Product | null }) {
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const files = Array.from(e.target.files);
+      const maxSize = 2 * 1024 * 1024; // 2MB in bytes
+      
+      // Check if any file exceeds 2MB
+      const oversizedFiles = files.filter(file => file.size > maxSize);
+      
+      if (oversizedFiles.length > 0) {
+        // Show error for oversized files
+        setImageError("Rozmiar zdjęcia przekracza dopuszczalne 2MB");
+        e.target.value = "";
+        return;
+      }
+      
+      // Clear any previous error
+      setImageError(null);
       setSelectedFiles((prev) => [...prev, ...files]);
       // Reset the input so the same file can be selected again
       e.target.value = "";
@@ -230,6 +245,7 @@ export default function ProductForm({ product }: { product?: Product | null }) {
           </p>
         )}
 
+        {imageError && <div className="text-destructive">{imageError}</div>}
         {state?.error?.image && <div className="text-destructive">{state.error.image}</div>}
       </div>
 

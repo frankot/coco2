@@ -12,6 +12,9 @@ const fileSchema = z
   .refine((file) => file.size > 0, {
     message: "Zdjęcie jest wymagane",
   })
+  .refine((file) => file.size <= 2 * 1024 * 1024, {
+    message: "Rozmiar zdjęcia przekracza dopuszczalne 2MB",
+  })
   .refine((file) => file.type.startsWith("image/"), {
     message: "Plik musi być obrazem",
   });
@@ -51,6 +54,13 @@ export async function addProduct(prevState: FormState, formData: FormData): Prom
     // Validate required fields
     if (!name || !priceInCents || !description) {
       return { error: { _form: ["Wszystkie pola są wymagane"] } };
+    }
+
+    // Validate image sizes before processing
+    for (const file of newImages) {
+      if (file instanceof File && file.size > 2 * 1024 * 1024) {
+        return { error: { image: ["Rozmiar zdjęcia przekracza dopuszczalne 2MB"] } };
+      }
     }
 
     if (
@@ -139,6 +149,13 @@ export async function updateProduct(
     // Validate required fields
     if (!name || !priceInCents || !description) {
       return { error: { _form: ["Wszystkie pola są wymagane"] } };
+    }
+
+    // Validate image sizes before processing
+    for (const file of newImages) {
+      if (file instanceof File && file.size > 2 * 1024 * 1024) {
+        return { error: { image: ["Rozmiar zdjęcia przekracza dopuszczalne 2MB"] } };
+      }
     }
 
     const product = await prisma.product.findUnique({
