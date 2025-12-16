@@ -4,30 +4,13 @@ import { useRef, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
+import type { InstagramPost } from "@/lib/instagram";
 
-// List of images from public/ig directory
-const IG_IMAGES = [
-  "/ig/IMG_4502.webp",
-  "/ig/IMG_4503.webp",
-  "/ig/IMG_4504.webp",
-  "/ig/IMG_4505.webp",
-  "/ig/IMG_4506.webp",
-  "/ig/IMG_4507.webp",
-  "/ig/IMG_4508.webp",
-  "/ig/IMG_4509.webp",
-  "/ig/IMG_4510.webp",
-  "/ig/IMG_4511.webp",
-  "/ig/IMG_4512.webp",
-  "/ig/IMG_4513.webp",
-  "/ig/IMG_4514.webp",
-  "/ig/IMG_4515.webp",
-  "/ig/IMG_4516.webp",
-  "/ig/IMG_4517.webp",
-  "/ig/IMG_4518.webp",
-  "/ig/IMG_4519.webp",
-];
+interface InstaCaruProps {
+  posts: InstagramPost[];
+}
 
-export function InstaCaru() {
+export function InstaCaru({ posts }: InstaCaruProps) {
   const carouselRef = useRef<HTMLDivElement>(null);
   const [isHovering, setIsHovering] = useState(false);
   const scrollSpeed = 0.5; // pixels per animation frame
@@ -62,6 +45,28 @@ export function InstaCaru() {
     };
   }, [isHovering]);
 
+  // If no posts, show fallback message
+  if (!posts || posts.length === 0) {
+    return (
+      <section className="py-10 pt-32">
+        <div className="container mx-auto px-4">
+          <div className="text-center text-muted-foreground">
+            <p>Brak postów z Instagrama do wyświetlenia.</p>
+            <Link
+              href="https://www.instagram.com/dr.coco/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline inline-flex items-center gap-2 mt-4"
+            >
+              Odwiedź nasz Instagram
+              <ExternalLink className="size-4" />
+            </Link>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="py-10 pt-32">
       <div className="container mx-auto px-4">
@@ -80,29 +85,38 @@ export function InstaCaru() {
             className="flex overflow-x-auto scrollbar-hide gap-6 pb-4"
             style={{ scrollBehavior: "smooth", WebkitOverflowScrolling: "touch" }}
           >
-            {/* Display images from public/ig directory */}
-            {[...IG_IMAGES, ...IG_IMAGES].map((imgSrc, index) => (
-              <div
-                key={`${imgSrc}-${index}`}
-                className="insta-card flex-shrink-0 w-60 rounded-lg overflow-hidden bg-card border shadow-sm group"
-              >
-                {/* Image with 9:16 aspect ratio */}
-                <div className="relative h-[427px] w-60">
-                  <Image
-                    src={imgSrc}
-                    alt={`Image ${index + 1}`}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 240px"
-                    className="object-cover"
-                  />
-                  {/* Primary color blur overlay that disappears on hover */}
-                  <div
-                    className="absolute inset-0 bg-primary/10 transition-opacity duration-300 ease-in-out group-hover:opacity-0"
-                    aria-hidden="true"
-                  ></div>
-                </div>
-              </div>
-            ))}
+            {/* Duplicate posts array for infinite scroll effect */}
+            {[...posts, ...posts].map((post, index) => {
+              const imageUrl = post.media_type === 'VIDEO' && post.thumbnail_url 
+                ? post.thumbnail_url 
+                : post.media_url;
+
+              return (
+                <Link
+                  key={`${post.id}-${index}`}
+                  href={post.permalink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="insta-card flex-shrink-0 w-60 rounded-lg overflow-hidden bg-card border shadow-sm group"
+                >
+                  {/* Image with 9:16 aspect ratio */}
+                  <div className="relative h-[427px] w-60">
+                    <Image
+                      src={imageUrl}
+                      alt={post.caption?.substring(0, 100) || "Instagram post"}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 240px"
+                      className="object-cover"
+                    />
+                    {/* Primary color blur overlay that disappears on hover */}
+                    <div
+                      className="absolute inset-0 bg-primary/10 transition-opacity duration-300 ease-in-out group-hover:opacity-0"
+                      aria-hidden="true"
+                    ></div>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         </div>
 
@@ -111,7 +125,7 @@ export function InstaCaru() {
             href="https://www.instagram.com/dr.coco/"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-primary hover:underline flex items-center justify-center gap-2  text-2xl"
+            className="text-primary hover:underline flex items-center justify-center gap-2 text-2xl"
           >
             Zobacz więcej na Instagramie
             <ExternalLink className="size-6" />

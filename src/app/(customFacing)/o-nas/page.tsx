@@ -51,17 +51,17 @@ export default function AboutUsPage() {
           {/* Floating image on the right */}
           <div className="relative">
             <Image
-              src="/o-nas.webp"
+              src="/about.webp"
               alt="O Dr.Coco"
               width={500}
               height={600}
               className="hidden lg:block float-right ml-8 mb-6 w-[45%] h-auto object-cover rounded-2xl shadow-xl"
             />
-            
+
             {/* Mobile image */}
             <div className="lg:hidden mb-8">
               <Image
-                src="/o-nas.webp"
+                src="/about.webp"
                 alt="O Dr.Coco"
                 width={600}
                 height={700}
@@ -76,29 +76,30 @@ export default function AboutUsPage() {
 
               <div className="space-y-5 text-gray-700 leading-relaxed text-base lg:text-lg">
                 <p>
-                  Wszystko zaczęło się od podróży do regionu <strong>Bến Tre w Wietnamie</strong> – 
-                  miejsca, które nazywane jest stolicą wody kokosowej. To tam, wśród palm kokosowych 
-                  rosnących w idealnych warunkach tropikalnych, odkryliśmy prawdziwą esencję naturalnego 
-                  smaku i właściwości młodych, zielonych kokosów.
+                  Wszystko zaczęło się od podróży do regionu <strong>Bến Tre w Wietnamie</strong> –
+                  miejsca, które nazywane jest stolicą wody kokosowej. To tam, wśród palm kokosowych
+                  rosnących w idealnych warunkach tropikalnych, odkryliśmy prawdziwą esencję
+                  naturalnego smaku i właściwości młodych, zielonych kokosów.
                 </p>
 
                 <p>
-                  Zachwyceni tym, co oferuje natura, postanowiliśmy podzielić się tym smakiem z Polakami. 
-                  Nawiązaliśmy współpracę z lokalnymi farmami, które od pokoleń uprawiają kokosy, 
-                  dbając o ich najwyższą jakość. Każdy kokos jest zbierany ręcznie we właściwym czasie, 
-                  aby zachować pełnię wartości odżywczych i niepowtarzalny, delikatny smak.
+                  Zachwyceni tym, co oferuje natura, postanowiliśmy podzielić się tym smakiem z
+                  Polakami. Nawiązaliśmy współpracę z lokalnymi farmami, które od pokoleń uprawiają
+                  kokosy, dbając o ich najwyższą jakość. Każdy kokos jest zbierany ręcznie we
+                  właściwym czasie, aby zachować pełnię wartości odżywczych i niepowtarzalny,
+                  delikatny smak.
                 </p>
 
                 <p>
-                  Dziś <strong>Dr.Coco</strong> to więcej niż marka – to wybór świadomych konsumentów, 
-                  którzy cenią naturalność, autentyczność i zdrowie. Bez dodatku cukru, bez konserwantów, 
-                  bez sztucznych dodatków. Tylko czysta woda kokosowa, bogata w elektrolity, potas 
-                  i magnez – idealny naturalny izotonik dla aktywnych.
+                  Dziś <strong>Dr.Coco</strong> to więcej niż marka – to wybór świadomych
+                  konsumentów, którzy cenią naturalność, autentyczność i zdrowie. Bez dodatku cukru,
+                  bez konserwantów, bez sztucznych dodatków. Tylko czysta woda kokosowa, bogata w
+                  elektrolity, potas i magnez – idealny naturalny izotonik dla aktywnych.
                 </p>
 
                 <p className="text-primary font-medium italic">
-                  "Każdego dnia dokładamy starań, aby woda kokosowa Dr.Coco docierała do Was w formie, 
-                  w jakiej stworzyła ją natura."
+                  "Każdego dnia dokładamy starań, aby woda kokosowa Dr.Coco docierała do Was w
+                  formie, w jakiej stworzyła ją natura."
                 </p>
               </div>
 

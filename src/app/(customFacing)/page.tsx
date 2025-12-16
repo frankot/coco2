@@ -1,5 +1,5 @@
 import { About } from "./components/About";
-import { InstaCaru } from "./components/InstaCaru2";
+import { InstagramFeed } from "./components/InstagramFeed";
 import Features from "./components/Features";
 import { Hero } from "./components/Hero";
 import { Newsletter } from "./components/Newsletter";
@@ -31,7 +31,7 @@ export default function Home() {
         <About />
 
         <FeaturedArticles />
-        <InstaCaru />
+        <InstagramFeed />
 
         <Features />
 

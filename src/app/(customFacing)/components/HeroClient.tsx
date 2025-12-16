@@ -98,41 +98,55 @@ export function HeroClient({ products }: HeroClientProps) {
                   className="object-cover"
                   priority={index === 0}
                 />
-                {/* Overlay */}
-                <div className={`absolute inset-0 bg-black/20`} />
+                {/* Overlay - lighter for minimalism */}
+                <div className={`absolute inset-0 bg-gradient-to-br from-black/40 to-black/20`} />
               </div>
 
-              {/* Content */}
-              <div className="relative z-10 h-full flex items-center justify-center">
-                <div className="container mx-auto px-4 max-w-4xl text-center">
-                  <div className=" space-y-6">
-                    {/* Badge */}
-                    <div className="inline-flex items-center gap-2 bg-white/20 border border-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-medium">
-                      <Leaf className="w-4 h-4" />
-                      Dr.Coco
-                    </div>
-
-                    {/* Title */}
-                    <h1 className="text-4xl lg:text-5xl xl:text-6xl font-bold text-white leading-tight">
-                      {slide.title}
-                      <span className="block text-3xl lg:text-4xl xl:text-5xl">
-                        {slide.subtitle}
-                      </span>
-                    </h1>
-
-                    {/* Description */}
-                    <p className="text-lg lg:text-xl text-white/90 leading-relaxed max-w-2xl mx-auto bg-white/10 backdrop-blur-md rounded-3xl p-2 lg:p-6 border border-white/20 shadow-2xl">
-                      {slide.description}
-                    </p>
-
-                    {/* CTA Button */}
-                    <div>
-                      <Button
-                        size="lg"
-                        className="bg-white text-primary hover:bg-white/90 px-8 py-3 text-lg font-semibold rounded-full"
+              {/* Content - Alternating positions */}
+              <div className="relative z-10 h-full">
+                <div className="container mx-auto px-6 lg:px-12 h-full">
+                  <div
+                    className={`h-full flex ${
+                      index % 2 === 0
+                        ? "items-end justify-start pb-16 lg:pb-20"
+                        : "items-start justify-end pt-24 lg:pt-28"
+                    }`}
+                  >
+                    <div
+                      className={`max-w-md lg:max-w-lg space-y-4 ${
+                        index % 2 === 0 ? "text-left" : "text-right"
+                      }`}
+                    >
+                      {/* Simple Badge */}
+                      <div
+                        className={`inline-flex items-center gap-1.5 text-white/80 text-xs font-medium tracking-wide uppercase ${
+                          index % 2 === 0 ? "" : "flex-row-reverse"
+                        }`}
                       >
-                        {slide.ctaText}
-                      </Button>
+                        <Leaf className="w-3.5 h-3.5" />
+                        <span>Dr.Coco</span>
+                      </div>
+
+                      {/* Minimal Title */}
+                      <h1 className="text-3xl lg:text-5xl xl:text-6xl font-light text-white leading-tight tracking-tight">
+                        {slide.title}
+                      </h1>
+
+                      {/* Subtitle */}
+                      <p className="text-lg lg:text-xl text-white/70 font-light leading-relaxed">
+                        {slide.description}
+                      </p>
+
+                      {/* Minimal CTA */}
+                      <div className="pt-2">
+                        <Button
+                          size="lg"
+                          variant="outline"
+                          className="border-white/30 text-white hover:bg-white hover:text-primary bg-transparent backdrop-blur-sm px-8 py-2.5 text-sm font-normal"
+                        >
+                          {slide.ctaText}
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -141,23 +155,44 @@ export function HeroClient({ products }: HeroClientProps) {
           ))}
         </div>
 
-        {/* Navigation Arrows */}
+        {/* Minimal Navigation Dots */}
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20 flex gap-2">
+          {carouselSlides.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => {
+                setCurrentSlide(index);
+                setShowArrows(true);
+              }}
+              className={`transition-all duration-300 ${
+                index === currentSlide
+                  ? "w-8 h-1.5 bg-white"
+                  : "w-1.5 h-1.5 bg-white/40 hover:bg-white/60"
+              }`}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
+        </div>
+
+        {/* Minimal Navigation Arrows */}
         <button
           onClick={prevSlide}
-          className={`absolute left-6 top-1/2 transform -translate-y-1/2 z-20 w-12 h-12 bg-primary rounded-full flex items-center justify-center text-white hover:bg-primary/80 transition-all duration-300 group shadow-lg ${
+          className={`absolute left-6 top-1/2 transform -translate-y-1/2 z-20 w-10 h-10 border border-white/30 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/10 transition-all duration-300 ${
             showArrows ? "opacity-100 scale-100" : "opacity-0 scale-75"
           }`}
+          aria-label="Previous slide"
         >
-          <ChevronLeft className="w-6 h-6 group-hover:scale-110 transition-transform" />
+          <ChevronLeft className="w-5 h-5" />
         </button>
 
         <button
           onClick={nextSlide}
-          className={`absolute right-6 top-1/2 transform -translate-y-1/2 z-20 w-12 h-12 bg-primary rounded-full flex items-center justify-center text-white hover:bg-primary/80 transition-all duration-300 group shadow-lg ${
+          className={`absolute right-6 top-1/2 transform -translate-y-1/2 z-20 w-10 h-10 border border-white/30 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/10 transition-all duration-300 ${
             showArrows ? "opacity-100 scale-100" : "opacity-0 scale-75"
           }`}
+          aria-label="Next slide"
         >
-          <ChevronRight className="w-6 h-6 group-hover:scale-110 transition-transform" />
+          <ChevronRight className="w-5 h-5" />
         </button>
       </div>
     </section>
