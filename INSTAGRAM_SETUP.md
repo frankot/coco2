@@ -1,6 +1,7 @@
 # Instagram API Setup Guide
 
 ## Prerequisites
+
 - An Instagram Business or Creator account
 - A Facebook Page connected to your Instagram account
 - A Facebook Developer account
@@ -29,19 +30,32 @@
 
 ### 3. Add Instagram Basic Display
 
-1. In your app dashboard, scroll down to **Add Products**
-2. Find **Instagram Basic Display** and click **Set Up**
-3. Click **Create New App** in the Instagram Basic Display section
-4. Accept the terms and click **Create App**
+**IMPORTANT**: In the current Meta interface (2025), here's how to add Instagram Basic Display:
+
+1. In your app dashboard (where you see "Dashboard" at the top), look at the left sidebar
+2. Scroll down in the left sidebar until you see **"App settings"** with a gear icon
+3. Click on **"App settings"** to expand it
+4. Look for **"Add Product"** or go directly to: `https://developers.facebook.com/apps/YOUR_APP_ID/add/`
+   - Replace `YOUR_APP_ID` with your actual app ID from the top left (under "dr CoCo")
+5. You'll see a page with available products - look for **"Instagram Basic Display"**
+6. Click **"Set Up"** on the Instagram Basic Display card
+7. Click **"Create New App"** when prompted
+8. Accept the Instagram Platform Terms and click **"Create App"**
+
+**Alternative way to find it:**
+- From your dashboard, look for "Add Products to Your App" section
+- Or navigate to: Tools → Product Setup → Add Products
+- Find Instagram Basic Display in the list
 
 ### 4. Configure Instagram Basic Display
 
-1. Go to **Basic Display** → **Settings**
-2. Fill in the required fields:
-   - **Valid OAuth Redirect URIs**: `https://localhost/` (for testing)
+1. After adding the product, in the left sidebar you should now see **"Instagram Basic Display"**
+2. Click on it, then go to **"Basic Display"** → **"Settings"**
+3. Scroll down and fill in the required URLs:
+   - **Valid OAuth Redirect URIs**: `https://localhost/` (for development testing)
    - **Deauthorize Callback URL**: `https://yourdomain.com/auth/instagram/deauthorize`
    - **Data Deletion Request URL**: `https://yourdomain.com/auth/instagram/delete`
-3. Click **Save Changes**
+4. Click **"Save Changes"** at the bottom
 
 ### 5. Add Instagram Test User
 
@@ -105,6 +119,7 @@ curl -X GET "https://graph.instagram.com/access_token?grant_type=ig_exchange_tok
 Long-lived tokens expire after 60 days. You can refresh them to extend validity:
 
 **Refresh URL** (can be called any time before expiration):
+
 ```bash
 curl -X GET "https://graph.instagram.com/refresh_access_token?grant_type=ig_refresh_token&access_token={your-long-lived-token}"
 ```
@@ -139,6 +154,7 @@ If you have an Instagram Business Account connected to a Facebook Page, you can 
 4. The Instagram carousel should now display your latest posts
 
 If you see "Brak postów z Instagrama do wyświetlenia", check:
+
 - Your access token is valid and not expired
 - Your Instagram User ID is correct
 - You have public posts on your Instagram account
@@ -149,14 +165,17 @@ If you see "Brak postów z Instagrama do wyświetlenia", check:
 ## Troubleshooting
 
 ### "Invalid OAuth access token"
+
 - Your token has expired. Generate a new long-lived token
 - Make sure you're using the long-lived token, not the short-lived one
 
 ### "Unsupported get request"
+
 - Check that your User ID is correct
 - Ensure your Instagram account is a Business or Creator account
 
 ### No posts showing
+
 - Verify your Instagram account has public posts
 - Check if the API is returning data by visiting:
   ```
@@ -164,6 +183,7 @@ If you see "Brak postów z Instagrama do wyświetlenia", check:
   ```
 
 ### Rate Limits
+
 - Instagram Basic Display has rate limits
 - If you hit limits, wait a few minutes before trying again
 - Consider caching in production (already set to 2-hour revalidation)

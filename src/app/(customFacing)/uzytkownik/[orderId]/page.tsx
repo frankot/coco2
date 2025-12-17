@@ -121,7 +121,7 @@ export default function OrderDetailsPage() {
   };
 
   const OrderSkeleton = () => (
-    <div className="container py-10 space-y-6 mt-44 mx-auto">
+    <div className="container py-10 space-y-6 pt-44 mx-auto">
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-2">
           <Skeleton className="h-6 w-6 rounded-full" />

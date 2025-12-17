@@ -3,8 +3,15 @@ import { ApaczkaServiceResponse, ApaczkaError, ApaczkaService } from "@/types/ap
 
 
 const APACZKA_API_URL = "https://www.apaczka.pl/api/v2";
-const APACZKA_APP_ID = process.env.APACZKA_APP_ID?.replace(/"/g, "") || "";
-const APACZKA_APP_SECRET = process.env.APACZKA_APP_SECRET?.replace(/"/g, "") || "";
+
+// Robust credential sanitization - remove quotes, whitespace, newlines
+function sanitizeCredential(value: string | undefined): string {
+  if (!value) return "";
+  return value.replace(/["'\s\n\r]/g, "");
+}
+
+const APACZKA_APP_ID = sanitizeCredential(process.env.APACZKA_APP_ID);
+const APACZKA_APP_SECRET = sanitizeCredential(process.env.APACZKA_APP_SECRET);
 
 function stringToSign(appId: string, route: string, data: string, expires: number): string {
   return `${appId}:${route}:${data}:${expires}`;
@@ -40,6 +47,12 @@ function filterCourierServices(response: ApaczkaServiceResponse): ApaczkaService
 
 export const GET = createRouteHandler(async () => {
   if (!APACZKA_APP_ID || !APACZKA_APP_SECRET) {
+    console.error("Apaczka credentials missing or invalid:", {
+      hasAppId: !!process.env.APACZKA_APP_ID,
+      hasSecret: !!process.env.APACZKA_APP_SECRET,
+      appIdLength: APACZKA_APP_ID.length,
+      secretLength: APACZKA_APP_SECRET.length,
+    });
     throw new ApiError("Missing Apaczka credentials", 500);
   }
   const expires = Math.floor(Date.now() / 1000) + 300;

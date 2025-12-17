@@ -87,9 +87,10 @@ export function InstaCaru({ posts }: InstaCaruProps) {
           >
             {/* Duplicate posts array for infinite scroll effect */}
             {[...posts, ...posts].map((post, index) => {
-              const imageUrl = post.media_type === 'VIDEO' && post.thumbnail_url 
-                ? post.thumbnail_url 
-                : post.media_url;
+              const imageUrl =
+                post.media_type === "VIDEO" && post.thumbnail_url
+                  ? post.thumbnail_url
+                  : post.media_url;
 
               return (
                 <Link
