@@ -1058,9 +1058,9 @@ export default function CheckoutPage() {
           <Card className="p-4 md:p-6 space-y-4 lg:sticky lg:top-20">
             <h2 className="text-lg md:text-xl font-semibold mb-2">Podsumowanie zamówienia</h2>
 
-            <div className="space-y-3 divide-y">
-              {cartItems.map((item) => (
-                <div key={item.id} className="pt-3 first:pt-0 flex gap-4">
+            <div className="space-y-0">
+              {cartItems.map((item, index) => (
+                <div key={item.id} className={`py-4 flex gap-4 ${index !== cartItems.length - 1 ? 'border-b' : ''}`}>
                   <div className="relative h-16 w-16 overflow-hidden rounded-md border">
                     <Image
                       src={item.imagePath}
@@ -1106,7 +1106,7 @@ export default function CheckoutPage() {
               ))}
             </div>
 
-            <div className="border-t pt-4 space-y-2">
+            <div className="border-t mx-4 pt-4 space-y-2">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Suma częściowa</span>
                 <span>{formatPLN(subtotal)}</span>
