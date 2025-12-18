@@ -1060,7 +1060,10 @@ export default function CheckoutPage() {
 
             <div className="space-y-0">
               {cartItems.map((item, index) => (
-                <div key={item.id} className={`py-4 flex gap-4 ${index !== cartItems.length - 1 ? 'border-b' : ''}`}>
+                <div
+                  key={item.id}
+                  className={`py-4 flex gap-4 ${index !== cartItems.length - 1 ? "border-b" : ""}`}
+                >
                   <div className="relative h-16 w-16 overflow-hidden rounded-md border">
                     <Image
                       src={item.imagePath}
