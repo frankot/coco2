@@ -10,6 +10,7 @@ import Link from "next/link";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import Loading from "@/components/ui/loading";
 import { Eye, EyeOff } from "lucide-react";
+import Image from "next/image";
 
 function SignInForm() {
   const [email, setEmail] = useState("");
@@ -61,13 +62,24 @@ function SignInForm() {
 
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Zaloguj się</CardTitle>
-          <CardDescription className="text-center">
-            Wprowadź dane dostępowe do swojego konta
-          </CardDescription>
-        </CardHeader>
+      <div className="w-full max-w-md space-y-8">
+        <div className="relative w-full h-32 flex items-center justify-center">
+          <Image
+            src="/logo.png"
+            alt="Logo"
+            width={200}
+            height={128}
+            className="object-contain mix-blend-multiply opacity-90"
+            priority
+          />
+        </div>
+        <Card className="w-full">
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-2xl font-bold text-center">Zaloguj się</CardTitle>
+            <CardDescription className="text-center">
+              Wprowadź dane dostępowe do swojego konta
+            </CardDescription>
+          </CardHeader>
 
         <CardContent>
           {error && (
@@ -134,6 +146,7 @@ function SignInForm() {
           </div>
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 }

@@ -50,6 +50,7 @@ model Product {
   imagePaths     String[]
   description    String
   isAvailable    Boolean     @default(true)
+  itemsPerPack   Int         @default(12)
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
   imagePublicIds String[]

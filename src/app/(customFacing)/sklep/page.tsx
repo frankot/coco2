@@ -203,19 +203,7 @@ export default function ShopPage() {
     });
 
   return (
-    <div className="min-h-screen mt-20 bg-gray-50/30">
-      {/* Header */}
-      {/* <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="text-center">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">Sklep</h1>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Odkryj naszą kolekcję wysokiej jakości produktów kokosowych. Wszystkie naturalne,
-              organiczne i pełne dobroci.
-            </p>
-          </div>
-        </div>
-      </div> */}
+    <div className="min-h-screen mt-16 bg-gray-50/30">
 
       {/* Filters and Search */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">

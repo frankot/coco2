@@ -47,12 +47,13 @@ export async function addProduct(prevState: FormState, formData: FormData): Prom
     const name = formData.get("name") as string;
     const priceInCents = parseInt(formData.get("priceInCents") as string);
     const description = formData.get("description") as string;
+    const itemsPerPack = parseInt(formData.get("itemsPerPack") as string) || 12;
 
     // Get all new image files
     const newImages = formData.getAll("newImages") as File[];
 
     // Validate required fields
-    if (!name || !priceInCents || !description) {
+    if (!name || !priceInCents || !description || !itemsPerPack || itemsPerPack < 1) {
       return { error: { _form: ["Wszystkie pola są wymagane"] } };
     }
 
@@ -101,6 +102,7 @@ export async function addProduct(prevState: FormState, formData: FormData): Prom
         imagePaths,
         imagePublicIds,
         isAvailable: true,
+        itemsPerPack,
       },
     });
 
@@ -143,11 +145,12 @@ export async function updateProduct(
     const name = formData.get("name") as string;
     const priceInCents = parseInt(formData.get("priceInCents") as string);
     const description = formData.get("description") as string;
+    const itemsPerPack = parseInt(formData.get("itemsPerPack") as string) || 12;
     const newImages = formData.getAll("newImages") as File[];
     const existingImages = formData.getAll("existingImages") as string[];
 
     // Validate required fields
-    if (!name || !priceInCents || !description) {
+    if (!name || !priceInCents || !description || !itemsPerPack || itemsPerPack < 1) {
       return { error: { _form: ["Wszystkie pola są wymagane"] } };
     }
 
@@ -172,6 +175,7 @@ export async function updateProduct(
       price: priceInCents / 100,
       priceInCents,
       description,
+      itemsPerPack,
     };
 
     // Handle images

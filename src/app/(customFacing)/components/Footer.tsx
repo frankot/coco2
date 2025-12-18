@@ -150,8 +150,8 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="text-gray-600 hover:text-primary transition-colors">
-                  Warunki użytkowania
+                <Link href="/regulamin" className="text-gray-600 hover:text-primary transition-colors">
+                  Regulamin
                 </Link>
               </li>
               <li>

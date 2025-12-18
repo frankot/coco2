@@ -1663,11 +1663,13 @@ export namespace Prisma {
   export type ProductAvgAggregateOutputType = {
     price: number | null
     priceInCents: number | null
+    itemsPerPack: number | null
   }
 
   export type ProductSumAggregateOutputType = {
     price: number | null
     priceInCents: number | null
+    itemsPerPack: number | null
   }
 
   export type ProductMinAggregateOutputType = {
@@ -1677,6 +1679,7 @@ export namespace Prisma {
     priceInCents: number | null
     description: string | null
     isAvailable: boolean | null
+    itemsPerPack: number | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -1688,6 +1691,7 @@ export namespace Prisma {
     priceInCents: number | null
     description: string | null
     isAvailable: boolean | null
+    itemsPerPack: number | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -1700,6 +1704,7 @@ export namespace Prisma {
     imagePaths: number
     description: number
     isAvailable: number
+    itemsPerPack: number
     createdAt: number
     updatedAt: number
     imagePublicIds: number
@@ -1710,11 +1715,13 @@ export namespace Prisma {
   export type ProductAvgAggregateInputType = {
     price?: true
     priceInCents?: true
+    itemsPerPack?: true
   }
 
   export type ProductSumAggregateInputType = {
     price?: true
     priceInCents?: true
+    itemsPerPack?: true
   }
 
   export type ProductMinAggregateInputType = {
@@ -1724,6 +1731,7 @@ export namespace Prisma {
     priceInCents?: true
     description?: true
     isAvailable?: true
+    itemsPerPack?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -1735,6 +1743,7 @@ export namespace Prisma {
     priceInCents?: true
     description?: true
     isAvailable?: true
+    itemsPerPack?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -1747,6 +1756,7 @@ export namespace Prisma {
     imagePaths?: true
     description?: true
     isAvailable?: true
+    itemsPerPack?: true
     createdAt?: true
     updatedAt?: true
     imagePublicIds?: true
@@ -1847,6 +1857,7 @@ export namespace Prisma {
     imagePaths: string[]
     description: string
     isAvailable: boolean
+    itemsPerPack: number
     createdAt: Date
     updatedAt: Date
     imagePublicIds: string[]
@@ -1879,6 +1890,7 @@ export namespace Prisma {
     imagePaths?: boolean
     description?: boolean
     isAvailable?: boolean
+    itemsPerPack?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     imagePublicIds?: boolean
@@ -1894,6 +1906,7 @@ export namespace Prisma {
     imagePaths?: boolean
     description?: boolean
     isAvailable?: boolean
+    itemsPerPack?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     imagePublicIds?: boolean
@@ -1907,6 +1920,7 @@ export namespace Prisma {
     imagePaths?: boolean
     description?: boolean
     isAvailable?: boolean
+    itemsPerPack?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     imagePublicIds?: boolean
@@ -1920,12 +1934,13 @@ export namespace Prisma {
     imagePaths?: boolean
     description?: boolean
     isAvailable?: boolean
+    itemsPerPack?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     imagePublicIds?: boolean
   }
 
-  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "price" | "priceInCents" | "imagePaths" | "description" | "isAvailable" | "createdAt" | "updatedAt" | "imagePublicIds", ExtArgs["result"]["product"]>
+  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "price" | "priceInCents" | "imagePaths" | "description" | "isAvailable" | "itemsPerPack" | "createdAt" | "updatedAt" | "imagePublicIds", ExtArgs["result"]["product"]>
   export type ProductInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     orderItems?: boolean | Product$orderItemsArgs<ExtArgs>
     _count?: boolean | ProductCountOutputTypeDefaultArgs<ExtArgs>
@@ -1946,6 +1961,7 @@ export namespace Prisma {
       imagePaths: string[]
       description: string
       isAvailable: boolean
+      itemsPerPack: number
       createdAt: Date
       updatedAt: Date
       imagePublicIds: string[]
@@ -2380,6 +2396,7 @@ export namespace Prisma {
     readonly imagePaths: FieldRef<"Product", 'String[]'>
     readonly description: FieldRef<"Product", 'String'>
     readonly isAvailable: FieldRef<"Product", 'Boolean'>
+    readonly itemsPerPack: FieldRef<"Product", 'Int'>
     readonly createdAt: FieldRef<"Product", 'DateTime'>
     readonly updatedAt: FieldRef<"Product", 'DateTime'>
     readonly imagePublicIds: FieldRef<"Product", 'String[]'>
@@ -9879,6 +9896,7 @@ export namespace Prisma {
     imagePaths: 'imagePaths',
     description: 'description',
     isAvailable: 'isAvailable',
+    itemsPerPack: 'itemsPerPack',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
     imagePublicIds: 'imagePublicIds'
@@ -10162,6 +10180,7 @@ export namespace Prisma {
     imagePaths?: StringNullableListFilter<"Product">
     description?: StringFilter<"Product"> | string
     isAvailable?: BoolFilter<"Product"> | boolean
+    itemsPerPack?: IntFilter<"Product"> | number
     createdAt?: DateTimeFilter<"Product"> | Date | string
     updatedAt?: DateTimeFilter<"Product"> | Date | string
     imagePublicIds?: StringNullableListFilter<"Product">
@@ -10176,6 +10195,7 @@ export namespace Prisma {
     imagePaths?: SortOrder
     description?: SortOrder
     isAvailable?: SortOrder
+    itemsPerPack?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     imagePublicIds?: SortOrder
@@ -10193,6 +10213,7 @@ export namespace Prisma {
     imagePaths?: StringNullableListFilter<"Product">
     description?: StringFilter<"Product"> | string
     isAvailable?: BoolFilter<"Product"> | boolean
+    itemsPerPack?: IntFilter<"Product"> | number
     createdAt?: DateTimeFilter<"Product"> | Date | string
     updatedAt?: DateTimeFilter<"Product"> | Date | string
     imagePublicIds?: StringNullableListFilter<"Product">
@@ -10207,6 +10228,7 @@ export namespace Prisma {
     imagePaths?: SortOrder
     description?: SortOrder
     isAvailable?: SortOrder
+    itemsPerPack?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     imagePublicIds?: SortOrder
@@ -10228,6 +10250,7 @@ export namespace Prisma {
     imagePaths?: StringNullableListFilter<"Product">
     description?: StringWithAggregatesFilter<"Product"> | string
     isAvailable?: BoolWithAggregatesFilter<"Product"> | boolean
+    itemsPerPack?: IntWithAggregatesFilter<"Product"> | number
     createdAt?: DateTimeWithAggregatesFilter<"Product"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Product"> | Date | string
     imagePublicIds?: StringNullableListFilter<"Product">
@@ -10769,6 +10792,7 @@ export namespace Prisma {
     imagePaths?: ProductCreateimagePathsInput | string[]
     description: string
     isAvailable?: boolean
+    itemsPerPack?: number
     createdAt?: Date | string
     updatedAt?: Date | string
     imagePublicIds?: ProductCreateimagePublicIdsInput | string[]
@@ -10783,6 +10807,7 @@ export namespace Prisma {
     imagePaths?: ProductCreateimagePathsInput | string[]
     description: string
     isAvailable?: boolean
+    itemsPerPack?: number
     createdAt?: Date | string
     updatedAt?: Date | string
     imagePublicIds?: ProductCreateimagePublicIdsInput | string[]
@@ -10797,6 +10822,7 @@ export namespace Prisma {
     imagePaths?: ProductUpdateimagePathsInput | string[]
     description?: StringFieldUpdateOperationsInput | string
     isAvailable?: BoolFieldUpdateOperationsInput | boolean
+    itemsPerPack?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     imagePublicIds?: ProductUpdateimagePublicIdsInput | string[]
@@ -10811,6 +10837,7 @@ export namespace Prisma {
     imagePaths?: ProductUpdateimagePathsInput | string[]
     description?: StringFieldUpdateOperationsInput | string
     isAvailable?: BoolFieldUpdateOperationsInput | boolean
+    itemsPerPack?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     imagePublicIds?: ProductUpdateimagePublicIdsInput | string[]
@@ -10825,6 +10852,7 @@ export namespace Prisma {
     imagePaths?: ProductCreateimagePathsInput | string[]
     description: string
     isAvailable?: boolean
+    itemsPerPack?: number
     createdAt?: Date | string
     updatedAt?: Date | string
     imagePublicIds?: ProductCreateimagePublicIdsInput | string[]
@@ -10838,6 +10866,7 @@ export namespace Prisma {
     imagePaths?: ProductUpdateimagePathsInput | string[]
     description?: StringFieldUpdateOperationsInput | string
     isAvailable?: BoolFieldUpdateOperationsInput | boolean
+    itemsPerPack?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     imagePublicIds?: ProductUpdateimagePublicIdsInput | string[]
@@ -10851,6 +10880,7 @@ export namespace Prisma {
     imagePaths?: ProductUpdateimagePathsInput | string[]
     description?: StringFieldUpdateOperationsInput | string
     isAvailable?: BoolFieldUpdateOperationsInput | boolean
+    itemsPerPack?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     imagePublicIds?: ProductUpdateimagePublicIdsInput | string[]
@@ -11511,6 +11541,7 @@ export namespace Prisma {
     imagePaths?: SortOrder
     description?: SortOrder
     isAvailable?: SortOrder
+    itemsPerPack?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     imagePublicIds?: SortOrder
@@ -11519,6 +11550,7 @@ export namespace Prisma {
   export type ProductAvgOrderByAggregateInput = {
     price?: SortOrder
     priceInCents?: SortOrder
+    itemsPerPack?: SortOrder
   }
 
   export type ProductMaxOrderByAggregateInput = {
@@ -11528,6 +11560,7 @@ export namespace Prisma {
     priceInCents?: SortOrder
     description?: SortOrder
     isAvailable?: SortOrder
+    itemsPerPack?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -11539,6 +11572,7 @@ export namespace Prisma {
     priceInCents?: SortOrder
     description?: SortOrder
     isAvailable?: SortOrder
+    itemsPerPack?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -11546,6 +11580,7 @@ export namespace Prisma {
   export type ProductSumOrderByAggregateInput = {
     price?: SortOrder
     priceInCents?: SortOrder
+    itemsPerPack?: SortOrder
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
@@ -13730,6 +13765,7 @@ export namespace Prisma {
     imagePaths?: ProductCreateimagePathsInput | string[]
     description: string
     isAvailable?: boolean
+    itemsPerPack?: number
     createdAt?: Date | string
     updatedAt?: Date | string
     imagePublicIds?: ProductCreateimagePublicIdsInput | string[]
@@ -13743,6 +13779,7 @@ export namespace Prisma {
     imagePaths?: ProductCreateimagePathsInput | string[]
     description: string
     isAvailable?: boolean
+    itemsPerPack?: number
     createdAt?: Date | string
     updatedAt?: Date | string
     imagePublicIds?: ProductCreateimagePublicIdsInput | string[]
@@ -13831,6 +13868,7 @@ export namespace Prisma {
     imagePaths?: ProductUpdateimagePathsInput | string[]
     description?: StringFieldUpdateOperationsInput | string
     isAvailable?: BoolFieldUpdateOperationsInput | boolean
+    itemsPerPack?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     imagePublicIds?: ProductUpdateimagePublicIdsInput | string[]
@@ -13844,6 +13882,7 @@ export namespace Prisma {
     imagePaths?: ProductUpdateimagePathsInput | string[]
     description?: StringFieldUpdateOperationsInput | string
     isAvailable?: BoolFieldUpdateOperationsInput | boolean
+    itemsPerPack?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     imagePublicIds?: ProductUpdateimagePublicIdsInput | string[]

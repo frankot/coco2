@@ -82,7 +82,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
         {/* Centered badge */}
         <div className="absolute top-4 right-12 transform -translate-x-1/2 bg-primary text-white px-3 py-2 rounded-lg text-base font-semibold shadow-lg">
-          12x
+          {product.itemsPerPack}x
         </div>
       </div>
 
@@ -93,14 +93,14 @@ export default function ProductCard({ product }: ProductCardProps) {
           <h3 className="text-lg font-bold text-primary group-hover:text-primary/80 transition-colors line-clamp-2 text-center">
             {product.name}
           </h3>
-          <p className="text-sm font-bold text-primary text-center mt-1">(zestaw 12 sztuk)</p>
+          <p className="text-sm font-bold text-primary text-center mt-1">(zestaw {product.itemsPerPack} sztuk)</p>
         </Link>
 
         {/* Centered price */}
         <div className="text-center space-y-2">
           <div className="text-xl font-bold text-black">{formatPLN(product.priceInCents)}</div>
           <div className="inline-block bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium">
-            {formatPLN(Math.round(product.priceInCents / 12))} / za szt. w zest.
+            {formatPLN(Math.round(product.priceInCents / product.itemsPerPack))} / za szt. w zest.
           </div>
         </div>
 

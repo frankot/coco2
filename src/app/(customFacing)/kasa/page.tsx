@@ -35,6 +35,7 @@ export default function CheckoutPage() {
   const [checkoutMode, setCheckoutMode] = useState<"guest" | "login" | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const [shippingMethods, setShippingMethods] = useState<ApaczkaService[]>([]);
   const [selectedShippingMethod, setSelectedShippingMethod] = useState<string | null>(null);
   const [isLoadingShipping, setIsLoadingShipping] = useState(false);
@@ -487,6 +488,11 @@ export default function CheckoutPage() {
       return;
     }
 
+    if (!termsAccepted) {
+      setError("Musisz zaakceptować regulamin przed złożeniem zamówienia");
+      return;
+    }
+
     // If door-to-point selected, ensure a point is chosen
     const selected = shippingMethods.find((m) => m.service_id === selectedShippingMethod);
     const requiresPoint = selected?.door_to_point === "1";
@@ -903,7 +909,7 @@ export default function CheckoutPage() {
               </Card>
 
               {/* Shipping Method Selection */}
-              <div className="space-y-4">
+              <div className="space-y-4 bg-white  shadow p-4 rounded-lg">
                 <h3 className="text-lg font-semibold">Metoda dostawy</h3>
                 {isLoadingShipping ? (
                   <div className="flex items-center justify-center py-4">
@@ -1040,7 +1046,29 @@ export default function CheckoutPage() {
                 )}
               </div>
 
-              <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
+              {/* Terms and Conditions Acceptance */}
+              <div className="flex items-start gap-3 p-4 bg-white shadow rounded-lg">
+                <input
+                  type="checkbox"
+                  id="termsAcceptance"
+                  checked={termsAccepted}
+                  onChange={(e) => setTermsAccepted(e.target.checked)}
+                  className="mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
+                />
+                <label htmlFor="termsAcceptance" className="text-sm leading-relaxed cursor-pointer">
+                  Akceptuję{" "}
+                  <Link
+                    href="/regulamin"
+                    target="_blank"
+                    className="text-primary hover:underline font-medium"
+                  >
+                    regulamin sklepu
+                  </Link>
+                  {" "}i wyrażam zgodę na przetwarzanie moich danych osobowych w celu realizacji zamówienia.
+                </label>
+              </div>
+
+              <Button type="submit" size="lg" className="w-full" disabled={isSubmitting || !termsAccepted}>
                 {isSubmitting ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Przetwarzanie...

@@ -159,6 +159,24 @@ export default function ProductForm({ product }: { product?: Product | null }) {
         )}
       </div>
 
+      <div className="space-y-2">
+        <Label htmlFor="itemsPerPack">Ilość sztuk w opakowaniu</Label>
+        <Input
+          type="number"
+          id="itemsPerPack"
+          name="itemsPerPack"
+          min="1"
+          required
+          defaultValue={product?.itemsPerPack || 12}
+        />
+        {state?.error?.itemsPerPack && (
+          <div className="text-destructive">{state.error.itemsPerPack}</div>
+        )}
+        <div className="text-sm text-muted-foreground">
+          Określ ile sztuk znajduje się w jednym opakowaniu produktu
+        </div>
+      </div>
+
       {/* Images Section */}
       <div className="space-y-4">
         <Label>Zdjęcia produktu</Label>

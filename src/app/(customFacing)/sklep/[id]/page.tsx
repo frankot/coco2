@@ -119,7 +119,8 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
   const productImages = product.imagePaths?.filter(Boolean) || [];
   const hasImages = productImages.length > 0;
   const displayImages = hasImages ? productImages : ["/hero.webp"]; // fallback to a default image
-  const pricePerUnit = product.priceInCents / 100; // Assuming single unit for now
+  const itemsPerPack = product.itemsPerPack || 12;
+  const pricePerUnit = product.priceInCents / itemsPerPack;
 
   return (
     <div className="min-h-screen ">
@@ -157,6 +158,11 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
                   Brak zdjęcia
                 </div>
               )}
+              
+              {/* Badge showing items per pack */}
+              <div className="absolute top-4 right-4 bg-primary text-white px-4 py-2 rounded-lg text-lg font-semibold shadow-lg">
+                {itemsPerPack}x
+              </div>
             </div>
 
             {/* Thumbnail images - only show if there are multiple images */}
@@ -205,7 +211,9 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
               <div className="text-3xl font-bold text-gray-900">
                 {formatPLN(product.priceInCents)}
               </div>
-              <div className="text-sm text-gray-600">{formatPLN(pricePerUnit * 100)} / za szt.</div>
+              <div className="text-sm text-gray-600">
+                {formatPLN(pricePerUnit)} / za szt. • Zestaw {itemsPerPack} sztuk
+              </div>
             </div>
 
             {/* Quantity and Add to Cart */}
@@ -241,14 +249,14 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
             </div>
 
             {/* Rating */}
-            <div className="flex items-center gap-2">
+            {/* <div className="flex items-center gap-2">
               <span className="text-sm text-gray-600">Ocena:</span>
               <div className="flex items-center gap-1">
                 {[...Array(5)].map((_, i) => (
                   <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                 ))}
               </div>
-            </div>
+            </div> */}
 
             {/* Short description */}
             <div className="space-y-2">
@@ -262,17 +270,7 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
               </div>
             </div>
 
-            {/* Additional info links */}
-            <div className="space-y-2 text-sm">
-              <button className="flex items-center gap-2 text-primary hover:underline">
-                <span>📞</span>
-                zapytaj o produkt
-              </button>
-              <button className="flex items-center gap-2 text-primary hover:underline">
-                <span>💚</span>
-                poleć znajomemu
-              </button>
-            </div>
+        
           </div>
         </div>
 
