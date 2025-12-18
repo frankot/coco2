@@ -7,7 +7,6 @@ import Link from "next/link";
 import { formatPLN } from "@/lib/formatter";
 import { ShoppingBag, Star } from "lucide-react";
 
-
 type Product = {
   id: string;
   name: string;
@@ -52,13 +51,13 @@ export function FeaturedProductCard({ product, onAddToCart }: FeaturedProductCar
           <div className="flex items-center justify-between mt-4">
             <div className="text-primary font-semibold">{formatPLN(product.priceInCents)}</div>
 
-            <Button 
-              size="sm" 
+            <Button
+              size="sm"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 onAddToCart?.();
-              }} 
+              }}
               className="flex items-center gap-1 relative z-10"
             >
               <ShoppingBag className="size-4" />

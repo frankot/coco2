@@ -41,11 +41,10 @@ export function About() {
             {/* Description text */}
             <div className="space-y-4 text-gray-600 leading-relaxed">
               <p>
-                Woda kokosowa Dr.Coco® to naturalny izotonik, który w ciągu kilku lat podbił
-                polski rynek, stając się znacznie zdrowszą alternatywą dla kolorowych napojów
-                izotonicznych zawierających sztuczne dodatki. Nasza woda pochodzi z organicznych
-                farm z regionu Bến Tre - stolicy wody kokosowej, gdzie kokosy żywane są co kilka
-                tygodni.
+                Woda kokosowa Dr.Coco® to naturalny izotonik, który w ciągu kilku lat podbił polski
+                rynek, stając się znacznie zdrowszą alternatywą dla kolorowych napojów izotonicznych
+                zawierających sztuczne dodatki. Nasza woda pochodzi z organicznych farm z regionu
+                Bến Tre - stolicy wody kokosowej, gdzie kokosy żywane są co kilka tygodni.
               </p>
               <p>
                 Dr.Coco® to doskonały element codziennej diety niezależnie od wieku. To naturalne
@@ -59,12 +58,7 @@ export function About() {
               {features.map((feature, index) => (
                 <div key={index} className="flex flex-col gap-3 items-center text-center">
                   <div className="w-16 h-16 lg:size-10 relative">
-                    <Image
-                      src={feature.icon}
-                      alt={feature.text}
-                      fill
-                      className="object-contain"
-                    />
+                    <Image src={feature.icon} alt={feature.text} fill className="object-contain" />
                   </div>
                   <span className="text-gray-700 font-medium text-sm">{feature.text}</span>
                 </div>

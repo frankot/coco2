@@ -497,7 +497,9 @@ export default function UserProfilePage() {
                         </div>
                       </div>
                       <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-                        <Button type="submit" className="w-full sm:w-auto">Zapisz adres</Button>
+                        <Button type="submit" className="w-full sm:w-auto">
+                          Zapisz adres
+                        </Button>
                         <Button
                           type="button"
                           variant="outline"

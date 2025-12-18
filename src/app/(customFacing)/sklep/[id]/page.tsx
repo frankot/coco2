@@ -142,7 +142,7 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
           {/* Left side - Product Images */}
           <div className="space-y-4">
             {/* Main image */}
-            <div className="relative aspect-square bg-gray-50 rounded-lg overflow-hidden">
+            <div className="relative aspect-square  rounded-lg overflow-hidden">
               {displayImages[selectedImage] ? (
                 <Image
                   src={displayImages[selectedImage]}
