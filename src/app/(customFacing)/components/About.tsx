@@ -1,13 +1,13 @@
 import Image from "next/image";
-import { Leaf, Shield, Droplet, Heart, Award } from "lucide-react";
 
 export function About() {
   const features = [
-    { icon: Droplet, text: "Bez dodatku cukru" },
-    { icon: Leaf, text: "Bez sztucznych dodatków i konserwantów" },
-    { icon: Shield, text: "Produkt wegański" },
-    { icon: Heart, text: "Produkt niskokaloryczny" },
-    { icon: Award, text: "Bez glutenu" },
+    { icon: "/icons/SugarFree.png", text: "Bez dodatku cukru" },
+    { icon: "/icons/no_conservants.png", text: "Bez konserwantów" },
+    { icon: "/icons/vegan.png", text: "Produkt wegański" },
+    { icon: "/icons/GlutenFree.png", text: "Bez glutenu" },
+    { icon: "/icons/DairyFree.png", text: "Bez laktozy" },
+    { icon: "/icons/no_gmo.png", text: "Bez GMO" },
   ];
 
   return (
@@ -55,13 +55,18 @@ export function About() {
             </div>
 
             {/* Features with icons */}
-            <div className=" flex">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6">
               {features.map((feature, index) => (
-                <div key={index} className="flex flex-col max-w-32 gap-4">
-                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                    <feature.icon className="w-6 h-6 text-primary" />
+                <div key={index} className="flex flex-col gap-3 items-center text-center">
+                  <div className="w-16 h-16 lg:size-10 relative">
+                    <Image
+                      src={feature.icon}
+                      alt={feature.text}
+                      fill
+                      className="object-contain"
+                    />
                   </div>
-                  <span className="text-gray-700 font-medium">{feature.text}</span>
+                  <span className="text-gray-700 font-medium text-sm">{feature.text}</span>
                 </div>
               ))}
             </div>

@@ -357,7 +357,7 @@ export default function UserProfilePage() {
   );
 
   return (
-    <div className="container py-10 mt-20 mx-auto">
+    <div className="container py-10 lg:mt-20 mx-auto px-4 md:px-6 lg:px-8">
       <Tabs value={activeTab} onValueChange={onTabChange} className="space-y-4">
         <TabsList>
           <TabsTrigger value="profile" className="flex items-center gap-2">
@@ -380,7 +380,7 @@ export default function UserProfilePage() {
                 <CardDescription>Twoje dane osobowe i ustawienia konta</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1">
                     <p className="text-sm text-muted-foreground">Email</p>
                     <p className="font-medium">{userData?.email}</p>
@@ -417,10 +417,10 @@ export default function UserProfilePage() {
                       Ładowanie adresu...
                     </div>
                   ) : defaultAddress && !editingId ? (
-                    <div className="border rounded-md p-4 w-1/2 flex justify-between items-start">
-                      <div>
-                        <div className="font-medium">{defaultAddress.street}</div>
-                        <div className="text-sm text-muted-foreground">
+                    <div className="border rounded-md p-4 flex flex-col sm:flex-row justify-between items-start gap-4">
+                      <div className="flex-1 min-w-0">
+                        <div className="font-medium break-words">{defaultAddress.street}</div>
+                        <div className="text-sm text-muted-foreground break-words">
                           {defaultAddress.postalCode} {defaultAddress.city},{" "}
                           {defaultAddress.country}
                         </div>
@@ -428,11 +428,12 @@ export default function UserProfilePage() {
                           <div className="text-sm mt-1">Telefon: {defaultAddress.phoneNumber}</div>
                         )}
                       </div>
-                      <div className="flex items-start gap-2">
+                      <div className="flex flex-row sm:flex-col items-start gap-2 shrink-0">
                         <Button
                           size="sm"
                           variant="outline"
                           onClick={() => setEditingId(defaultAddress.id)}
+                          className="w-full sm:w-auto"
                         >
                           Edytuj
                         </Button>
@@ -440,6 +441,7 @@ export default function UserProfilePage() {
                           size="sm"
                           variant="destructive"
                           onClick={() => deleteAddress(defaultAddress.id)}
+                          className="w-full sm:w-auto"
                         >
                           Usuń
                         </Button>
@@ -494,11 +496,12 @@ export default function UserProfilePage() {
                           />
                         </div>
                       </div>
-                      <div className="flex gap-2">
-                        <Button type="submit">Zapisz adres</Button>
+                      <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                        <Button type="submit" className="w-full sm:w-auto">Zapisz adres</Button>
                         <Button
                           type="button"
                           variant="outline"
+                          className="w-full sm:w-auto"
                           onClick={() => {
                             // cancel editing
                             setEditingId(null);

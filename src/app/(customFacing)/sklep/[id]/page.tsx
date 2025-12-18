@@ -122,7 +122,7 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
   const pricePerUnit = product.priceInCents / 100; // Assuming single unit for now
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen ">
       <div className="container mx-auto px-4  py-10 lg:py-20">
         {/* Back button */}
         <div className="mb-6">

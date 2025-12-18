@@ -32,6 +32,52 @@ declare global {
   }
 }
 
+// Mobile Account Section component
+function MobileAccountSection({ onLinkClick }: { onLinkClick?: () => void }) {
+  const { data: session, status } = useSession();
+  const isAuthenticated = status === "authenticated";
+
+  if (!isAuthenticated) {
+    return (
+      <div className="space-y-2">
+        <p className="text-sm text-muted-foreground px-4">Konto</p>
+        <Link href="/auth/zaloguj" className="flex items-center gap-3 px-4 py-2 hover:bg-accent rounded-md transition-colors" onClick={onLinkClick}>
+          <User className="size-5" />
+          <span>Zaloguj się</span>
+        </Link>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-2">
+      <p className="text-sm text-muted-foreground px-4">Witaj, {session?.user?.name?.split(" ")[0] || "Użytkowniku"}</p>
+      <Link href="/uzytkownik" className="flex items-center gap-3 px-4 py-2 hover:bg-accent rounded-md transition-colors" onClick={onLinkClick}>
+        <User className="size-5" />
+        <span>Mój profil</span>
+      </Link>
+      <Link href={{ pathname: "/uzytkownik", query: { tab: "orders" } }} className="flex items-center gap-3 px-4 py-2 hover:bg-accent rounded-md transition-colors" onClick={onLinkClick}>
+        <svg className="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+        </svg>
+        <span>Moje zamówienia</span>
+      </Link>
+      <button
+        onClick={() => {
+          signOut({ callbackUrl: "/" });
+          onLinkClick?.();
+        }}
+        className="flex items-center gap-3 px-4 py-2 hover:bg-accent rounded-md transition-colors w-full text-left"
+      >
+        <svg className="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+        </svg>
+        <span>Wyloguj się</span>
+      </button>
+    </div>
+  );
+}
+
 // User Account Menu component
 function UserAccountMenu() {
   const { data: session, status } = useSession();
@@ -72,6 +118,7 @@ function UserAccountMenu() {
 export function Nav({ children }: { children: React.ReactNode }) {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [scrollY, setScrollY] = useState(0);
   const pathname = usePathname();
 
@@ -190,15 +237,22 @@ export function Nav({ children }: { children: React.ReactNode }) {
       {/* Mobile Navigation */}
       <nav className="lg:hidden">
         <div className="flex h-16 items-center justify-between px-4">
-          <Sheet>
+          <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="">
-                <Menu className="size-6 " />
+              <Button variant="ghost" size="icon">
+                <Menu className="size-6" />
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="w-[300px] sm:w-[400px] flex flex-col">
               <SheetTitle className="sr-only">Menu nawigacyjne</SheetTitle>
-              <nav className="flex flex-col space-y-4 mt-8 flex-1">{children}</nav>
+              <nav className="flex flex-col space-y-4 mt-8 flex-1" onClick={() => setIsMobileMenuOpen(false)}>
+                {children}
+                
+                {/* Mobile Account Section */}
+                <div className="pt-4 border-t">
+                  <MobileAccountSection onLinkClick={() => setIsMobileMenuOpen(false)} />
+                </div>
+              </nav>
               <div className="flex flex-col items-center gap-6 pb-8">
                 <Image
                   src="/logo.png"
@@ -227,7 +281,7 @@ export function Nav({ children }: { children: React.ReactNode }) {
             </SheetContent>
           </Sheet>
 
-          <Link href="/" className="flex-shrink-0">
+          <Link href="/" className="absolute left-1/2 -translate-x-1/2">
             <Image
               src="/logo.png"
               alt="Logo"
@@ -237,7 +291,7 @@ export function Nav({ children }: { children: React.ReactNode }) {
             />
           </Link>
 
-          <div className="flex items-center">
+          <div className="flex items-center ml-auto">
             <CartButton onClick={() => setIsCartOpen(true)} itemCount={cartItemCount} />
           </div>
         </div>

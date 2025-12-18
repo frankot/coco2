@@ -15,7 +15,7 @@ function getSignature(string: string, key: string): string {
 function getCreds() {
   // Read fresh from env on each call to avoid stale values in dev/HMR
   // Robust sanitization - remove quotes, whitespace, newlines
-  const sanitize = (val: string | undefined) => val ? val.replace(/["'\s\n\r]/g, "") : "";
+  const sanitize = (val: string | undefined) => (val ? val.replace(/["'\s\n\r]/g, "") : "");
   const id = sanitize(process.env.APACZKA_APP_ID);
   const secret = sanitize(process.env.APACZKA_APP_SECRET);
   return { id, secret };

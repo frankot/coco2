@@ -43,6 +43,7 @@
 8. Accept the Instagram Platform Terms and click **"Create App"**
 
 **Alternative way to find it:**
+
 - From your dashboard, look for "Add Products to Your App" section
 - Or navigate to: Tools → Product Setup → Add Products
 - Find Instagram Basic Display in the list

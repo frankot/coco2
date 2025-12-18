@@ -13,7 +13,7 @@ export async function GET() {
 
   const rawAppId = process.env.APACZKA_APP_ID;
   const rawSecret = process.env.APACZKA_APP_SECRET;
-  
+
   const cleanAppId = sanitizeCredential(rawAppId);
   const cleanSecret = sanitizeCredential(rawSecret);
 

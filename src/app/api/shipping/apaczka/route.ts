@@ -1,7 +1,6 @@
 import { createRouteHandler, ApiError } from "@/lib/api";
 import { ApaczkaServiceResponse, ApaczkaError, ApaczkaService } from "@/types/apaczka";
 
-
 const APACZKA_API_URL = "https://www.apaczka.pl/api/v2";
 
 // Robust credential sanitization - remove quotes, whitespace, newlines
