@@ -1063,12 +1063,18 @@ export default function CheckoutPage() {
                     className="text-primary hover:underline font-medium"
                   >
                     regulamin sklepu
-                  </Link>
-                  {" "}i wyrażam zgodę na przetwarzanie moich danych osobowych w celu realizacji zamówienia.
+                  </Link>{" "}
+                  i wyrażam zgodę na przetwarzanie moich danych osobowych w celu realizacji
+                  zamówienia.
                 </label>
               </div>
 
-              <Button type="submit" size="lg" className="w-full" disabled={isSubmitting || !termsAccepted}>
+              <Button
+                type="submit"
+                size="lg"
+                className="w-full"
+                disabled={isSubmitting || !termsAccepted}
+              >
                 {isSubmitting ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Przetwarzanie...

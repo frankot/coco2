@@ -158,7 +158,7 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
                   Brak zdjęcia
                 </div>
               )}
-              
+
               {/* Badge showing items per pack */}
               <div className="absolute top-4 right-4 bg-primary text-white px-4 py-2 rounded-lg text-lg font-semibold shadow-lg">
                 {itemsPerPack}x
@@ -269,8 +269,6 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
                 <p>- Świetnie komponuje się z owocami i warzywami w koktajlach czy smoothies</p>
               </div>
             </div>
-
-        
           </div>
         </div>
 

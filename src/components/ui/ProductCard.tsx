@@ -93,7 +93,9 @@ export default function ProductCard({ product }: ProductCardProps) {
           <h3 className="text-lg font-bold text-primary group-hover:text-primary/80 transition-colors line-clamp-2 text-center">
             {product.name}
           </h3>
-          <p className="text-sm font-bold text-primary text-center mt-1">(zestaw {product.itemsPerPack} sztuk)</p>
+          <p className="text-sm font-bold text-primary text-center mt-1">
+            (zestaw {product.itemsPerPack} sztuk)
+          </p>
         </Link>
 
         {/* Centered price */}

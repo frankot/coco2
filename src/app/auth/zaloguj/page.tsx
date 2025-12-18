@@ -81,71 +81,71 @@ function SignInForm() {
             </CardDescription>
           </CardHeader>
 
-        <CardContent>
-          {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-              {error}
-            </div>
-          )}
+          <CardContent>
+            {error && (
+              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                {error}
+              </div>
+            )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="twój@email.com"
-                disabled={isLoading}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="password">Hasło</Label>
-              <div className="relative">
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
                 <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
+                  id="email"
+                  type="email"
                   required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="twój@email.com"
                   disabled={isLoading}
-                  className="pr-10"
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                  disabled={isLoading}
-                >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </button>
               </div>
-              <div className="text-right mt-1">
-                <Link href="/auth/forgot" className="text-sm text-primary hover:underline">
-                  Zapomniałeś hasła?
+
+              <div className="space-y-2">
+                <Label htmlFor="password">Hasło</Label>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    disabled={isLoading}
+                    className="pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    disabled={isLoading}
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+                <div className="text-right mt-1">
+                  <Link href="/auth/forgot" className="text-sm text-primary hover:underline">
+                    Zapomniałeś hasła?
+                  </Link>
+                </div>
+              </div>
+
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? "Logowanie..." : "Zaloguj się"}
+              </Button>
+            </form>
+
+            <div className="mt-4 text-center text-sm">
+              <p>
+                Nie masz konta?{" "}
+                <Link href="/auth/rejestracja" className="text-primary hover:underline">
+                  Zarejestruj się
                 </Link>
-              </div>
+              </p>
             </div>
-
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Logowanie..." : "Zaloguj się"}
-            </Button>
-          </form>
-
-          <div className="mt-4 text-center text-sm">
-            <p>
-              Nie masz konta?{" "}
-              <Link href="/auth/rejestracja" className="text-primary hover:underline">
-                Zarejestruj się
-              </Link>
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

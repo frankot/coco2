@@ -260,7 +260,7 @@ export function Nav({ children }: { children: React.ReactNode }) {
 
       {/* Mobile Navigation */}
       <nav className="lg:hidden">
-        <div className="flex h-16 items-center justify-between px-4">
+        <div className="flex h-24 items-center justify-between px-4">
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon">

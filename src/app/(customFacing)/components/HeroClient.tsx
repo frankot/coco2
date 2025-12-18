@@ -79,7 +79,7 @@ export function HeroClient({ products }: HeroClientProps) {
   };
 
   return (
-    <section className="relative h-[40rem] mt-14 w-full overflow-hidden">
+    <section className="relative h-[40rem] lg:mt-14 w-full overflow-hidden">
       {/* Carousel Container */}
       <div className="relative h-full w-full" onClick={handleSlideAreaClick}>
         {/* Slides Container */}
