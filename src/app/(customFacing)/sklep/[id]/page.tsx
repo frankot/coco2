@@ -248,16 +248,7 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
               </Button>
             </div>
 
-            {/* Rating */}
-            {/* <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-600">Ocena:</span>
-              <div className="flex items-center gap-1">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                ))}
-              </div>
-            </div> */}
-
+      
             {/* Short description */}
             <div className="space-y-2">
               <p className="text-gray-700 leading-relaxed">{product.description}</p>

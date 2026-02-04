@@ -1,10 +1,11 @@
 import { getBlogPost } from "../../_actions/blog";
 import BlogForm from "../_components/BlogForm";
 
-type Props = { params: { id: string } };
+type Props = { params: Promise<{ id: string }> };
 
 export default async function EditBlogPage({ params }: Props) {
-  const post = await getBlogPost(params.id);
+  const { id } = await params;
+  const post = await getBlogPost(id);
 
   if (!post) return <div>Wpis nie znaleziony</div>;
 

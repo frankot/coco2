@@ -3,6 +3,10 @@ import prisma from "@/db";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import type { Metadata } from "next";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import remarkBreaks from "remark-breaks";
+import rehypeRaw from "rehype-raw";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -19,8 +23,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
-  // Strip HTML tags for description
-  const plainText = post.content.replace(/<[^>]*>?/gm, "");
+  // Convert content to a plain text summary (handles HTML or Markdown)
+  const plainText = post.content
+    .replace(/<[^>]*>?/gm, "") // remove HTML tags
+    .replace(/\[([^\]]+)\]\([^\)]+\)/g, "$1") // markdown links [text](url)
+    .replace(/[`*_~>#-]/g, "") // common markdown punctuation
+    .replace(/\n+/g, " "); // collapse newlines
   const description = plainText.slice(0, 160) + (plainText.length > 160 ? "..." : "");
 
   return {
@@ -53,10 +61,40 @@ export default async function BlogDetail({ params }: Props) {
           {/* Text Column */}
           <div className="space-y-8 order-2 lg:order-1">
             <h1 className="text-4xl font-bold leading-tight">{post.title}</h1>
-            <div
-              className="prose max-w-none text-gray-700"
-              dangerouslySetInnerHTML={{ __html: post.content }}
-            />
+            <div className="prose prose-lg max-w-none text-gray-700">
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm, remarkBreaks]}
+                rehypePlugins={[rehypeRaw]}
+                components={{
+                  h1: ({ children }) => (
+                    <h1 className="text-4xl font-bold leading-tight mt-6 mb-3">{children}</h1>
+                  ),
+                  h2: ({ children }) => (
+                    <h2 className="text-3xl font-semibold mt-6 mb-3">{children}</h2>
+                  ),
+                  h3: ({ children }) => (
+                    <h3 className="text-2xl font-semibold mt-5 mb-2">{children}</h3>
+                  ),
+                  p: ({ children }) => <p className="my-4">{children}</p>,
+                  ul: ({ children }) => <ul className="list-disc pl-6 my-4">{children}</ul>,
+                  ol: ({ children }) => <ol className="list-decimal pl-6 my-4">{children}</ol>,
+                  li: ({ children }) => <li className="my-1">{children}</li>,
+                  a: ({ children, href }) => (
+                    <a href={href} className="text-primary underline">
+                      {children}
+                    </a>
+                  ),
+                  strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
+                  em: ({ children }) => <em className="italic">{children}</em>,
+                  blockquote: ({ children }) => (
+                    <blockquote className="border-l-4 pl-4 italic my-4">{children}</blockquote>
+                  ),
+                  hr: () => <hr className="my-6" />,
+                }}
+              >
+                {post.content}
+              </ReactMarkdown>
+            </div>
           </div>
           {/* Image Column (Sticky) */}
           <div className="order-1 lg:order-2 lg:sticky lg:top-24">

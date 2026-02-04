@@ -3,13 +3,17 @@
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useState, useRef, useTransition } from "react";
-import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { addBlogPost, updateBlogPost } from "../../_actions/blog";
 import type { BlogPost } from "@/app/generated/prisma/client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import dynamic from "next/dynamic";
+import "@uiw/react-md-editor/markdown-editor.css";
+import "@uiw/react-markdown-preview/markdown.css";
+
+const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
 
 export default function BlogForm({ post }: { post?: BlogPost | null }) {
   const formRef = useRef<HTMLFormElement>(null);
@@ -63,14 +67,13 @@ export default function BlogForm({ post }: { post?: BlogPost | null }) {
         <Input id="title" name="title" value={title} onChange={(e) => setTitle(e.target.value)} />
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="content">Treść</Label>
-        <Textarea
-          id="content"
-          name="content"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-        />
+      <div className="space-y-2" suppressHydrationWarning>
+        <Label htmlFor="content">Treść (Markdown)</Label>
+        <div data-color-mode="light">
+          {/* Hidden input to ensure content is posted with formData */}
+          <input type="hidden" id="content" name="content" value={content} />
+          <MDEditor value={content} onChange={(val) => setContent(val || "")} />
+        </div>
       </div>
 
       <div className="space-y-4">

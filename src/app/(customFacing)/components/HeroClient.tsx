@@ -9,30 +9,48 @@ import { ChevronLeft, ChevronRight, Leaf } from "lucide-react";
 const carouselSlides = [
   {
     id: 1,
-    title: "Naturalna Woda Kokosowa",
-    subtitle: "Dr.Coco",
+    title: "Naturalna woda kokosowa",
+    subtitle: "Z młodych kokosów",
     description:
-      "Czyste źródło natury - nic dodanego, nic odjętego. Wydobywamy ją bezpośrednio z młodych, zielonych kokosów.",
+      "Z młodych, zielonych kokosów, bez zbędnych dodatków. Czyste źródło natury prosto do Ciebie.",
     ctaText: "Odkryj teraz",
-    image: "/hero/slide0.webp",
+    image: "/hero/slide01.webp",
   },
   {
     id: 2,
-    title: "Tropikalne Doznania",
-    subtitle: "W każdym łyku",
+    title: "Prosto z tropików",
+    subtitle: "Poczuj smak",
     description:
-      "Poczuj smak tropików w każdym łyku. Naturalnie słodka, orzeźwiająca woda kokosowa prosto z palm.",
+      "Poczuj smak Tajlandii i Filipin w każdym łyku. Natura, która smakuje słońcem.",
     ctaText: "Zamów teraz",
-    image: "/hero/slide1.webp",
+    image: "/hero/slide02.webp",
   },
   {
     id: 3,
-    title: "Zdrowa Energia",
+    title: "Energia z natury",
     subtitle: "Naturalne paliwo",
     description:
-      "Trójglicerydy średniołańcuchowe (MCT) zapewniają czystą, długotrwałą energię bez skoków cukru.",
+      "Naturalne elektrolity sprawiają, że woda kokosowa świetnie sprawdza się na co dzień i po treningu.",
     ctaText: "Poznaj więcej",
-    image: "/hero/slide2.webp",
+    image: "/hero/slide03.webp",
+  },
+  {
+    id: 4,
+    title: "Dzieci ją uwielbiają",
+    subtitle: "Naturalnie słodka",
+    description:
+      "Naturalnie słodka alternatywa dla soków. Zdrow dla całej rodziny, od najmłodszych.",
+    ctaText: "Dla dzieci",
+    image: "/hero/slide04.webp",
+  },
+  {
+    id: 5,
+    title: "Zadbaj o nawodnienie",
+    subtitle: "Każdego dnia",
+    description:
+      "Nie tylko podczas upalnych dni. Woda kokosowa wspiera hydratację organizmu na każdą okazję.",
+    ctaText: "Czytaj więcej",
+    image: "/hero/slide05.webp",
   },
 ];
 
