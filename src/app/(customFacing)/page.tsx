@@ -30,11 +30,11 @@ export default function Home() {
         <About />
 
         <FeaturedArticles />
+        <Faq/>
 
         <Features />
 
         <Newsletter />
-        <Faq/>
 
       </main>
     </div>
