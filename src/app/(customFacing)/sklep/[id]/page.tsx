@@ -255,11 +255,21 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
                 <div className="prose prose-sm max-w-none">
                   <ReactMarkdown
                     components={{
-                      h1: ({ node, ...props }) => <h1 className="text-2xl font-bold mt-4 mb-2" {...props} />,
-                      h2: ({ node, ...props }) => <h2 className="text-xl font-bold mt-3 mb-2" {...props} />,
-                      h3: ({ node, ...props }) => <h3 className="text-lg font-semibold mt-2 mb-1" {...props} />,
-                      p: ({ node, ...props }) => <p className="text-gray-700 mb-2 leading-relaxed" {...props} />,
-                      ul: ({ node, ...props }) => <ul className="list-disc list-inside text-gray-700 mb-2" {...props} />,
+                      h1: ({ node, ...props }) => (
+                        <h1 className="text-2xl font-bold mt-4 mb-2" {...props} />
+                      ),
+                      h2: ({ node, ...props }) => (
+                        <h2 className="text-xl font-bold mt-3 mb-2" {...props} />
+                      ),
+                      h3: ({ node, ...props }) => (
+                        <h3 className="text-lg font-semibold mt-2 mb-1" {...props} />
+                      ),
+                      p: ({ node, ...props }) => (
+                        <p className="text-gray-700 mb-2 leading-relaxed" {...props} />
+                      ),
+                      ul: ({ node, ...props }) => (
+                        <ul className="list-disc list-inside text-gray-700 mb-2" {...props} />
+                      ),
                       li: ({ node, ...props }) => <li className="text-gray-700 mb-1" {...props} />,
                     }}
                   >
@@ -309,7 +319,9 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
                         <ReactMarkdown
                           components={{
                             p: ({ node, ...props }) => <p className="mb-2" {...props} />,
-                            ul: ({ node, ...props }) => <ul className="list-disc list-inside" {...props} />,
+                            ul: ({ node, ...props }) => (
+                              <ul className="list-disc list-inside" {...props} />
+                            ),
                             li: ({ node, ...props }) => <li className="mb-1" {...props} />,
                           }}
                         >
@@ -326,7 +338,9 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
                         <ReactMarkdown
                           components={{
                             p: ({ node, ...props }) => <p className="mb-2" {...props} />,
-                            ul: ({ node, ...props }) => <ul className="list-disc list-inside" {...props} />,
+                            ul: ({ node, ...props }) => (
+                              <ul className="list-disc list-inside" {...props} />
+                            ),
                             li: ({ node, ...props }) => <li className="mb-1" {...props} />,
                           }}
                         >
@@ -338,12 +352,16 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
 
                   {product.composition?.nutritionPerHundredMl && (
                     <>
-                      <h3 className="text-lg font-semibold mb-3">Wartość odżywcza w 100 ml produktu:</h3>
+                      <h3 className="text-lg font-semibold mb-3">
+                        Wartość odżywcza w 100 ml produktu:
+                      </h3>
                       <div className="text-gray-700 space-y-1">
                         <ReactMarkdown
                           components={{
                             p: ({ node, ...props }) => <p className="mb-1" {...props} />,
-                            ul: ({ node, ...props }) => <ul className="list-disc list-inside" {...props} />,
+                            ul: ({ node, ...props }) => (
+                              <ul className="list-disc list-inside" {...props} />
+                            ),
                             li: ({ node, ...props }) => <li className="mb-1" {...props} />,
                           }}
                         >

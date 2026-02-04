@@ -79,9 +79,8 @@ export default function AboutUsPage() {
                   Wszystko zaczęło się w 2015 roku od podróży po Azji. To właśnie tam, na plażach
                   Tajlandii, odkryliśmy smak prawdziwej wody z młodych kokosów i to, jak genialnie
                   stawia ona na nogi po całym dniu w tropikalnym słońcu. Wróciliśmy do Polski, ale
-                  nie chcieliśmy zostawiać tego klimatu za sobą. Chcieliśmy mieć to dobro zawsze
-                  pod ręką – w aucie, na treningu czy w biegu przez miasto. Tak narodził się Dr.
-                  Coco.
+                  nie chcieliśmy zostawiać tego klimatu za sobą. Chcieliśmy mieć to dobro zawsze pod
+                  ręką – w aucie, na treningu czy w biegu przez miasto. Tak narodził się Dr. Coco.
                 </p>
 
                 <p>
@@ -93,11 +92,11 @@ export default function AboutUsPage() {
                 </p>
 
                 <p>
-                  W kwestii składu nie uznajemy kompromisów. Osobiście selekcjonujemy uprawy i
-                  dbamy o to, by każda partia przeszła rygorystyczne badania w niezależnych
-                  laboratoriach w Niemczech. Dr. Coco to 100% wody kokosowej, certyfikaty BIO i
-                  V-label oraz jakość premium, której szukaliśmy dla samych siebie. Czysta natura,
-                  bez zbędnej chemii.
+                  W kwestii składu nie uznajemy kompromisów. Osobiście selekcjonujemy uprawy i dbamy
+                  o to, by każda partia przeszła rygorystyczne badania w niezależnych laboratoriach
+                  w Niemczech. Dr. Coco to 100% wody kokosowej, certyfikaty BIO i V-label oraz
+                  jakość premium, której szukaliśmy dla samych siebie. Czysta natura, bez zbędnej
+                  chemii.
                 </p>
               </div>
 

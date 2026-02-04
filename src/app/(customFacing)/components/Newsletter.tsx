@@ -19,12 +19,10 @@ export function Newsletter() {
             <span className="text-yellow-300 text-sm font-medium tracking-wider uppercase">
               NEWSLETTER DR.COCO®
             </span>
-            <h2 className="mt-4 text-4xl text-white">
-              Lubimy Cię. Zostańmy w kontakcie
-            </h2>
+            <h2 className="mt-4 text-4xl text-white">Lubimy Cię. Zostańmy w kontakcie</h2>
             <p className="mt-4 text-lg text-white/80">
-              Zostaw nam swój mail, a my będziemy dawać Ci znać o promocjach, nowych dropach
-              i tym, co ciekawego dzieje się w świecie Dr. Coco. Bez lania wody (chyba, że kokosowej).
+              Zostaw nam swój mail, a my będziemy dawać Ci znać o promocjach, nowych dropach i tym,
+              co ciekawego dzieje się w świecie Dr. Coco. Bez lania wody (chyba, że kokosowej).
             </p>
             <div className="mt-6 flex max-w-md gap-x-4">
               <Input
@@ -52,8 +50,8 @@ export function Newsletter() {
               </div>
               <dt className="mt-4 text-lg text-white">Co u nas słychać?</dt>
               <dd className="mt-2 text-base leading-7 text-white/70">
-                Chętnie Ci powiemy. Będziesz na bieżąco z naszymi nowymi produktami, przepisami
-                i ciekawostkami, których nie znajdziesz na stronie!
+                Chętnie Ci powiemy. Będziesz na bieżąco z naszymi nowymi produktami, przepisami i
+                ciekawostkami, których nie znajdziesz na stronie!
               </dd>
             </div>
             <div className="flex flex-col items-start">

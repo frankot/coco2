@@ -25,13 +25,15 @@ export default function ProductForm({ product }: { product?: Product | null }) {
   );
   const [description, setDescription] = useState<string>(product?.description || "");
   const [content, setContent] = useState<string>(product?.content || "");
-  
+
   // Parse composition from JSON or initialize empty
   const initialComposition = product?.composition
-    ? (typeof product.composition === "string" ? JSON.parse(product.composition) : product.composition)
+    ? typeof product.composition === "string"
+      ? JSON.parse(product.composition)
+      : product.composition
     : { ingredients: "", storage: "", nutritionPerHundredMl: "" };
   const [composition, setComposition] = useState(initialComposition);
-  
+
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [existingImages, setExistingImages] = useState<string[]>(product?.imagePaths || []);
   const [imageError, setImageError] = useState<string | null>(null);
@@ -187,9 +189,7 @@ export default function ProductForm({ product }: { product?: Product | null }) {
           <input type="hidden" id="content" name="content" value={content} />
           <MDEditor value={content} onChange={(val) => setContent(val || "")} />
         </div>
-        {state?.error?.content && (
-          <div className="text-destructive">{state.error.content}</div>
-        )}
+        {state?.error?.content && <div className="text-destructive">{state.error.content}</div>}
         <div className="text-sm text-muted-foreground">
           Pełna zawartość produktu z formatowaniem Markdown. Będzie wyświetlana na stronie produktu.
         </div>
@@ -227,7 +227,9 @@ export default function ProductForm({ product }: { product?: Product | null }) {
             id="nutrition"
             placeholder="Wartość energetyczna (kJ/ kcal) - 79/19&#10;Tłuszcz (g) - 0..."
             value={composition.nutritionPerHundredMl}
-            onChange={(e) => setComposition({ ...composition, nutritionPerHundredMl: e.target.value })}
+            onChange={(e) =>
+              setComposition({ ...composition, nutritionPerHundredMl: e.target.value })
+            }
             rows={5}
           />
         </div>
