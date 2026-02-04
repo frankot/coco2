@@ -49,6 +49,8 @@ model Product {
   priceInCents   Int
   imagePaths     String[]
   description    String
+  content        String? // Markdown content
+  composition    Json? // Composition/nutritional info
   isAvailable    Boolean     @default(true)
   itemsPerPack   Int         @default(12)
   createdAt      DateTime    @default(now())

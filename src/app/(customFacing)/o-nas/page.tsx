@@ -71,35 +71,33 @@ export default function AboutUsPage() {
 
             <div className="space-y-6">
               <h2 className="text-3xl lg:text-4xl font-bold leading-tight text-gray-900">
-                Z Wietnamu do Polski – historia Dr.Coco
+                Z Azji do Polski – tak powstał Dr. Coco
               </h2>
 
               <div className="space-y-5 text-gray-700 leading-relaxed text-base lg:text-lg">
                 <p>
-                  Wszystko zaczęło się od podróży do regionu <strong>Bến Tre w Wietnamie</strong> –
-                  miejsca, które nazywane jest stolicą wody kokosowej. To tam, wśród palm kokosowych
-                  rosnących w idealnych warunkach tropikalnych, odkryliśmy prawdziwą esencję
-                  naturalnego smaku i właściwości młodych, zielonych kokosów.
+                  Wszystko zaczęło się w 2015 roku od podróży po Azji. To właśnie tam, na plażach
+                  Tajlandii, odkryliśmy smak prawdziwej wody z młodych kokosów i to, jak genialnie
+                  stawia ona na nogi po całym dniu w tropikalnym słońcu. Wróciliśmy do Polski, ale
+                  nie chcieliśmy zostawiać tego klimatu za sobą. Chcieliśmy mieć to dobro zawsze
+                  pod ręką – w aucie, na treningu czy w biegu przez miasto. Tak narodził się Dr.
+                  Coco.
                 </p>
 
                 <p>
-                  Zachwyceni tym, co oferuje natura, postanowiliśmy podzielić się tym smakiem z
-                  Polakami. Nawiązaliśmy współpracę z lokalnymi farmami, które od pokoleń uprawiają
-                  kokosy, dbając o ich najwyższą jakość. Każdy kokos jest zbierany ręcznie we
-                  właściwym czasie, aby zachować pełnię wartości odżywczych i niepowtarzalny,
-                  delikatny smak.
+                  Kim jesteśmy? Ludźmi, którzy po prostu dbają o to, co ląduje w ich szklankach.
+                  Sami żyjemy aktywnie i zależy nam na tym, by pić to, co najlepsze, dlatego
+                  tworzymy markę, pod którą podpisujemy się obiema rękami. Nie chcemy być Twoim
+                  mentorem ani mówić Ci, jak masz żyć – chcemy być Twoim towarzyszem, który
+                  dostarcza Ci naturalne nawodnienie najwyższej jakości.
                 </p>
 
                 <p>
-                  Dziś <strong>Dr.Coco</strong> to więcej niż marka – to wybór świadomych
-                  konsumentów, którzy cenią naturalność, autentyczność i zdrowie. Bez dodatku cukru,
-                  bez konserwantów, bez sztucznych dodatków. Tylko czysta woda kokosowa, bogata w
-                  elektrolity, potas i magnez – idealny naturalny izotonik dla aktywnych.
-                </p>
-
-                <p className="text-primary font-medium italic">
-                  "Każdego dnia dokładamy starań, aby woda kokosowa Dr.Coco docierała do Was w
-                  formie, w jakiej stworzyła ją natura."
+                  W kwestii składu nie uznajemy kompromisów. Osobiście selekcjonujemy uprawy i
+                  dbamy o to, by każda partia przeszła rygorystyczne badania w niezależnych
+                  laboratoriach w Niemczech. Dr. Coco to 100% wody kokosowej, certyfikaty BIO i
+                  V-label oraz jakość premium, której szukaliśmy dla samych siebie. Czysta natura,
+                  bez zbędnej chemii.
                 </p>
               </div>
 

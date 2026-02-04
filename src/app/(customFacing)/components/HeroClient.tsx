@@ -20,8 +20,7 @@ const carouselSlides = [
     id: 2,
     title: "Prosto z tropików",
     subtitle: "Poczuj smak",
-    description:
-      "Poczuj smak Tajlandii i Filipin w każdym łyku. Natura, która smakuje słońcem.",
+    description: "Poczuj smak Tajlandii i Filipin w każdym łyku. Natura, która smakuje słońcem.",
     ctaText: "Zamów teraz",
     image: "/hero/slide02.webp",
   },

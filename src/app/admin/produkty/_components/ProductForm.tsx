@@ -10,7 +10,12 @@ import { addProduct, updateProduct } from "../../_actions/products";
 import type { Product } from "@/app/generated/prisma/client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { X, Plus } from "lucide-react";
+import { X, Plus, Trash2 } from "lucide-react";
+import dynamic from "next/dynamic";
+import "@uiw/react-md-editor/markdown-editor.css";
+import "@uiw/react-markdown-preview/markdown.css";
+
+const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
 
 export default function ProductForm({ product }: { product?: Product | null }) {
   const formRef = useRef<HTMLFormElement>(null);
@@ -19,6 +24,14 @@ export default function ProductForm({ product }: { product?: Product | null }) {
     product?.priceInCents != null ? (product.priceInCents / 100).toFixed(2) : ""
   );
   const [description, setDescription] = useState<string>(product?.description || "");
+  const [content, setContent] = useState<string>(product?.content || "");
+  
+  // Parse composition from JSON or initialize empty
+  const initialComposition = product?.composition
+    ? (typeof product.composition === "string" ? JSON.parse(product.composition) : product.composition)
+    : { ingredients: "", storage: "", nutritionPerHundredMl: "" };
+  const [composition, setComposition] = useState(initialComposition);
+  
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [existingImages, setExistingImages] = useState<string[]>(product?.imagePaths || []);
   const [imageError, setImageError] = useState<string | null>(null);
@@ -96,6 +109,12 @@ export default function ProductForm({ product }: { product?: Product | null }) {
     // Optionally remove UI-only field
     formData.delete("pricePln");
 
+    // Add markdown content
+    formData.set("content", content);
+
+    // Add composition as JSON
+    formData.set("composition", JSON.stringify(composition));
+
     // Add selected files to FormData
     selectedFiles.forEach((file, index) => {
       formData.append(`newImages`, file);
@@ -146,7 +165,7 @@ export default function ProductForm({ product }: { product?: Product | null }) {
         </div>
       </div>
       <div className="space-y-2">
-        <Label htmlFor="description">Opis</Label>
+        <Label htmlFor="description">Opis (krótki)</Label>
         <Textarea
           id="description"
           name="description"
@@ -157,6 +176,61 @@ export default function ProductForm({ product }: { product?: Product | null }) {
         {state?.error?.description && (
           <div className="text-destructive">{state.error.description}</div>
         )}
+        <div className="text-sm text-muted-foreground">
+          Krótki opis widoczny na liście produktów
+        </div>
+      </div>
+
+      <div className="space-y-2" suppressHydrationWarning>
+        <Label htmlFor="content">Pełna zawartość (Markdown)</Label>
+        <div data-color-mode="light">
+          <input type="hidden" id="content" name="content" value={content} />
+          <MDEditor value={content} onChange={(val) => setContent(val || "")} />
+        </div>
+        {state?.error?.content && (
+          <div className="text-destructive">{state.error.content}</div>
+        )}
+        <div className="text-sm text-muted-foreground">
+          Pełna zawartość produktu z formatowaniem Markdown. Będzie wyświetlana na stronie produktu.
+        </div>
+      </div>
+
+      {/* Composition Section */}
+      <div className="space-y-4 border-t pt-6">
+        <h3 className="text-lg font-semibold">Skład i Wartość Odżywcza</h3>
+
+        <div className="space-y-2">
+          <Label htmlFor="ingredients">Skład (Markdown)</Label>
+          <Textarea
+            id="ingredients"
+            placeholder="np. 100% woda kokosowa."
+            value={composition.ingredients}
+            onChange={(e) => setComposition({ ...composition, ingredients: e.target.value })}
+            rows={3}
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="storage">Sposób przechowywania (Markdown)</Label>
+          <Textarea
+            id="storage"
+            placeholder="Przechowuj w suchym i chłodnym miejscu..."
+            value={composition.storage}
+            onChange={(e) => setComposition({ ...composition, storage: e.target.value })}
+            rows={3}
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="nutrition">Wartość odżywcza na 100 ml (Markdown)</Label>
+          <Textarea
+            id="nutrition"
+            placeholder="Wartość energetyczna (kJ/ kcal) - 79/19&#10;Tłuszcz (g) - 0..."
+            value={composition.nutritionPerHundredMl}
+            onChange={(e) => setComposition({ ...composition, nutritionPerHundredMl: e.target.value })}
+            rows={5}
+          />
+        </div>
       </div>
 
       <div className="space-y-2">

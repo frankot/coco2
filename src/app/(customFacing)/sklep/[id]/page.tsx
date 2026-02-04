@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { notFound } from "next/navigation";
 import { formatPLN } from "@/lib/formatter";
 import { useCart } from "@/app/(customFacing)/components/Cart";
+import ReactMarkdown from "react-markdown";
 // Toasts are handled inside useCart().addToCart
 
 export default function ProductPage({ params }: { params: Promise<{ id: string }> }) {
@@ -17,7 +18,7 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
   const [productId, setProductId] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
-  const [activeTab, setActiveTab] = useState("description");
+  const [activeTab, setActiveTab] = useState("composition");
 
   const { addToCart } = useCart();
 
@@ -248,33 +249,42 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
               </Button>
             </div>
 
-      
-            {/* Short description */}
+            {/* Full description with markdown content */}
             <div className="space-y-2">
-              <p className="text-gray-700 leading-relaxed">{product.description}</p>
-              <div className="text-sm text-gray-600 space-y-1">
-                <p>- Pyszny smak młodego kokosa</p>
-                <p>- Wyborny shot z minerałami</p>
-                <p>- Nawadnia lepiej niż woda</p>
-                <p>- Idealna dla sportowców i świadomych konsumentów</p>
-                <p>- Świetnie komponuje się z owocami i warzywami w koktajlach czy smoothies</p>
-              </div>
+              {product.content ? (
+                <div className="prose prose-sm max-w-none">
+                  <ReactMarkdown
+                    components={{
+                      h1: ({ node, ...props }) => <h1 className="text-2xl font-bold mt-4 mb-2" {...props} />,
+                      h2: ({ node, ...props }) => <h2 className="text-xl font-bold mt-3 mb-2" {...props} />,
+                      h3: ({ node, ...props }) => <h3 className="text-lg font-semibold mt-2 mb-1" {...props} />,
+                      p: ({ node, ...props }) => <p className="text-gray-700 mb-2 leading-relaxed" {...props} />,
+                      ul: ({ node, ...props }) => <ul className="list-disc list-inside text-gray-700 mb-2" {...props} />,
+                      li: ({ node, ...props }) => <li className="text-gray-700 mb-1" {...props} />,
+                    }}
+                  >
+                    {product.content}
+                  </ReactMarkdown>
+                </div>
+              ) : (
+                <p className="text-gray-700 leading-relaxed">{product.description}</p>
+              )}
             </div>
           </div>
         </div>
 
-        {/* Full-width description section */}
+        {/* Composition and related section */}
         <div className="border-t border-gray-200 pt-8 mb-12">
           <div className="flex gap-8 border-b border-gray-200 mb-6">
             <button
-              onClick={() => setActiveTab("description")}
+              onClick={() => setActiveTab("composition")}
               className={`pb-2 font-medium ${
-                activeTab === "description"
+                activeTab === "composition"
                   ? "border-b-2 border-primary text-primary"
                   : "text-gray-600 hover:text-gray-900"
               }`}
             >
-              Opis
+              Skład i Wartości
             </button>
             <button
               onClick={() => setActiveTab("related")}
@@ -288,49 +298,60 @@ export default function ProductPage({ params }: { params: Promise<{ id: string }
             </button>
           </div>
 
-          {activeTab === "description" && (
+          {activeTab === "composition" && (
             <div className="prose max-w-none">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
-                  <h3 className="text-lg font-semibold mb-3">Skład:</h3>
-                  <p className="text-gray-700 mb-4">
-                    woda kokosowa z młodego kokosa (99,96%), kwas L-askorbinowy.
-                  </p>
+                  {product.composition?.ingredients && (
+                    <>
+                      <h3 className="text-lg font-semibold mb-3">Skład:</h3>
+                      <div className="text-gray-700 mb-4">
+                        <ReactMarkdown
+                          components={{
+                            p: ({ node, ...props }) => <p className="mb-2" {...props} />,
+                            ul: ({ node, ...props }) => <ul className="list-disc list-inside" {...props} />,
+                            li: ({ node, ...props }) => <li className="mb-1" {...props} />,
+                          }}
+                        >
+                          {product.composition.ingredients}
+                        </ReactMarkdown>
+                      </div>
+                    </>
+                  )}
 
-                  <h3 className="text-lg font-semibold mb-3">Sposób przechowywania:</h3>
-                  <p className="text-gray-700 mb-4">
-                    Przechowuj w suchym i chłodnym miejscu. Po otwarciu trzymaj w lodówce nie dłużej
-                    niż 2 dni.
-                  </p>
+                  {product.composition?.storage && (
+                    <>
+                      <h3 className="text-lg font-semibold mb-3">Sposób przechowywania:</h3>
+                      <div className="text-gray-700 mb-4">
+                        <ReactMarkdown
+                          components={{
+                            p: ({ node, ...props }) => <p className="mb-2" {...props} />,
+                            ul: ({ node, ...props }) => <ul className="list-disc list-inside" {...props} />,
+                            li: ({ node, ...props }) => <li className="mb-1" {...props} />,
+                          }}
+                        >
+                          {product.composition.storage}
+                        </ReactMarkdown>
+                      </div>
+                    </>
+                  )}
 
-                  <h3 className="text-lg font-semibold mb-3">
-                    Wartość odżywcza w 100 ml produktu:
-                  </h3>
-                  <div className="text-gray-700 space-y-1">
-                    <p>Wartość energetyczna (kJ/ kcal) - 94/22</p>
-                    <p>Tłuszcz (g) - 0, w tym kwasy tłuszczowe (g) - 0</p>
-                    <p>Węglowodany (g) - 5,5, w tym cukry (g) - 5,2</p>
-                    <p>Sól (g) - 0,05</p>
-                  </div>
-                </div>
-
-                <div>
-                  <h3 className="text-lg font-semibold mb-3">Prosty i naturalny skład</h3>
-                  <p className="text-gray-700 mb-4">
-                    Dr.Coco® to wyłącznie naturalna woda kokosowa produkowana w Wietnamie z
-                    najlepszych młodych kokosów.
-                  </p>
-
-                  <p className="text-gray-700 mb-4">
-                    Nasza woda kokosowa Dr.Coco® to produkt odpowiedni dla wegan, co gwarantuje
-                    certyfikat V-label.
-                  </p>
-
-                  <p className="text-gray-700">
-                    V-Label to uznawane na całym świecie oznaczenie produktów i usług wegańskich
-                    oraz wegetariańskich, zarejestrowane w Szwajcarii w 1996 roku. V-Label stanowi
-                    niezawodną wskazówkę podczas zakupów.
-                  </p>
+                  {product.composition?.nutritionPerHundredMl && (
+                    <>
+                      <h3 className="text-lg font-semibold mb-3">Wartość odżywcza w 100 ml produktu:</h3>
+                      <div className="text-gray-700 space-y-1">
+                        <ReactMarkdown
+                          components={{
+                            p: ({ node, ...props }) => <p className="mb-1" {...props} />,
+                            ul: ({ node, ...props }) => <ul className="list-disc list-inside" {...props} />,
+                            li: ({ node, ...props }) => <li className="mb-1" {...props} />,
+                          }}
+                        >
+                          {product.composition.nutritionPerHundredMl}
+                        </ReactMarkdown>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             </div>

@@ -20,11 +20,11 @@ export function Newsletter() {
               NEWSLETTER DR.COCO®
             </span>
             <h2 className="mt-4 text-4xl text-white">
-              Dołącz do Kokosowej Społeczności
+              Lubimy Cię. Zostańmy w kontakcie
             </h2>
             <p className="mt-4 text-lg text-white/80">
-              Zapisz się do naszego newslettera, aby otrzymywać najnowsze informacje o produktach,
-              promocjach i ciekawostki ze świata wody kokosowej.
+              Zostaw nam swój mail, a my będziemy dawać Ci znać o promocjach, nowych dropach
+              i tym, co ciekawego dzieje się w świecie Dr. Coco. Bez lania wody (chyba, że kokosowej).
             </p>
             <div className="mt-6 flex max-w-md gap-x-4">
               <Input
@@ -50,20 +50,20 @@ export function Newsletter() {
               <div className="rounded-xl bg-white/5 p-3 ring-1 ring-white/10 group">
                 <CalendarCheck className="size-6 text-yellow-300 group-hover:scale-110 transition-transform duration-300" />
               </div>
-              <dt className="mt-4 text-lg text-white">Cotygodniowe Nowości</dt>
+              <dt className="mt-4 text-lg text-white">Co u nas słychać?</dt>
               <dd className="mt-2 text-base leading-7 text-white/70">
-                Bądź na bieżąco z najnowszymi produktami, przepisami i poradami dotyczącymi zdrowego
-                stylu życia z Dr.Coco.
+                Chętnie Ci powiemy. Będziesz na bieżąco z naszymi nowymi produktami, przepisami
+                i ciekawostkami, których nie znajdziesz na stronie!
               </dd>
             </div>
             <div className="flex flex-col items-start">
               <div className="rounded-xl bg-white/5 p-3 ring-1 ring-white/10 group">
                 <ShieldCheck className="size-6 text-yellow-300 group-hover:scale-110 transition-transform duration-300" />
               </div>
-              <dt className="mt-4 text-lg text-white">Gwarancja Jakości</dt>
+              <dt className="mt-4 text-lg text-white">Obiecujemy, że…</dt>
               <dd className="mt-2 text-base leading-7 text-white/70">
-                Tylko wartościowe treści i oferty specjalne. Szanujemy Twoją prywatność i nie
-                wysyłamy spamu.
+                …Twoje dane są u nas bezpieczne. Wysyłamy tylko to, co sami chcielibyśmy dostać,
+                czyli kody zniżkowe i newsy, które faktycznie mają znaczenie.
               </dd>
             </div>
           </motion.dl>

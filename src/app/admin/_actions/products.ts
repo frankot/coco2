@@ -92,6 +92,16 @@ export async function addProduct(prevState: FormState, formData: FormData): Prom
     const imagePaths = cloudinaryResults.map((result) => result!.secure_url);
     const imagePublicIds = cloudinaryResults.map((result) => result!.public_id);
 
+    // Extract content and composition
+    const content = (formData.get("content") as string) || "";
+    const compositionStr = (formData.get("composition") as string) || "{}";
+    let composition: any = {};
+    try {
+      composition = JSON.parse(compositionStr);
+    } catch (e) {
+      composition = {};
+    }
+
     // Create product in database with Cloudinary URLs
     await prisma.product.create({
       data: {
@@ -99,6 +109,8 @@ export async function addProduct(prevState: FormState, formData: FormData): Prom
         price: priceInCents / 100,
         priceInCents,
         description,
+        content,
+        composition,
         imagePaths,
         imagePublicIds,
         isAvailable: true,
@@ -177,6 +189,19 @@ export async function updateProduct(
       description,
       itemsPerPack,
     };
+
+    // Extract content and composition
+    const content = (formData.get("content") as string) || "";
+    const compositionStr = (formData.get("composition") as string) || "{}";
+    let composition: any = {};
+    try {
+      composition = JSON.parse(compositionStr);
+    } catch (e) {
+      composition = {};
+    }
+
+    updateData.content = content;
+    updateData.composition = composition;
 
     // Handle images
     const finalImagePaths: string[] = [...existingImages];

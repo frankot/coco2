@@ -1678,6 +1678,7 @@ export namespace Prisma {
     price: number | null
     priceInCents: number | null
     description: string | null
+    content: string | null
     isAvailable: boolean | null
     itemsPerPack: number | null
     createdAt: Date | null
@@ -1690,6 +1691,7 @@ export namespace Prisma {
     price: number | null
     priceInCents: number | null
     description: string | null
+    content: string | null
     isAvailable: boolean | null
     itemsPerPack: number | null
     createdAt: Date | null
@@ -1703,6 +1705,8 @@ export namespace Prisma {
     priceInCents: number
     imagePaths: number
     description: number
+    content: number
+    composition: number
     isAvailable: number
     itemsPerPack: number
     createdAt: number
@@ -1730,6 +1734,7 @@ export namespace Prisma {
     price?: true
     priceInCents?: true
     description?: true
+    content?: true
     isAvailable?: true
     itemsPerPack?: true
     createdAt?: true
@@ -1742,6 +1747,7 @@ export namespace Prisma {
     price?: true
     priceInCents?: true
     description?: true
+    content?: true
     isAvailable?: true
     itemsPerPack?: true
     createdAt?: true
@@ -1755,6 +1761,8 @@ export namespace Prisma {
     priceInCents?: true
     imagePaths?: true
     description?: true
+    content?: true
+    composition?: true
     isAvailable?: true
     itemsPerPack?: true
     createdAt?: true
@@ -1856,6 +1864,8 @@ export namespace Prisma {
     priceInCents: number
     imagePaths: string[]
     description: string
+    content: string | null
+    composition: JsonValue | null
     isAvailable: boolean
     itemsPerPack: number
     createdAt: Date
@@ -1889,6 +1899,8 @@ export namespace Prisma {
     priceInCents?: boolean
     imagePaths?: boolean
     description?: boolean
+    content?: boolean
+    composition?: boolean
     isAvailable?: boolean
     itemsPerPack?: boolean
     createdAt?: boolean
@@ -1905,6 +1917,8 @@ export namespace Prisma {
     priceInCents?: boolean
     imagePaths?: boolean
     description?: boolean
+    content?: boolean
+    composition?: boolean
     isAvailable?: boolean
     itemsPerPack?: boolean
     createdAt?: boolean
@@ -1919,6 +1933,8 @@ export namespace Prisma {
     priceInCents?: boolean
     imagePaths?: boolean
     description?: boolean
+    content?: boolean
+    composition?: boolean
     isAvailable?: boolean
     itemsPerPack?: boolean
     createdAt?: boolean
@@ -1933,6 +1949,8 @@ export namespace Prisma {
     priceInCents?: boolean
     imagePaths?: boolean
     description?: boolean
+    content?: boolean
+    composition?: boolean
     isAvailable?: boolean
     itemsPerPack?: boolean
     createdAt?: boolean
@@ -1940,7 +1958,7 @@ export namespace Prisma {
     imagePublicIds?: boolean
   }
 
-  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "price" | "priceInCents" | "imagePaths" | "description" | "isAvailable" | "itemsPerPack" | "createdAt" | "updatedAt" | "imagePublicIds", ExtArgs["result"]["product"]>
+  export type ProductOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "price" | "priceInCents" | "imagePaths" | "description" | "content" | "composition" | "isAvailable" | "itemsPerPack" | "createdAt" | "updatedAt" | "imagePublicIds", ExtArgs["result"]["product"]>
   export type ProductInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     orderItems?: boolean | Product$orderItemsArgs<ExtArgs>
     _count?: boolean | ProductCountOutputTypeDefaultArgs<ExtArgs>
@@ -1960,6 +1978,8 @@ export namespace Prisma {
       priceInCents: number
       imagePaths: string[]
       description: string
+      content: string | null
+      composition: Prisma.JsonValue | null
       isAvailable: boolean
       itemsPerPack: number
       createdAt: Date
@@ -2395,6 +2415,8 @@ export namespace Prisma {
     readonly priceInCents: FieldRef<"Product", 'Int'>
     readonly imagePaths: FieldRef<"Product", 'String[]'>
     readonly description: FieldRef<"Product", 'String'>
+    readonly content: FieldRef<"Product", 'String'>
+    readonly composition: FieldRef<"Product", 'Json'>
     readonly isAvailable: FieldRef<"Product", 'Boolean'>
     readonly itemsPerPack: FieldRef<"Product", 'Int'>
     readonly createdAt: FieldRef<"Product", 'DateTime'>
@@ -9895,6 +9917,8 @@ export namespace Prisma {
     priceInCents: 'priceInCents',
     imagePaths: 'imagePaths',
     description: 'description',
+    content: 'content',
+    composition: 'composition',
     isAvailable: 'isAvailable',
     itemsPerPack: 'itemsPerPack',
     createdAt: 'createdAt',
@@ -10012,12 +10036,29 @@ export namespace Prisma {
   export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+  export const NullableJsonNullValueInput: {
+    DbNull: typeof DbNull,
+    JsonNull: typeof JsonNull
+  };
+
+  export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
   export const QueryMode: {
     default: 'default',
     insensitive: 'insensitive'
   };
 
   export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+
+
+  export const JsonNullValueFilter: {
+    DbNull: typeof DbNull,
+    JsonNull: typeof JsonNull,
+    AnyNull: typeof AnyNull
+  };
+
+  export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
 
   export const NullsOrder: {
@@ -10058,6 +10099,20 @@ export namespace Prisma {
    * Reference to a field of type 'Int[]'
    */
   export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Json'
+   */
+  export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+  /**
+   * Reference to a field of type 'QueryMode'
+   */
+  export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
     
 
 
@@ -10179,6 +10234,8 @@ export namespace Prisma {
     priceInCents?: IntFilter<"Product"> | number
     imagePaths?: StringNullableListFilter<"Product">
     description?: StringFilter<"Product"> | string
+    content?: StringNullableFilter<"Product"> | string | null
+    composition?: JsonNullableFilter<"Product">
     isAvailable?: BoolFilter<"Product"> | boolean
     itemsPerPack?: IntFilter<"Product"> | number
     createdAt?: DateTimeFilter<"Product"> | Date | string
@@ -10194,6 +10251,8 @@ export namespace Prisma {
     priceInCents?: SortOrder
     imagePaths?: SortOrder
     description?: SortOrder
+    content?: SortOrderInput | SortOrder
+    composition?: SortOrderInput | SortOrder
     isAvailable?: SortOrder
     itemsPerPack?: SortOrder
     createdAt?: SortOrder
@@ -10212,6 +10271,8 @@ export namespace Prisma {
     priceInCents?: IntFilter<"Product"> | number
     imagePaths?: StringNullableListFilter<"Product">
     description?: StringFilter<"Product"> | string
+    content?: StringNullableFilter<"Product"> | string | null
+    composition?: JsonNullableFilter<"Product">
     isAvailable?: BoolFilter<"Product"> | boolean
     itemsPerPack?: IntFilter<"Product"> | number
     createdAt?: DateTimeFilter<"Product"> | Date | string
@@ -10227,6 +10288,8 @@ export namespace Prisma {
     priceInCents?: SortOrder
     imagePaths?: SortOrder
     description?: SortOrder
+    content?: SortOrderInput | SortOrder
+    composition?: SortOrderInput | SortOrder
     isAvailable?: SortOrder
     itemsPerPack?: SortOrder
     createdAt?: SortOrder
@@ -10249,6 +10312,8 @@ export namespace Prisma {
     priceInCents?: IntWithAggregatesFilter<"Product"> | number
     imagePaths?: StringNullableListFilter<"Product">
     description?: StringWithAggregatesFilter<"Product"> | string
+    content?: StringNullableWithAggregatesFilter<"Product"> | string | null
+    composition?: JsonNullableWithAggregatesFilter<"Product">
     isAvailable?: BoolWithAggregatesFilter<"Product"> | boolean
     itemsPerPack?: IntWithAggregatesFilter<"Product"> | number
     createdAt?: DateTimeWithAggregatesFilter<"Product"> | Date | string
@@ -10791,6 +10856,8 @@ export namespace Prisma {
     priceInCents: number
     imagePaths?: ProductCreateimagePathsInput | string[]
     description: string
+    content?: string | null
+    composition?: NullableJsonNullValueInput | InputJsonValue
     isAvailable?: boolean
     itemsPerPack?: number
     createdAt?: Date | string
@@ -10806,6 +10873,8 @@ export namespace Prisma {
     priceInCents: number
     imagePaths?: ProductCreateimagePathsInput | string[]
     description: string
+    content?: string | null
+    composition?: NullableJsonNullValueInput | InputJsonValue
     isAvailable?: boolean
     itemsPerPack?: number
     createdAt?: Date | string
@@ -10821,6 +10890,8 @@ export namespace Prisma {
     priceInCents?: IntFieldUpdateOperationsInput | number
     imagePaths?: ProductUpdateimagePathsInput | string[]
     description?: StringFieldUpdateOperationsInput | string
+    content?: NullableStringFieldUpdateOperationsInput | string | null
+    composition?: NullableJsonNullValueInput | InputJsonValue
     isAvailable?: BoolFieldUpdateOperationsInput | boolean
     itemsPerPack?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10836,6 +10907,8 @@ export namespace Prisma {
     priceInCents?: IntFieldUpdateOperationsInput | number
     imagePaths?: ProductUpdateimagePathsInput | string[]
     description?: StringFieldUpdateOperationsInput | string
+    content?: NullableStringFieldUpdateOperationsInput | string | null
+    composition?: NullableJsonNullValueInput | InputJsonValue
     isAvailable?: BoolFieldUpdateOperationsInput | boolean
     itemsPerPack?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10851,6 +10924,8 @@ export namespace Prisma {
     priceInCents: number
     imagePaths?: ProductCreateimagePathsInput | string[]
     description: string
+    content?: string | null
+    composition?: NullableJsonNullValueInput | InputJsonValue
     isAvailable?: boolean
     itemsPerPack?: number
     createdAt?: Date | string
@@ -10865,6 +10940,8 @@ export namespace Prisma {
     priceInCents?: IntFieldUpdateOperationsInput | number
     imagePaths?: ProductUpdateimagePathsInput | string[]
     description?: StringFieldUpdateOperationsInput | string
+    content?: NullableStringFieldUpdateOperationsInput | string | null
+    composition?: NullableJsonNullValueInput | InputJsonValue
     isAvailable?: BoolFieldUpdateOperationsInput | boolean
     itemsPerPack?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10879,6 +10956,8 @@ export namespace Prisma {
     priceInCents?: IntFieldUpdateOperationsInput | number
     imagePaths?: ProductUpdateimagePathsInput | string[]
     description?: StringFieldUpdateOperationsInput | string
+    content?: NullableStringFieldUpdateOperationsInput | string | null
+    composition?: NullableJsonNullValueInput | InputJsonValue
     isAvailable?: BoolFieldUpdateOperationsInput | boolean
     itemsPerPack?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -11507,6 +11586,44 @@ export namespace Prisma {
     isEmpty?: boolean
   }
 
+  export type StringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+  export type JsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
   export type BoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
@@ -11529,6 +11646,11 @@ export namespace Prisma {
     none?: OrderItemWhereInput
   }
 
+  export type SortOrderInput = {
+    sort: SortOrder
+    nulls?: NullsOrder
+  }
+
   export type OrderItemOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -11540,6 +11662,8 @@ export namespace Prisma {
     priceInCents?: SortOrder
     imagePaths?: SortOrder
     description?: SortOrder
+    content?: SortOrder
+    composition?: SortOrder
     isAvailable?: SortOrder
     itemsPerPack?: SortOrder
     createdAt?: SortOrder
@@ -11559,6 +11683,7 @@ export namespace Prisma {
     price?: SortOrder
     priceInCents?: SortOrder
     description?: SortOrder
+    content?: SortOrder
     isAvailable?: SortOrder
     itemsPerPack?: SortOrder
     createdAt?: SortOrder
@@ -11571,6 +11696,7 @@ export namespace Prisma {
     price?: SortOrder
     priceInCents?: SortOrder
     description?: SortOrder
+    content?: SortOrder
     isAvailable?: SortOrder
     itemsPerPack?: SortOrder
     createdAt?: SortOrder
@@ -11617,6 +11743,50 @@ export namespace Prisma {
     _max?: NestedIntFilter<$PrismaModel>
   }
 
+  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+  export type JsonNullableWithAggregatesFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedJsonNullableFilter<$PrismaModel>
+    _max?: NestedJsonNullableFilter<$PrismaModel>
+  }
+
   export type BoolWithAggregatesFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
@@ -11637,26 +11807,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
-  }
-
-  export type StringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
-  }
-
-  export type SortOrderInput = {
-    sort: SortOrder
-    nulls?: NullsOrder
   }
 
   export type BlogPostCountOrderByAggregateInput = {
@@ -11690,24 +11840,6 @@ export namespace Prisma {
     imagePublicId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-  }
-
-  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type EnumAccountTypeFilter<$PrismaModel = never> = {
@@ -12149,6 +12281,10 @@ export namespace Prisma {
     push?: string | string[]
   }
 
+  export type NullableStringFieldUpdateOperationsInput = {
+    set?: string | null
+  }
+
   export type BoolFieldUpdateOperationsInput = {
     set?: boolean
   }
@@ -12188,10 +12324,6 @@ export namespace Prisma {
     update?: OrderItemUpdateWithWhereUniqueWithoutProductInput | OrderItemUpdateWithWhereUniqueWithoutProductInput[]
     updateMany?: OrderItemUpdateManyWithWhereWithoutProductInput | OrderItemUpdateManyWithWhereWithoutProductInput[]
     deleteMany?: OrderItemScalarWhereInput | OrderItemScalarWhereInput[]
-  }
-
-  export type NullableStringFieldUpdateOperationsInput = {
-    set?: string | null
   }
 
   export type OrderCreateNestedManyWithoutUserInput = {
@@ -12649,6 +12781,20 @@ export namespace Prisma {
     not?: NestedIntFilter<$PrismaModel> | number
   }
 
+  export type NestedStringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
   export type NestedBoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
@@ -12709,42 +12855,6 @@ export namespace Prisma {
     not?: NestedFloatFilter<$PrismaModel> | number
   }
 
-  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
-  }
-
-  export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedDateTimeFilter<$PrismaModel>
-    _max?: NestedDateTimeFilter<$PrismaModel>
-  }
-
-  export type NestedStringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
-  }
-
   export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -12771,6 +12881,51 @@ export namespace Prisma {
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+  export type NestedJsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<NestedJsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<NestedJsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type NestedJsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedDateTimeFilter<$PrismaModel>
+    _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
   export type NestedEnumAccountTypeFilter<$PrismaModel = never> = {
@@ -13764,6 +13919,8 @@ export namespace Prisma {
     priceInCents: number
     imagePaths?: ProductCreateimagePathsInput | string[]
     description: string
+    content?: string | null
+    composition?: NullableJsonNullValueInput | InputJsonValue
     isAvailable?: boolean
     itemsPerPack?: number
     createdAt?: Date | string
@@ -13778,6 +13935,8 @@ export namespace Prisma {
     priceInCents: number
     imagePaths?: ProductCreateimagePathsInput | string[]
     description: string
+    content?: string | null
+    composition?: NullableJsonNullValueInput | InputJsonValue
     isAvailable?: boolean
     itemsPerPack?: number
     createdAt?: Date | string
@@ -13867,6 +14026,8 @@ export namespace Prisma {
     priceInCents?: IntFieldUpdateOperationsInput | number
     imagePaths?: ProductUpdateimagePathsInput | string[]
     description?: StringFieldUpdateOperationsInput | string
+    content?: NullableStringFieldUpdateOperationsInput | string | null
+    composition?: NullableJsonNullValueInput | InputJsonValue
     isAvailable?: BoolFieldUpdateOperationsInput | boolean
     itemsPerPack?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -13881,6 +14042,8 @@ export namespace Prisma {
     priceInCents?: IntFieldUpdateOperationsInput | number
     imagePaths?: ProductUpdateimagePathsInput | string[]
     description?: StringFieldUpdateOperationsInput | string
+    content?: NullableStringFieldUpdateOperationsInput | string | null
+    composition?: NullableJsonNullValueInput | InputJsonValue
     isAvailable?: BoolFieldUpdateOperationsInput | boolean
     itemsPerPack?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
