@@ -96,7 +96,7 @@ export function HeroClient({ products }: HeroClientProps) {
   };
 
   return (
-    <section className="relative h-[40rem] lg:mt-14 w-full overflow-hidden">
+    <section className="relative h-[40rem] lg:mt-[72px] w-full overflow-hidden">
       {/* Carousel Container */}
       <div className="relative h-full w-full" onClick={handleSlideAreaClick}>
         {/* Slides Container */}
@@ -125,7 +125,7 @@ export function HeroClient({ products }: HeroClientProps) {
                   <div
                     className={`h-full flex ${
                       index % 2 === 0
-                        ? "items-end justify-start pb-16 lg:pb-20"
+                        ? "items-end justify-start pb-16 lg:pb-28"
                         : "items-start justify-end pt-24 lg:pt-28"
                     }`}
                   >
