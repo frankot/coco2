@@ -11,20 +11,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { MoreVertical, User, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-  DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
+import { User, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
-import {
-  ChangeTypeDropdownItem,
-  DeleteDropdownItem,
-  ViewClientDetailsDropdownItem,
-} from "./_components/ClientActions";
+import { ClientActionsMenu } from "./_components/ClientActions";
 import { useState, useEffect, useCallback } from "react";
 import AdminLoading from "../loading";
 import { useRouter } from "next/navigation";
@@ -229,18 +219,11 @@ function ClientsTable() {
                 <TableCell>{client._count.orders}</TableCell>
                 <TableCell>{formattedTotal}</TableCell>
                 <TableCell>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger>
-                      <MoreVertical className="size-4 cursor-pointer" />
-                      <span className="sr-only">Otwórz menu</span>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                      <ViewClientDetailsDropdownItem id={client.id} />
-                      <ChangeTypeDropdownItem id={client.id} currentType={accountType} />
-                      <DropdownMenuSeparator />
-                      <DeleteDropdownItem id={client.id} disabled={client._count.orders > 0} />
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  <ClientActionsMenu
+                    id={client.id}
+                    currentType={accountType}
+                    hasOrders={client._count.orders > 0}
+                  />
                 </TableCell>
               </TableRow>
             );

@@ -13,23 +13,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { MoreVertical, ShoppingBag, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-  DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
+import { ShoppingBag, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { useState, useEffect } from "react";
 import AdminLoading from "../loading";
 import {
-  ViewOrderDropdownItem,
-  UpdateStatusDropdownItem,
-  CancelOrderDropdownItem,
+  OrderActionsMenu,
   confirmAllApaczka,
-  DownloadLabelDropdownItem,
 } from "./_components/OrderActions";
 
 // Type definitions
@@ -387,22 +378,11 @@ function OrdersTable() {
                 <TableCell>{order._count.orderItems}</TableCell>
                 <TableCell>{formattedTotal}</TableCell>
                 <TableCell>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger>
-                      <MoreVertical className="size-4 cursor-pointer" />
-                      <span className="sr-only">Otwórz menu</span>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                      <ViewOrderDropdownItem id={order.id} />
-                      <UpdateStatusDropdownItem id={order.id} currentStatus={order.status} />
-                      {order.apaczkaOrderId ? <DownloadLabelDropdownItem id={order.id} /> : null}
-                      <DropdownMenuSeparator />
-                      <CancelOrderDropdownItem
-                        id={order.id}
-                        disabled={order.status === "DELIVERED" || order.status === "CANCELLED"}
-                      />
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  <OrderActionsMenu
+                    id={order.id}
+                    currentStatus={order.status}
+                    hasApaczkaOrderId={!!order.apaczkaOrderId}
+                  />
                 </TableCell>
               </TableRow>
             );

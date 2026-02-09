@@ -1,9 +1,15 @@
 "use client";
 
-import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { useTransition, useState, useCallback } from "react";
 import { updateClientType, deleteClient } from "../../_actions/clients";
 import { useRouter } from "next/navigation";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 import {
   Dialog,
   DialogContent,
@@ -16,59 +22,69 @@ import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
+import { MoreVertical } from "lucide-react";
 import { toast } from "sonner";
 import { useRefresh } from "@/providers/RefreshProvider";
 
-export function ChangeTypeDropdownItem({ id, currentType }: { id: string; currentType: string }) {
-  const [isOpen, setIsOpen] = useState(false);
+// Combined component that owns both the dropdown and dialog states
+export function ClientActionsMenu({
+  id,
+  currentType,
+  hasOrders,
+}: {
+  id: string;
+  currentType: string;
+  hasOrders: boolean;
+}) {
+  const [changeTypeOpen, setChangeTypeOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        <DropdownMenuItem onSelect={(e) => e.preventDefault()}>Zmień typ konta</DropdownMenuItem>
-      </DialogTrigger>
-      <DialogContent>
-        <ChangeTypeDialogContent
-          id={id}
-          currentType={currentType}
-          onClose={() => setIsOpen(false)}
-        />
-      </DialogContent>
-    </Dialog>
-  );
-}
+    <>
+      <DropdownMenu modal={false}>
+        <DropdownMenuTrigger>
+          <MoreVertical className="size-4 cursor-pointer" />
+          <span className="sr-only">Otwórz menu</span>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem asChild>
+            <Link href={`/admin/klienci/${id}`}>Szczegóły</Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem onSelect={() => setChangeTypeOpen(true)}>
+            Zmień typ konta
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            variant="destructive"
+            disabled={hasOrders}
+            onSelect={() => setDeleteOpen(true)}
+          >
+            Usuń
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
 
-export function DeleteDropdownItem({ id, disabled }: { id: string; disabled: boolean }) {
-  const [isOpen, setIsOpen] = useState(false);
+      <Dialog open={changeTypeOpen} onOpenChange={setChangeTypeOpen}>
+        <DialogContent>
+          <ChangeTypeDialogContent
+            id={id}
+            currentType={currentType}
+            onClose={() => setChangeTypeOpen(false)}
+          />
+        </DialogContent>
+      </Dialog>
 
-  return (
-    <Dialog open={isOpen} onOpenChange={disabled ? () => {} : setIsOpen}>
-      <DialogTrigger asChild>
-        <DropdownMenuItem
-          variant="destructive"
-          disabled={disabled}
-          onSelect={(e) => e.preventDefault()}
-        >
-          Usuń
-        </DropdownMenuItem>
-      </DialogTrigger>
-      <DialogContent>
-        <DeleteDialogContent
-          id={id}
-          disabled={disabled}
-          onClose={() => setIsOpen(false)}
-          redirectAfterDelete
-        />
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-export function ViewClientDetailsDropdownItem({ id }: { id: string }) {
-  return (
-    <DropdownMenuItem asChild>
-      <Link href={`/admin/klienci/${id}`}>Szczegóły</Link>
-    </DropdownMenuItem>
+      <Dialog open={deleteOpen} onOpenChange={hasOrders ? () => {} : setDeleteOpen}>
+        <DialogContent>
+          <DeleteDialogContent
+            id={id}
+            disabled={hasOrders}
+            onClose={() => setDeleteOpen(false)}
+            redirectAfterDelete
+          />
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
 
@@ -84,12 +100,14 @@ function ChangeTypeDialogContent({
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [selectedType, setSelectedType] = useState(currentType);
+  const [selectedType, setSelectedType] = useState(
+    currentType === "ADMIN" ? "DETAL" : currentType
+  );
   const { triggerRefresh } = useRefresh();
 
   const handleUpdateType = useCallback(() => {
     startTransition(async () => {
-      const result = await updateClientType(id, selectedType as "ADMIN" | "DETAL" | "HURT");
+      const result = await updateClientType(id, selectedType as "DETAL" | "HURT");
       if (result.success) {
         toast.success(result.message);
         onClose();
@@ -115,10 +133,6 @@ function ChangeTypeDialogContent({
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="HURT" id="hurt" />
             <Label htmlFor="hurt">Hurt</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="ADMIN" id="admin" />
-            <Label htmlFor="admin">Admin</Label>
           </div>
         </RadioGroup>
       </div>
