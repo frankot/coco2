@@ -18,10 +18,7 @@ import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { useState, useEffect } from "react";
 import AdminLoading from "../loading";
-import {
-  OrderActionsMenu,
-  confirmAllApaczka,
-} from "./_components/OrderActions";
+import { OrderActionsMenu, confirmAllApaczka } from "./_components/OrderActions";
 
 // Type definitions
 type OrderStatus = "PENDING" | "PAID" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED";

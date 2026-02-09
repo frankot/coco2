@@ -100,9 +100,7 @@ function ChangeTypeDialogContent({
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [selectedType, setSelectedType] = useState(
-    currentType === "ADMIN" ? "DETAL" : currentType
-  );
+  const [selectedType, setSelectedType] = useState(currentType === "ADMIN" ? "DETAL" : currentType);
   const { triggerRefresh } = useRefresh();
 
   const handleUpdateType = useCallback(() => {
