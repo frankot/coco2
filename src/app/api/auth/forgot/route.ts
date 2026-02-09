@@ -15,7 +15,8 @@ export const POST = createRouteHandler(async ({ req }) => {
     return { success: true };
   }
 
-  const secret = process.env.NEXTAUTH_SECRET || process.env.SECRET || "secret";
+  const secret = process.env.NEXTAUTH_SECRET;
+  if (!secret) throw new ApiError("Server misconfiguration: missing NEXTAUTH_SECRET", 500);
   const token = jwt.sign({ sub: user.id, email: user.email }, secret, { expiresIn: "1h" });
 
   const siteUrl =

@@ -1,9 +1,9 @@
 import { PrismaClient } from "../app/generated/prisma";
 
-// Use PrismaClient from the correct generated location
-const prisma = new PrismaClient();
+const globalForPrisma = globalThis as unknown as { prisma: PrismaClient | undefined };
 
-// Remove the main function that's causing issues
-// This should be in a separate script, not in the module
+const prisma = globalForPrisma.prisma ?? new PrismaClient();
+
+if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
 export default prisma;

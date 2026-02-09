@@ -1,14 +1,12 @@
 "use server";
 
-import { PrismaClient } from "@/app/generated/prisma";
+import prisma from "@/db";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { createOrUpdateUser } from "@/lib/auth-utils";
 import mailer from "@/lib/mailer";
-
-const prisma = new PrismaClient();
 
 function normalizePhonePL(input: string): string | null {
   if (!input) return null;
@@ -75,10 +73,12 @@ export async function createOrder(formData: OrderFormData) {
     });
     console.log(`Found ${existingProducts.length} products in database`);
 
+    // Build a map of DB products for price lookups
+    const productMap = new Map(existingProducts.map((p) => [p.id, p]));
+
     // Verify all cart items have corresponding products
-    const existingProductIds = existingProducts.map((p) => p.id);
     const missingProducts = validatedData.cartItems.filter(
-      (item) => !existingProductIds.includes(item.id)
+      (item) => !productMap.has(item.id)
     );
 
     if (missingProducts.length > 0) {
@@ -97,9 +97,9 @@ export async function createOrder(formData: OrderFormData) {
       };
     }
 
-    // Calculate total price
+    // Calculate total price using DB prices — never trust client-provided prices
     const subtotalInCents = validatedData.cartItems.reduce(
-      (sum, item) => sum + item.priceInCents * item.quantity,
+      (sum, item) => sum + productMap.get(item.id)!.priceInCents * item.quantity,
       0
     );
 
@@ -157,151 +157,114 @@ export async function createOrder(formData: OrderFormData) {
     const verifiedUserId = userId as string;
     console.log("Verified userId:", verifiedUserId);
 
-    // Find or create the address with verified userId
-    let address;
-    try {
-      const normalizedPhone = normalizePhonePL(validatedData.phoneNumber);
-      if (!normalizedPhone) {
-        return {
-          success: false,
-          error: "Niepoprawny numer telefonu. Podaj 9 cyfr (PL) lub numer z prefiksem +48.",
-        };
+    // Validate phone before entering transaction
+    const normalizedPhone = normalizePhonePL(validatedData.phoneNumber);
+    if (!normalizedPhone) {
+      return {
+        success: false,
+        error: "Niepoprawny numer telefonu. Podaj 9 cyfr (PL) lub numer z prefiksem +48.",
+      };
+    }
+
+    // Resolve Apaczka D2P service outside transaction (external API call)
+    let finalServiceId = validatedData.shippingMethodId;
+    if (validatedData.apaczkaPointId && validatedData.apaczkaPointSupplier) {
+      try {
+        const Apaczka = (await import("@/lib/apaczka")).default;
+        const correctServiceId = await Apaczka.findD2PService(
+          validatedData.apaczkaPointSupplier,
+          validatedData.apaczkaPointId
+        );
+        if (correctServiceId) {
+          console.log(
+            `Resolved D2P service for ${validatedData.apaczkaPointSupplier} point ${validatedData.apaczkaPointId}: ${finalServiceId} -> ${correctServiceId}`
+          );
+          finalServiceId = String(correctServiceId);
+        }
+      } catch (e) {
+        console.warn("Failed to resolve D2P service_id during order creation:", e);
       }
+    }
 
-      // Check if address with same street, city, and postalCode already exists for this user
-      const existingAddress = await prisma.address.findFirst({
-        where: {
-          userId: verifiedUserId,
-          street: validatedData.street,
-          city: validatedData.city,
-          postalCode: validatedData.postalCode,
-        },
-      });
-
-      if (existingAddress) {
-        // Reuse existing address, update phone if needed
-        address = await prisma.address.update({
-          where: { id: existingAddress.id },
-          data: {
-            phoneNumber: normalizedPhone,
-            country: validatedData.country, // Update country in case it changed
-          },
-        });
-        console.log("Reusing existing address:", address.id);
-      } else {
-        // Create new address
-        address = await prisma.address.create({
-          data: {
+    // Atomic transaction: address + order + orderItems + payment
+    let orderId: string;
+    try {
+      const result = await prisma.$transaction(async (tx) => {
+        // 1. Find or create address
+        const existingAddress = await tx.address.findFirst({
+          where: {
             userId: verifiedUserId,
             street: validatedData.street,
             city: validatedData.city,
             postalCode: validatedData.postalCode,
-            country: validatedData.country,
-            phoneNumber: normalizedPhone,
-            isDefault: true,
-            addressType: "BOTH",
           },
         });
-        console.log("Created new address:", address.id);
-      }
-    } catch (error) {
-      console.error("Failed to create address:", error);
-      return { success: false, error: "Nie udało się utworzyć adresu" };
-    }
 
-    // Create the order
-    let order;
-    try {
-      // If this is a point delivery, resolve the correct service_id based on supplier and point code
-      let finalServiceId = validatedData.shippingMethodId;
-      if (validatedData.apaczkaPointId && validatedData.apaczkaPointSupplier) {
-        try {
-          const Apaczka = (await import("@/lib/apaczka")).default;
-          const correctServiceId = await Apaczka.findD2PService(
-            validatedData.apaczkaPointSupplier,
-            validatedData.apaczkaPointId
-          );
-          if (correctServiceId) {
-            console.log(
-              `Resolved D2P service for ${validatedData.apaczkaPointSupplier} point ${validatedData.apaczkaPointId}: ${finalServiceId} -> ${correctServiceId}`
-            );
-            finalServiceId = String(correctServiceId);
-          }
-        } catch (e) {
-          console.warn("Failed to resolve D2P service_id during order creation:", e);
-        }
-      }
+        const address = existingAddress
+          ? await tx.address.update({
+              where: { id: existingAddress.id },
+              data: { phoneNumber: normalizedPhone, country: validatedData.country },
+            })
+          : await tx.address.create({
+              data: {
+                userId: verifiedUserId,
+                street: validatedData.street,
+                city: validatedData.city,
+                postalCode: validatedData.postalCode,
+                country: validatedData.country,
+                phoneNumber: normalizedPhone,
+                isDefault: true,
+                addressType: "BOTH",
+              },
+            });
 
-      order = await prisma.order.create({
-        data: {
-          userId: verifiedUserId,
-          // Create initially as PENDING to avoid runtime enum mismatches with generated Prisma client.
-          // We'll try to switch to PAID immediately after creation (in a safe try/catch) when appropriate.
-          status: "PENDING",
-          paymentMethod: validatedData.paymentMethod,
-          pricePaidInCents: totalPriceInCents,
-          subtotalInCents: subtotalInCents,
-          shippingCostInCents: shippingCostInCents,
-          billingAddressId: address.id,
-          shippingAddressId: address.id,
-          shippingServiceId: finalServiceId,
-          // Normalize point id and supplier to avoid accidental whitespace / casing issues
-          // Store the raw map code (e.g. POP-WAW640) as required by Apaczka API v2 for foreign_access_point_id
-          apaczkaPointId: validatedData.apaczkaPointId?.trim() || undefined,
-          apaczkaPointSupplier: validatedData.apaczkaPointSupplier
-            ? validatedData.apaczkaPointSupplier.trim().toUpperCase()
-            : undefined,
-          orderItems: {
-            create: validatedData.cartItems.map((item) => ({
-              productId: item.id,
-              quantity: item.quantity,
-              pricePerItemInCents: item.priceInCents,
-            })),
+        // 2. Create order with nested orderItems
+        const order = await tx.order.create({
+          data: {
+            userId: verifiedUserId,
+            status: "PENDING",
+            paymentMethod: validatedData.paymentMethod,
+            pricePaidInCents: totalPriceInCents,
+            subtotalInCents: subtotalInCents,
+            shippingCostInCents: shippingCostInCents,
+            billingAddressId: address.id,
+            shippingAddressId: address.id,
+            shippingServiceId: finalServiceId,
+            apaczkaPointId: validatedData.apaczkaPointId?.trim() || undefined,
+            apaczkaPointSupplier: validatedData.apaczkaPointSupplier
+              ? validatedData.apaczkaPointSupplier.trim().toUpperCase()
+              : undefined,
+            orderItems: {
+              create: validatedData.cartItems.map((item) => ({
+                productId: item.id,
+                quantity: item.quantity,
+                pricePerItemInCents: productMap.get(item.id)!.priceInCents,
+              })),
+            },
           },
-        },
-        include: {
-          orderItems: true,
-        },
+          include: { orderItems: true },
+        });
+
+        // 3. Create payment record
+        await tx.payment.create({
+          data: {
+            orderId: order.id,
+            userId: verifiedUserId,
+            amount: totalPriceInCents,
+            currency: "PLN",
+            status: "PENDING",
+            paymentMethodType: validatedData.paymentMethod,
+          },
+        });
+
+        return order;
       });
-      console.log("Created order:", order.id);
+
+      orderId = result.id;
+      console.log("Created order (atomic):", orderId);
     } catch (error) {
       console.error("Failed to create order:", error);
       return { success: false, error: "Nie udało się utworzyć zamówienia" };
-    }
-
-    const orderId = order.id;
-
-    // If payment method is COD, attempt to mark order as PAID. Do this in a try/catch
-    // so we don't fail if the generated Prisma client or DB enum hasn't been updated yet.
-    if (validatedData.paymentMethod === "COD") {
-      try {
-        await prisma.order.update({ where: { id: orderId }, data: { status: "PAID" } });
-        // Optional: refresh order (not strictly needed below because we only use orderId)
-      } catch (e) {
-        console.warn(
-          "Could not set order status to PAID (client/schema mismatch). Leaving as PENDING.",
-          e
-        );
-      }
-    }
-
-    // Create a payment record
-    try {
-      await prisma.payment.create({
-        data: {
-          orderId,
-          userId: verifiedUserId,
-          amount: totalPriceInCents,
-          currency: "PLN",
-          // If COD, mark payment as COMPLETED because payment will be collected on delivery
-          status: validatedData.paymentMethod === "COD" ? "COMPLETED" : "PENDING",
-          paymentMethodType: validatedData.paymentMethod,
-        },
-      });
-      console.log("Created payment record for order:", orderId);
-    } catch (error) {
-      console.error("Failed to create payment:", error);
-      // If payment creation fails, we should still return the order, but log the error
     }
 
     revalidatePath("/");

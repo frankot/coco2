@@ -13,6 +13,11 @@ export const POST = createRouteHandler(async ({ req }) => {
     expand: ["payment_intent"],
   });
 
+  // Verify the session actually belongs to this order
+  if (session.metadata?.orderId !== orderId) {
+    throw new ApiError("Session does not match the provided order", 403);
+  }
+
   // Check payment status
   const paid = session.payment_status === "paid" || session.status === "complete";
 

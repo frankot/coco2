@@ -1,5 +1,5 @@
 import prisma from "@/db";
-import { Hero2 } from "./Hero2";
+import ProductCard from "@/components/ui/ProductCard";
 
 async function getLatestProducts() {
   const products = await prisma.product.findMany({
@@ -22,5 +22,15 @@ export default async function LatestProductsSection() {
     return null;
   }
 
-  return <Hero2 latestProducts={products} />;
+  return (
+    <section className="py-12">
+      <div className="container px-4 mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {products.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
 }

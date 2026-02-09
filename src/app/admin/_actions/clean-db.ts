@@ -15,7 +15,7 @@ export async function deleteAllProducts() {
     const products = await prisma.product.findMany({
       select: {
         id: true,
-        imagePublicId: true,
+        imagePublicIds: true,
       },
     });
 
@@ -33,9 +33,10 @@ export async function deleteAllProducts() {
     let cloudinaryErrors = [];
 
     for (const product of products) {
-      if (product.imagePublicId) {
+      for (const publicId of product.imagePublicIds) {
+        if (!publicId) continue;
         try {
-          await deleteImage(product.imagePublicId);
+          await deleteImage(publicId);
           cloudinaryDeleteCount++;
         } catch (error) {
           console.error(`Error deleting Cloudinary image for product ${product.id}:`, error);

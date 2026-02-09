@@ -9,7 +9,8 @@ export const POST = createRouteHandler(async ({ req }) => {
   const { token, password } = await readJson<Body>(req);
   if (!token || !password) throw new ApiError("token and password are required", 400);
 
-  const secret = process.env.NEXTAUTH_SECRET || process.env.SECRET || "secret";
+  const secret = process.env.NEXTAUTH_SECRET;
+  if (!secret) throw new ApiError("Server misconfiguration: missing NEXTAUTH_SECRET", 500);
   let payload: any;
   try {
     payload = jwt.verify(token, secret) as any;

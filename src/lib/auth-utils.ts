@@ -1,4 +1,3 @@
-import { PrismaClient } from "@/app/generated/prisma";
 import { z } from "zod";
 import {
   hashPassword,
@@ -7,8 +6,6 @@ import {
   createUser,
   updateUser,
 } from "./auth-server";
-
-const prisma = new PrismaClient();
 
 // Validation schemas
 export const userRegistrationSchema = z.object({

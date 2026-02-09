@@ -118,8 +118,9 @@ export default function ReadmePage() {
                   className="border-l-4 border-blue-500 bg-blue-50 pl-4 py-2 my-4 rounded-r text-blue-900 italic"
                 />
               ),
-              code: ({ node, inline, ...props }) =>
-                inline ? (
+              code: ({ node, className, ...props }) => {
+                const isInline = !className;
+                return isInline ? (
                   <code
                     {...props}
                     className="bg-slate-100 text-slate-800 px-1.5 py-0.5 rounded text-sm font-mono border border-slate-200"
@@ -127,9 +128,12 @@ export default function ReadmePage() {
                 ) : (
                   <code
                     {...props}
-                    className="block bg-slate-900 text-slate-100 p-4 rounded-lg overflow-x-auto my-4 text-sm font-mono border border-slate-700"
+                    className={`block bg-slate-900 text-slate-100 p-4 rounded-lg overflow-x-auto my-4 text-sm font-mono border border-slate-700 ${
+                      className ?? ""
+                    }`}
                   />
-                ),
+                );
+              },
               a: ({ node, ...props }) => (
                 <a
                   {...props}

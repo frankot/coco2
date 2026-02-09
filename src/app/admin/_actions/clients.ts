@@ -101,7 +101,6 @@ export async function addClient(prevState: FormState, formData: FormData): Promi
         email: data.email,
         firstName: data.firstName || null,
         lastName: data.lastName || null,
-        phoneNumber: data.phoneNumber || null,
         password: hashedPassword,
         accountType: data.accountType,
       },
@@ -173,7 +172,6 @@ export async function updateClient(
       email: data.email,
       firstName: data.firstName || null,
       lastName: data.lastName || null,
-      phoneNumber: data.phoneNumber || null,
       accountType: data.accountType,
     };
 

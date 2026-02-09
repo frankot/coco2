@@ -1,12 +1,9 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { NextAuthOptions } from "next-auth";
-import { PrismaClient } from "@/app/generated/prisma";
 import { verifyUserCredentials } from "@/lib/auth-utils";
 import { findUserByEmail } from "@/lib/auth-server";
 import { compare } from "bcrypt";
-
-const prisma = new PrismaClient();
 
 export const authOptions: NextAuthOptions = {
   providers: [

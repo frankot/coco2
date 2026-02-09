@@ -1,9 +1,7 @@
 "use server";
 
-import { PrismaClient } from "@/app/generated/prisma";
+import prisma from "@/db";
 import { hash, compare } from "bcrypt";
-
-const prisma = new PrismaClient();
 
 // Server-only password hashing
 export async function hashPassword(password: string): Promise<string> {

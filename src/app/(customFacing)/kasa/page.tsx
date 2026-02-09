@@ -572,7 +572,7 @@ export default function CheckoutPage() {
 
       if (result.success) {
         if (formData.paymentMethod === "STRIPE") {
-          // Create Stripe checkout session
+          // Create Stripe checkout session — map cart items to expected format
           const response = await fetch("/api/payments/stripe/create-checkout-session", {
             method: "POST",
             headers: {
@@ -580,23 +580,27 @@ export default function CheckoutPage() {
             },
             body: JSON.stringify({
               orderId: result.orderId,
-              items: cartItems,
-              totalAmount: total,
+              items: cartItems.map((item) => ({
+                productId: item.id,
+                quantity: item.quantity,
+              })),
               email: formData.email,
             }),
           });
 
-          const { url } = await response.json();
+          const data = await response.json();
 
-          if (url) {
-            // Clear cart
-            localStorage.removeItem("cart");
-            window.dispatchEvent(new Event("cartUpdated"));
-
-            // Redirect to Stripe Checkout
-            window.location.href = url;
+          if (!response.ok || !data.url) {
+            setError(data.error || "Nie udało się utworzyć sesji płatności. Spróbuj ponownie.");
+            setIsSubmitting(false);
             return;
           }
+
+          // Clear cart and redirect to Stripe Checkout
+          localStorage.removeItem("cart");
+          window.dispatchEvent(new Event("cartUpdated"));
+          window.location.href = data.url;
+          return;
         } else {
           // Clear cart after successful order
           localStorage.removeItem("cart");
@@ -609,6 +613,7 @@ export default function CheckoutPage() {
         }
       } else {
         setError(result.error || "Wystąpił błąd podczas składania zamówienia");
+        setIsSubmitting(false);
 
         // If it's an authentication error, suggest login
         if (result.error?.includes("użytkownika")) {
@@ -618,7 +623,6 @@ export default function CheckoutPage() {
     } catch (err) {
       console.error("Order submission error:", err);
       setError("Wystąpił błąd podczas składania zamówienia");
-    } finally {
       setIsSubmitting(false);
     }
   };

@@ -1,12 +1,10 @@
-import { PrismaClient } from "@/app/generated/prisma";
+import prisma from "@/db";
 import { formatPLN } from "@/lib/formatter";
 import { CheckCircle2, Loader2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import VerifySessionClient from "../verifyClient";
-
-const prisma = new PrismaClient();
 
 export default async function OrderConfirmationPage({
   params,

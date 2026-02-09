@@ -36,6 +36,8 @@ type FormState = {
     name?: string[];
     priceInCents?: string[];
     description?: string[];
+    content?: string[];
+    itemsPerPack?: string[];
     image?: string[];
     _form?: string[];
   };
