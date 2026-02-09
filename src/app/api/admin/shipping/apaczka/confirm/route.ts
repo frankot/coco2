@@ -317,8 +317,7 @@ export const POST = createRouteHandler(
         const attachments: any[] = [];
         try {
           const logoPath = process.cwd() + "/public/logo.png";
-          // eslint-disable-next-line no-eval
-          const fs: any = eval("require")("fs");
+          const fs = await import("fs");
           if (fs.existsSync(logoPath)) {
             attachments.push({ filename: "logo.png", path: logoPath, cid: "logo.png" });
           }

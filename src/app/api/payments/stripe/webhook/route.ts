@@ -20,6 +20,10 @@ export const POST = createRouteHandler(async ({ req }) => {
     const orderId = session.metadata.orderId;
     const payment = await prisma.payment.findFirst({ where: { orderId } });
     if (!payment) throw new ApiError("Payment not found", 404);
+    // Idempotency: skip if already processed
+    if (payment.status === "COMPLETED") {
+      return { received: true, skipped: true };
+    }
     await prisma.$transaction([
       prisma.order.update({ where: { id: orderId }, data: { status: "PROCESSING" } }),
       prisma.payment.update({

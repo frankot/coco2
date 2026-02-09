@@ -115,8 +115,6 @@ export default function OrderDetailsPage() {
         // If cancelled from details page, redirect back to orders list
         if (status === "CANCELLED") {
           toast.success(`Zamówienie zostało anulowane`);
-          // navigate back to orders list
-          const router = useRouter();
           router.push("/admin/zamowienia");
           return;
         }

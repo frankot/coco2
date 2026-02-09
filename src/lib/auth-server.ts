@@ -5,7 +5,6 @@ import { hash, compare } from "bcrypt";
 
 // Server-only password hashing
 export async function hashPassword(password: string): Promise<string> {
-  console.log("Hashing password");
   return await hash(password, 10);
 }
 
@@ -19,7 +18,6 @@ export async function verifyPassword(
 
 // Server-only user lookup
 export async function findUserByEmail(email: string) {
-  console.log(`Looking up user by email: ${email}`);
   const user = await prisma.user.findUnique({
     where: { email },
     select: {
@@ -31,7 +29,6 @@ export async function findUserByEmail(email: string) {
       accountType: true,
     },
   });
-  console.log(`User lookup result: ${user ? `Found user ID ${user.id}` : "User not found"}`);
   return user;
 }
 
@@ -43,7 +40,6 @@ export async function createUser(userData: {
   lastName?: string | null;
   accountType?: string;
 }) {
-  console.log(`Creating new user with email: ${userData.email}`);
   try {
     const hashedPassword = await hashPassword(userData.password);
 
@@ -57,7 +53,6 @@ export async function createUser(userData: {
       },
     });
 
-    console.log(`User created successfully with ID: ${user.id}`);
     return user;
   } catch (error) {
     console.error("Error creating user:", error);
@@ -73,13 +68,11 @@ export async function updateUser(
     lastName?: string | null;
   }
 ) {
-  console.log(`Updating user with ID: ${userId}`);
   try {
     const user = await prisma.user.update({
       where: { id: userId },
       data: userData,
     });
-    console.log(`User updated successfully`);
     return user;
   } catch (error) {
     console.error("Error updating user:", error);

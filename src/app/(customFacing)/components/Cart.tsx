@@ -428,20 +428,11 @@ export default function Cart({ isOpen, onClose, navbarHeight, onOpenCart }: Cart
     setCartItems((prev) => prev.filter((item) => item.id !== id));
   }, []);
 
+  // TODO: Implement server-side discount validation before enabling this feature.
+  // Client-only discounts are misleading — the order total on the server ignores them.
   const applyDiscount = useCallback(() => {
-    setIsApplyingDiscount(true);
-    // Simulate API call with timeout
-    setTimeout(() => {
-      // For demo purposes: apply a 10% discount for code "COCO10"
-      if (discountCode.trim().toUpperCase() === "COCO10") {
-        setDiscount(10);
-      } else {
-        setDiscount(0);
-        alert("Nieprawidłowy kod rabatowy");
-      }
-      setIsApplyingDiscount(false);
-    }, 800);
-  }, [discountCode]);
+    alert("Kody rabatowe będą dostępne wkrótce");
+  }, []);
 
   // Memoized derived values
   const hasCartItems = cartItems.length > 0;

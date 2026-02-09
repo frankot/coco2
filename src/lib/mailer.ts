@@ -1,9 +1,5 @@
 async function createTransporter() {
-  // Avoid static require so bundler doesn't fail when nodemailer isn't installed.
-  // Use eval to call require at runtime.
-  // eslint-disable-next-line no-eval
-  const req: any = eval("require");
-  const nodemailer = req("nodemailer");
+  const nodemailer = await import("nodemailer");
 
   const host = process.env.SMTP_HOST;
   const port = process.env.SMTP_PORT ? Number(process.env.SMTP_PORT) : undefined;
@@ -19,7 +15,7 @@ async function createTransporter() {
     auth: { user, pass },
   };
 
-  return nodemailer.createTransport(options);
+  return nodemailer.default.createTransport(options);
 }
 
 export async function sendMail({

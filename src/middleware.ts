@@ -8,6 +8,7 @@ export default withAuth(
     const isAuth = !!token;
     const isAdmin = token?.role === "ADMIN";
     const isAdminPanel = request.nextUrl.pathname.startsWith("/admin");
+    const isAdminApi = request.nextUrl.pathname.startsWith("/api/admin");
     const isAdminLogin = request.nextUrl.pathname === "/admin/login";
 
     // Allow access to admin login page
@@ -17,6 +18,11 @@ export default withAuth(
         return NextResponse.redirect(new URL("/admin", request.url));
       }
       return NextResponse.next();
+    }
+
+    // Block unauthenticated or non-admin access to admin API routes
+    if (isAdminApi && (!isAuth || !isAdmin)) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Redirect unauthenticated users trying to access admin panel to admin login
@@ -51,6 +57,8 @@ export const config = {
   matcher: [
     // Admin routes (excluding login)
     "/admin/:path*",
+    // Admin API routes (defense-in-depth)
+    "/api/admin/:path*",
     // Auth routes
     "/auth/zaloguj",
     "/auth/rejestracja",

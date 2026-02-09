@@ -40,7 +40,7 @@ const orderFormSchema = z.object({
       id: z.string(),
       name: z.string(),
       priceInCents: z.number(),
-      quantity: z.number().min(1),
+      quantity: z.number().min(1).max(500, "Maksymalna ilość to 500"),
       imagePath: z.string(),
     })
   ),
@@ -53,11 +53,8 @@ type OrderFormData = z.infer<typeof orderFormSchema>;
 
 export async function createOrder(formData: OrderFormData) {
   try {
-    console.log("Received form data:", JSON.stringify(formData, null, 2));
-
     // Validate form data
     const validatedData = orderFormSchema.parse(formData);
-    console.log("Validation passed");
 
     // Get product IDs from cart
     const productIds = validatedData.cartItems.map((item) => item.id);
@@ -71,7 +68,6 @@ export async function createOrder(formData: OrderFormData) {
         isAvailable: true,
       },
     });
-    console.log(`Found ${existingProducts.length} products in database`);
 
     // Build a map of DB products for price lookups
     const productMap = new Map(existingProducts.map((p) => [p.id, p]));
@@ -82,7 +78,6 @@ export async function createOrder(formData: OrderFormData) {
     );
 
     if (missingProducts.length > 0) {
-      console.log("Missing products:", missingProducts);
       return {
         success: false,
         error: `Niektóre produkty nie są dostępne: ${missingProducts.map((p) => p.name).join(", ")}`,
@@ -90,7 +85,6 @@ export async function createOrder(formData: OrderFormData) {
     }
 
     if (existingProducts.length === 0) {
-      console.log("No products found in database");
       return {
         success: false,
         error: "Nie znaleziono żadnych produktów w bazie danych",
@@ -115,31 +109,21 @@ export async function createOrder(formData: OrderFormData) {
     if (!userId) {
       const session = await getServerSession(authOptions);
       userId = session?.user?.id;
-      console.log("Found userId from session:", userId);
     }
 
     // If we still don't have a userId, use createOrUpdateUser function
     if (!userId) {
-      console.log("No userId found, creating or updating user with data:", {
-        email: validatedData.email,
-        firstName: validatedData.firstName,
-        lastName: validatedData.lastName,
-      });
-
       const userResult = await createOrUpdateUser({
         email: validatedData.email,
         firstName: validatedData.firstName,
         lastName: validatedData.lastName,
       });
 
-      console.log("User creation/update result:", userResult);
-
       if (!userResult.success) {
         return { success: false, error: userResult.message };
       }
 
       userId = userResult.userId;
-      console.log("Assigned userId:", userId);
     }
 
     // Verify the user exists before proceeding
@@ -149,13 +133,11 @@ export async function createOrder(formData: OrderFormData) {
     });
 
     if (!userExists) {
-      console.log("User not found in database:", userId);
       return { success: false, error: "Nie znaleziono użytkownika. Zaloguj się lub utwórz konto." };
     }
 
     // Now userId is definitely not undefined - if we got here, userId exists and is valid
     const verifiedUserId = userId as string;
-    console.log("Verified userId:", verifiedUserId);
 
     // Validate phone before entering transaction
     const normalizedPhone = normalizePhonePL(validatedData.phoneNumber);
@@ -311,10 +293,8 @@ export async function createOrder(formData: OrderFormData) {
         // Try to attach logo from public folder if present
         const attachments: any[] = [];
         try {
-          // runtime check: include a cid attachment pointing to /public/logo.png
           const logoPath = process.cwd() + "/public/logo.png";
-          // eslint-disable-next-line no-eval
-          const fs: any = eval("require")("fs");
+          const fs = await import("fs");
           if (fs.existsSync(logoPath)) {
             attachments.push({ filename: "logo.png", path: logoPath, cid: "logo.png" });
           }
