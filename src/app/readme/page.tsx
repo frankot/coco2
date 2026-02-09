@@ -6,8 +6,10 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
+import { getOrigin } from "@/lib/get-origin";
+
 export default function ReadmePage() {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const appUrl = getOrigin();
   const filePath = join(process.cwd(), "ADMIN_PANEL.md");
   let content = readFileSync(filePath, "utf-8");
 

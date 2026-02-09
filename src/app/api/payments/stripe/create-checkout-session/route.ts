@@ -1,14 +1,14 @@
 import { stripe } from "@/lib/stripe";
 import { createRouteHandler, ApiError, readJson } from "@/lib/api";
 import prisma from "@/db";
+import { getOrigin } from "@/lib/get-origin";
 
 export const POST = createRouteHandler(async ({ req }) => {
   const body = await readJson(req);
   const { orderId, items } = body;
   const customerEmail = body.email as string | undefined;
-  const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
-  const origin = process.env.NEXT_PUBLIC_URL || `${protocol}://localhost:3000`;
-  if (!origin) throw new ApiError("No origin header or NEXT_PUBLIC_URL found", 500);
+  const origin = getOrigin();
+  if (!origin) throw new ApiError("No origin found", 500);
 
   // Validate items array
   if (!Array.isArray(items) || items.length === 0) {

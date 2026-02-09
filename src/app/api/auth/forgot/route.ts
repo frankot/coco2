@@ -2,6 +2,7 @@ import { createRouteHandler, readJson, ApiError } from "@/lib/api";
 import prisma from "@/db";
 import mailer from "@/lib/mailer";
 import jwt from "jsonwebtoken";
+import { getOrigin } from "@/lib/get-origin";
 
 type Body = { email: string };
 
@@ -19,8 +20,7 @@ export const POST = createRouteHandler(async ({ req }) => {
   if (!secret) throw new ApiError("Server misconfiguration: missing NEXTAUTH_SECRET", 500);
   const token = jwt.sign({ sub: user.id, email: user.email }, secret, { expiresIn: "1h" });
 
-  const siteUrl =
-    process.env.NEXT_PUBLIC_URL || process.env.NEXTAUTH_URL || "http://localhost:3000";
+  const siteUrl = getOrigin();
   const resetUrl = `${siteUrl.replace(/\/$/, "")}/auth/reset?token=${encodeURIComponent(token)}`;
 
   const html = `<p>Dzień dobry,</p>

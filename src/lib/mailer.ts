@@ -1,3 +1,5 @@
+import { getOrigin } from "./get-origin";
+
 async function createTransporter() {
   const nodemailer = await import("nodemailer");
 
@@ -41,7 +43,8 @@ export async function sendMail({
   const sender =
     from ||
     process.env.FROM_EMAIL ||
-    `no-reply@${process.env.NEXT_PUBLIC_URL?.replace(/^https?:\/\//, "") || "example.com"}`;
+    `no-reply@${getOrigin().replace(/^https?:\/\//, "")}` ||
+    "no-reply@example.com";
   try {
     await transporter.sendMail({ from: sender, to, subject, html, text, attachments });
     console.log("Sent email to", to, "subject=", subject);
