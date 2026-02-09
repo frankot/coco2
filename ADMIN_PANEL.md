@@ -47,13 +47,13 @@ Sekcja **Produkty** (`/admin/produkty`) pozwala zarządzać całym katalogiem pr
 
 Na liście produktów widzisz tabelę zawierającą:
 
-| Kolumna      | Opis                                                            |
-| ------------ | --------------------------------------------------------------- |
-| Dostępność   | Zielona ikona ✅ = produkt aktywny, czerwona ❌ = nieaktywny     |
-| Nazwa        | Nazwa produktu                                                  |
-| Cena         | Cena produktu w PLN                                             |
-| Zamówienia   | Ile razy produkt został zamówiony                                |
-| Akcje        | Menu z opcjami (ikona trzech kropek `⋮`)                        |
+| Kolumna    | Opis                                                         |
+| ---------- | ------------------------------------------------------------ |
+| Dostępność | Zielona ikona ✅ = produkt aktywny, czerwona ❌ = nieaktywny |
+| Nazwa      | Nazwa produktu                                               |
+| Cena       | Cena produktu w PLN                                          |
+| Zamówienia | Ile razy produkt został zamówiony                            |
+| Akcje      | Menu z opcjami (ikona trzech kropek `⋮`)                     |
 
 Możesz **sortować** listę klikając na nagłówki kolumn **Cena** lub **Zamówienia** — kliknięcie zmienia kierunek sortowania (rosnąco / malejąco).
 
@@ -110,14 +110,14 @@ Sekcja **Zamówienia** (`/admin/zamowienia`) pozwala przeglądać i zarządzać 
 
 Tabela zamówień zawiera:
 
-| Kolumna         | Opis                                                    |
-| --------------- | ------------------------------------------------------- |
-| Klient          | Adres email klienta oraz typ konta (Detal / Hurt)       |
-| Status          | Aktualny status zamówienia (kolorowa etykieta)          |
-| Data zamówienia | Data i godzina złożenia zamówienia                      |
-| Produkty        | Liczba pozycji w zamówieniu                             |
-| Kwota (PLN)     | Łączna kwota zamówienia                                 |
-| Akcje           | Menu z opcjami                                          |
+| Kolumna         | Opis                                              |
+| --------------- | ------------------------------------------------- |
+| Klient          | Adres email klienta oraz typ konta (Detal / Hurt) |
+| Status          | Aktualny status zamówienia (kolorowa etykieta)    |
+| Data zamówienia | Data i godzina złożenia zamówienia                |
+| Produkty        | Liczba pozycji w zamówieniu                       |
+| Kwota (PLN)     | Łączna kwota zamówienia                           |
+| Akcje           | Menu z opcjami                                    |
 
 Możesz **sortować** listę klikając na nagłówki kolumn: **Status**, **Data zamówienia**, **Produkty**, **Kwota**.
 
@@ -125,14 +125,14 @@ Możesz **sortować** listę klikając na nagłówki kolumn: **Status**, **Data 
 
 Każde zamówienie przechodzi przez następujące statusy:
 
-| Status          | Znaczenie                                              |
-| --------------- | ------------------------------------------------------ |
-| **Oczekujące**  | Zamówienie złożone, oczekuje na opłatę                 |
-| **Opłacone**    | Płatność otrzymana                                     |
-| **W realizacji**| Zamówienie jest pakowane / przygotowywane              |
-| **Wysłane**     | Paczka została wysłana do klienta                      |
-| **Dostarczone** | Paczka dotarła do klienta                              |
-| **Anulowane**   | Zamówienie zostało anulowane                           |
+| Status           | Znaczenie                                 |
+| ---------------- | ----------------------------------------- |
+| **Oczekujące**   | Zamówienie złożone, oczekuje na opłatę    |
+| **Opłacone**     | Płatność otrzymana                        |
+| **W realizacji** | Zamówienie jest pakowane / przygotowywane |
+| **Wysłane**      | Paczka została wysłana do klienta         |
+| **Dostarczone**  | Paczka dotarła do klienta                 |
+| **Anulowane**    | Zamówienie zostało anulowane              |
 
 ### 4.3. Zmiana statusu zamówienia
 
@@ -196,6 +196,7 @@ Apaczka to system zarządzania wysyłkami. Panel oferuje kilka sposobów interak
 Przycisk **„Synchronizuj statusy Apaczka"** (u góry strony zamówień) pobiera aktualne statusy przesyłek z systemu Apaczka i aktualizuje je w panelu.
 
 Użyj tej opcji, aby:
+
 - Sprawdzić, czy paczki zostały odebrane przez kuriera.
 - Zaktualizować statusy śledzenia dla wszystkich zamówień naraz.
 
@@ -211,14 +212,14 @@ Sekcja **Klienci** (`/admin/klienci`) pozwala zarządzać kontami użytkowników
 
 Tabela klientów zawiera:
 
-| Kolumna          | Opis                                              |
-| ---------------- | ------------------------------------------------- |
-| Email            | Adres email klienta                               |
-| Typ konta        | Detal, Hurt lub Admin (kolorowa etykieta)         |
-| Data rejestracji | Kiedy klient się zarejestrował                    |
-| Zamówienia       | Liczba zamówień złożonych przez klienta            |
-| Wydane (PLN)     | Łączna kwota wydana przez klienta                 |
-| Akcje            | Menu z opcjami                                    |
+| Kolumna          | Opis                                      |
+| ---------------- | ----------------------------------------- |
+| Email            | Adres email klienta                       |
+| Typ konta        | Detal, Hurt lub Admin (kolorowa etykieta) |
+| Data rejestracji | Kiedy klient się zarejestrował            |
+| Zamówienia       | Liczba zamówień złożonych przez klienta   |
+| Wydane (PLN)     | Łączna kwota wydana przez klienta         |
+| Akcje            | Menu z opcjami                            |
 
 Możesz **sortować** listę klikając na nagłówki: **Typ konta**, **Data rejestracji**, **Zamówienia**, **Wydane (PLN)**.
 
@@ -226,11 +227,11 @@ Możesz **sortować** listę klikając na nagłówki: **Typ konta**, **Data reje
 
 W systemie istnieją trzy typy kont:
 
-| Typ konta  | Opis                                                        |
-| ---------- | ----------------------------------------------------------- |
-| **Detal**  | Zwykły klient detaliczny                                    |
-| **Hurt**   | Klient hurtowy (może mieć inne ceny lub warunki)            |
-| **Admin**  | Administrator z dostępem do panelu administracyjnego         |
+| Typ konta | Opis                                                 |
+| --------- | ---------------------------------------------------- |
+| **Detal** | Zwykły klient detaliczny                             |
+| **Hurt**  | Klient hurtowy (może mieć inne ceny lub warunki)     |
+| **Admin** | Administrator z dostępem do panelu administracyjnego |
 
 ### 5.3. Dodawanie nowego klienta
 
@@ -282,12 +283,12 @@ Sekcja **Blog** (`/admin/blog`) służy do zarządzania wpisami blogowymi wyświ
 
 Tabela wpisów zawiera:
 
-| Kolumna   | Opis                                |
-| --------- | ----------------------------------- |
-| Nagłówek  | Tytuł wpisu                        |
-| Slug      | Adres URL wpisu (generowany automatycznie z tytułu) |
-| Data      | Data utworzenia wpisu               |
-| Akcje     | Menu z opcjami                      |
+| Kolumna  | Opis                                                |
+| -------- | --------------------------------------------------- |
+| Nagłówek | Tytuł wpisu                                         |
+| Slug     | Adres URL wpisu (generowany automatycznie z tytułu) |
+| Data     | Data utworzenia wpisu                               |
+| Akcje    | Menu z opcjami                                      |
 
 ### 6.2. Dodawanie nowego wpisu
 
@@ -345,12 +346,12 @@ Sekcja **Czyszczenie bazy danych** (`/admin/clean-db`) dostępna jest z poziomu 
 
 Na górze strony znajduje się pasek nawigacji z zakładkami:
 
-| Zakładka     | Opis                          |
-| ------------ | ----------------------------- |
-| **Dashboard**| Strona główna z podsumowaniem |
-| **Produkty** | Zarządzanie produktami        |
-| **Zamówienia** | Zarządzanie zamówieniami    |
-| **Klienci**  | Zarządzanie klientami         |
-| **Blog**     | Zarządzanie wpisami bloga     |
+| Zakładka       | Opis                          |
+| -------------- | ----------------------------- |
+| **Dashboard**  | Strona główna z podsumowaniem |
+| **Produkty**   | Zarządzanie produktami        |
+| **Zamówienia** | Zarządzanie zamówieniami      |
+| **Klienci**    | Zarządzanie klientami         |
+| **Blog**       | Zarządzanie wpisami bloga     |
 
 Aktualnie wybrana zakładka jest podświetlona. W prawym rogu paska znajduje się przycisk **Wyloguj się**.

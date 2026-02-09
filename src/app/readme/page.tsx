@@ -15,7 +15,7 @@ export default function ReadmePage() {
   content = content.replace(/`(\/admin\/[^`]+)`/g, (match, url) => {
     return `[${url}](${appUrl}${url})`;
   });
-  
+
   content = content.replace(/`(\/readme)`/g, (match, url) => {
     return `[${url}](${appUrl}${url})`;
   });
@@ -23,19 +23,22 @@ export default function ReadmePage() {
   // Remove backticks from UI elements that shouldn't look like code
   // Remove from menu icon (three dots)
   content = content.replace(/`⋮`/g, "⋮");
-  
+
   // Remove from button/menu item references (but keep the text intact)
   content = content.replace(/`„([^"]+)"`/g, '„$1"');
   content = content.replace(/`"([^"]+)"`/g, '"$1"');
-  
+
   // Remove from common UI references like "DETAL", "HURT", "ADMIN" when in backticks
   content = content.replace(/`(DETAL|HURT|ADMIN)`/g, "$1");
-  
-  // Remove from status names when in backticks 
+
+  // Remove from status names when in backticks
   content = content.replace(/`(PENDING|PAID|PROCESSING|SHIPPED|DELIVERED|CANCELLED)`/g, "$1");
-  
+
   // Remove from simple field/column names that aren't paths
-  content = content.replace(/`(Dostępność|Nazwa|Cena|Zamówienia|Akcje|Email|Status|Data|Klient|Produkty|Kwota|Obraz|Treść|Tytuł|Slug|Nagłówek)`/g, "$1");
+  content = content.replace(
+    /`(Dostępność|Nazwa|Cena|Zamówienia|Akcje|Email|Status|Data|Klient|Produkty|Kwota|Obraz|Treść|Tytuł|Slug|Nagłówek)`/g,
+    "$1"
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
@@ -62,7 +65,10 @@ export default function ReadmePage() {
                 <h1 {...props} className="text-3xl font-bold text-slate-900 mt-8 mb-4 first:mt-0" />
               ),
               h2: ({ node, ...props }) => (
-                <h2 {...props} className="text-2xl font-bold text-slate-800 mt-8 mb-4 border-b border-slate-200 pb-2" />
+                <h2
+                  {...props}
+                  className="text-2xl font-bold text-slate-800 mt-8 mb-4 border-b border-slate-200 pb-2"
+                />
               ),
               h3: ({ node, ...props }) => (
                 <h3 {...props} className="text-xl font-semibold text-slate-700 mt-6 mb-3" />
@@ -79,9 +85,7 @@ export default function ReadmePage() {
               ol: ({ node, ...props }) => (
                 <ol {...props} className="list-decimal list-inside space-y-2 my-4 text-slate-600" />
               ),
-              li: ({ node, ...props }) => (
-                <li {...props} className="ml-2" />
-              ),
+              li: ({ node, ...props }) => <li {...props} className="ml-2" />,
               table: ({ node, ...props }) => (
                 <div className="overflow-x-auto my-4 rounded-lg border border-slate-200">
                   <table {...props} className="w-full text-sm border-collapse" />
@@ -97,10 +101,16 @@ export default function ReadmePage() {
                 />
               ),
               tr: ({ node, ...props }) => (
-                <tr {...props} className="border-b border-slate-200 hover:bg-slate-50 last:border-b-0" />
+                <tr
+                  {...props}
+                  className="border-b border-slate-200 hover:bg-slate-50 last:border-b-0"
+                />
               ),
               td: ({ node, ...props }) => (
-                <td {...props} className="px-4 py-2 text-slate-600 border-r border-slate-200 last:border-r-0" />
+                <td
+                  {...props}
+                  className="px-4 py-2 text-slate-600 border-r border-slate-200 last:border-r-0"
+                />
               ),
               blockquote: ({ node, ...props }) => (
                 <blockquote
@@ -127,7 +137,10 @@ export default function ReadmePage() {
                 />
               ),
               img: ({ node, ...props }) => (
-                <img {...props} className="max-w-full h-auto rounded-lg border border-slate-200 my-4" />
+                <img
+                  {...props}
+                  className="max-w-full h-auto rounded-lg border border-slate-200 my-4"
+                />
               ),
               hr: ({ node, ...props }) => <hr {...props} className="my-8 border-slate-200" />,
               strong: ({ node, ...props }) => (
