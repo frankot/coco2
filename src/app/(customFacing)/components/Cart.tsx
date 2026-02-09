@@ -12,7 +12,7 @@ import { toast } from "sonner";
 
 
 // Import Product type from Prisma
-import type { Product as PrismaProduct } from "@/app/generated/prisma";
+import type { Product as PrismaProduct } from "@/app/generated/prisma/client";
 
 // Define types for cart
 export type Product = PrismaProduct;

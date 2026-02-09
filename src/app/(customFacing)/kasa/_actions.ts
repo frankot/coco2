@@ -158,13 +158,10 @@ export async function createOrder(formData: OrderFormData) {
           validatedData.apaczkaPointId
         );
         if (correctServiceId) {
-          console.log(
-            `Resolved D2P service for ${validatedData.apaczkaPointSupplier} point ${validatedData.apaczkaPointId}: ${finalServiceId} -> ${correctServiceId}`
-          );
           finalServiceId = String(correctServiceId);
         }
       } catch (e) {
-        console.warn("Failed to resolve D2P service_id during order creation:", e);
+        // D2P resolution is best-effort; order can proceed with original service ID
       }
     }
 
@@ -243,14 +240,12 @@ export async function createOrder(formData: OrderFormData) {
       });
 
       orderId = result.id;
-      console.log("Created order (atomic):", orderId);
     } catch (error) {
       console.error("Failed to create order:", error);
       return { success: false, error: "Nie udało się utworzyć zamówienia" };
     }
 
     revalidatePath("/");
-    console.log("Order process completed successfully");
 
     // Send order confirmation email if SMTP configured
     try {

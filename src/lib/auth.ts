@@ -58,7 +58,6 @@ export const authOptions: NextAuthOptions = {
         try {
           // Check if credentials exist
           if (!credentials?.email || !credentials?.password) {
-            console.log("Missing user credentials");
             return null;
           }
 
@@ -76,11 +75,9 @@ export const authOptions: NextAuthOptions = {
           const user = await findUserByEmail(credentials.email);
 
           if (!user) {
-            console.log("User not found after verification");
             return null;
           }
 
-          console.log("User login successful");
           return {
             id: user.id,
             email: user.email,
