@@ -73,9 +73,7 @@ export async function createOrder(formData: OrderFormData) {
     const productMap = new Map(existingProducts.map((p) => [p.id, p]));
 
     // Verify all cart items have corresponding products
-    const missingProducts = validatedData.cartItems.filter(
-      (item) => !productMap.has(item.id)
-    );
+    const missingProducts = validatedData.cartItems.filter((item) => !productMap.has(item.id));
 
     if (missingProducts.length > 0) {
       return {

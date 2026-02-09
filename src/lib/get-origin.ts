@@ -1,23 +1,25 @@
 /**
  * Get the origin URL for the application.
- * Handles Vercel deployment, environment variables, and fallbacks.
+ * Explicit env vars (NEXT_PUBLIC_APP_URL / NEXT_PUBLIC_URL) take priority
+ * over Vercel's auto-set VERCEL_URL, which points to a per-deployment URL.
  */
 export function getOrigin(): string {
-  // Vercel automatically sets VERCEL_URL in production deployments
+  if (process.env.NEXT_PUBLIC_APP_URL) {
+    return process.env.NEXT_PUBLIC_APP_URL.replace(/\/$/, "");
+  }
+
+  if (process.env.NEXT_PUBLIC_URL) {
+    return process.env.NEXT_PUBLIC_URL.replace(/\/$/, "");
+  }
+
+  if (process.env.NEXTAUTH_URL) {
+    return process.env.NEXTAUTH_URL.replace(/\/$/, "");
+  }
+
+  // Vercel's auto-set URL (per-deployment, not the main domain)
   if (process.env.VERCEL_URL) {
     return `https://${process.env.VERCEL_URL}`;
   }
 
-  // Use explicitly set NEXT_PUBLIC_URL
-  if (process.env.NEXT_PUBLIC_URL) {
-    return process.env.NEXT_PUBLIC_URL;
-  }
-
-  // Fallback to NEXTAUTH_URL
-  if (process.env.NEXTAUTH_URL) {
-    return process.env.NEXTAUTH_URL;
-  }
-
-  // Local development fallback
   return "http://localhost:3000";
 }
