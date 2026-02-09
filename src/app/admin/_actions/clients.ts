@@ -4,6 +4,7 @@ import prisma from "@/db";
 import { z } from "zod";
 import { redirect } from "next/navigation";
 import bcrypt from "bcrypt";
+import { requireAdmin } from "@/lib/require-admin";
 
 // Define error type
 type FormState = {
@@ -66,6 +67,8 @@ const validatePasswords = (data: any): FormState | null => {
 
 export async function addClient(prevState: FormState, formData: FormData): Promise<FormState> {
   try {
+    await requireAdmin();
+
     const entries = Object.fromEntries(formData);
 
     // Validation
@@ -129,6 +132,8 @@ export async function updateClient(
   formData: FormData
 ): Promise<FormState> {
   try {
+    await requireAdmin();
+
     const entries = Object.fromEntries(formData);
 
     // Validation
@@ -214,6 +219,8 @@ export async function updateClientType(
   accountType: "ADMIN" | "DETAL" | "HURT"
 ): Promise<{ success: boolean; message: string }> {
   try {
+    await requireAdmin();
+
     // Validate
     const result = updateSchema.safeParse({ accountType });
     if (!result.success) {
@@ -237,6 +244,8 @@ export async function deleteClient(
   clientId: string
 ): Promise<{ success: boolean; message: string }> {
   try {
+    await requireAdmin();
+
     // Check if client has orders
     const client = await prisma.user.findUnique({
       where: { id: clientId },

@@ -4,6 +4,7 @@ import { NextAuthOptions } from "next-auth";
 import { PrismaClient } from "@/app/generated/prisma";
 import { verifyUserCredentials } from "@/lib/auth-utils";
 import { findUserByEmail } from "@/lib/auth-server";
+import { compare } from "bcrypt";
 
 const prisma = new PrismaClient();
 
@@ -20,20 +21,20 @@ export const authOptions: NextAuthOptions = {
         try {
           // Check if credentials exist
           if (!credentials?.username || !credentials?.password) {
-            console.log("Missing credentials");
             return null;
           }
 
-          console.log("Verifying admin credentials for:", credentials.username);
-          console.log("Expected username:", process.env.ADMIN_USERNAME);
-          console.log("Expected password:", process.env.ADMIN_PASSWORD ? "***" : "NOT SET");
-
-          // Check if credentials match the admin credentials in .env
+          // Verify admin credentials using env vars
+          // ADMIN_PASSWORD should be stored as a bcrypt hash in the env var
           const isValidUsername = credentials.username === process.env.ADMIN_USERNAME;
-          const isValidPassword = credentials.password === process.env.ADMIN_PASSWORD;
+          const adminPasswordHash = process.env.ADMIN_PASSWORD;
+          if (!isValidUsername || !adminPasswordHash) {
+            return null;
+          }
+
+          const isValidPassword = await compare(credentials.password, adminPasswordHash);
 
           if (isValidUsername && isValidPassword) {
-            console.log("Admin login successful");
             return {
               id: "admin",
               name: "Admin",
@@ -42,7 +43,6 @@ export const authOptions: NextAuthOptions = {
             };
           }
 
-          console.log("Invalid admin credentials");
           return null;
         } catch (error) {
           console.error("Auth error:", error);
@@ -72,7 +72,6 @@ export const authOptions: NextAuthOptions = {
           });
 
           if (!result.success) {
-            console.log(result.message);
             return null;
           }
 
@@ -108,7 +107,6 @@ export const authOptions: NextAuthOptions = {
     jwt: async ({ token, user }) => {
       // Add the user's role to the token
       if (user) {
-        console.log("Setting JWT with user role:", user.role);
         token.role = user.role;
         token.id = user.id;
         token.accountType = user.accountType;
@@ -118,7 +116,6 @@ export const authOptions: NextAuthOptions = {
     session: async ({ session, token }) => {
       // Add the user's role to the session
       if (token && session.user) {
-        console.log("Setting session with role:", token.role);
         session.user.role = token.role;
         session.user.id = token.id;
         session.user.accountType = token.accountType;
@@ -130,5 +127,5 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
-  secret: process.env.NEXTAUTH_SECRET || "development-secret-do-not-use-in-production",
+  secret: process.env.NEXTAUTH_SECRET,
 };

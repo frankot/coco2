@@ -1,8 +1,10 @@
 "use server";
 
 import { PrismaClient } from "@/app/generated/prisma";
+import { requireAdmin } from "@/lib/require-admin";
 
 export async function getDashboardData() {
+  await requireAdmin();
   const prisma = new PrismaClient();
 
   try {

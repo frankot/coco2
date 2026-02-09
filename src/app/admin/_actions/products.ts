@@ -4,6 +4,7 @@ import prisma from "@/db";
 import { z } from "zod";
 import { redirect } from "next/navigation";
 import { uploadImage, deleteImage } from "@/lib/cloudinary";
+import { requireAdmin } from "@/lib/require-admin";
 
 const fileSchema = z
   .instanceof(File, {
@@ -43,6 +44,8 @@ type FormState = {
 
 export async function addProduct(prevState: FormState, formData: FormData): Promise<FormState> {
   try {
+    await requireAdmin();
+
     // Extract and validate basic data
     const name = formData.get("name") as string;
     const priceInCents = parseInt(formData.get("priceInCents") as string);
@@ -153,6 +156,8 @@ export async function updateProduct(
   formData: FormData
 ): Promise<FormState> {
   try {
+    await requireAdmin();
+
     // Extract data from FormData
     const name = formData.get("name") as string;
     const priceInCents = parseInt(formData.get("priceInCents") as string);
@@ -294,6 +299,8 @@ export async function deleteProduct(
   productId: string
 ): Promise<{ success: boolean; message: string }> {
   try {
+    await requireAdmin();
+
     // First get the product to find the image public IDs
     const product = await prisma.product.findUnique({
       where: { id: productId },
@@ -329,6 +336,7 @@ export async function deleteProduct(
 }
 
 export async function toggleProductAvailability(productId: string, isAvailable: boolean) {
+  await requireAdmin();
   await prisma.product.update({
     where: { id: productId },
     data: { isAvailable },

@@ -2,12 +2,15 @@
 
 import prisma from "@/db";
 import { deleteImage } from "@/lib/cloudinary";
+import { requireAdmin } from "@/lib/require-admin";
 
 /**
  * Deletes all products from the database and their associated images from Cloudinary
  */
 export async function deleteAllProducts() {
   try {
+    await requireAdmin();
+
     // First, get all products to find their Cloudinary IDs
     const products = await prisma.product.findMany({
       select: {
@@ -80,6 +83,8 @@ export async function deleteAllProducts() {
  */
 export async function deleteAllOrders() {
   try {
+    await requireAdmin();
+
     // First delete all payments (they reference orders)
     await prisma.payment.deleteMany();
 

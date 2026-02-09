@@ -2,6 +2,7 @@
 
 import prisma from "@/db";
 import { uploadImage, deleteImage } from "@/lib/cloudinary";
+import { requireAdmin } from "@/lib/require-admin";
 
 export async function listBlogPosts() {
   return prisma.blogPost.findMany({ orderBy: { createdAt: "desc" } });
@@ -13,6 +14,8 @@ export async function getBlogPost(id: string) {
 
 export async function addBlogPost(prevState: any, formData: FormData) {
   try {
+    await requireAdmin();
+
     const title = formData.get("title") as string;
     const content = formData.get("content") as string;
     const image = formData.get("image") as File;
@@ -72,6 +75,8 @@ export async function addBlogPost(prevState: any, formData: FormData) {
 
 export async function updateBlogPost(postId: string, prevState: any, formData: FormData) {
   try {
+    await requireAdmin();
+
     const title = formData.get("title") as string;
     const content = formData.get("content") as string;
     const image = formData.get("image") as File;
@@ -147,6 +152,8 @@ export async function updateBlogPost(postId: string, prevState: any, formData: F
 
 export async function deleteBlogPost(postId: string) {
   try {
+    await requireAdmin();
+
     const post = await prisma.blogPost.findUnique({ where: { id: postId } });
     if (!post) return { success: false, message: "Wpis nie został znaleziony" };
 
