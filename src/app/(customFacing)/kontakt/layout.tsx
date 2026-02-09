@@ -17,8 +17,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary",
     title: "Kontakt | Dr.Coco",
-    description:
-      "Skontaktuj się z Dr.Coco®. Telefon: 798 865 865, Email: kontakt@drcoco.pl.",
+    description: "Skontaktuj się z Dr.Coco®. Telefon: 798 865 865, Email: kontakt@drcoco.pl.",
   },
 };
 

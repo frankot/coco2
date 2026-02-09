@@ -57,12 +57,11 @@ export default function Home() {
         <About />
 
         <FeaturedArticles />
-        <Faq/>
+        <Faq />
 
         <Features />
 
         <Newsletter />
-
       </main>
     </div>
   );

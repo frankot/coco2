@@ -13,16 +13,14 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Blog | Dr.Coco",
-    description:
-      "Artykuły o zdrowym życiu, wodzie kokosowej i naturalnych produktach Dr.Coco®.",
+    description: "Artykuły o zdrowym życiu, wodzie kokosowej i naturalnych produktach Dr.Coco®.",
     url: "https://drcoco.pl/blog",
     type: "website",
   },
   twitter: {
     card: "summary",
     title: "Blog | Dr.Coco",
-    description:
-      "Artykuły o zdrowym życiu, wodzie kokosowej i naturalnych produktach Dr.Coco®.",
+    description: "Artykuły o zdrowym życiu, wodzie kokosowej i naturalnych produktach Dr.Coco®.",
   },
 };
 
