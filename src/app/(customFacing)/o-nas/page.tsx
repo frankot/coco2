@@ -3,9 +3,34 @@ import { Users, Target, Heart, TrendingUp } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Dr.Coco | O nas",
+  title: "O nas",
   description:
-    "Poznaj historię Dr.Coco i ludzi, którzy tworzą najlepszą wodę kokosową w Polsce. Nasza misja to dostarczanie naturalnych produktów najwyższej jakości.",
+    "Poznaj historię Dr.Coco® i ludzi, którzy tworzą najlepszą naturalną wodę kokosową w Polsce. Nasza misja to dostarczanie zdrowych produktów najwyższej jakości prosto z Wietnamu.",
+  alternates: {
+    canonical: "https://drcoco.pl/o-nas",
+  },
+  openGraph: {
+    title: "O nas | Dr.Coco",
+    description:
+      "Poznaj historię Dr.Coco® - producenta najlepszej naturalnej wody kokosowej w Polsce.",
+    url: "https://drcoco.pl/o-nas",
+    type: "website",
+    images: [
+      {
+        url: "/og-image.webp",
+        width: 1200,
+        height: 630,
+        alt: "Zespół Dr.Coco",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "O nas | Dr.Coco",
+    description:
+      "Poznaj historię Dr.Coco® - producenta najlepszej naturalnej wody kokosowej w Polsce.",
+    images: ["/og-image.webp"],
+  },
 };
 
 export default function AboutUsPage() {

@@ -2,6 +2,12 @@ import { Nav, NavLink } from "@/app/admin/NavAdmin";
 import { LogOut } from "./_components/LogOut";
 import Image from "next/image";
 import { RefreshProvider } from "@/providers/RefreshProvider";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Panel administracyjny",
+  robots: { index: false, follow: false },
+};
 
 export const dynamic = "force-dynamic";
 

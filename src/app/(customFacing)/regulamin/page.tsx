@@ -1,4 +1,21 @@
 import { Card } from "@/components/ui/card";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Regulamin sklepu",
+  description:
+    "Regulamin sklepu internetowego Dr.Coco® (drcoco.pl). Zasady zakupów, dostawy, zwrotów i reklamacji. New Age Food Sp. z o.o.",
+  alternates: {
+    canonical: "https://drcoco.pl/regulamin",
+  },
+  openGraph: {
+    title: "Regulamin sklepu | Dr.Coco",
+    description:
+      "Regulamin sklepu internetowego drcoco.pl - zasady zakupów, dostawy, zwrotów i reklamacji.",
+    url: "https://drcoco.pl/regulamin",
+    type: "website",
+  },
+};
 
 export default function RegulaminPage() {
   return (

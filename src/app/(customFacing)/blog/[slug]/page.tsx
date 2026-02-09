@@ -32,8 +32,38 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const description = plainText.slice(0, 160) + (plainText.length > 160 ? "..." : "");
 
   return {
-    title: `Dr.Coco | ${post.title}`,
+    title: post.title,
     description,
+    alternates: {
+      canonical: `https://drcoco.pl/blog/${slug}`,
+    },
+    openGraph: {
+      title: `${post.title} | Dr.Coco Blog`,
+      description,
+      url: `https://drcoco.pl/blog/${slug}`,
+      type: "article",
+      publishedTime: post.createdAt.toISOString(),
+      modifiedTime: post.updatedAt.toISOString(),
+      authors: ["Dr.Coco"],
+      ...(post.imagePath
+        ? {
+            images: [
+              {
+                url: post.imagePath,
+                width: 1200,
+                height: 630,
+                alt: post.title,
+              },
+            ],
+          }
+        : {}),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${post.title} | Dr.Coco Blog`,
+      description,
+      ...(post.imagePath ? { images: [post.imagePath] } : {}),
+    },
   };
 }
 

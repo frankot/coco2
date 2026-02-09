@@ -5,9 +5,25 @@ import { ArrowLeft } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Dr.Coco | Blog",
+  title: "Blog",
   description:
-    "Czytaj najnowsze artykuły o zdrowym życiu, wodzie kokosowej i naszych produktach. Porady, przepisy i inspiracje od Dr.Coco.",
+    "Czytaj najnowsze artykuły o zdrowym życiu, wodzie kokosowej i produktach Dr.Coco®. Porady zdrowotne, przepisy i inspiracje.",
+  alternates: {
+    canonical: "https://drcoco.pl/blog",
+  },
+  openGraph: {
+    title: "Blog | Dr.Coco",
+    description:
+      "Artykuły o zdrowym życiu, wodzie kokosowej i naturalnych produktach Dr.Coco®.",
+    url: "https://drcoco.pl/blog",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Blog | Dr.Coco",
+    description:
+      "Artykuły o zdrowym życiu, wodzie kokosowej i naturalnych produktach Dr.Coco®.",
+  },
 };
 
 export const revalidate = 60;
