@@ -18,4 +18,4 @@ export async function getDashboardData() {
   } finally {
     await prisma.$disconnect();
   }
-} 
+}
