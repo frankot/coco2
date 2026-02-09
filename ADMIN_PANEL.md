@@ -8,7 +8,6 @@
 4. [Zamówienia](#4-zamówienia)
 5. [Klienci](#5-klienci)
 6. [Blog (CMS)](#6-blog-cms)
-7. [Czyszczenie bazy danych](#7-czyszczenie-bazy-danych)
 
 ---
 
@@ -318,29 +317,7 @@ Tabela wpisów zawiera:
 
 ---
 
-## 7. Czyszczenie bazy danych
 
-Sekcja **Czyszczenie bazy danych** (`/admin/clean-db`) dostępna jest z poziomu strony produktów (przycisk „Usuń wszystkie produkty" na dole) lub zamówień (przycisk „Usuń wszystkie zamówienia" na dole).
-
-> ⚠️ **UWAGA: To jest strefa niebezpieczna. Operacje są nieodwracalne!**
-
-### 7.1. Usuwanie wszystkich produktów
-
-1. Kliknij **„Usuń wszystkie produkty"**.
-2. Potwierdź operację w oknie dialogowym.
-3. System usunie:
-   - Wszystkie produkty z bazy danych.
-   - Wszystkie powiązane zdjęcia z serwera obrazów (Cloudinary).
-4. Zobaczysz podsumowanie: ile produktów usunięto, ile obrazów usunięto.
-
-### 7.2. Usuwanie wszystkich zamówień
-
-1. Kliknij **„Usuń wszystkie zamówienia"**.
-2. Potwierdź operację w oknie dialogowym.
-3. System usunie wszystkie zamówienia, powiązane płatności i pozycje zamówień.
-4. Zobaczysz podsumowanie z liczbą usuniętych zamówień.
-
----
 
 ## Nawigacja panelu
 
