@@ -45,7 +45,7 @@ export default function ReadmePage() {
       {/* Header with back button */}
       <div className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200 shadow-sm">
         <div className="max-w-5xl mx-auto px-4 py-3 sm:px-6 lg:px-8 flex items-center justify-between">
-          <h1 className="text-xl font-bold text-slate-900">Panel Administracyjny</h1>
+          <h1 className="text-xl font-bold text-slate-900">MANUAL</h1>
           <Button variant="outline" size="sm" asChild>
             <Link href="/">
               <ArrowLeft className="h-4 w-4 mr-2" />

@@ -62,7 +62,7 @@ Możesz **sortować** listę klikając na nagłówki kolumn **Cena** lub **Zamó
 1. Kliknij przycisk **„Dodaj produkt"** w prawym górnym rogu.
 2. Wypełnij formularz:
    - **Nazwa** — nazwa produktu (wymagane).
-   - **Cena (PLN)** — cena produktu w złotych (np. `12,99`). Pod polem widoczny jest podgląd sformatowanej ceny.
+   - **Cena (PLN)** — cena produktu w złotych (np. 12,99). Pod polem widoczny jest podgląd sformatowanej ceny.
    - **Opis (krótki)** — krótki opis widoczny na liście produktów w sklepie (wymagane).
    - **Pełna zawartość (Markdown)** — szczegółowy opis produktu z formatowaniem. Możesz używać nagłówków, list, pogrubień itp. Edytor wyświetla podgląd w czasie rzeczywistym.
    - **Skład i Wartość Odżywcza** — opcjonalne sekcje:
@@ -79,7 +79,7 @@ Możesz **sortować** listę klikając na nagłówki kolumn **Cena** lub **Zamó
 2. Wybierz **„Edytuj"**.
 3. Formularz edycji jest identyczny jak do dodawania. Zmień potrzebne pola.
 4. W sekcji zdjęć możesz:
-   - **Usunąć istniejące zdjęcie** — najedź na zdjęcie i kliknij przycisk `✕`.
+   - **Usunąć istniejące zdjęcie** — najedź na zdjęcie i kliknij przycisk ❌.
    - **Dodać nowe zdjęcia** — kliknij „Dodaj zdjęcia" i wybierz pliki.
    - Produkt musi mieć **co najmniej jedno zdjęcie**.
 5. Kliknij **„Aktualizuj produkt"**, aby zapisać zmiany.
@@ -299,7 +299,7 @@ Tabela wpisów zawiera:
    - **Obraz wpisu** — opcjonalny. Kliknij pole „Dodaj obraz", aby przesłać zdjęcie, które będzie wyświetlane jako grafika wpisu.
 3. Kliknij **„Dodaj wpis"**, aby opublikować.
 
-> **Slug** (adres URL wpisu) jest generowany automatycznie na podstawie tytułu. Jeśli istnieje już wpis z takim samym slugem, system automatycznie doda numer (np. `moj-wpis-2`).
+> **Slug** (adres URL wpisu) jest generowany automatycznie na podstawie tytułu. Jeśli istnieje już wpis z takim samym slugem, system automatycznie doda numer (np. 'moj-wpis-2').
 
 ### 6.3. Edycja wpisu
 
