@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Galindo, Outfit } from "next/font/google";
+import { Geist, Outfit } from "next/font/google";
 import "./globals.css";
 import { SessionProvider } from "@/components/SessionProvider";
 import { Toaster } from "@/components/ui/sonner";
@@ -9,12 +9,6 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
-const galindo = Galindo({
-  weight: "400",
-  variable: "--font-galindo",
-  subsets: ["latin"],
-  display: "swap",
-});
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -103,11 +97,10 @@ export default function RootLayout({
     <html lang="pl">
       <head>
         {/* Preload critical images */}
-        <link rel="preload" href="/palmy-prawa.png" as="image" />
         <link rel="preload" href="/logo.png" as="image" />
       </head>
       <body
-        className={`${geistSans.variable} ${galindo.variable} ${outfit.variable} font-outfit min-h-screen antialiased bg-white scroll-smooth`}
+        className={`${geistSans.variable}  ${outfit.variable} font-outfit min-h-screen antialiased bg-white scroll-smooth`}
       >
         <SessionProvider>{children}</SessionProvider>
         <Toaster
