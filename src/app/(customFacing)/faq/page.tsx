@@ -5,7 +5,9 @@ export const metadata: Metadata = {
   title: "FAQ - Dr.Coco",
   description:
     "Najczęściej zadawane pytania o wodzie kokosowej Dr.Coco. Dowiedz się wszystkiego o naszym naturalnym napoju.",
-  canonical: "https://drcoco.pl/faq",
+  alternates: {
+    canonical: "https://drcoco.pl/faq",
+  },
   openGraph: {
     title: "FAQ - Dr.Coco",
     description:
