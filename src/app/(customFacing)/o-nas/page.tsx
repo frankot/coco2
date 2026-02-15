@@ -34,25 +34,7 @@ export const metadata: Metadata = {
 };
 
 export default function AboutUsPage() {
-  const values = [
-    { icon: Heart, text: "Pasja do zdrowia" },
-    { icon: Target, text: "Jakość produktu" },
-    { icon: Users, text: "Społeczność" },
-    { icon: TrendingUp, text: "Rozwój" },
-  ];
 
-  const founders = [
-    {
-      name: "Anna Kowalska",
-      role: "Współzałożycielka & CEO",
-      image: "/team/team1.png", // Placeholder
-    },
-    {
-      name: "Piotr Nowak",
-      role: "Współzałożyciel & COO",
-      image: "/team/team2.png", // Placeholder
-    },
-  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-primary/5 via-white to-primary/5 lg:pt-20">
@@ -125,28 +107,7 @@ export default function AboutUsPage() {
                 </p>
               </div>
 
-              {/* Founders inline */}
-              <div className="pt-8 border-t border-gray-200 mt-8">
-                <div className="flex flex-wrap gap-8 items-center">
-                  {founders.map((founder, index) => (
-                    <div key={index} className="flex items-center gap-4">
-                      <div className="relative w-16 h-16 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
-                        <Image
-                          src={founder.image}
-                          alt={founder.name}
-                          width={64}
-                          height={64}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      <div>
-                        <h3 className="font-bold text-gray-900">{founder.name}</h3>
-                        <p className="text-sm text-gray-600">{founder.role}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+      
             </div>
           </div>
         </div>

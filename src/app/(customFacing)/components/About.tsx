@@ -41,15 +41,10 @@ export function About() {
             {/* Description text */}
             <div className="space-y-4 text-gray-600 leading-relaxed">
               <p>
-                Woda kokosowa Dr.Coco® to naturalny izotonik, który w ciągu kilku lat podbił polski
-                rynek, stając się znacznie zdrowszą alternatywą dla kolorowych napojów izotonicznych
-                zawierających sztuczne dodatki. Nasza woda pochodzi z organicznych farm z regionu
-                Bến Tre - stolicy wody kokosowej, gdzie kokosy żywane są co kilka tygodni.
+     Dr. Coco® to 100% naturalna woda kokosowa, pozyskiwana z młodych kokosów rosnących na certyfikowanych, organicznych farmach w Tajlandii i na Filipinach – sercu światowej produkcji wody kokosowej. Dzięki regularnym zbiorom i tropikalnemu klimatowi zachowuje świeżość, naturalny smak i pełnię wartości odżywczych.
               </p>
               <p>
-                Dr.Coco® to doskonały element codziennej diety niezależnie od wieku. To naturalne
-                źródło minerałów i mikroelementów dla aktywnych, a także tych, którzy chcą zadbać o
-                swoje zdrowie.
+  Naturalnie bogata w elektrolity, Dr. Coco® działa jak naturalny izotonik – nawadnia, wspiera organizm i stanowi czystą alternatywę dla kolorowych napojów z dodatkami. Idealna na co dzień: po treningu, w pracy i zawsze wtedy, gdy chcesz pić świadomie.
               </p>
             </div>
 

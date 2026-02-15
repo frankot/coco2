@@ -1,11 +1,9 @@
 import { About } from "./components/About";
-import Features from "./components/Features";
 import { Hero } from "./components/Hero";
 import { Newsletter } from "./components/Newsletter";
 import { FeaturedArticles } from "./components/FeaturedArticles";
 import FeaturedProducts from "./components/FeaturedProducts";
 import type { Metadata } from "next";
-import { Faq } from "./components/Faq";
 
 export const metadata: Metadata = {
   title: "Dr.Coco - Naturalna woda kokosowa z Wietnamu",
@@ -57,9 +55,8 @@ export default function Home() {
         <About />
 
         <FeaturedArticles />
-        <Faq />
 
-        <Features />
+        {/* <Features /> */}
 
         <Newsletter />
       </main>
