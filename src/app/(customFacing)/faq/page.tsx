@@ -10,8 +10,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "FAQ - Dr.Coco",
-    description:
-      "Najczęściej zadawane pytania o wodzie kokosowej Dr.Coco.",
+    description: "Najczęściej zadawane pytania o wodzie kokosowej Dr.Coco.",
     url: "https://drcoco.pl/faq",
     type: "website",
   },

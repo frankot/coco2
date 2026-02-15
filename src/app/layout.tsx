@@ -11,7 +11,6 @@ const geistSans = Geist({
   fallback: ["system-ui", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
 });
 
-
 const outfit = Outfit({
   subsets: ["latin"],
   variable: "--font-outfit",
