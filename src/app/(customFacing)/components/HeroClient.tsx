@@ -38,13 +38,13 @@ const carouselSlides = [
     title: "Prosto z tropików",
     subtitle: "Naturalnie słodka",
     description:
-      "Naturalnie słodka alternatywa dla soków. Zdrow dla całej rodziny, od najmłodszych",
+      "Poczuj smak Tajlandii w każdym łyku",
     ctaText: "Dla dzieci",
     image: "/hero/slide04.webp",
   },
   {
     id: 5,
-    title: "Dzieci uwielbiają",
+    title: "Dzieci ją uwielbiają",
     subtitle: "Każdego dnia",
     description:
       "Naturalnie słodka alternatywa dla soków",
