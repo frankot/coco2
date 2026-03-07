@@ -262,13 +262,7 @@ export function Nav({ children }: { children: React.ReactNode }) {
       <nav className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-stone-50 border-b border-gray-200 shadow-xs">
         <div className="flex h-16 items-center justify-between px-4">
           <Link href="/" className="absolute left-1/2 -translate-x-1/2">
-            <Image
-              src="/logo.png"
-              alt="Logo"
-              width={80}
-              height={80}
-              className="h-14 w-auto"
-            />
+            <Image src="/logo.png" alt="Logo" width={80} height={80} className="h-14 w-auto" />
           </Link>
 
           <div className="flex items-center gap-2 ml-auto">
