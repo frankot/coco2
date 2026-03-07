@@ -11,8 +11,7 @@ const carouselSlides = [
     id: 1,
     title: "Naturalna woda kokosowa",
     subtitle: "Z młodych kokosów",
-    description:
-      "Z młodych, zielonych kokosów, bez zbędnych dodatków",
+    description: "Z młodych, zielonych kokosów, bez zbędnych dodatków",
     ctaText: "Odkryj teraz",
     image: "/hero/slide01.webp",
   },
@@ -37,8 +36,7 @@ const carouselSlides = [
     id: 4,
     title: "Prosto z tropików",
     subtitle: "Naturalnie słodka",
-    description:
-      "Poczuj smak Tajlandii w każdym łyku",
+    description: "Poczuj smak Tajlandii w każdym łyku",
     ctaText: "Dla dzieci",
     image: "/hero/slide04.webp",
   },
@@ -46,8 +44,7 @@ const carouselSlides = [
     id: 5,
     title: "Dzieci ją uwielbiają",
     subtitle: "Każdego dnia",
-    description:
-      "Naturalnie słodka alternatywa dla soków",
+    description: "Naturalnie słodka alternatywa dla soków",
     ctaText: "Czytaj więcej",
     image: "/hero/slide05.webp",
   },
@@ -112,7 +109,7 @@ export function HeroClient({ products }: HeroClientProps) {
                   src={slide.image}
                   alt={slide.title}
                   fill
-                  className={`object-cover ${index === 0 || index === 2 ? 'object-right lg:object-center' : ''}`}
+                  className={`object-cover ${index === 0 || index === 2 ? "object-right lg:object-center" : ""}`}
                   priority={index === 0}
                 />
                 {/* Overlay - lighter for minimalism */}
