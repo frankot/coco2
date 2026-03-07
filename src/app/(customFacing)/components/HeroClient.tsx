@@ -112,7 +112,7 @@ export function HeroClient({ products }: HeroClientProps) {
                   src={slide.image}
                   alt={slide.title}
                   fill
-                  className="object-cover"
+                  className={`object-cover ${index === 0 || index === 2 ? 'object-right lg:object-center' : ''}`}
                   priority={index === 0}
                 />
                 {/* Overlay - lighter for minimalism */}
