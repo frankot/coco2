@@ -9,6 +9,7 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableCellLink,
   TableHead,
   TableHeader,
   TableRow,
@@ -358,22 +359,38 @@ function OrdersTable() {
             return (
               <TableRow key={order.id}>
                 <TableCell>
-                  <ShoppingBag className="size-8 text-gray-500" />
+                  <TableCellLink href={`/admin/zamowienia/${order.id}`}>
+                    <ShoppingBag className="size-8 text-gray-500" />
+                  </TableCellLink>
                 </TableCell>
                 <TableCell>
-                  {order.user.email}
-                  <div className="text-xs text-muted-foreground mt-1">
-                    Typ: {order.user.accountType}
-                  </div>
+                  <TableCellLink href={`/admin/zamowienia/${order.id}`}>
+                    {order.user.email}
+                    <div className="mt-1 text-xs text-muted-foreground">
+                      Typ: {order.user.accountType}
+                    </div>
+                  </TableCellLink>
                 </TableCell>
                 <TableCell>
-                  <Badge variant={getStatusBadgeVariant(order.status)}>
-                    {getStatusDisplayName(order.status)}
-                  </Badge>
+                  <TableCellLink href={`/admin/zamowienia/${order.id}`}>
+                    <Badge variant={getStatusBadgeVariant(order.status)}>
+                      {getStatusDisplayName(order.status)}
+                    </Badge>
+                  </TableCellLink>
                 </TableCell>
-                <TableCell>{format(new Date(order.createdAt), "dd.MM.yyyy | HH:mm")}</TableCell>
-                <TableCell>{order._count.orderItems}</TableCell>
-                <TableCell>{formattedTotal}</TableCell>
+                <TableCell>
+                  <TableCellLink href={`/admin/zamowienia/${order.id}`}>
+                    {format(new Date(order.createdAt), "dd.MM.yyyy | HH:mm")}
+                  </TableCellLink>
+                </TableCell>
+                <TableCell>
+                  <TableCellLink href={`/admin/zamowienia/${order.id}`}>
+                    {order._count.orderItems}
+                  </TableCellLink>
+                </TableCell>
+                <TableCell>
+                  <TableCellLink href={`/admin/zamowienia/${order.id}`}>{formattedTotal}</TableCellLink>
+                </TableCell>
                 <TableCell>
                   <OrderActionsMenu
                     id={order.id}

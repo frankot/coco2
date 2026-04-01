@@ -7,6 +7,7 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableCellLink,
   TableHead,
   TableHeader,
   TableRow,
@@ -163,21 +164,31 @@ function ProductsTable() {
           {sortedProducts.map((product) => (
             <TableRow key={product.id}>
               <TableCell>
-                {product.isAvailable ? (
-                  <>
-                    <span className="sr-only">Dostepne</span>
-                    <CheckCircle2 className="size-8 text-green-500" />
-                  </>
-                ) : (
-                  <>
-                    <span className="sr-only">Niedostepne</span>
-                    <XCircle className="size-8 text-red-500" />
-                  </>
-                )}
+                <TableCellLink href={`/admin/produkty/${product.id}`}>
+                  {product.isAvailable ? (
+                    <>
+                      <span className="sr-only">Dostepne</span>
+                      <CheckCircle2 className="size-8 text-green-500" />
+                    </>
+                  ) : (
+                    <>
+                      <span className="sr-only">Niedostepne</span>
+                      <XCircle className="size-8 text-red-500" />
+                    </>
+                  )}
+                </TableCellLink>
               </TableCell>
-              <TableCell>{product.name}</TableCell>
-              <TableCell>{product.price}</TableCell>
-              <TableCell>{product._count.orders}</TableCell>
+              <TableCell>
+                <TableCellLink href={`/admin/produkty/${product.id}`}>{product.name}</TableCellLink>
+              </TableCell>
+              <TableCell>
+                <TableCellLink href={`/admin/produkty/${product.id}`}>{product.price}</TableCellLink>
+              </TableCell>
+              <TableCell>
+                <TableCellLink href={`/admin/produkty/${product.id}`}>
+                  {product._count.orders}
+                </TableCellLink>
+              </TableCell>
               <TableCell>
                 <DropdownMenu>
                   <DropdownMenuTrigger>

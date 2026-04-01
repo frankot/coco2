@@ -7,6 +7,7 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableCellLink,
   TableHead,
   TableHeader,
   TableRow,
@@ -197,27 +198,41 @@ function ClientsTable() {
             return (
               <TableRow key={client.id}>
                 <TableCell>
-                  <User className="size-8 text-gray-500" />
-                </TableCell>
-                <TableCell>{client.email}</TableCell>
-                <TableCell>
-                  <Badge
-                    variant={
-                      accountType === "ADMIN"
-                        ? "destructive"
-                        : accountType === "HURT"
-                          ? "default"
-                          : "secondary"
-                    }
-                  >
-                    {accountType}
-                  </Badge>
+                  <TableCellLink href={`/admin/klienci/${client.id}`}>
+                    <User className="size-8 text-gray-500" />
+                  </TableCellLink>
                 </TableCell>
                 <TableCell>
-                  {format(new Date(client.createdAt), "dd.MM.yyyy      | HH:mm")}
+                  <TableCellLink href={`/admin/klienci/${client.id}`}>{client.email}</TableCellLink>
                 </TableCell>
-                <TableCell>{client._count.orders}</TableCell>
-                <TableCell>{formattedTotal}</TableCell>
+                <TableCell>
+                  <TableCellLink href={`/admin/klienci/${client.id}`}>
+                    <Badge
+                      variant={
+                        accountType === "ADMIN"
+                          ? "destructive"
+                          : accountType === "HURT"
+                            ? "default"
+                            : "secondary"
+                      }
+                    >
+                      {accountType}
+                    </Badge>
+                  </TableCellLink>
+                </TableCell>
+                <TableCell>
+                  <TableCellLink href={`/admin/klienci/${client.id}`}>
+                    {format(new Date(client.createdAt), "dd.MM.yyyy      | HH:mm")}
+                  </TableCellLink>
+                </TableCell>
+                <TableCell>
+                  <TableCellLink href={`/admin/klienci/${client.id}`}>
+                    {client._count.orders}
+                  </TableCellLink>
+                </TableCell>
+                <TableCell>
+                  <TableCellLink href={`/admin/klienci/${client.id}`}>{formattedTotal}</TableCellLink>
+                </TableCell>
                 <TableCell>
                   <ClientActionsMenu
                     id={client.id}

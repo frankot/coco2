@@ -7,6 +7,7 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableCellLink,
   TableHead,
   TableHeader,
   TableRow,
@@ -90,9 +91,17 @@ function BlogTable() {
       <TableBody>
         {posts.map((p) => (
           <TableRow key={p.id}>
-            <TableCell>{p.title}</TableCell>
-            <TableCell>{p.slug}</TableCell>
-            <TableCell>{new Date(p.createdAt).toLocaleString()}</TableCell>
+            <TableCell>
+              <TableCellLink href={`/admin/blog/${p.id}`}>{p.title}</TableCellLink>
+            </TableCell>
+            <TableCell>
+              <TableCellLink href={`/admin/blog/${p.id}`}>{p.slug}</TableCellLink>
+            </TableCell>
+            <TableCell>
+              <TableCellLink href={`/admin/blog/${p.id}`}>
+                {new Date(p.createdAt).toLocaleString()}
+              </TableCellLink>
+            </TableCell>
             <TableCell>
               <DropdownMenu>
                 <DropdownMenuTrigger>

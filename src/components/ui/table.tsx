@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
@@ -79,6 +80,18 @@ function TableCell({ className, ...props }: React.ComponentProps<"td">) {
   );
 }
 
+function TableCellLink({ className, ...props }: React.ComponentProps<typeof Link>) {
+  return (
+    <Link
+      className={cn(
+        "focus-visible:ring-ring block -m-2 rounded-sm p-2 outline-none transition-colors hover:text-primary focus-visible:ring-2",
+        className
+      )}
+      {...props}
+    />
+  );
+}
+
 function TableCaption({ className, ...props }: React.ComponentProps<"caption">) {
   return (
     <caption
@@ -89,4 +102,14 @@ function TableCaption({ className, ...props }: React.ComponentProps<"caption">) 
   );
 }
 
-export { Table, TableHeader, TableBody, TableFooter, TableHead, TableRow, TableCell, TableCaption };
+export {
+  Table,
+  TableHeader,
+  TableBody,
+  TableFooter,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableCellLink,
+  TableCaption,
+};
