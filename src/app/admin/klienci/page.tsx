@@ -231,7 +231,9 @@ function ClientsTable() {
                   </TableCellLink>
                 </TableCell>
                 <TableCell>
-                  <TableCellLink href={`/admin/klienci/${client.id}`}>{formattedTotal}</TableCellLink>
+                  <TableCellLink href={`/admin/klienci/${client.id}`}>
+                    {formattedTotal}
+                  </TableCellLink>
                 </TableCell>
                 <TableCell>
                   <ClientActionsMenu

@@ -182,7 +182,9 @@ function ProductsTable() {
                 <TableCellLink href={`/admin/produkty/${product.id}`}>{product.name}</TableCellLink>
               </TableCell>
               <TableCell>
-                <TableCellLink href={`/admin/produkty/${product.id}`}>{product.price}</TableCellLink>
+                <TableCellLink href={`/admin/produkty/${product.id}`}>
+                  {product.price}
+                </TableCellLink>
               </TableCell>
               <TableCell>
                 <TableCellLink href={`/admin/produkty/${product.id}`}>

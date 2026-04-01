@@ -389,7 +389,9 @@ function OrdersTable() {
                   </TableCellLink>
                 </TableCell>
                 <TableCell>
-                  <TableCellLink href={`/admin/zamowienia/${order.id}`}>{formattedTotal}</TableCellLink>
+                  <TableCellLink href={`/admin/zamowienia/${order.id}`}>
+                    {formattedTotal}
+                  </TableCellLink>
                 </TableCell>
                 <TableCell>
                   <OrderActionsMenu
