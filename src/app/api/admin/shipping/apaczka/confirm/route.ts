@@ -1,6 +1,7 @@
 import { createRouteHandler, ApiError, readJson } from "@/lib/api";
 import prisma from "@/db";
 import Apaczka from "@/lib/apaczka";
+import { getOrigin } from "@/lib/get-origin";
 import mailer from "@/lib/mailer";
 function normalizePhonePL(input: string | null | undefined): string | undefined {
   if (!input) return undefined;
@@ -285,11 +286,12 @@ export const POST = createRouteHandler(
     // Send shipment notification email to customer
     try {
       if (order.user?.email) {
+        const siteUrl = getOrigin();
         const html = `
           <div style="font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; color:#111;">
             <div style="max-width:600px;margin:0 auto;padding:24px;background:#ffffff;border-radius:8px;">
               <div style="text-align:center;margin-bottom:18px;">
-                <img src="cid:logo.png" alt="Logo" style="height:56px;object-fit:contain;" onerror="this.style.display='none'" />
+                <img src="${siteUrl}/logo.png" alt="Logo" style="height:56px;object-fit:contain;" onerror="this.style.display='none'" />
               </div>
               <h1 style="font-size:20px;margin:0 0 8px;color:#0f172a;text-align:center;">Twoja przesyłka jest w drodze!</h1>
               <p style="margin:0 0 18px;text-align:center;color:#6b7280;">Twoje zamówienie <strong style="font-family:monospace">${order.id}</strong> zostało nadane i jest w drodze do Ciebie.</p>
@@ -312,24 +314,10 @@ export const POST = createRouteHandler(
             </div>
           </div>
         `;
-
-        // Try to attach logo from public folder if present
-        const attachments: any[] = [];
-        try {
-          const logoPath = process.cwd() + "/public/logo.png";
-          const fs = await import("fs");
-          if (fs.existsSync(logoPath)) {
-            attachments.push({ filename: "logo.png", path: logoPath, cid: "logo.png" });
-          }
-        } catch (e) {
-          // ignore attachment failures
-        }
-
         await mailer.sendMail({
           to: order.user.email,
           subject: `Przesyłka nadana - Zamówienie ${order.id}`,
           html,
-          attachments: attachments.length ? attachments : undefined,
         });
       }
     } catch (e) {

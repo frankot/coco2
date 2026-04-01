@@ -245,7 +245,7 @@ export async function createOrder(formData: OrderFormData) {
 
     revalidatePath("/");
 
-    // Send order confirmation email if SMTP configured
+    // Send order confirmation email if an email provider is configured
     try {
       const user = await prisma.user.findUnique({ where: { id: verifiedUserId } });
       if (user?.email) {
@@ -259,7 +259,7 @@ export async function createOrder(formData: OrderFormData) {
           <div style="font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; color:#111;">
             <div style="max-width:600px;margin:0 auto;padding:24px;background:#ffffff;border-radius:8px;">
               <div style="text-align:center;margin-bottom:18px;">
-                <img src="cid:logo.png" alt="Logo" style="height:56px;object-fit:contain;" onerror="this.style.display='none'" />
+                <img src="${siteUrl}/logo.png" alt="Logo" style="height:56px;object-fit:contain;" onerror="this.style.display='none'" />
               </div>
               <h1 style="font-size:20px;margin:0 0 8px;color:#0f172a;text-align:center;">Dziękujemy za zamówienie!</h1>
               <p style="margin:0 0 18px;text-align:center;color:#6b7280;">Twoje zamówienie <strong style="font-family:monospace">${orderId}</strong> zostało przyjęte. Wkrótce je przygotujemy i wyślemy.</p>
@@ -282,24 +282,10 @@ export async function createOrder(formData: OrderFormData) {
             </div>
           </div>
         `;
-
-        // Try to attach logo from public folder if present
-        const attachments: any[] = [];
-        try {
-          const logoPath = process.cwd() + "/public/logo.png";
-          const fs = await import("fs");
-          if (fs.existsSync(logoPath)) {
-            attachments.push({ filename: "logo.png", path: logoPath, cid: "logo.png" });
-          }
-        } catch (e) {
-          // ignore attachment failures
-        }
-
         await mailer.sendMail({
           to: user.email,
           subject: `Potwierdzenie zamówienia ${orderId}`,
           html,
-          attachments: attachments.length ? attachments : undefined,
         });
       }
     } catch (e) {

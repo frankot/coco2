@@ -13,7 +13,7 @@ Polish-language e-commerce application for a food/confectionery brand. Features 
 - **Shipping:** Apaczka API integration
 - **Styling:** Tailwind CSS + shadcn/ui (Radix primitives) + Framer Motion
 - **Images:** Cloudinary
-- **Email:** Custom mailer (`src/lib/mailer.ts`)
+- **Email:** Resend via custom mailer (`src/lib/mailer.ts`)
 - **Markdown:** MDEditor (dynamically imported) for product/blog content
 
 ## Commands
