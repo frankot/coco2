@@ -84,9 +84,9 @@ export async function sendMail({ to, subject, html, text, from, attachments }: S
       from: sender,
       to: [to],
       subject,
-      html,
-      text,
-      attachments: normalizedAttachments,
+      html: html ?? "",
+      ...(text ? { text } : {}),
+      ...(normalizedAttachments ? { attachments: normalizedAttachments } : {}),
     });
 
     if (error) {
