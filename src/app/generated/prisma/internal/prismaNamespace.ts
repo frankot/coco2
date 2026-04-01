@@ -390,7 +390,8 @@ export const ModelName = {
   Address: 'Address',
   Order: 'Order',
   OrderItem: 'OrderItem',
-  Payment: 'Payment'
+  Payment: 'Payment',
+  CustomPrice: 'CustomPrice'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -406,7 +407,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "product" | "blogPost" | "user" | "address" | "order" | "orderItem" | "payment"
+    modelProps: "product" | "blogPost" | "user" | "address" | "order" | "orderItem" | "payment" | "customPrice"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -928,6 +929,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    CustomPrice: {
+      payload: Prisma.$CustomPricePayload<ExtArgs>
+      fields: Prisma.CustomPriceFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CustomPriceFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomPricePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CustomPriceFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomPricePayload>
+        }
+        findFirst: {
+          args: Prisma.CustomPriceFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomPricePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CustomPriceFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomPricePayload>
+        }
+        findMany: {
+          args: Prisma.CustomPriceFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomPricePayload>[]
+        }
+        create: {
+          args: Prisma.CustomPriceCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomPricePayload>
+        }
+        createMany: {
+          args: Prisma.CustomPriceCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CustomPriceCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomPricePayload>[]
+        }
+        delete: {
+          args: Prisma.CustomPriceDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomPricePayload>
+        }
+        update: {
+          args: Prisma.CustomPriceUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomPricePayload>
+        }
+        deleteMany: {
+          args: Prisma.CustomPriceDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CustomPriceUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CustomPriceUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomPricePayload>[]
+        }
+        upsert: {
+          args: Prisma.CustomPriceUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomPricePayload>
+        }
+        aggregate: {
+          args: Prisma.CustomPriceAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCustomPrice>
+        }
+        groupBy: {
+          args: Prisma.CustomPriceGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CustomPriceGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CustomPriceCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CustomPriceCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1083,6 +1158,18 @@ export const PaymentScalarFieldEnum = {
 } as const
 
 export type PaymentScalarFieldEnum = (typeof PaymentScalarFieldEnum)[keyof typeof PaymentScalarFieldEnum]
+
+
+export const CustomPriceScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  productId: 'productId',
+  priceInCents: 'priceInCents',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CustomPriceScalarFieldEnum = (typeof CustomPriceScalarFieldEnum)[keyof typeof CustomPriceScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1380,6 +1467,7 @@ export type GlobalOmitConfig = {
   order?: Prisma.OrderOmit
   orderItem?: Prisma.OrderItemOmit
   payment?: Prisma.PaymentOmit
+  customPrice?: Prisma.CustomPriceOmit
 }
 
 /* Types for Logging */

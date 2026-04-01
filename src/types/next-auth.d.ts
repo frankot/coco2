@@ -11,7 +11,7 @@ declare module "next-auth" {
       email: string;
       name: string;
       role: "ADMIN" | "USER";
-      accountType?: "ADMIN" | "DETAL" | "HURT";
+      accountType?: "ADMIN" | "DETAL" | "DETAL_B2B" | "HURT";
     } & DefaultSession["user"];
   }
 
@@ -21,7 +21,7 @@ declare module "next-auth" {
   interface User {
     id: string;
     role: "ADMIN" | "USER";
-    accountType?: "ADMIN" | "DETAL" | "HURT";
+    accountType?: "ADMIN" | "DETAL" | "DETAL_B2B" | "HURT";
   }
 }
 
@@ -32,6 +32,6 @@ declare module "next-auth/jwt" {
   interface JWT {
     id: string;
     role: "ADMIN" | "USER";
-    accountType?: "ADMIN" | "DETAL" | "HURT";
+    accountType?: "ADMIN" | "DETAL" | "DETAL_B2B" | "HURT";
   }
 }

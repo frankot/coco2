@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -145,9 +145,54 @@ export function Nav({ children }: { children: React.ReactNode }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [scrollY, setScrollY] = useState(0);
   const pathname = usePathname();
+  const { data: session, status } = useSession();
+  const prevUserIdRef = useRef<string | null | undefined>(undefined);
 
   // Check if we're on the main page
   const isMainPage = pathname === "/";
+
+  // Refresh cart prices from /api/products (returns auth-aware prices)
+  const refreshCartPrices = useCallback(() => {
+    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+    if (cart.length === 0) return;
+
+    fetch("/api/products")
+      .then((r) => r.json())
+      .then((products: { id: string; priceInCents: number }[]) => {
+        const priceMap = new Map(products.map((p) => [p.id, p.priceInCents]));
+        const currentCart = JSON.parse(localStorage.getItem("cart") || "[]");
+        let changed = false;
+        const updated = currentCart.map((item: any) => {
+          const freshPrice = priceMap.get(item.id);
+          if (freshPrice !== undefined && freshPrice !== item.priceInCents) {
+            changed = true;
+            return { ...item, priceInCents: freshPrice };
+          }
+          return item;
+        });
+        if (changed) {
+          localStorage.setItem("cart", JSON.stringify(updated));
+          window.dispatchEvent(new Event("cartUpdated"));
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  // Refresh cart prices when auth state changes (login/logout/page load)
+  useEffect(() => {
+    if (status === "loading") return;
+    const currentUserId = session?.user?.id ?? null;
+    if (prevUserIdRef.current === undefined) {
+      // First load — refresh to sync prices with current auth state
+      prevUserIdRef.current = currentUserId;
+      refreshCartPrices();
+      return;
+    }
+    if (prevUserIdRef.current !== currentUserId) {
+      prevUserIdRef.current = currentUserId;
+      refreshCartPrices();
+    }
+  }, [session?.user?.id, status, refreshCartPrices]);
 
   // Load cart items
   useEffect(() => {

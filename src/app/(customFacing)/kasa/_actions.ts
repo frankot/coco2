@@ -89,6 +89,20 @@ export async function createOrder(formData: OrderFormData) {
       };
     }
 
+    // Resolve custom prices for authenticated user (B2B/HURT)
+    const earlySession = await getServerSession(authOptions);
+    const earlyUserId = validatedData.userId || earlySession?.user?.id;
+    if (earlyUserId) {
+      const { getCustomPriceMap } = await import("@/lib/resolve-prices");
+      const customPriceMap = await getCustomPriceMap(earlyUserId);
+      for (const [productId, product] of productMap) {
+        const customPrice = customPriceMap.get(productId);
+        if (customPrice !== undefined) {
+          productMap.set(productId, { ...product, priceInCents: customPrice });
+        }
+      }
+    }
+
     // Calculate total price using DB prices — never trust client-provided prices
     const subtotalInCents = validatedData.cartItems.reduce(
       (sum, item) => sum + productMap.get(item.id)!.priceInCents * item.quantity,

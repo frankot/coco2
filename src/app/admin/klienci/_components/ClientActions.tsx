@@ -105,7 +105,7 @@ function ChangeTypeDialogContent({
 
   const handleUpdateType = useCallback(() => {
     startTransition(async () => {
-      const result = await updateClientType(id, selectedType as "DETAL" | "HURT");
+      const result = await updateClientType(id, selectedType as "DETAL" | "DETAL_B2B" | "HURT");
       if (result.success) {
         toast.success(result.message);
         onClose();
@@ -127,6 +127,10 @@ function ChangeTypeDialogContent({
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="DETAL" id="detal" />
             <Label htmlFor="detal">Detal</Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="DETAL_B2B" id="detal_b2b" />
+            <Label htmlFor="detal_b2b">Detal B2B</Label>
           </div>
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="HURT" id="hurt" />

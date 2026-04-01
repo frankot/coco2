@@ -1,5 +1,8 @@
 import prisma from "@/db";
 import ProductCard from "../../../components/ui/ProductCard";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { resolveProductPrices } from "@/lib/resolve-prices";
 
 async function getLatestProducts() {
   const products = await prisma.product.findMany({
@@ -12,7 +15,8 @@ async function getLatestProducts() {
     take: 3,
   });
 
-  return products;
+  const session = await getServerSession(authOptions);
+  return resolveProductPrices(products, session?.user?.id);
 }
 
 export default async function FeaturedProducts() {

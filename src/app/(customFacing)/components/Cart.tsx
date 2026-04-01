@@ -361,7 +361,6 @@ export default function Cart({ isOpen, onClose, navbarHeight, onOpenCart }: Cart
   const [discount, setDiscount] = useState(0); // Discount percentage
   const [isInitialized, setIsInitialized] = useState(false);
   const [isFloatingButtonVisible, setIsFloatingButtonVisible] = useState(false);
-
   // Load cart from local storage - optimized with error handling
   useEffect(() => {
     const loadCart = () => {

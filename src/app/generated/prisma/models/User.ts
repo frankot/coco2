@@ -209,6 +209,7 @@ export type UserWhereInput = {
   orders?: Prisma.OrderListRelationFilter
   addresses?: Prisma.AddressListRelationFilter
   payments?: Prisma.PaymentListRelationFilter
+  customPrices?: Prisma.CustomPriceListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -223,6 +224,7 @@ export type UserOrderByWithRelationInput = {
   orders?: Prisma.OrderOrderByRelationAggregateInput
   addresses?: Prisma.AddressOrderByRelationAggregateInput
   payments?: Prisma.PaymentOrderByRelationAggregateInput
+  customPrices?: Prisma.CustomPriceOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -240,6 +242,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   orders?: Prisma.OrderListRelationFilter
   addresses?: Prisma.AddressListRelationFilter
   payments?: Prisma.PaymentListRelationFilter
+  customPrices?: Prisma.CustomPriceListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -282,6 +285,7 @@ export type UserCreateInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
   addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
+  customPrices?: Prisma.CustomPriceCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -296,6 +300,7 @@ export type UserUncheckedCreateInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
+  customPrices?: Prisma.CustomPriceUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -310,6 +315,7 @@ export type UserUpdateInput = {
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
   addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
+  customPrices?: Prisma.CustomPriceUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -324,6 +330,7 @@ export type UserUncheckedUpdateInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
+  customPrices?: Prisma.CustomPriceUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -443,6 +450,20 @@ export type UserUpdateOneRequiredWithoutPaymentsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPaymentsInput, Prisma.UserUpdateWithoutPaymentsInput>, Prisma.UserUncheckedUpdateWithoutPaymentsInput>
 }
 
+export type UserCreateNestedOneWithoutCustomPricesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCustomPricesInput, Prisma.UserUncheckedCreateWithoutCustomPricesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCustomPricesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutCustomPricesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCustomPricesInput, Prisma.UserUncheckedCreateWithoutCustomPricesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCustomPricesInput
+  upsert?: Prisma.UserUpsertWithoutCustomPricesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCustomPricesInput, Prisma.UserUpdateWithoutCustomPricesInput>, Prisma.UserUncheckedUpdateWithoutCustomPricesInput>
+}
+
 export type UserCreateWithoutAddressesInput = {
   id?: string
   email: string
@@ -454,6 +475,7 @@ export type UserCreateWithoutAddressesInput = {
   accountType?: $Enums.AccountType
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
+  customPrices?: Prisma.CustomPriceCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAddressesInput = {
@@ -467,6 +489,7 @@ export type UserUncheckedCreateWithoutAddressesInput = {
   accountType?: $Enums.AccountType
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
+  customPrices?: Prisma.CustomPriceUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAddressesInput = {
@@ -496,6 +519,7 @@ export type UserUpdateWithoutAddressesInput = {
   accountType?: Prisma.EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
+  customPrices?: Prisma.CustomPriceUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAddressesInput = {
@@ -509,6 +533,7 @@ export type UserUncheckedUpdateWithoutAddressesInput = {
   accountType?: Prisma.EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
+  customPrices?: Prisma.CustomPriceUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutOrdersInput = {
@@ -522,6 +547,7 @@ export type UserCreateWithoutOrdersInput = {
   accountType?: $Enums.AccountType
   addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
+  customPrices?: Prisma.CustomPriceCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutOrdersInput = {
@@ -535,6 +561,7 @@ export type UserUncheckedCreateWithoutOrdersInput = {
   accountType?: $Enums.AccountType
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
+  customPrices?: Prisma.CustomPriceUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutOrdersInput = {
@@ -564,6 +591,7 @@ export type UserUpdateWithoutOrdersInput = {
   accountType?: Prisma.EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
   addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
+  customPrices?: Prisma.CustomPriceUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOrdersInput = {
@@ -577,6 +605,7 @@ export type UserUncheckedUpdateWithoutOrdersInput = {
   accountType?: Prisma.EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
+  customPrices?: Prisma.CustomPriceUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPaymentsInput = {
@@ -590,6 +619,7 @@ export type UserCreateWithoutPaymentsInput = {
   accountType?: $Enums.AccountType
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
   addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
+  customPrices?: Prisma.CustomPriceCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPaymentsInput = {
@@ -603,6 +633,7 @@ export type UserUncheckedCreateWithoutPaymentsInput = {
   accountType?: $Enums.AccountType
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
+  customPrices?: Prisma.CustomPriceUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPaymentsInput = {
@@ -632,6 +663,7 @@ export type UserUpdateWithoutPaymentsInput = {
   accountType?: Prisma.EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
   addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
+  customPrices?: Prisma.CustomPriceUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPaymentsInput = {
@@ -645,6 +677,79 @@ export type UserUncheckedUpdateWithoutPaymentsInput = {
   accountType?: Prisma.EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
+  customPrices?: Prisma.CustomPriceUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutCustomPricesInput = {
+  id?: string
+  email: string
+  password: string
+  firstName?: string | null
+  lastName?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  accountType?: $Enums.AccountType
+  orders?: Prisma.OrderCreateNestedManyWithoutUserInput
+  addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutCustomPricesInput = {
+  id?: string
+  email: string
+  password: string
+  firstName?: string | null
+  lastName?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  accountType?: $Enums.AccountType
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
+  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutCustomPricesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutCustomPricesInput, Prisma.UserUncheckedCreateWithoutCustomPricesInput>
+}
+
+export type UserUpsertWithoutCustomPricesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutCustomPricesInput, Prisma.UserUncheckedUpdateWithoutCustomPricesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutCustomPricesInput, Prisma.UserUncheckedCreateWithoutCustomPricesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutCustomPricesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutCustomPricesInput, Prisma.UserUncheckedUpdateWithoutCustomPricesInput>
+}
+
+export type UserUpdateWithoutCustomPricesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accountType?: Prisma.EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
+  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
+  addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutCustomPricesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accountType?: Prisma.EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
+  addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -656,12 +761,14 @@ export type UserCountOutputType = {
   orders: number
   addresses: number
   payments: number
+  customPrices: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   orders?: boolean | UserCountOutputTypeCountOrdersArgs
   addresses?: boolean | UserCountOutputTypeCountAddressesArgs
   payments?: boolean | UserCountOutputTypeCountPaymentsArgs
+  customPrices?: boolean | UserCountOutputTypeCountCustomPricesArgs
 }
 
 /**
@@ -695,6 +802,13 @@ export type UserCountOutputTypeCountPaymentsArgs<ExtArgs extends runtime.Types.E
   where?: Prisma.PaymentWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountCustomPricesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CustomPriceWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -708,6 +822,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   orders?: boolean | Prisma.User$ordersArgs<ExtArgs>
   addresses?: boolean | Prisma.User$addressesArgs<ExtArgs>
   payments?: boolean | Prisma.User$paymentsArgs<ExtArgs>
+  customPrices?: boolean | Prisma.User$customPricesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -749,6 +864,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   orders?: boolean | Prisma.User$ordersArgs<ExtArgs>
   addresses?: boolean | Prisma.User$addressesArgs<ExtArgs>
   payments?: boolean | Prisma.User$paymentsArgs<ExtArgs>
+  customPrices?: boolean | Prisma.User$customPricesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -760,6 +876,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     orders: Prisma.$OrderPayload<ExtArgs>[]
     addresses: Prisma.$AddressPayload<ExtArgs>[]
     payments: Prisma.$PaymentPayload<ExtArgs>[]
+    customPrices: Prisma.$CustomPricePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1167,6 +1284,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   orders<T extends Prisma.User$ordersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$ordersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   addresses<T extends Prisma.User$addressesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$addressesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AddressPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   payments<T extends Prisma.User$paymentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$paymentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  customPrices<T extends Prisma.User$customPricesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$customPricesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CustomPricePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1666,6 +1784,30 @@ export type User$paymentsArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   take?: number
   skip?: number
   distinct?: Prisma.PaymentScalarFieldEnum | Prisma.PaymentScalarFieldEnum[]
+}
+
+/**
+ * User.customPrices
+ */
+export type User$customPricesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CustomPrice
+   */
+  select?: Prisma.CustomPriceSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CustomPrice
+   */
+  omit?: Prisma.CustomPriceOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CustomPriceInclude<ExtArgs> | null
+  where?: Prisma.CustomPriceWhereInput
+  orderBy?: Prisma.CustomPriceOrderByWithRelationInput | Prisma.CustomPriceOrderByWithRelationInput[]
+  cursor?: Prisma.CustomPriceWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CustomPriceScalarFieldEnum | Prisma.CustomPriceScalarFieldEnum[]
 }
 
 /**

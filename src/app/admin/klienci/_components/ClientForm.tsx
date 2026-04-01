@@ -15,7 +15,7 @@ type User = {
   firstName: string | null;
   lastName: string | null;
   phoneNumber: string | null;
-  accountType: "ADMIN" | "DETAL" | "HURT";
+  accountType: "ADMIN" | "DETAL" | "DETAL_B2B" | "HURT";
 };
 
 export default function ClientForm({ client }: { client?: User | null }) {
@@ -98,6 +98,10 @@ export default function ClientForm({ client }: { client?: User | null }) {
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="DETAL" id="detal" />
             <Label htmlFor="detal">Detal</Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="DETAL_B2B" id="detal_b2b" />
+            <Label htmlFor="detal_b2b">Detal B2B</Label>
           </div>
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="HURT" id="hurt" />

@@ -76,3 +76,8 @@ export type OrderItem = Prisma.OrderItemModel
  * 
  */
 export type Payment = Prisma.PaymentModel
+/**
+ * Model CustomPrice
+ * 
+ */
+export type CustomPrice = Prisma.CustomPriceModel

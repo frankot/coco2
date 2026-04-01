@@ -10,6 +10,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { ChangeTypeButton, DeleteButton } from "../_components/ClientActions";
+import CustomPricing from "./_components/CustomPricing";
 
 export default async function ClientDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -88,7 +89,7 @@ async function ClientDetailContent({ id }: { id: string }) {
                 variant={
                   client.accountType === "ADMIN"
                     ? "destructive"
-                    : client.accountType === "HURT"
+                    : client.accountType === "HURT" || client.accountType === "DETAL_B2B"
                       ? "default"
                       : "secondary"
                 }
@@ -157,6 +158,11 @@ async function ClientDetailContent({ id }: { id: string }) {
           )}
         </CardContent>
       </Card>
+
+      {/* Custom Pricing for B2B/Hurt */}
+      {(client.accountType === "HURT" || client.accountType === "DETAL_B2B") && (
+        <CustomPricing userId={client.id} />
+      )}
 
       {/* Orders Card */}
       <Card>

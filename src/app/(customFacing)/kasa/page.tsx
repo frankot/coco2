@@ -61,18 +61,22 @@ export default function CheckoutPage() {
     shippingMethodId: "",
   });
 
-  // Load cart items from localStorage
+  // Load cart items from localStorage and listen for price updates
   useEffect(() => {
     setIsClient(true);
-    try {
-      const savedCart = localStorage.getItem("cart");
-      if (savedCart) {
-        const parsedCart = JSON.parse(savedCart);
-        setCartItems(parsedCart);
+    const loadCart = () => {
+      try {
+        const savedCart = localStorage.getItem("cart");
+        if (savedCart) {
+          setCartItems(JSON.parse(savedCart));
+        }
+      } catch (e) {
+        console.error("Failed to parse cart from localStorage:", e);
       }
-    } catch (e) {
-      console.error("Failed to parse cart from localStorage:", e);
-    }
+    };
+    loadCart();
+    window.addEventListener("cartUpdated", loadCart);
+    return () => window.removeEventListener("cartUpdated", loadCart);
   }, []);
 
   // Load Apaczka map widget for pickup points
@@ -693,15 +697,17 @@ export default function CheckoutPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
               <Button
-                onClick={() => setCheckoutMode("login")}
+                asChild
                 size="lg"
                 className="flex items-center gap-2 h-20"
               >
-                <LogIn className="w-5 h-5" />
-                <div>
-                  <div className="font-medium">Zaloguj się</div>
-                  <div className="text-xs">Kontynuuj jako użytkownik</div>
-                </div>
+                <Link href="/auth/zaloguj?callbackUrl=/kasa">
+                  <LogIn className="w-5 h-5" />
+                  <div>
+                    <div className="font-medium">Zaloguj się</div>
+                    <div className="text-xs">Kontynuuj jako użytkownik</div>
+                  </div>
+                </Link>
               </Button>
 
               <Button
@@ -717,40 +723,6 @@ export default function CheckoutPage() {
                 </div>
               </Button>
             </div>
-          </div>
-        </Card>
-      </div>
-    );
-  }
-
-  // If user chose to login
-  if (checkoutMode === "login" && status !== "authenticated") {
-    return (
-      <div className="container max-w-3xl py-10 px-4 md:px-6">
-        <h1 className="text-3xl font-bold mb-6">Kasa</h1>
-
-        <Card className="p-6">
-          <div className="text-center mb-6">
-            <h2 className="text-xl font-semibold">Zaloguj się aby kontynuować</h2>
-            <p className="text-muted-foreground">Zaloguj się lub załóż konto</p>
-          </div>
-
-          <div className="flex justify-center gap-4">
-            <Button asChild size="lg">
-              <Link href="/auth/zaloguj">Zaloguj się</Link>
-            </Button>
-            <Button asChild variant="outline" size="lg">
-              <Link href="/rejestracja">Zarejestruj się</Link>
-            </Button>
-          </div>
-
-          <div className="mt-4 text-center">
-            <button
-              onClick={() => setCheckoutMode("guest")}
-              className="text-primary hover:underline text-sm"
-            >
-              Kontynuuj jako gość
-            </button>
           </div>
         </Card>
       </div>

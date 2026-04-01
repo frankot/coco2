@@ -2,6 +2,9 @@ import { stripe } from "@/lib/stripe";
 import { createRouteHandler, ApiError, readJson } from "@/lib/api";
 import prisma from "@/db";
 import { getOrigin } from "@/lib/get-origin";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { getCustomPriceMap } from "@/lib/resolve-prices";
 
 export const POST = createRouteHandler(async ({ req }) => {
   const body = await readJson(req);
@@ -25,6 +28,18 @@ export const POST = createRouteHandler(async ({ req }) => {
     where: { id: { in: productIds }, isAvailable: true },
     select: { id: true, name: true, priceInCents: true, imagePaths: true },
   });
+
+  // Resolve custom prices for authenticated user
+  const authSession = await getServerSession(authOptions);
+  if (authSession?.user?.id) {
+    const customPrices = await getCustomPriceMap(authSession.user.id);
+    for (const product of products) {
+      const customPrice = customPrices.get(product.id);
+      if (customPrice !== undefined) {
+        product.priceInCents = customPrice;
+      }
+    }
+  }
 
   const productMap = new Map(products.map((p) => [p.id, p]));
 

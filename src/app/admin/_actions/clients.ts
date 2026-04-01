@@ -28,7 +28,7 @@ const clientSchema = z.object({
   phoneNumber: z.string().optional(),
   password: z.string().min(6, "Hasło musi mieć co najmniej 6 znaków"),
   confirmPassword: z.string().min(6, "Hasło musi mieć co najmniej 6 znaków"),
-  accountType: z.enum(["ADMIN", "DETAL", "HURT"], {
+  accountType: z.enum(["ADMIN", "DETAL", "DETAL_B2B", "HURT"], {
     errorMap: () => ({ message: "Nieprawidłowy typ konta" }),
   }),
 });
@@ -45,7 +45,7 @@ const editClientSchema = z.object({
     .min(6, "Hasło musi mieć co najmniej 6 znaków")
     .optional()
     .or(z.literal("")),
-  accountType: z.enum(["ADMIN", "DETAL", "HURT"], {
+  accountType: z.enum(["ADMIN", "DETAL", "DETAL_B2B", "HURT"], {
     errorMap: () => ({ message: "Nieprawidłowy typ konta" }),
   }),
 });
@@ -207,14 +207,14 @@ export async function updateClient(
 }
 
 const updateSchema = z.object({
-  accountType: z.enum(["ADMIN", "DETAL", "HURT"], {
+  accountType: z.enum(["ADMIN", "DETAL", "DETAL_B2B", "HURT"], {
     errorMap: () => ({ message: "Nieprawidłowy typ konta" }),
   }),
 });
 
 export async function updateClientType(
   clientId: string,
-  accountType: "ADMIN" | "DETAL" | "HURT"
+  accountType: "ADMIN" | "DETAL" | "DETAL_B2B" | "HURT"
 ): Promise<{ success: boolean; message: string }> {
   try {
     await requireAdmin();

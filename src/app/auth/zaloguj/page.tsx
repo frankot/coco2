@@ -139,7 +139,7 @@ function SignInForm() {
             <div className="mt-4 text-center text-sm">
               <p>
                 Nie masz konta?{" "}
-                <Link href="/auth/rejestracja" className="text-primary hover:underline">
+                <Link href={callbackUrl !== "/" ? `/auth/rejestracja?callbackUrl=${encodeURIComponent(callbackUrl)}` : "/auth/rejestracja"} className="text-primary hover:underline">
                   Zarejestruj się
                 </Link>
               </p>

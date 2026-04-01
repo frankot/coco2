@@ -25,7 +25,7 @@ import { useRefresh } from "@/providers/RefreshProvider";
 type Client = {
   id: string;
   email: string;
-  accountType: "ADMIN" | "DETAL" | "HURT";
+  accountType: "ADMIN" | "DETAL" | "DETAL_B2B" | "HURT";
   createdAt: string;
   orders: { pricePaidInCents: number }[];
   _count: { orders: number };

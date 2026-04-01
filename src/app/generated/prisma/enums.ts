@@ -12,6 +12,7 @@
 export const AccountType = {
   ADMIN: 'ADMIN',
   DETAL: 'DETAL',
+  DETAL_B2B: 'DETAL_B2B',
   HURT: 'HURT'
 } as const
 
