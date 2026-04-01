@@ -88,6 +88,10 @@ export const ProductScalarFieldEnum = {
   composition: 'composition',
   isAvailable: 'isAvailable',
   itemsPerPack: 'itemsPerPack',
+  weightKg: 'weightKg',
+  lengthCm: 'lengthCm',
+  widthCm: 'widthCm',
+  heightCm: 'heightCm',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   imagePublicIds: 'imagePublicIds'

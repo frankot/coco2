@@ -53,6 +53,10 @@ model Product {
   composition    Json?       // Composition/nutritional info
   isAvailable    Boolean     @default(true)
   itemsPerPack   Int         @default(12)
+  weightKg       Float       @default(0.5)   // Weight per unit in kg
+  lengthCm       Int         @default(20)    // Package length in cm
+  widthCm        Int         @default(15)    // Package width in cm
+  heightCm       Int         @default(10)    // Package height in cm
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
   imagePublicIds String[]

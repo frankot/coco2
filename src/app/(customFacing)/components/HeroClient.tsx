@@ -109,6 +109,7 @@ export function HeroClient({ products }: HeroClientProps) {
                   src={slide.image}
                   alt={slide.title}
                   fill
+                  sizes="100vw"
                   className={`object-cover ${index === 0 || index === 2 ? "object-right lg:object-center" : ""}`}
                   priority={index === 0}
                 />

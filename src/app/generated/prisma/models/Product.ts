@@ -30,12 +30,20 @@ export type ProductAvgAggregateOutputType = {
   price: number | null
   priceInCents: number | null
   itemsPerPack: number | null
+  weightKg: number | null
+  lengthCm: number | null
+  widthCm: number | null
+  heightCm: number | null
 }
 
 export type ProductSumAggregateOutputType = {
   price: number | null
   priceInCents: number | null
   itemsPerPack: number | null
+  weightKg: number | null
+  lengthCm: number | null
+  widthCm: number | null
+  heightCm: number | null
 }
 
 export type ProductMinAggregateOutputType = {
@@ -47,6 +55,10 @@ export type ProductMinAggregateOutputType = {
   content: string | null
   isAvailable: boolean | null
   itemsPerPack: number | null
+  weightKg: number | null
+  lengthCm: number | null
+  widthCm: number | null
+  heightCm: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -60,6 +72,10 @@ export type ProductMaxAggregateOutputType = {
   content: string | null
   isAvailable: boolean | null
   itemsPerPack: number | null
+  weightKg: number | null
+  lengthCm: number | null
+  widthCm: number | null
+  heightCm: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -75,6 +91,10 @@ export type ProductCountAggregateOutputType = {
   composition: number
   isAvailable: number
   itemsPerPack: number
+  weightKg: number
+  lengthCm: number
+  widthCm: number
+  heightCm: number
   createdAt: number
   updatedAt: number
   imagePublicIds: number
@@ -86,12 +106,20 @@ export type ProductAvgAggregateInputType = {
   price?: true
   priceInCents?: true
   itemsPerPack?: true
+  weightKg?: true
+  lengthCm?: true
+  widthCm?: true
+  heightCm?: true
 }
 
 export type ProductSumAggregateInputType = {
   price?: true
   priceInCents?: true
   itemsPerPack?: true
+  weightKg?: true
+  lengthCm?: true
+  widthCm?: true
+  heightCm?: true
 }
 
 export type ProductMinAggregateInputType = {
@@ -103,6 +131,10 @@ export type ProductMinAggregateInputType = {
   content?: true
   isAvailable?: true
   itemsPerPack?: true
+  weightKg?: true
+  lengthCm?: true
+  widthCm?: true
+  heightCm?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -116,6 +148,10 @@ export type ProductMaxAggregateInputType = {
   content?: true
   isAvailable?: true
   itemsPerPack?: true
+  weightKg?: true
+  lengthCm?: true
+  widthCm?: true
+  heightCm?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -131,6 +167,10 @@ export type ProductCountAggregateInputType = {
   composition?: true
   isAvailable?: true
   itemsPerPack?: true
+  weightKg?: true
+  lengthCm?: true
+  widthCm?: true
+  heightCm?: true
   createdAt?: true
   updatedAt?: true
   imagePublicIds?: true
@@ -234,6 +274,10 @@ export type ProductGroupByOutputType = {
   composition: runtime.JsonValue | null
   isAvailable: boolean
   itemsPerPack: number
+  weightKg: number
+  lengthCm: number
+  widthCm: number
+  heightCm: number
   createdAt: Date
   updatedAt: Date
   imagePublicIds: string[]
@@ -273,6 +317,10 @@ export type ProductWhereInput = {
   composition?: Prisma.JsonNullableFilter<"Product">
   isAvailable?: Prisma.BoolFilter<"Product"> | boolean
   itemsPerPack?: Prisma.IntFilter<"Product"> | number
+  weightKg?: Prisma.FloatFilter<"Product"> | number
+  lengthCm?: Prisma.IntFilter<"Product"> | number
+  widthCm?: Prisma.IntFilter<"Product"> | number
+  heightCm?: Prisma.IntFilter<"Product"> | number
   createdAt?: Prisma.DateTimeFilter<"Product"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Product"> | Date | string
   imagePublicIds?: Prisma.StringNullableListFilter<"Product">
@@ -291,6 +339,10 @@ export type ProductOrderByWithRelationInput = {
   composition?: Prisma.SortOrderInput | Prisma.SortOrder
   isAvailable?: Prisma.SortOrder
   itemsPerPack?: Prisma.SortOrder
+  weightKg?: Prisma.SortOrder
+  lengthCm?: Prisma.SortOrder
+  widthCm?: Prisma.SortOrder
+  heightCm?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   imagePublicIds?: Prisma.SortOrder
@@ -312,6 +364,10 @@ export type ProductWhereUniqueInput = Prisma.AtLeast<{
   composition?: Prisma.JsonNullableFilter<"Product">
   isAvailable?: Prisma.BoolFilter<"Product"> | boolean
   itemsPerPack?: Prisma.IntFilter<"Product"> | number
+  weightKg?: Prisma.FloatFilter<"Product"> | number
+  lengthCm?: Prisma.IntFilter<"Product"> | number
+  widthCm?: Prisma.IntFilter<"Product"> | number
+  heightCm?: Prisma.IntFilter<"Product"> | number
   createdAt?: Prisma.DateTimeFilter<"Product"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Product"> | Date | string
   imagePublicIds?: Prisma.StringNullableListFilter<"Product">
@@ -330,6 +386,10 @@ export type ProductOrderByWithAggregationInput = {
   composition?: Prisma.SortOrderInput | Prisma.SortOrder
   isAvailable?: Prisma.SortOrder
   itemsPerPack?: Prisma.SortOrder
+  weightKg?: Prisma.SortOrder
+  lengthCm?: Prisma.SortOrder
+  widthCm?: Prisma.SortOrder
+  heightCm?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   imagePublicIds?: Prisma.SortOrder
@@ -354,6 +414,10 @@ export type ProductScalarWhereWithAggregatesInput = {
   composition?: Prisma.JsonNullableWithAggregatesFilter<"Product">
   isAvailable?: Prisma.BoolWithAggregatesFilter<"Product"> | boolean
   itemsPerPack?: Prisma.IntWithAggregatesFilter<"Product"> | number
+  weightKg?: Prisma.FloatWithAggregatesFilter<"Product"> | number
+  lengthCm?: Prisma.IntWithAggregatesFilter<"Product"> | number
+  widthCm?: Prisma.IntWithAggregatesFilter<"Product"> | number
+  heightCm?: Prisma.IntWithAggregatesFilter<"Product"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Product"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Product"> | Date | string
   imagePublicIds?: Prisma.StringNullableListFilter<"Product">
@@ -370,6 +434,10 @@ export type ProductCreateInput = {
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: boolean
   itemsPerPack?: number
+  weightKg?: number
+  lengthCm?: number
+  widthCm?: number
+  heightCm?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   imagePublicIds?: Prisma.ProductCreateimagePublicIdsInput | string[]
@@ -388,6 +456,10 @@ export type ProductUncheckedCreateInput = {
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: boolean
   itemsPerPack?: number
+  weightKg?: number
+  lengthCm?: number
+  widthCm?: number
+  heightCm?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   imagePublicIds?: Prisma.ProductCreateimagePublicIdsInput | string[]
@@ -406,6 +478,10 @@ export type ProductUpdateInput = {
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   itemsPerPack?: Prisma.IntFieldUpdateOperationsInput | number
+  weightKg?: Prisma.FloatFieldUpdateOperationsInput | number
+  lengthCm?: Prisma.IntFieldUpdateOperationsInput | number
+  widthCm?: Prisma.IntFieldUpdateOperationsInput | number
+  heightCm?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   imagePublicIds?: Prisma.ProductUpdateimagePublicIdsInput | string[]
@@ -424,6 +500,10 @@ export type ProductUncheckedUpdateInput = {
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   itemsPerPack?: Prisma.IntFieldUpdateOperationsInput | number
+  weightKg?: Prisma.FloatFieldUpdateOperationsInput | number
+  lengthCm?: Prisma.IntFieldUpdateOperationsInput | number
+  widthCm?: Prisma.IntFieldUpdateOperationsInput | number
+  heightCm?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   imagePublicIds?: Prisma.ProductUpdateimagePublicIdsInput | string[]
@@ -442,6 +522,10 @@ export type ProductCreateManyInput = {
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: boolean
   itemsPerPack?: number
+  weightKg?: number
+  lengthCm?: number
+  widthCm?: number
+  heightCm?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   imagePublicIds?: Prisma.ProductCreateimagePublicIdsInput | string[]
@@ -458,6 +542,10 @@ export type ProductUpdateManyMutationInput = {
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   itemsPerPack?: Prisma.IntFieldUpdateOperationsInput | number
+  weightKg?: Prisma.FloatFieldUpdateOperationsInput | number
+  lengthCm?: Prisma.IntFieldUpdateOperationsInput | number
+  widthCm?: Prisma.IntFieldUpdateOperationsInput | number
+  heightCm?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   imagePublicIds?: Prisma.ProductUpdateimagePublicIdsInput | string[]
@@ -474,6 +562,10 @@ export type ProductUncheckedUpdateManyInput = {
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   itemsPerPack?: Prisma.IntFieldUpdateOperationsInput | number
+  weightKg?: Prisma.FloatFieldUpdateOperationsInput | number
+  lengthCm?: Prisma.IntFieldUpdateOperationsInput | number
+  widthCm?: Prisma.IntFieldUpdateOperationsInput | number
+  heightCm?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   imagePublicIds?: Prisma.ProductUpdateimagePublicIdsInput | string[]
@@ -498,6 +590,10 @@ export type ProductCountOrderByAggregateInput = {
   composition?: Prisma.SortOrder
   isAvailable?: Prisma.SortOrder
   itemsPerPack?: Prisma.SortOrder
+  weightKg?: Prisma.SortOrder
+  lengthCm?: Prisma.SortOrder
+  widthCm?: Prisma.SortOrder
+  heightCm?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   imagePublicIds?: Prisma.SortOrder
@@ -507,6 +603,10 @@ export type ProductAvgOrderByAggregateInput = {
   price?: Prisma.SortOrder
   priceInCents?: Prisma.SortOrder
   itemsPerPack?: Prisma.SortOrder
+  weightKg?: Prisma.SortOrder
+  lengthCm?: Prisma.SortOrder
+  widthCm?: Prisma.SortOrder
+  heightCm?: Prisma.SortOrder
 }
 
 export type ProductMaxOrderByAggregateInput = {
@@ -518,6 +618,10 @@ export type ProductMaxOrderByAggregateInput = {
   content?: Prisma.SortOrder
   isAvailable?: Prisma.SortOrder
   itemsPerPack?: Prisma.SortOrder
+  weightKg?: Prisma.SortOrder
+  lengthCm?: Prisma.SortOrder
+  widthCm?: Prisma.SortOrder
+  heightCm?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -531,6 +635,10 @@ export type ProductMinOrderByAggregateInput = {
   content?: Prisma.SortOrder
   isAvailable?: Prisma.SortOrder
   itemsPerPack?: Prisma.SortOrder
+  weightKg?: Prisma.SortOrder
+  lengthCm?: Prisma.SortOrder
+  widthCm?: Prisma.SortOrder
+  heightCm?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -539,6 +647,10 @@ export type ProductSumOrderByAggregateInput = {
   price?: Prisma.SortOrder
   priceInCents?: Prisma.SortOrder
   itemsPerPack?: Prisma.SortOrder
+  weightKg?: Prisma.SortOrder
+  lengthCm?: Prisma.SortOrder
+  widthCm?: Prisma.SortOrder
+  heightCm?: Prisma.SortOrder
 }
 
 export type ProductScalarRelationFilter = {
@@ -577,6 +689,14 @@ export type NullableStringFieldUpdateOperationsInput = {
 
 export type BoolFieldUpdateOperationsInput = {
   set?: boolean
+}
+
+export type FloatFieldUpdateOperationsInput = {
+  set?: number
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
 }
 
 export type DateTimeFieldUpdateOperationsInput = {
@@ -627,6 +747,10 @@ export type ProductCreateWithoutOrderItemsInput = {
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: boolean
   itemsPerPack?: number
+  weightKg?: number
+  lengthCm?: number
+  widthCm?: number
+  heightCm?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   imagePublicIds?: Prisma.ProductCreateimagePublicIdsInput | string[]
@@ -644,6 +768,10 @@ export type ProductUncheckedCreateWithoutOrderItemsInput = {
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: boolean
   itemsPerPack?: number
+  weightKg?: number
+  lengthCm?: number
+  widthCm?: number
+  heightCm?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   imagePublicIds?: Prisma.ProductCreateimagePublicIdsInput | string[]
@@ -677,6 +805,10 @@ export type ProductUpdateWithoutOrderItemsInput = {
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   itemsPerPack?: Prisma.IntFieldUpdateOperationsInput | number
+  weightKg?: Prisma.FloatFieldUpdateOperationsInput | number
+  lengthCm?: Prisma.IntFieldUpdateOperationsInput | number
+  widthCm?: Prisma.IntFieldUpdateOperationsInput | number
+  heightCm?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   imagePublicIds?: Prisma.ProductUpdateimagePublicIdsInput | string[]
@@ -694,6 +826,10 @@ export type ProductUncheckedUpdateWithoutOrderItemsInput = {
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   itemsPerPack?: Prisma.IntFieldUpdateOperationsInput | number
+  weightKg?: Prisma.FloatFieldUpdateOperationsInput | number
+  lengthCm?: Prisma.IntFieldUpdateOperationsInput | number
+  widthCm?: Prisma.IntFieldUpdateOperationsInput | number
+  heightCm?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   imagePublicIds?: Prisma.ProductUpdateimagePublicIdsInput | string[]
@@ -711,6 +847,10 @@ export type ProductCreateWithoutCustomPricesInput = {
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: boolean
   itemsPerPack?: number
+  weightKg?: number
+  lengthCm?: number
+  widthCm?: number
+  heightCm?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   imagePublicIds?: Prisma.ProductCreateimagePublicIdsInput | string[]
@@ -728,6 +868,10 @@ export type ProductUncheckedCreateWithoutCustomPricesInput = {
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: boolean
   itemsPerPack?: number
+  weightKg?: number
+  lengthCm?: number
+  widthCm?: number
+  heightCm?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   imagePublicIds?: Prisma.ProductCreateimagePublicIdsInput | string[]
@@ -761,6 +905,10 @@ export type ProductUpdateWithoutCustomPricesInput = {
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   itemsPerPack?: Prisma.IntFieldUpdateOperationsInput | number
+  weightKg?: Prisma.FloatFieldUpdateOperationsInput | number
+  lengthCm?: Prisma.IntFieldUpdateOperationsInput | number
+  widthCm?: Prisma.IntFieldUpdateOperationsInput | number
+  heightCm?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   imagePublicIds?: Prisma.ProductUpdateimagePublicIdsInput | string[]
@@ -778,6 +926,10 @@ export type ProductUncheckedUpdateWithoutCustomPricesInput = {
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   itemsPerPack?: Prisma.IntFieldUpdateOperationsInput | number
+  weightKg?: Prisma.FloatFieldUpdateOperationsInput | number
+  lengthCm?: Prisma.IntFieldUpdateOperationsInput | number
+  widthCm?: Prisma.IntFieldUpdateOperationsInput | number
+  heightCm?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   imagePublicIds?: Prisma.ProductUpdateimagePublicIdsInput | string[]
@@ -835,6 +987,10 @@ export type ProductSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   composition?: boolean
   isAvailable?: boolean
   itemsPerPack?: boolean
+  weightKg?: boolean
+  lengthCm?: boolean
+  widthCm?: boolean
+  heightCm?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   imagePublicIds?: boolean
@@ -854,6 +1010,10 @@ export type ProductSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   composition?: boolean
   isAvailable?: boolean
   itemsPerPack?: boolean
+  weightKg?: boolean
+  lengthCm?: boolean
+  widthCm?: boolean
+  heightCm?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   imagePublicIds?: boolean
@@ -870,6 +1030,10 @@ export type ProductSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   composition?: boolean
   isAvailable?: boolean
   itemsPerPack?: boolean
+  weightKg?: boolean
+  lengthCm?: boolean
+  widthCm?: boolean
+  heightCm?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   imagePublicIds?: boolean
@@ -886,12 +1050,16 @@ export type ProductSelectScalar = {
   composition?: boolean
   isAvailable?: boolean
   itemsPerPack?: boolean
+  weightKg?: boolean
+  lengthCm?: boolean
+  widthCm?: boolean
+  heightCm?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   imagePublicIds?: boolean
 }
 
-export type ProductOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "price" | "priceInCents" | "imagePaths" | "description" | "content" | "composition" | "isAvailable" | "itemsPerPack" | "createdAt" | "updatedAt" | "imagePublicIds", ExtArgs["result"]["product"]>
+export type ProductOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "price" | "priceInCents" | "imagePaths" | "description" | "content" | "composition" | "isAvailable" | "itemsPerPack" | "weightKg" | "lengthCm" | "widthCm" | "heightCm" | "createdAt" | "updatedAt" | "imagePublicIds", ExtArgs["result"]["product"]>
 export type ProductInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   orderItems?: boolean | Prisma.Product$orderItemsArgs<ExtArgs>
   customPrices?: boolean | Prisma.Product$customPricesArgs<ExtArgs>
@@ -917,6 +1085,10 @@ export type $ProductPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     composition: runtime.JsonValue | null
     isAvailable: boolean
     itemsPerPack: number
+    weightKg: number
+    lengthCm: number
+    widthCm: number
+    heightCm: number
     createdAt: Date
     updatedAt: Date
     imagePublicIds: string[]
@@ -1355,6 +1527,10 @@ export interface ProductFieldRefs {
   readonly composition: Prisma.FieldRef<"Product", 'Json'>
   readonly isAvailable: Prisma.FieldRef<"Product", 'Boolean'>
   readonly itemsPerPack: Prisma.FieldRef<"Product", 'Int'>
+  readonly weightKg: Prisma.FieldRef<"Product", 'Float'>
+  readonly lengthCm: Prisma.FieldRef<"Product", 'Int'>
+  readonly widthCm: Prisma.FieldRef<"Product", 'Int'>
+  readonly heightCm: Prisma.FieldRef<"Product", 'Int'>
   readonly createdAt: Prisma.FieldRef<"Product", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Product", 'DateTime'>
   readonly imagePublicIds: Prisma.FieldRef<"Product", 'String[]'>

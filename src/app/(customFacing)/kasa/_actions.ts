@@ -109,9 +109,97 @@ export async function createOrder(formData: OrderFormData) {
       0
     );
 
-    // Set default values for required fields
-    // TODO: integrate Apaczka order_valuation to compute exact price.
-    const shippingCostInCents = 1500; // Placeholder: 15 PLN in cents
+    // Compute shipping cost via Apaczka order_valuation
+    let shippingCostInCents = 1500; // fallback
+    try {
+      const products = await prisma.product.findMany({
+        where: { id: { in: productIds } },
+        select: { id: true, weightKg: true, lengthCm: true, widthCm: true, heightCm: true, priceInCents: true },
+      });
+      const prodMap = new Map(products.map((p) => [p.id, p]));
+
+      let totalWeight = 0;
+      let maxLength = 0;
+      let maxWidth = 0;
+      let totalHeight = 0;
+
+      for (const item of validatedData.cartItems) {
+        const prod = prodMap.get(item.id);
+        if (!prod) continue;
+        totalWeight += prod.weightKg * item.quantity;
+        maxLength = Math.max(maxLength, prod.lengthCm);
+        maxWidth = Math.max(maxWidth, prod.widthCm);
+        totalHeight += prod.heightCm * item.quantity;
+      }
+      totalHeight = Math.min(totalHeight, 100);
+
+      const Apaczka = (await import("@/lib/apaczka")).default;
+      const order = {
+        service_id: Number(validatedData.shippingMethodId) || 0,
+        address: {
+          sender: {
+            country_code: process.env.SENDER_COUNTRY_CODE || "PL",
+            name: process.env.SENDER_NAME || "",
+            line1: process.env.SENDER_LINE1 || "",
+            line2: process.env.SENDER_LINE2 || "",
+            postal_code: process.env.SENDER_POSTAL_CODE || "",
+            state_code: process.env.SENDER_STATE_CODE || "",
+            city: process.env.SENDER_CITY || "",
+            is_residential: 0,
+            contact_person: process.env.SENDER_CONTACT_PERSON || "",
+            email: process.env.SENDER_EMAIL || "",
+            phone: process.env.SENDER_PHONE || "",
+          },
+          receiver: {
+            country_code: "PL",
+            name: `${validatedData.firstName} ${validatedData.lastName}`,
+            line1: validatedData.street,
+            line2: "",
+            postal_code: validatedData.postalCode,
+            state_code: "",
+            city: validatedData.city,
+            is_residential: 1,
+            contact_person: `${validatedData.firstName} ${validatedData.lastName}`,
+            email: validatedData.email,
+            phone: normalizePhonePL(validatedData.phoneNumber) || "",
+          },
+        },
+        shipment: [
+          {
+            dimension1: Math.max(maxLength, 1),
+            dimension2: Math.max(maxWidth, 1),
+            dimension3: Math.max(totalHeight, 1),
+            weight: Math.max(Math.round(totalWeight * 10) / 10, 0.1),
+            is_nstd: 0,
+            shipment_type_code: "PACZKA",
+          },
+        ],
+        shipment_value: subtotalInCents,
+        shipment_currency: "PLN",
+        pickup: { type: "SELF" },
+      };
+
+      const valuation = await Apaczka.orderValuation(order);
+      const priceTable = valuation.response?.price_table;
+      if (priceTable) {
+        const serviceId = String(validatedData.shippingMethodId);
+        if (priceTable[serviceId]) {
+          const grossStr = (priceTable[serviceId] as any).price_gross ?? (priceTable[serviceId] as any).price ?? "0";
+          shippingCostInCents = Math.round(parseFloat(grossStr));
+        } else {
+          // If specific service not found, use cheapest available
+          const prices = Object.values(priceTable)
+            .map((v: any) => Math.round(parseFloat(v.price_gross ?? v.price ?? "0")))
+            .filter((p) => p > 0);
+          if (prices.length > 0) {
+            shippingCostInCents = Math.min(...prices);
+          }
+        }
+      }
+    } catch (e) {
+      console.error("Apaczka valuation failed, using fallback shipping cost:", e);
+    }
+
     const totalPriceInCents = subtotalInCents + shippingCostInCents;
 
     // Handle user - first check if a userId was provided or if there's a logged in user

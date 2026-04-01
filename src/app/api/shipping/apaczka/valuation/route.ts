@@ -1,0 +1,112 @@
+import { createRouteHandler, ApiError } from "@/lib/api";
+import Apaczka from "@/lib/apaczka";
+import prisma from "@/db";
+import { z } from "zod";
+
+const valuationSchema = z.object({
+  cartItems: z.array(
+    z.object({
+      id: z.string(),
+      quantity: z.number().min(1),
+    })
+  ),
+  postalCode: z.string().min(1),
+  city: z.string().min(1),
+  serviceId: z.string().optional(),
+});
+
+function getSenderAddress() {
+  return {
+    country_code: process.env.SENDER_COUNTRY_CODE || "PL",
+    name: process.env.SENDER_NAME || "",
+    line1: process.env.SENDER_LINE1 || "",
+    line2: process.env.SENDER_LINE2 || "",
+    postal_code: process.env.SENDER_POSTAL_CODE || "",
+    state_code: process.env.SENDER_STATE_CODE || "",
+    city: process.env.SENDER_CITY || "",
+    is_residential: 0,
+    contact_person: process.env.SENDER_CONTACT_PERSON || "",
+    email: process.env.SENDER_EMAIL || "",
+    phone: process.env.SENDER_PHONE || "",
+  };
+}
+
+export const POST = createRouteHandler(async ({ req }) => {
+  const body = await req.json();
+  const data = valuationSchema.parse(body);
+
+  const productIds = data.cartItems.map((item) => item.id);
+  const products = await prisma.product.findMany({
+    where: { id: { in: productIds }, isAvailable: true },
+    select: {
+      id: true,
+      weightKg: true,
+      lengthCm: true,
+      widthCm: true,
+      heightCm: true,
+      priceInCents: true,
+    },
+  });
+
+  const productMap = new Map(products.map((p) => [p.id, p]));
+
+  // Calculate total weight and find max dimensions across all items
+  let totalWeightKg = 0;
+  let maxLength = 0;
+  let maxWidth = 0;
+  let totalHeight = 0;
+  let shipmentValueInCents = 0;
+
+  for (const item of data.cartItems) {
+    const product = productMap.get(item.id);
+    if (!product) {
+      throw new ApiError(`Produkt ${item.id} nie znaleziony`, 400);
+    }
+    totalWeightKg += product.weightKg * item.quantity;
+    maxLength = Math.max(maxLength, product.lengthCm);
+    maxWidth = Math.max(maxWidth, product.widthCm);
+    totalHeight += product.heightCm * item.quantity;
+    shipmentValueInCents += product.priceInCents * item.quantity;
+  }
+
+  // Cap height at a reasonable max (e.g. 100cm)
+  totalHeight = Math.min(totalHeight, 100);
+
+  const order: Record<string, any> = {
+    service_id: data.serviceId ? Number(data.serviceId) : 0,
+    address: {
+      sender: getSenderAddress(),
+      receiver: {
+        country_code: "PL",
+        name: "",
+        line1: "",
+        line2: "",
+        postal_code: data.postalCode,
+        state_code: "",
+        city: data.city,
+        is_residential: 1,
+        contact_person: "",
+        email: "",
+        phone: "",
+      },
+    },
+    shipment: [
+      {
+        dimension1: Math.max(maxLength, 1),
+        dimension2: Math.max(maxWidth, 1),
+        dimension3: Math.max(totalHeight, 1),
+        weight: Math.max(Math.round(totalWeightKg * 10) / 10, 0.1),
+        is_nstd: 0,
+        shipment_type_code: "PACZKA",
+      },
+    ],
+    shipment_value: shipmentValueInCents,
+    shipment_currency: "PLN",
+    pickup: {
+      type: "SELF",
+    },
+  };
+
+  const result = await Apaczka.orderValuation(order);
+  return result;
+});

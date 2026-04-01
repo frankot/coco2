@@ -40,6 +40,9 @@ export default function CheckoutPage() {
   const [selectedShippingMethod, setSelectedShippingMethod] = useState<string | null>(null);
   const [isLoadingShipping, setIsLoadingShipping] = useState(false);
   const [shippingError, setShippingError] = useState<string | null>(null);
+  // Shipping price from Apaczka valuation (keyed by service_id, value in grosze)
+  const [shippingPrices, setShippingPrices] = useState<Record<string, number>>({});
+  const [isLoadingValuation, setIsLoadingValuation] = useState(false);
   // Apaczka pickup point selection (for door-to-point services)
   const [selectedPointId, setSelectedPointId] = useState("");
   const [selectedSupplier, setSelectedSupplier] = useState("");
@@ -299,6 +302,52 @@ export default function CheckoutPage() {
 
     fetchShippingMethods();
   }, []);
+
+  // Fetch shipping valuation from Apaczka when cart/address change
+  useEffect(() => {
+    if (cartItems.length === 0 || !formData.postalCode || !formData.city) return;
+    // Require a plausible postal code (XX-XXX)
+    if (!/^\d{2}-\d{3}$/.test(formData.postalCode)) return;
+
+    const controller = new AbortController();
+    const fetchValuation = async () => {
+      setIsLoadingValuation(true);
+      try {
+        const res = await fetch("/api/shipping/apaczka/valuation", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            cartItems: cartItems.map((item) => ({ id: item.id, quantity: item.quantity })),
+            postalCode: formData.postalCode,
+            city: formData.city,
+          }),
+          signal: controller.signal,
+        });
+        const data = await res.json();
+        if (data.response?.price_table) {
+          const prices: Record<string, number> = {};
+          for (const [serviceId, val] of Object.entries(data.response.price_table)) {
+            const v = val as { price_gross?: string; price?: string };
+            const gross = v.price_gross ?? v.price ?? "0";
+            prices[serviceId] = Math.round(parseFloat(gross));
+          }
+          setShippingPrices(prices);
+        }
+      } catch (e: any) {
+        if (e.name !== "AbortError") {
+          console.error("Shipping valuation error:", e);
+        }
+      } finally {
+        setIsLoadingValuation(false);
+      }
+    };
+
+    const debounce = setTimeout(fetchValuation, 500);
+    return () => {
+      clearTimeout(debounce);
+      controller.abort();
+    };
+  }, [cartItems, formData.postalCode, formData.city]);
 
   // Compute visible services depending on selected payment method
   const visibleServices = (() => {
@@ -653,10 +702,25 @@ export default function CheckoutPage() {
     window.dispatchEvent(new Event("cartUpdated"));
   };
 
-  // Calculate shipping cost based on selected method
+  // Calculate shipping cost based on selected method and Apaczka valuation
   const getShippingCost = () => {
-    // For now, return a fixed cost. In a real implementation, you would calculate this based on the selected method
-    return selectedShippingMethod ? 1500 : 0; // 15 PLN in cents
+    if (!selectedShippingMethod) return 0;
+    // Resolve synthetic id (strip _COD, _PREPAID suffixes) to find price
+    const realId = selectedShippingMethod
+      .replace(/_COD$/, "")
+      .replace(/_PREPAID$/, "")
+      .replace(/_D2P$/, "");
+    if (shippingPrices[realId]) return shippingPrices[realId];
+    // For APACZKA_MAP, try to find cheapest D2P price
+    if (selectedShippingMethod === "APACZKA_MAP" && Object.keys(shippingPrices).length > 0) {
+      const d2pServices = shippingMethods.filter((s) => s.door_to_point === "1");
+      const d2pPrices = d2pServices
+        .map((s) => shippingPrices[s.service_id])
+        .filter((p) => p && p > 0);
+      if (d2pPrices.length > 0) return Math.min(...d2pPrices);
+    }
+    // Fallback while valuation is loading
+    return 1500;
   };
 
   // Calculate totals
@@ -1127,7 +1191,7 @@ export default function CheckoutPage() {
 
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Dostawa</span>
-                <span>{formatPLN(shipping)}</span>
+                <span>{isLoadingValuation ? "..." : formatPLN(shipping)}</span>
               </div>
               <div className="flex justify-between font-medium text-lg pt-2">
                 <span>Razem</span>

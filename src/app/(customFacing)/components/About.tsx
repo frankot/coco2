@@ -22,6 +22,8 @@ export function About() {
                 alt="Woda kokosowa z młodych kokosów"
                 width={600}
                 height={700}
+                loading="eager"
+                priority
                 className="w-full h-[600px] object-cover rounded-lg shadow-lg"
               />
             </div>
@@ -59,7 +61,13 @@ export function About() {
               {features.map((feature, index) => (
                 <div key={index} className="flex flex-col gap-3 items-center text-center">
                   <div className="w-16 h-16 lg:size-10 relative">
-                    <Image src={feature.icon} alt={feature.text} fill className="object-contain" />
+                    <Image
+                      src={feature.icon}
+                      alt={feature.text}
+                      fill
+                      sizes="(min-width: 1024px) 40px, 64px"
+                      className="object-contain"
+                    />
                     {feature.addStrike ? (
                       <span
                         className="absolute  right-0 top-5 w-full h-[1.5px] bg-black rotate-[-45deg]"
