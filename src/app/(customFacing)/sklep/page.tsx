@@ -50,7 +50,7 @@ function ProductCard({ product }: { product: Product }) {
     >
       {/* Product Image */}
       <div className="relative aspect-square overflow-hidden bg-gray-50">
-        <Link href={`/sklep/${product.id}`}>
+        <Link href={`/sklep/${product.slug || product.id}`}>
           {mainImage && (
             <>
               {/* Main Image */}
@@ -97,7 +97,7 @@ function ProductCard({ product }: { product: Product }) {
 
       {/* Product Info */}
       <div className="p-4">
-        <Link href={`/sklep/${product.id}`}>
+        <Link href={`/sklep/${product.slug || product.id}`}>
           <h3 className="text-lg font-semibold text-gray-900 hover:text-primary transition-colors line-clamp-2 mb-2">
             {product.name}
           </h3>

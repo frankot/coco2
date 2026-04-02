@@ -89,7 +89,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       {/* Product info */}
       <div className="p-6 space-y-4">
         {/* Product name */}
-        <Link href={`/sklep/${product.id}`} className="block group">
+        <Link href={`/sklep/${product.slug || product.id}`} className="block group">
           <h3 className="text-lg font-bold text-primary group-hover:text-primary/80 transition-colors line-clamp-2 text-center">
             {product.name}
           </h3>

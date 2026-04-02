@@ -7,7 +7,10 @@ type Props = { params: Promise<{ id: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
-  const product = await prisma.product.findUnique({ where: { id } });
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+  const product = isUuid
+    ? await prisma.product.findUnique({ where: { id } })
+    : await prisma.product.findUnique({ where: { slug: id } });
 
   if (!product) {
     return {
@@ -27,12 +30,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: product.name,
     description,
     alternates: {
-      canonical: `https://drcoco.pl/sklep/${id}`,
+      canonical: `https://drcoco.pl/sklep/${product.slug || id}`,
     },
     openGraph: {
       title: `${product.name} | Dr.Coco`,
       description,
-      url: `https://drcoco.pl/sklep/${id}`,
+      url: `https://drcoco.pl/sklep/${product.slug || id}`,
       type: "website",
       images: [
         {

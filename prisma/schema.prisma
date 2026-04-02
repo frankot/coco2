@@ -45,6 +45,7 @@ enum AddressType {
 model Product {
   id             String      @id @default(uuid())
   name           String
+  slug           String      @unique @default("")
   price          Int
   priceInCents   Int
   imagePaths     String[]

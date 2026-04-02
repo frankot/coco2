@@ -9,6 +9,7 @@ import { ShoppingBag, Star } from "lucide-react";
 
 type Product = {
   id: string;
+  slug?: string;
   name: string;
   price: number;
   priceInCents: number;
@@ -23,7 +24,7 @@ interface FeaturedProductCardProps {
 
 export function FeaturedProductCard({ product, onAddToCart }: FeaturedProductCardProps) {
   return (
-    <Link href={`/sklep/${product.id}`} className="block group">
+    <Link href={`/sklep/${product.slug || product.id}`} className="block group">
       <Card className="w-full overflow-hidden shadow-md relative transition-shadow hover:shadow-lg">
         {/* Featured badge */}
         <div className="absolute top-2 left-2 z-10 bg-primary text-primary-foreground rounded-full px-2 py-1 text-xs flex items-center gap-1">

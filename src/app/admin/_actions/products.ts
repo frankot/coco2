@@ -5,6 +5,7 @@ import { z } from "zod";
 import { redirect } from "next/navigation";
 import { uploadImage, deleteImage } from "@/lib/cloudinary";
 import { requireAdmin } from "@/lib/require-admin";
+import { slugify } from "@/lib/formatter";
 
 const fileSchema = z
   .instanceof(File, {
@@ -34,6 +35,7 @@ const addSchema = z.object({
 type FormState = {
   error?: {
     name?: string[];
+    slug?: string[];
     priceInCents?: string[];
     description?: string[];
     content?: string[];
@@ -50,6 +52,7 @@ export async function addProduct(prevState: FormState, formData: FormData): Prom
 
     // Extract and validate basic data
     const name = formData.get("name") as string;
+    const slug = ((formData.get("slug") as string) || "").trim() || slugify(name || "");
     const priceInCents = parseInt(formData.get("priceInCents") as string);
     const description = formData.get("description") as string;
     const itemsPerPack = parseInt(formData.get("itemsPerPack") as string) || 12;
@@ -60,6 +63,16 @@ export async function addProduct(prevState: FormState, formData: FormData): Prom
     // Validate required fields
     if (!name || !priceInCents || !description || !itemsPerPack || itemsPerPack < 1) {
       return { error: { _form: ["Wszystkie pola są wymagane"] } };
+    }
+
+    if (!slug) {
+      return { error: { slug: ["Slug jest wymagany"] } };
+    }
+
+    // Check slug uniqueness
+    const existingSlug = await prisma.product.findUnique({ where: { slug } });
+    if (existingSlug) {
+      return { error: { slug: ["Ten slug jest już zajęty"] } };
     }
 
     // Validate image sizes before processing
@@ -111,6 +124,7 @@ export async function addProduct(prevState: FormState, formData: FormData): Prom
     await prisma.product.create({
       data: {
         name,
+        slug,
         price: priceInCents / 100,
         priceInCents,
         description,
@@ -162,6 +176,7 @@ export async function updateProduct(
 
     // Extract data from FormData
     const name = formData.get("name") as string;
+    const slug = ((formData.get("slug") as string) || "").trim() || slugify(name || "");
     const priceInCents = parseInt(formData.get("priceInCents") as string);
     const description = formData.get("description") as string;
     const itemsPerPack = parseInt(formData.get("itemsPerPack") as string) || 12;
@@ -171,6 +186,16 @@ export async function updateProduct(
     // Validate required fields
     if (!name || !priceInCents || !description || !itemsPerPack || itemsPerPack < 1) {
       return { error: { _form: ["Wszystkie pola są wymagane"] } };
+    }
+
+    if (!slug) {
+      return { error: { slug: ["Slug jest wymagany"] } };
+    }
+
+    // Check slug uniqueness (exclude current product)
+    const existingSlug = await prisma.product.findUnique({ where: { slug } });
+    if (existingSlug && existingSlug.id !== productId) {
+      return { error: { slug: ["Ten slug jest już zajęty"] } };
     }
 
     // Validate image sizes before processing
@@ -191,6 +216,7 @@ export async function updateProduct(
     // Prepare update data
     const updateData: any = {
       name,
+      slug,
       price: priceInCents / 100,
       priceInCents,
       description,

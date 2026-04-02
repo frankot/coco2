@@ -30,3 +30,17 @@ export function formatNumber(value: number | null | undefined): string {
 
   return new Intl.NumberFormat("pl-PL").format(value);
 }
+
+/**
+ * Generate a URL-safe slug from a Polish string
+ */
+export function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/ł/g, "l")
+    .replace(/Ł/g, "l")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}

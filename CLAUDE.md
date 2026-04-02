@@ -1,5 +1,7 @@
 # CLAUDE.md — coco2
 
+Minimize tool calls. Don't re-read files you've already read this session. Don't read files for context unless I explicitly ask. Work from what's already in the conversation. Batch all changes into as few operations as possible.
+
 ## Project Overview
 
 Polish-language e-commerce application for a food/confectionery brand. Features a customer-facing storefront, admin dashboard, blog, integrated payments (Stripe), and shipping (Apaczka). Currency is PLN; prices stored in cents internally.

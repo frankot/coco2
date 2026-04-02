@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { addProduct, updateProduct } from "../../_actions/products";
 import type { Product } from "@/app/generated/prisma/client";
+import { slugify } from "@/lib/formatter";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { X, Plus, Trash2 } from "lucide-react";
@@ -20,6 +21,8 @@ const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
 export default function ProductForm({ product }: { product?: Product | null }) {
   const formRef = useRef<HTMLFormElement>(null);
   // Store price as PLN string in the input, convert to grosze on submit
+  const [slug, setSlug] = useState<string>(product?.slug || "");
+  const [slugManuallyEdited, setSlugManuallyEdited] = useState(!!product?.slug);
   const [pricePln, setPricePln] = useState<string>(
     product?.priceInCents != null ? (product.priceInCents / 100).toFixed(2) : ""
   );
@@ -134,8 +137,53 @@ export default function ProductForm({ product }: { product?: Product | null }) {
     <form ref={formRef} action={customFormAction} className="space-y-8">
       <div className="space-y-2">
         <Label htmlFor="name">Nazwa</Label>
-        <Input type="text" id="name" name="name" required defaultValue={product?.name || ""} />
+        <Input
+          type="text"
+          id="name"
+          name="name"
+          required
+          defaultValue={product?.name || ""}
+          onChange={(e) => {
+            if (!slugManuallyEdited) {
+              setSlug(slugify(e.target.value));
+            }
+          }}
+        />
         {state?.error?.name && <div className="text-destructive">{state.error.name}</div>}
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="slug">Slug (URL)</Label>
+        <div className="flex gap-2">
+          <Input
+            type="text"
+            id="slug"
+            name="slug"
+            required
+            value={slug}
+            onChange={(e) => {
+              setSlug(e.target.value);
+              setSlugManuallyEdited(true);
+            }}
+          />
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              const nameInput = formRef.current?.querySelector<HTMLInputElement>("#name");
+              if (nameInput) {
+                setSlug(slugify(nameInput.value));
+                setSlugManuallyEdited(false);
+              }
+            }}
+          >
+            Generuj
+          </Button>
+        </div>
+        {state?.error?.slug && <div className="text-destructive">{state.error.slug}</div>}
+        <div className="text-sm text-muted-foreground">
+          /sklep/<strong>{slug || "..."}</strong>
+        </div>
       </div>
       <div className="space-y-2">
         <Label htmlFor="pricePln">Cena (PLN)</Label>
