@@ -15,7 +15,16 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Separator } from "@/components/ui/separator";
-import { ShoppingBag, ArrowLeft, Truck, Package, CheckCircle, XCircle } from "lucide-react";
+import {
+  ShoppingBag,
+  ArrowLeft,
+  Truck,
+  Package,
+  CheckCircle,
+  XCircle,
+  Download,
+  FilePlus2,
+} from "lucide-react";
 import Link from "next/link";
 import AdminLoading from "../../loading";
 import { toast } from "sonner";
@@ -49,6 +58,7 @@ type Order = {
   pricePaidInCents: number;
   createdAt: string;
   status: OrderStatus;
+  paymentMethod: string | null;
   user: {
     id: string;
     email: string;
@@ -70,6 +80,9 @@ type Order = {
   apaczkaPointSupplier?: string | null;
   shippingServiceId?: string | null;
   shippingServiceName?: string | null;
+  wfirmaInvoiceId?: string | null;
+  wfirmaInvoiceNumber?: string | null;
+  wfirmaInvoiceSentAt?: string | null;
 };
 
 export default function OrderDetailsPage() {
@@ -129,11 +142,47 @@ export default function OrderDetailsPage() {
     }
   };
 
+  const downloadInvoice = async () => {
+    try {
+      const response = await fetch(`/api/admin/invoices/${id}/download`);
+      if (!response.ok) {
+        throw new Error("Nie udało się pobrać faktury");
+      }
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `Faktura_${order?.wfirmaInvoiceNumber || id}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Błąd pobierania faktury");
+    }
+  };
+
+  const retryInvoice = async () => {
+    try {
+      const response = await fetch(`/api/admin/invoices/${id}/retry`, {
+        method: "POST",
+      });
+      const data = await response.json().catch(() => null);
+      if (!response.ok || !data?.success) {
+        throw new Error(data?.error || "Nie udało się wygenerować faktury");
+      }
+      toast.success("Faktura została wygenerowana");
+      window.location.reload();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Błąd generowania faktury");
+    }
+  };
+
   // Get status display name in Polish
-  const getStatusDisplayName = (status: OrderStatus) => {
+  const getStatusDisplayName = (status: OrderStatus, paymentMethod?: string | null) => {
     switch (status) {
       case "PENDING":
         return "Oczekujące";
+      case "PAID":
+        return paymentMethod === "COD" ? "Opłacone (Pobranie)" : "Opłacone";
       case "PROCESSING":
         return "W realizacji";
       case "SHIPPED":
@@ -152,6 +201,8 @@ export default function OrderDetailsPage() {
     switch (status) {
       case "PENDING":
         return "secondary";
+      case "PAID":
+        return "default";
       case "PROCESSING":
         return "default";
       case "SHIPPED":
@@ -216,7 +267,7 @@ export default function OrderDetailsPage() {
               <div className="text-sm text-muted-foreground">Status:</div>
               <div>
                 <Badge variant={getStatusBadgeVariant(order.status)}>
-                  {getStatusDisplayName(order.status)}
+                  {getStatusDisplayName(order.status, order.paymentMethod)}
                 </Badge>
               </div>
 
@@ -230,14 +281,38 @@ export default function OrderDetailsPage() {
 
               <div className="text-sm text-muted-foreground">Liczba produktów:</div>
               <div className="text-sm font-medium">{order.orderItems.length}</div>
+
+              <div className="text-sm text-muted-foreground">Numer faktury:</div>
+              <div className="text-sm font-medium">{order.wfirmaInvoiceNumber || "—"}</div>
+
+              <div className="text-sm text-muted-foreground">Wysłano fakturę:</div>
+              <div className="text-sm font-medium">
+                {order.wfirmaInvoiceSentAt
+                  ? format(new Date(order.wfirmaInvoiceSentAt), "dd.MM.yyyy | HH:mm")
+                  : "—"}
+              </div>
             </div>
 
             <Separator className="my-4" />
 
+            <div className="flex flex-wrap gap-2">
+              {order.wfirmaInvoiceId ? (
+                <Button variant="outline" size="sm" onClick={downloadInvoice}>
+                  <Download className="mr-2 h-4 w-4" />
+                  Pobierz fakturę
+                </Button>
+              ) : (
+                <Button variant="outline" size="sm" onClick={retryInvoice}>
+                  <FilePlus2 className="mr-2 h-4 w-4" />
+                  Wygeneruj fakturę
+                </Button>
+              )}
+            </div>
+
             <div className="space-y-2">
               <h3 className="font-medium">Zmień status</h3>
               <div className="flex flex-wrap gap-2">
-                {(order.status === "PENDING" || order.status === "PAID") && (
+                {order.status === "PAID" && (
                   <Button
                     variant="outline"
                     size="sm"
@@ -264,6 +339,7 @@ export default function OrderDetailsPage() {
                   </Button>
                 )}
                 {(order.status === "PENDING" ||
+                  order.status === "PAID" ||
                   order.status === "PROCESSING" ||
                   order.status === "SHIPPED") && (
                   <Button

@@ -22,7 +22,7 @@ export const POST = createRouteHandler(
     const where = {
       id: orderIds && orderIds.length ? { in: orderIds } : undefined,
       apaczkaOrderId: null as any,
-      status: { in: ["PENDING", "PROCESSING"] } as any,
+      status: { in: ["PAID"] } as any,
       shippingServiceId: { not: null } as any,
     };
 

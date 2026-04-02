@@ -37,8 +37,11 @@ type Order = {
   pricePaidInCents: number;
   createdAt: string;
   status: OrderStatus;
+  paymentMethod: string | null;
   apaczkaOrderId?: string | null;
   apaczkaWaybillNumber?: string | null;
+  wfirmaInvoiceId?: string | null;
+  wfirmaInvoiceNumber?: string | null;
   user: {
     id: string;
     email: string;
@@ -286,12 +289,12 @@ function OrdersTable() {
   };
 
   // Get status display name in Polish
-  const getStatusDisplayName = (status: OrderStatus) => {
+  const getStatusDisplayName = (status: OrderStatus, paymentMethod?: string | null) => {
     switch (status) {
       case "PENDING":
         return "Oczekujące";
       case "PAID":
-        return "Opłacone";
+        return paymentMethod === "COD" ? "Opłacone (Pobranie)" : "Opłacone";
       case "PROCESSING":
         return "W realizacji";
       case "SHIPPED":
@@ -374,7 +377,7 @@ function OrdersTable() {
                 <TableCell>
                   <TableCellLink href={`/admin/zamowienia/${order.id}`}>
                     <Badge variant={getStatusBadgeVariant(order.status)}>
-                      {getStatusDisplayName(order.status)}
+                      {getStatusDisplayName(order.status, order.paymentMethod)}
                     </Badge>
                   </TableCellLink>
                 </TableCell>
@@ -398,6 +401,7 @@ function OrdersTable() {
                     id={order.id}
                     currentStatus={order.status}
                     hasApaczkaOrderId={!!order.apaczkaOrderId}
+                    wfirmaInvoiceId={order.wfirmaInvoiceId ?? null}
                   />
                 </TableCell>
               </TableRow>

@@ -27,8 +27,11 @@ export const ORDER_LIST_SELECT = {
   pricePaidInCents: true,
   createdAt: true,
   status: true,
+  paymentMethod: true,
   apaczkaOrderId: true,
   apaczkaWaybillNumber: true,
+  wfirmaInvoiceId: true,
+  wfirmaInvoiceNumber: true,
   user: { select: { id: true, email: true, accountType: true } },
   orderItems: {
     select: {
@@ -41,6 +44,7 @@ export const ORDER_LIST_SELECT = {
 };
 
 export const ORDER_DETAIL_INCLUDE = {
+  // Scalar fields are included automatically when using include; keep relations explicit here.
   user: {
     select: {
       id: true,

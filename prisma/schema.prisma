@@ -127,6 +127,10 @@ model Order {
   apaczkaTrackingUrl  String?
   apaczkaStatus       String?
   apaczkaConfirmedAt  DateTime?
+  // wFirma invoice metadata
+  wfirmaInvoiceId     String?
+  wfirmaInvoiceNumber String?
+  wfirmaInvoiceSentAt DateTime?
   // Apaczka pickup/point delivery selection (for door-to-point)
   apaczkaPointId       String?
   apaczkaPointSupplier String?

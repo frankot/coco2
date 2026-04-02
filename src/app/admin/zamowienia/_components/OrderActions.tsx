@@ -11,7 +11,6 @@ import {
   Package,
   CheckCircle,
   XCircle,
-  CheckSquare,
   Download,
   MoreVertical,
 } from "lucide-react";
@@ -35,10 +34,12 @@ export function OrderActionsMenu({
   id,
   currentStatus,
   hasApaczkaOrderId,
+  wfirmaInvoiceId,
 }: {
   id: string;
   currentStatus: OrderStatus;
   hasApaczkaOrderId: boolean;
+  wfirmaInvoiceId: string | null;
 }) {
   const [cancelOpen, setCancelOpen] = useState(false);
   const isCancelDisabled = currentStatus === "DELIVERED" || currentStatus === "CANCELLED";
@@ -84,26 +85,6 @@ export function OrderActionsMenu({
     }
   };
 
-  const confirmApaczka = async () => {
-    try {
-      const res = await fetch(`/api/admin/shipping/apaczka/confirm`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ orderId: id }),
-      });
-      const data = await res.json();
-      if (!res.ok || !data.success) {
-        const errorMsg = data.error || data.message || "Błąd API";
-        toast.error(`Apaczka: ${errorMsg}`, { duration: 8000 });
-        return;
-      }
-      toast.success("Zamówienie potwierdzone w Apaczka");
-      window.location.reload();
-    } catch (e: any) {
-      toast.error(`Błąd połączenia: ${e?.message ?? "Nieznany błąd"}`, { duration: 6000 });
-    }
-  };
-
   const downloadLabel = async () => {
     try {
       const res = await fetch(`/api/admin/shipping/apaczka/waybill/${id}`);
@@ -120,22 +101,47 @@ export function OrderActionsMenu({
     }
   };
 
+  const downloadInvoice = async () => {
+    try {
+      const res = await fetch(`/api/admin/invoices/${id}/download`);
+      if (!res.ok) throw new Error("Nie udało się pobrać faktury");
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `Faktura_${id}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (e: any) {
+      toast.error(e?.message || "Błąd pobierania faktury");
+    }
+  };
+
+  const retryInvoice = async () => {
+    try {
+      const res = await fetch(`/api/admin/invoices/${id}/retry`, {
+        method: "POST",
+      });
+      const data = await res.json().catch(() => null);
+      if (!res.ok || !data?.success) {
+        throw new Error(data?.error || "Nie udało się wygenerować faktury");
+      }
+      toast.success("Faktura została wygenerowana");
+      window.location.reload();
+    } catch (e: any) {
+      toast.error(e?.message || "Błąd generowania faktury");
+    }
+  };
+
   // Render status-specific items
   const renderStatusItems = () => {
     switch (currentStatus) {
-      case "PENDING":
       case "PAID":
         return (
-          <>
-            <DropdownMenuItem className="cursor-pointer" onClick={() => updateStatus("PROCESSING")}>
-              <Package className="mr-2 h-4 w-4" />
-              <span>Rozpocznij realizację</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem className="cursor-pointer" onClick={confirmApaczka}>
-              <CheckSquare className="mr-2 h-4 w-4" />
-              <span>Potwierdź w Apaczka</span>
-            </DropdownMenuItem>
-          </>
+          <DropdownMenuItem className="cursor-pointer" onClick={() => updateStatus("PROCESSING")}>
+            <Package className="mr-2 h-4 w-4" />
+            <span>Rozpocznij realizację</span>
+          </DropdownMenuItem>
         );
       case "PROCESSING":
         return (
@@ -175,6 +181,17 @@ export function OrderActionsMenu({
             <DropdownMenuItem className="cursor-pointer" onClick={downloadLabel}>
               <Download className="mr-2 h-4 w-4" />
               <span>Pobierz etykietę</span>
+            </DropdownMenuItem>
+          )}
+          {wfirmaInvoiceId ? (
+            <DropdownMenuItem className="cursor-pointer" onClick={downloadInvoice}>
+              <Download className="mr-2 h-4 w-4" />
+              <span>Pobierz fakturę</span>
+            </DropdownMenuItem>
+          ) : (
+            <DropdownMenuItem className="cursor-pointer" onClick={retryInvoice}>
+              <Download className="mr-2 h-4 w-4" />
+              <span>Wygeneruj fakturę</span>
             </DropdownMenuItem>
           )}
           <DropdownMenuSeparator />

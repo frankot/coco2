@@ -301,7 +301,7 @@ export async function createOrder(formData: OrderFormData) {
         const order = await tx.order.create({
           data: {
             userId: verifiedUserId,
-            status: "PENDING",
+            status: validatedData.paymentMethod === "COD" ? "PAID" : "PENDING",
             paymentMethod: validatedData.paymentMethod,
             pricePaidInCents: totalPriceInCents,
             subtotalInCents: subtotalInCents,
