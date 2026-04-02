@@ -109,11 +109,18 @@ function UserAccountMenu() {
 
   if (!isAuthenticated) {
     return (
-      <Link href="/auth/zaloguj">
-        <Button variant="ghost" size="icon">
-          <User className="size-7" />
-        </Button>
-      </Link>
+      <div className="flex items-center gap-1">
+        <Link href="/auth/zaloguj">
+          <Button variant="ghost" size="sm" className="text-sm font-medium">
+            Zaloguj
+          </Button>
+        </Link>
+        <Link href="/rejestracja">
+          <Button variant="ghost" size="sm" className="text-sm font-medium text-primary">
+            Zarejestruj
+          </Button>
+        </Link>
+      </div>
     );
   }
 
@@ -259,8 +266,8 @@ export function Nav({ children }: { children: React.ReactNode }) {
   const logoMarginTop = isMainPage ? 48 - scrollProgress * 48 : 0;
   const logoPadding = isMainPage ? 8 - scrollProgress * 8 : 0;
 
-  // Use same height class for both states to ensure consistency
-  const logoHeight = isMainPage && scrollProgress < 1 ? "h-28" : "h-20";
+
+  const logoHeightPx = isMainPage ? 88 - scrollProgress * 8 : 80;
 
   return (
     <>
@@ -289,7 +296,8 @@ export function Nav({ children }: { children: React.ReactNode }) {
                   alt="Logo"
                   width={144}
                   height={144}
-                  className={`w-auto transition-all duration-300 ease-out ${logoHeight}`}
+                  className="w-auto transition-all duration-300 ease-out"
+                  style={{ height: `${logoHeightPx}px` }}
                 />
               </Link>
             </div>

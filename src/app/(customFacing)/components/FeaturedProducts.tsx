@@ -30,8 +30,14 @@ export default async function FeaturedProducts() {
     <section className="py-12">
       <div className="container px-4 mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
+          {products.map((product, index) => (
+            <div
+              key={product.id}
+              className="featured-product-item"
+              style={{ "--stagger-delay": `${index * 120}ms` } as React.CSSProperties}
+            >
+              <ProductCard product={product} />
+            </div>
           ))}
         </div>
       </div>

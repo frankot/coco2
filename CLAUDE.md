@@ -1,6 +1,18 @@
 # CLAUDE.md — coco2
 
+
+
+## General Rules
+
 Minimize tool calls. Don't re-read files you've already read this session. Don't read files for context unless I explicitly ask. Work from what's already in the conversation. Batch all changes into as few operations as possible.
+
+Do not use any skills unless I explicitly ask you to use them.
+
+Comment style rule: Add comments only as short, self-explanatory title labels, no full-sentence comments for example:
+// Desktop Logo
+// Cart Price Refresher
+
+
 
 ## Project Overview
 
