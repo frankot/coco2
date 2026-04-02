@@ -35,6 +35,16 @@ export type CreateInvoiceParams = {
   lines: WfirmaInvoiceLine[];
 };
 
+const COUNTRY_CODE_MAP: Record<string, string> = {
+  POLSKA: "PL",
+  POLAND: "PL",
+  NIEMCY: "DE",
+  GERMANY: "DE",
+  CZECHY: "CZ",
+  CZECH_REPUBLIC: "CZ",
+  CZECHIA: "CZ",
+};
+
 function sanitize(value: string | undefined) {
   return value?.trim().replace(/^['"]|['"]$/g, "") ?? "";
 }
@@ -53,10 +63,14 @@ function getConfig() {
 }
 
 function getUrl(path: string) {
+  return getUrlWithFormat(path, "json");
+}
+
+function getUrlWithFormat(path: string, inputFormat: "json" | "xml") {
   const { companyId } = getConfig();
   const normalizedPath = path.startsWith("/") ? path : `/${path}`;
   const query = new URLSearchParams({
-    inputFormat: "json",
+    inputFormat,
     outputFormat: "json",
     company_id: companyId,
   });
@@ -64,19 +78,25 @@ function getUrl(path: string) {
   return `${WFIRMA_API_URL}${normalizedPath}?${query.toString()}`;
 }
 
-async function requestJson<T>(path: string, init?: RequestInit): Promise<WfirmaEnvelope<T>> {
+async function requestJson<T>(
+  path: string,
+  init?: RequestInit,
+  options?: { inputFormat?: "json" | "xml"; contentType?: string }
+): Promise<WfirmaEnvelope<T>> {
   const { accessKey, secretKey, appKey } = getConfig();
-  const response = await fetch(getUrl(path), {
+  const inputFormat = options?.inputFormat ?? "json";
+  const response = await fetch(getUrlWithFormat(path, inputFormat), {
     ...init,
     headers: {
       Accept: "application/json",
-      "Content-Type": "application/json",
+      "Content-Type": options?.contentType ?? "application/json",
       accessKey,
       secretKey,
       appKey,
       ...(init?.headers ?? {}),
     },
     cache: "no-store",
+    // requestJson handles both JSON and XML request bodies; response is always JSON here.
   });
 
   const text = await response.text();
@@ -94,6 +114,15 @@ async function requestJson<T>(path: string, init?: RequestInit): Promise<WfirmaE
   }
 
   return data;
+}
+
+function escapeXml(value: string) {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
 }
 
 function isRecord(value: unknown): value is UnknownRecord {
@@ -171,27 +200,53 @@ async function requestPdf(path: string, init?: RequestInit): Promise<Buffer> {
 
 export const wFirma = {
   createInvoice(params: CreateInvoiceParams) {
+    const normalizedCountry =
+      COUNTRY_CODE_MAP[params.contractor.country.trim().toUpperCase().replace(/\s+/g, "_")] ||
+      params.contractor.country.trim().toUpperCase();
+
+    const linesXml = params.lines
+      .map(
+        (line) => `<invoicecontent>
+<name>${escapeXml(line.name)}</name>
+<count>${line.quantity.toFixed(4)}</count>
+<unit_count>1.0000</unit_count>
+<unit>${escapeXml(line.unit ?? "szt.")}</unit>
+<price>${escapeXml(line.price)}</price>
+<vat>${escapeXml(line.vat)}</vat>
+</invoicecontent>`
+      )
+      .join("");
+
+    const xmlBody = `<api>
+<invoices>
+<invoice>
+<contractor>
+<name>${escapeXml(params.contractor.name)}</name>
+<street>${escapeXml(params.contractor.street)}</street>
+<zip>${escapeXml(params.contractor.zip)}</zip>
+<city>${escapeXml(params.contractor.city)}</city>
+<country>${escapeXml(normalizedCountry)}</country>
+${params.contractor.email ? `<email>${escapeXml(params.contractor.email)}</email>` : ""}
+${params.contractor.phone ? `<phone>${escapeXml(params.contractor.phone)}</phone>` : ""}
+</contractor>
+<type>normal</type>
+<paymentmethod>${params.paymentMethod}</paymentmethod>
+<paymentstate>${params.paymentState}</paymentstate>
+<price_type>brutto</price_type>
+<invoicecontents>${linesXml}</invoicecontents>
+</invoice>
+</invoices>
+</api>`;
+
     return requestJson<{
       invoices?: Array<{ id?: string | number; fullnumber?: string }>;
       invoice?: { id?: string | number; fullnumber?: string };
     }>("/invoices/add", {
       method: "POST",
-      body: JSON.stringify({
-        invoice: {
-          contractor: params.contractor,
-          type: "normal",
-          paymentmethod: params.paymentMethod,
-          paymentstate: params.paymentState,
-          price_type: "brutto",
-          invoicecontents: params.lines.map((line) => ({
-            name: line.name,
-            count: line.quantity.toFixed(4),
-            unit: line.unit ?? "szt.",
-            price: line.price,
-            vat: line.vat,
-          })),
-        },
-      }),
+      body: xmlBody,
+    }, {
+      inputFormat: "xml",
+      contentType: "application/xml",
     });
   },
 
