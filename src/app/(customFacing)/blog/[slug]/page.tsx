@@ -7,6 +7,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkBreaks from "remark-breaks";
 import rehypeRaw from "rehype-raw";
+import { Button } from "@/components/ui/button";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -23,12 +24,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
-  // Convert content to a plain text summary (handles HTML or Markdown)
   const plainText = post.content
-    .replace(/<[^>]*>?/gm, "") // remove HTML tags
-    .replace(/\[([^\]]+)\]\([^\)]+\)/g, "$1") // markdown links [text](url)
-    .replace(/[`*_~>#-]/g, "") // common markdown punctuation
-    .replace(/\n+/g, " "); // collapse newlines
+    .replace(/<[^>]*>?/gm, "")
+    .replace(/\[([^\]]+)\]\([^\)]+\)/g, "$1")
+    .replace(/[`*_~>#-]/g, "")
+    .replace(/\n+/g, " ");
   const description = plainText.slice(0, 160) + (plainText.length > 160 ? "..." : "");
 
   return {
@@ -68,29 +68,42 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function BlogDetail({ params }: Props) {
-  const { slug } = await params; // await params per Next.js dynamic route guidance
+  const { slug } = await params;
   const post = await prisma.blogPost.findUnique({ where: { slug } });
   if (!post)
-    return <div className="py-16 container mx-auto px-6 max-w-3xl">Wpis nie znaleziony</div>;
+    return (
+      <div className="min-h-screen mt-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">Wpis nie znaleziony</div>
+      </div>
+    );
 
   return (
-    <section className="py-16 lg:mt-10">
-      <div className="container mx-auto max-w-7xl px-6">
-        <div className="flex items-center justify-between mb-10">
-          <Link
-            href="/blog"
-            className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"
-          >
-            <ArrowLeft className="w-4 h-4" /> Wróć
+    <div className="min-h-screen mt-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {/* Back Button */}
+        <div className="mb-6">
+          <Link href="/blog">
+            <Button
+              variant="ghost"
+              className="flex items-center gap-2 text-gray-600 hover:bg-secondary/50"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Wróć do bloga
+            </Button>
           </Link>
-          <p className="text-sm text-muted-foreground">
-            {new Date(post.createdAt).toLocaleDateString()}
-          </p>
         </div>
+
         <div className="grid lg:grid-cols-2 gap-12 items-start">
           {/* Text Column */}
-          <div className="space-y-8 order-2 lg:order-1">
-            <h1 className="text-4xl font-bold leading-tight">{post.title}</h1>
+          <div className="space-y-6 order-2 lg:order-1">
+            <div>
+              <p className="text-sm text-gray-500 mb-3">
+                {new Date(post.createdAt).toLocaleDateString()}
+              </p>
+              <h1 className="text-3xl lg:text-4xl font-bold leading-tight text-gray-900">
+                {post.title}
+              </h1>
+            </div>
             <div className="prose prose-lg max-w-none text-gray-700">
               <ReactMarkdown
                 remarkPlugins={[remarkGfm, remarkBreaks]}
@@ -126,18 +139,19 @@ export default async function BlogDetail({ params }: Props) {
               </ReactMarkdown>
             </div>
           </div>
-          {/* Image Column (Sticky) */}
+
+          {/* Image Column */}
           <div className="order-1 lg:order-2 lg:sticky lg:top-24">
             {post.imagePath ? (
-              <div className="relative w-full h-[560px] rounded-lg overflow-hidden shadow-lg">
-                <Image src={post.imagePath} alt={post.title} fill className="object-cover" />
+              <div className="relative w-full h-[560px] rounded-2xl overflow-hidden shadow-lg">
+                <Image src={post.imagePath} alt={post.title} fill loading="eager" sizes="(min-width: 1024px) 50vw, 100vw" className="object-cover" />
               </div>
             ) : (
-              <div className="w-full h-[400px] bg-muted rounded-lg" />
+              <div className="w-full h-[400px] bg-gray-50 rounded-2xl" />
             )}
           </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 }

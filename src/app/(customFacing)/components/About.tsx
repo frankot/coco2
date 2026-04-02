@@ -1,5 +1,5 @@
 import Image from "next/image";
-
+import Link from "next/link";
 export function About() {
   const features = [
     { icon: "/icons/SugarFree.png", text: "Bez dodatku cukru" },
@@ -15,7 +15,7 @@ export function About() {
       <div className="container mx-auto px-6 max-w-7xl">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Left - Large Image */}
-          <div className="order-2 lg:order-1">
+          <div className="order-1">
             <div className="relative">
               <Image
                 src="/ab.webp"
@@ -24,7 +24,7 @@ export function About() {
                 height={700}
                 loading="eager"
                 priority
-                className="w-full h-[600px] object-cover rounded-lg shadow-lg"
+                className="w-full h-[450px] lg:h-[680px] object-cover rounded-lg shadow-lg"
               />
             </div>
           </div>
@@ -66,7 +66,7 @@ export function About() {
                       alt={feature.text}
                       fill
                       sizes="(min-width: 1024px) 40px, 64px"
-                      className="object-contain"
+                      className="object-contain hover:scale-110 transition-transform duration-300"
                     />
                     {feature.addStrike ? (
                       <span
@@ -81,11 +81,12 @@ export function About() {
             </div>
 
             {/* CTA Button */}
-            <div className="">
-              <button className="bg-primary hover:bg-primary/90 text-white px-8 py-4 rounded-full font-semibold text-lg transition-colors">
+            <Link href="/sklep">           <div className="text-center">
+              <button className="bg-primary hover:bg-primary/90 text-white px-8 py-4 rounded-xl font-semibold text-lg transition-colors">
                 Poznaj produkty Dr.Coco
               </button>
-            </div>
+            </div></Link>
+ 
           </div>
         </div>
       </div>

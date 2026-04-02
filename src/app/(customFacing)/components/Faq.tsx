@@ -42,11 +42,31 @@ const faqs = [
   },
 ];
 
+// Accordion only — for standalone FAQ page
+export function FaqContent() {
+  return (
+    <div className="max-w-4xl">
+      <Accordion type="single" defaultValue="faq-0" collapsible>
+        {faqs.map((item, idx) => (
+          <AccordionItem key={idx} value={`faq-${idx}`} className="border-b last:border-b-0">
+            <AccordionTrigger className="px-6 py-4 text-base font-medium text-gray-900 hover:no-underline hover:text-primary transition-colors">
+              {item.q}
+            </AccordionTrigger>
+            <AccordionContent className="px-6 pb-4">
+              <p className="text-gray-600 leading-relaxed">{item.a}</p>
+            </AccordionContent>
+          </AccordionItem>
+        ))}
+      </Accordion>
+    </div>
+  );
+}
+
+// Full section with header — for homepage
 export function Faq() {
   return (
     <section className="py-20">
       <div className="container mx-auto px-6 max-w-4xl">
-        {/* Centered Title */}
         <div className="text-center space-y-4 mb-12">
           <h2 className="text-4xl lg:text-5xl font-bold leading-tight">
             <span className="text-primary">Najczęstsze</span>
@@ -59,21 +79,18 @@ export function Faq() {
           </p>
         </div>
 
-        {/* FAQ Accordion */}
-        <div className="">
-          <Accordion type="single" defaultValue="faq-0" collapsible>
-            {faqs.map((item, idx) => (
-              <AccordionItem key={idx} value={`faq-${idx}`} className="border-b last:border-b-0">
-                <AccordionTrigger className="px-6 py-4 text-base font-medium text-gray-900 hover:no-underline hover:text-primary transition-colors">
-                  {item.q}
-                </AccordionTrigger>
-                <AccordionContent className="px-6 pb-4">
-                  <p className="text-gray-600 leading-relaxed">{item.a}</p>
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
-        </div>
+        <Accordion type="single" defaultValue="faq-0" collapsible>
+          {faqs.map((item, idx) => (
+            <AccordionItem key={idx} value={`faq-${idx}`} className="border-b last:border-b-0">
+              <AccordionTrigger className="px-6 py-4 text-base font-medium text-gray-900 hover:no-underline hover:text-primary transition-colors">
+                {item.q}
+              </AccordionTrigger>
+              <AccordionContent className="px-6 pb-4">
+                <p className="text-gray-600 leading-relaxed">{item.a}</p>
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
       </div>
     </section>
   );

@@ -332,13 +332,14 @@ export function Nav({ children }: { children: React.ReactNode }) {
                   </div>
                 </nav>
                 <div className="flex flex-col items-center gap-6 pb-8">
-                  <Image
+                  <Link href="/">          <Image
                     src="/logo.png"
                     alt="Logo"
                     width={160}
                     height={160}
                     className="h-44 w-auto opacity-80"
-                  />
+                  /></Link>
+        
                   <div className="flex items-center gap-4">
                     <Link
                       href="https://instagram.com/drcoco"
