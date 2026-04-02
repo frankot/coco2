@@ -109,18 +109,11 @@ function UserAccountMenu() {
 
   if (!isAuthenticated) {
     return (
-      <div className="flex items-center gap-1">
-        <Link href="/auth/zaloguj">
-          <Button variant="ghost" size="sm" className="text-sm font-medium">
-            Zaloguj
-          </Button>
-        </Link>
-        <Link href="/rejestracja">
-          <Button variant="ghost" size="sm" className="text-sm font-medium text-primary">
-            Zarejestruj
-          </Button>
-        </Link>
-      </div>
+      <Link href="/auth/zaloguj">
+        <Button variant="ghost" size="icon">
+          <User className="size-7" />
+        </Button>
+      </Link>
     );
   }
 
