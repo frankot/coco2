@@ -259,7 +259,6 @@ export function Nav({ children }: { children: React.ReactNode }) {
   const logoMarginTop = isMainPage ? 48 - scrollProgress * 48 : 0;
   const logoPadding = isMainPage ? 8 - scrollProgress * 8 : 0;
 
-
   const logoHeightPx = isMainPage ? 88 - scrollProgress * 8 : 80;
 
   return (
