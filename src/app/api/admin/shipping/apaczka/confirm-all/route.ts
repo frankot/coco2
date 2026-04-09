@@ -28,7 +28,11 @@ export const POST = createRouteHandler(
 
     const orders = await prisma.order.findMany({
       where: where as any,
-      include: { user: true, shippingAddress: true },
+      include: {
+        user: true,
+        shippingAddress: true,
+        orderItems: { include: { product: { select: { weightKg: true, lengthCm: true, widthCm: true, heightCm: true } } } },
+      },
       orderBy: { createdAt: "asc" },
       take: limit,
     });
@@ -100,10 +104,18 @@ export const POST = createRouteHandler(
           foreign_address_id: "",
         };
 
-        const dim1 = parseInt(process.env.APACZKA_DEFAULT_DIM1 || "30", 10);
-        const dim2 = parseInt(process.env.APACZKA_DEFAULT_DIM2 || "25", 10);
-        const dim3 = parseInt(process.env.APACZKA_DEFAULT_DIM3 || "15", 10);
-        const weight = Number(process.env.APACZKA_DEFAULT_WEIGHT || "4");
+        // Aggregate per-product dimensions
+        let totalWeight = 0;
+        let maxLength = 0;
+        let maxWidth = 0;
+        let totalHeight = 0;
+        for (const item of order.orderItems) {
+          totalWeight += item.product.weightKg * item.quantity;
+          maxLength = Math.max(maxLength, item.product.lengthCm);
+          maxWidth = Math.max(maxWidth, item.product.widthCm);
+          totalHeight += item.product.heightCm * item.quantity;
+        }
+        totalHeight = Math.min(totalHeight, 100);
 
         // Calculate pickup date: next business day (Mon-Fri) if after 14:00, otherwise today if business day
         const getPickupDate = () => {
@@ -135,10 +147,10 @@ export const POST = createRouteHandler(
           },
           shipment: [
             {
-              dimension1: dim1,
-              dimension2: dim2,
-              dimension3: dim3,
-              weight: weight,
+              dimension1: Math.max(maxLength, 1),
+              dimension2: Math.max(maxWidth, 1),
+              dimension3: Math.max(totalHeight, 1),
+              weight: Math.max(Math.round(totalWeight * 10) / 10, 0.1),
               is_nstd: 0,
               shipment_type_code: "PACZKA",
             },

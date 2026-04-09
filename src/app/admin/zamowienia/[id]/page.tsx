@@ -23,7 +23,6 @@ import {
   CheckCircle,
   XCircle,
   Download,
-  FilePlus2,
 } from "lucide-react";
 import Link from "next/link";
 import AdminLoading from "../../loading";
@@ -90,6 +89,7 @@ export default function OrderDetailsPage() {
   const router = useRouter();
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
+  const [invoiceDownloading, setInvoiceDownloading] = useState(false);
 
   useEffect(() => {
     const fetchOrder = async () => {
@@ -143,6 +143,7 @@ export default function OrderDetailsPage() {
   };
 
   const downloadInvoice = async () => {
+    setInvoiceDownloading(true);
     try {
       const response = await fetch(`/api/admin/invoices/${id}/download`);
       if (!response.ok) {
@@ -157,22 +158,8 @@ export default function OrderDetailsPage() {
       URL.revokeObjectURL(url);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Błąd pobierania faktury");
-    }
-  };
-
-  const retryInvoice = async () => {
-    try {
-      const response = await fetch(`/api/admin/invoices/${id}/retry`, {
-        method: "POST",
-      });
-      const data = await response.json().catch(() => null);
-      if (!response.ok || !data?.success) {
-        throw new Error(data?.error || "Nie udało się wygenerować faktury");
-      }
-      toast.success("Faktura została wygenerowana");
-      window.location.reload();
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Błąd generowania faktury");
+    } finally {
+      setTimeout(() => setInvoiceDownloading(false), 5000);
     }
   };
 
@@ -296,16 +283,16 @@ export default function OrderDetailsPage() {
             <Separator className="my-4" />
 
             <div className="flex flex-wrap gap-2">
-              {order.wfirmaInvoiceId ? (
-                <Button variant="outline" size="sm" onClick={downloadInvoice}>
-                  <Download className="mr-2 h-4 w-4" />
-                  Pobierz fakturę
-                </Button>
-              ) : (
-                <Button variant="outline" size="sm" onClick={retryInvoice}>
-                  <FilePlus2 className="mr-2 h-4 w-4" />
-                  Wygeneruj fakturę
-                </Button>
+              {order.wfirmaInvoiceId && (
+                <div>
+                  <Button variant="outline" size="sm" onClick={downloadInvoice} disabled={invoiceDownloading}>
+                    <Download className="mr-2 h-4 w-4" />
+                    {invoiceDownloading ? "Pobieranie..." : "Pobierz fakturę"}
+                  </Button>
+                  {invoiceDownloading && (
+                    <p className="text-xs text-muted-foreground mt-1">Trwa generowanie faktury...</p>
+                  )}
+                </div>
               )}
             </div>
 

@@ -301,6 +301,57 @@ export default function ProductForm({ product }: { product?: Product | null }) {
         </div>
       </div>
 
+      {/* Package Dimensions */}
+      <div className="space-y-4 border-t pt-6">
+        <h3 className="text-lg font-semibold">Wymiary paczki</h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="weightKg">Waga (kg)</Label>
+            <Input
+              type="number"
+              id="weightKg"
+              name="weightKg"
+              step="0.1"
+              min="0.1"
+              defaultValue={product?.weightKg ?? 0.5}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="lengthCm">Długość (cm)</Label>
+            <Input
+              type="number"
+              id="lengthCm"
+              name="lengthCm"
+              min="1"
+              defaultValue={product?.lengthCm ?? 20}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="widthCm">Szerokość (cm)</Label>
+            <Input
+              type="number"
+              id="widthCm"
+              name="widthCm"
+              min="1"
+              defaultValue={product?.widthCm ?? 15}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="heightCm">Wysokość (cm)</Label>
+            <Input
+              type="number"
+              id="heightCm"
+              name="heightCm"
+              min="1"
+              defaultValue={product?.heightCm ?? 10}
+            />
+          </div>
+        </div>
+        <div className="text-sm text-muted-foreground">
+          Wymiary pojedynczego opakowania produktu dla kalkulacji wysyłki
+        </div>
+      </div>
+
       {/* Images Section */}
       <div className="space-y-4">
         <Label>Zdjęcia produktu</Label>

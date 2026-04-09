@@ -2,7 +2,6 @@ import { stripe } from "@/lib/stripe";
 import { headers } from "next/headers";
 import { createRouteHandler, ApiError } from "@/lib/api";
 import prisma from "@/db";
-import { generateAndSendInvoice } from "@/lib/invoice";
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 export const POST = createRouteHandler(async ({ req }) => {
@@ -32,9 +31,6 @@ export const POST = createRouteHandler(async ({ req }) => {
         data: { status: "COMPLETED", transactionId: session.payment_intent },
       }),
     ]);
-    generateAndSendInvoice(orderId).catch((err) => {
-      console.error("[WFIRMA] Invoice generation failed for order", orderId, err);
-    });
   }
   return { received: true };
 });

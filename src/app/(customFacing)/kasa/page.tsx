@@ -938,9 +938,9 @@ export default function CheckoutPage() {
                     >
                       <CreditCard className="h-5 w-5" />
                       <div className="grid gap-0.5">
-                        <span className="font-medium">Karta płatnicza</span>
+                        <span className="font-medium">Płatność online</span>
                         <span className="text-muted-foreground text-sm">
-                          Zapłać kartą kredytową lub debetową
+                          Zapłać szybko i bezpiecznie kartą lub BLIK
                         </span>
                       </div>
                     </Label>

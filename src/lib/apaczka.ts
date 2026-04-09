@@ -268,6 +268,9 @@ export const Apaczka = {
   pickupHours(postal_code: string, service_id?: string) {
     return post<{ postal_code: string; hours: any }>("pickup_hours/", { postal_code, service_id });
   },
+  cancelOrder(orderId: string) {
+    return post(`cancel_order/${orderId}/`, []);
+  },
 };
 
 export default Apaczka;

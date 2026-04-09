@@ -144,7 +144,14 @@ export default async function BlogDetail({ params }: Props) {
           <div className="order-1 lg:order-2 lg:sticky lg:top-24">
             {post.imagePath ? (
               <div className="relative w-full h-[560px] rounded-2xl overflow-hidden shadow-lg">
-                <Image src={post.imagePath} alt={post.title} fill loading="eager" sizes="(min-width: 1024px) 50vw, 100vw" className="object-cover" />
+                <Image
+                  src={post.imagePath}
+                  alt={post.title}
+                  fill
+                  loading="eager"
+                  sizes="(min-width: 1024px) 50vw, 100vw"
+                  className="object-cover"
+                />
               </div>
             ) : (
               <div className="w-full h-[400px] bg-gray-50 rounded-2xl" />

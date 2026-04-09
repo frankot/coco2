@@ -20,6 +20,11 @@ export type WfirmaInvoiceLine = {
   vat: string;
 };
 
+export type CorrectionInvoiceLineItem = {
+  parentId: string;
+  name: string;
+};
+
 export type CreateInvoiceParams = {
   contractor: {
     name: string;
@@ -233,6 +238,47 @@ ${params.contractor.phone ? `<phone>${escapeXml(params.contractor.phone)}</phone
 <paymentmethod>${params.paymentMethod}</paymentmethod>
 <paymentstate>${params.paymentState}</paymentstate>
 <price_type>brutto</price_type>
+<invoicecontents>${linesXml}</invoicecontents>
+</invoice>
+</invoices>
+</api>`;
+
+    return requestJson<{
+      invoices?: Array<{ id?: string | number; fullnumber?: string }>;
+      invoice?: { id?: string | number; fullnumber?: string };
+    }>("/invoices/add", {
+      method: "POST",
+      body: xmlBody,
+    }, {
+      inputFormat: "xml",
+      contentType: "application/xml",
+    });
+  },
+
+  createCorrectionInvoice(
+    parentInvoiceId: string,
+    lineItems: CorrectionInvoiceLineItem[],
+    reason?: string
+  ) {
+    const description = reason ?? "Anulowanie zamówienia";
+
+    const linesXml = lineItems
+      .map(
+        (line) => `<invoicecontent>
+<parent_id>${escapeXml(line.parentId)}</parent_id>
+<name>${escapeXml(line.name)}</name>
+<count>0.0000</count>
+<price>0.00</price>
+</invoicecontent>`
+      )
+      .join("");
+
+    const xmlBody = `<api>
+<invoices>
+<invoice>
+<type>correction</type>
+<parent_id>${escapeXml(parentInvoiceId)}</parent_id>
+<description>${escapeXml(description)}</description>
 <invoicecontents>${linesXml}</invoicecontents>
 </invoice>
 </invoices>

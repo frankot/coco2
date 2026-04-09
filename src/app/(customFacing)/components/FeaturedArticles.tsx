@@ -10,7 +10,7 @@ export default async function FeaturedArticles() {
   const posts = await prisma.blogPost.findMany({
     orderBy: { createdAt: "desc" },
     take: 3,
-    select: { id: true, title: true, slug: true, imagePath: true, createdAt: true, content: true   },
+    select: { id: true, title: true, slug: true, imagePath: true, createdAt: true, content: true },
   });
 
   return (

@@ -1131,6 +1131,8 @@ export const OrderScalarFieldEnum = {
   wfirmaInvoiceId: 'wfirmaInvoiceId',
   wfirmaInvoiceNumber: 'wfirmaInvoiceNumber',
   wfirmaInvoiceSentAt: 'wfirmaInvoiceSentAt',
+  wfirmaCorrectionInvoiceId: 'wfirmaCorrectionInvoiceId',
+  wfirmaCorrectionInvoiceNumber: 'wfirmaCorrectionInvoiceNumber',
   apaczkaPointId: 'apaczkaPointId',
   apaczkaPointSupplier: 'apaczkaPointSupplier',
   createdAt: 'createdAt',

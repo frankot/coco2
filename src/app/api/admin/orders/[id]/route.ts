@@ -4,6 +4,7 @@ import { createRouteHandler, ApiError, getRequiredParam, readJson } from "@/lib/
 import { ORDER_DETAIL_INCLUDE } from "@/lib/selects";
 import { generateAndSendInvoice } from "@/lib/invoice";
 import { confirmOrderInApaczka } from "@/lib/apaczka-confirm";
+import { Apaczka } from "@/lib/apaczka";
 import { z } from "zod";
 
 const ORDER_STATUSES = ["PENDING", "PAID", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED"] as const;
@@ -41,7 +42,6 @@ export const PATCH = createRouteHandler(
   async ({ req, params }) => {
     const orderId = getRequiredParam(params as any, "id");
     const body = patchOrderSchema.parse(await readJson(req));
-    let previousPaymentMethod: "BANK_TRANSFER" | "COD" | "STRIPE" | null = null;
     let previousStatus: OrderStatus | null = null;
 
     // Validate status transition if status is being changed
@@ -62,7 +62,6 @@ export const PATCH = createRouteHandler(
       }
 
       previousStatus = currentStatus;
-      previousPaymentMethod = order.paymentMethod;
     }
 
     const updatedOrder = await prisma.order.update({
@@ -71,8 +70,6 @@ export const PATCH = createRouteHandler(
       include: ORDER_DETAIL_INCLUDE,
     });
 
-    const effectivePaymentMethod =
-      (body.paymentMethod as "BANK_TRANSFER" | "COD" | "STRIPE" | undefined) ?? previousPaymentMethod;
     const movedToProcessing = previousStatus !== "PROCESSING" && body.status === "PROCESSING";
 
     if (movedToProcessing) {
@@ -83,15 +80,28 @@ export const PATCH = createRouteHandler(
         });
       }
 
-      // Generate invoice for COD orders
-      if (effectivePaymentMethod === "COD") {
+      // Generate invoice for all payment methods
+      if (!updatedOrder.wfirmaInvoiceId) {
         generateAndSendInvoice(orderId).catch((error) => {
-          console.error("[WFIRMA] Invoice generation failed after moving COD order to processing", {
+          console.error("[WFIRMA] Invoice generation failed after moving order to processing", {
             orderId,
             error,
           });
         });
       }
+    }
+
+    // Cancellation side effects
+    const movedToCancelled = previousStatus !== "CANCELLED" && body.status === "CANCELLED";
+
+    if (movedToCancelled) {
+      if (updatedOrder.apaczkaOrderId) {
+        Apaczka.cancelOrder(updatedOrder.apaczkaOrderId).catch((error) => {
+          console.error("[APACZKA] Order cancellation failed", { orderId, error });
+        });
+      }
+
+      // TODO: generate correction invoice (faktura korygująca) when wfirmaInvoiceId exists
     }
 
     return updatedOrder;

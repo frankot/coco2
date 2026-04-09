@@ -57,7 +57,6 @@ export default function ShopPage() {
   return (
     <div className="min-h-screen mt-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        
         <div className="flex flex-col sm:flex-row gap-4 items-center justify-between mb-8">
           {/* Search */}
           <div className="relative flex-1 max-w-md">

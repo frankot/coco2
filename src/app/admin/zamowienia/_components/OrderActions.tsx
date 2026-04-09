@@ -42,6 +42,8 @@ export function OrderActionsMenu({
   wfirmaInvoiceId: string | null;
 }) {
   const [cancelOpen, setCancelOpen] = useState(false);
+  const [labelDownloading, setLabelDownloading] = useState(false);
+  const [invoiceDownloading, setInvoiceDownloading] = useState(false);
   const isCancelDisabled = currentStatus === "DELIVERED" || currentStatus === "CANCELLED";
 
   const updateStatus = async (newStatus: OrderStatus) => {
@@ -86,6 +88,7 @@ export function OrderActionsMenu({
   };
 
   const downloadLabel = async () => {
+    setLabelDownloading(true);
     try {
       const res = await fetch(`/api/admin/shipping/apaczka/waybill/${id}`);
       if (!res.ok) throw new Error("Nie udało się pobrać etykiety");
@@ -98,10 +101,13 @@ export function OrderActionsMenu({
       URL.revokeObjectURL(url);
     } catch (e: any) {
       toast.error(e?.message || "Błąd pobierania etykiety");
+    } finally {
+      setTimeout(() => setLabelDownloading(false), 5000);
     }
   };
 
   const downloadInvoice = async () => {
+    setInvoiceDownloading(true);
     try {
       const res = await fetch(`/api/admin/invoices/${id}/download`);
       if (!res.ok) throw new Error("Nie udało się pobrać faktury");
@@ -114,22 +120,8 @@ export function OrderActionsMenu({
       URL.revokeObjectURL(url);
     } catch (e: any) {
       toast.error(e?.message || "Błąd pobierania faktury");
-    }
-  };
-
-  const retryInvoice = async () => {
-    try {
-      const res = await fetch(`/api/admin/invoices/${id}/retry`, {
-        method: "POST",
-      });
-      const data = await res.json().catch(() => null);
-      if (!res.ok || !data?.success) {
-        throw new Error(data?.error || "Nie udało się wygenerować faktury");
-      }
-      toast.success("Faktura została wygenerowana");
-      window.location.reload();
-    } catch (e: any) {
-      toast.error(e?.message || "Błąd generowania faktury");
+    } finally {
+      setTimeout(() => setInvoiceDownloading(false), 5000);
     }
   };
 
@@ -178,20 +170,15 @@ export function OrderActionsMenu({
           </Link>
           {renderStatusItems()}
           {hasApaczkaOrderId && (
-            <DropdownMenuItem className="cursor-pointer" onClick={downloadLabel}>
+            <DropdownMenuItem className="cursor-pointer" onClick={downloadLabel} disabled={labelDownloading}>
               <Download className="mr-2 h-4 w-4" />
-              <span>Pobierz etykietę</span>
+              <span>{labelDownloading ? "Pobieranie..." : "Pobierz etykietę"}</span>
             </DropdownMenuItem>
           )}
-          {wfirmaInvoiceId ? (
-            <DropdownMenuItem className="cursor-pointer" onClick={downloadInvoice}>
+          {wfirmaInvoiceId && (
+            <DropdownMenuItem className="cursor-pointer" onClick={downloadInvoice} disabled={invoiceDownloading}>
               <Download className="mr-2 h-4 w-4" />
-              <span>Pobierz fakturę</span>
-            </DropdownMenuItem>
-          ) : (
-            <DropdownMenuItem className="cursor-pointer" onClick={retryInvoice}>
-              <Download className="mr-2 h-4 w-4" />
-              <span>Wygeneruj fakturę</span>
+              <span>{invoiceDownloading ? "Pobieranie..." : "Pobierz fakturę"}</span>
             </DropdownMenuItem>
           )}
           <DropdownMenuSeparator />

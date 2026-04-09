@@ -109,7 +109,7 @@ model Address {
 }
 
 model Order {
-  id                  String       @id @default(uuid())
+  id                  String       @id @default(dbgenerated("substring(gen_random_uuid()::text, 1, 8)"))
   userId              String
   status              OrderStatus  @default(PENDING)
   paymentMethod       PaymentMethod
@@ -131,6 +131,9 @@ model Order {
   wfirmaInvoiceId     String?
   wfirmaInvoiceNumber String?
   wfirmaInvoiceSentAt DateTime?
+  // wFirma correction invoice
+  wfirmaCorrectionInvoiceId     String?
+  wfirmaCorrectionInvoiceNumber String?
   // Apaczka pickup/point delivery selection (for door-to-point)
   apaczkaPointId       String?
   apaczkaPointSupplier String?

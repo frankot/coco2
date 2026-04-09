@@ -57,6 +57,12 @@ export async function addProduct(prevState: FormState, formData: FormData): Prom
     const description = formData.get("description") as string;
     const itemsPerPack = parseInt(formData.get("itemsPerPack") as string) || 12;
 
+    // Package dimensions
+    const weightKg = parseFloat(formData.get("weightKg") as string) || 0.5;
+    const lengthCm = parseInt(formData.get("lengthCm") as string) || 20;
+    const widthCm = parseInt(formData.get("widthCm") as string) || 15;
+    const heightCm = parseInt(formData.get("heightCm") as string) || 10;
+
     // Get all new image files
     const newImages = formData.getAll("newImages") as File[];
 
@@ -134,6 +140,10 @@ export async function addProduct(prevState: FormState, formData: FormData): Prom
         imagePublicIds,
         isAvailable: true,
         itemsPerPack,
+        weightKg,
+        lengthCm,
+        widthCm,
+        heightCm,
       },
     });
 
@@ -180,6 +190,10 @@ export async function updateProduct(
     const priceInCents = parseInt(formData.get("priceInCents") as string);
     const description = formData.get("description") as string;
     const itemsPerPack = parseInt(formData.get("itemsPerPack") as string) || 12;
+    const weightKg = parseFloat(formData.get("weightKg") as string) || 0.5;
+    const lengthCm = parseInt(formData.get("lengthCm") as string) || 20;
+    const widthCm = parseInt(formData.get("widthCm") as string) || 15;
+    const heightCm = parseInt(formData.get("heightCm") as string) || 10;
     const newImages = formData.getAll("newImages") as File[];
     const existingImages = formData.getAll("existingImages") as string[];
 
@@ -221,6 +235,10 @@ export async function updateProduct(
       priceInCents,
       description,
       itemsPerPack,
+      weightKg,
+      lengthCm,
+      widthCm,
+      heightCm,
     };
 
     // Extract content and composition
