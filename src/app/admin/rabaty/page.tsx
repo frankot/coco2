@@ -11,15 +11,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { CheckCircle2, MoreVertical, XCircle } from "lucide-react";
+import { MoreVertical } from "lucide-react";
 import {
   DropdownMenu,
-  DropdownMenuItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
-  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { ActiveToggleDropdownItem, DeleteDropdownItem } from "./_components/RabatyActions";
+import { ActiveToggleButton, DeleteDropdownItem } from "./_components/RabatyActions";
 import { useState, useEffect, useCallback } from "react";
 import AdminLoading from "../loading";
 import { useRefresh } from "@/providers/RefreshProvider";
@@ -118,11 +116,7 @@ function RabatyTable() {
           {codes.map((code) => (
             <TableRow key={code.id}>
               <TableCell>
-                {code.isActive ? (
-                  <CheckCircle2 className="size-6 text-green-500" />
-                ) : (
-                  <XCircle className="size-6 text-red-500" />
-                )}
+                <ActiveToggleButton id={code.id} isActive={code.isActive} />
               </TableCell>
               <TableCell className="font-mono font-medium">{code.code}</TableCell>
               <TableCell>{code.discountType === "PERCENTAGE" ? "Procentowy" : "Kwotowy"}</TableCell>
@@ -137,8 +131,6 @@ function RabatyTable() {
                     <span className="sr-only">Otwórz menu</span>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
-                    <ActiveToggleDropdownItem id={code.id} isActive={code.isActive} />
-                    <DropdownMenuSeparator />
                     <DeleteDropdownItem id={code.id} disabled={code.usedCount > 0} />
                   </DropdownMenuContent>
                 </DropdownMenu>

@@ -48,7 +48,7 @@ export function CartButton({ onClick, itemCount, className, variant = "ghost" }:
         <ShoppingCart className={cn("size-7")} />
         <span
           className={cn(
-            "absolute -top-4 -right-4 bg-primary text-primary-foreground rounded-full h-5 w-5 text-xs flex items-center justify-center",
+            "absolute -top-2 -right-2 bg-primary text-primary-foreground rounded-full h-5 w-5 text-xs flex items-center justify-center",
             variant === "floating" && "bg-primary text-white"
           )}
         >
