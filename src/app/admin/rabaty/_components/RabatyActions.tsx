@@ -7,13 +7,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useRefresh } from "@/providers/RefreshProvider";
 
-export function ActiveToggleDropdownItem({
-  id,
-  isActive,
-}: {
-  id: string;
-  isActive: boolean;
-}) {
+export function ActiveToggleDropdownItem({ id, isActive }: { id: string; isActive: boolean }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const { triggerRefresh } = useRefresh();

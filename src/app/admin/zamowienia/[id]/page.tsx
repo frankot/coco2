@@ -55,6 +55,8 @@ type OrderItem = {
 type Order = {
   id: string;
   pricePaidInCents: number;
+  discountCodeValue?: string | null;
+  discountAmountInCents?: number;
   createdAt: string;
   status: OrderStatus;
   paymentMethod: string | null;
@@ -223,6 +225,7 @@ export default function OrderDetailsPage() {
 
   // Format to PLN (złoty)
   const totalAmount = (order.pricePaidInCents / 100).toFixed(2);
+  const discountAmount = ((order.discountAmountInCents ?? 0) / 100).toFixed(2);
 
   return (
     <div className="space-y-6">
@@ -265,6 +268,14 @@ export default function OrderDetailsPage() {
 
               <div className="text-sm text-muted-foreground">Kwota:</div>
               <div className="text-sm font-medium">{totalAmount} PLN</div>
+
+              <div className="text-sm text-muted-foreground">Kod rabatowy:</div>
+              <div className="text-sm font-medium">{order.discountCodeValue || "—"}</div>
+
+              <div className="text-sm text-muted-foreground">Rabat:</div>
+              <div className="text-sm font-medium">
+                {(order.discountAmountInCents ?? 0) > 0 ? `-${discountAmount} PLN` : "—"}
+              </div>
 
               <div className="text-sm text-muted-foreground">Liczba produktów:</div>
               <div className="text-sm font-medium">{order.orderItems.length}</div>
