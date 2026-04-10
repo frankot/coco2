@@ -45,6 +45,7 @@ type Order = {
   id: string;
   pricePaidInCents: number;
   createdAt: string;
+  paidAt: string | null;
   status: OrderStatus;
   paymentMethod: string | null;
   apaczkaOrderId?: string | null;
@@ -370,10 +371,11 @@ function OrdersTable() {
             </TableHead>
             <TableHead className="cursor-pointer" onClick={() => handleSort("createdAt")}>
               <div className="flex items-center">
-                Data zamówienia
+                Data utworzenia
                 {renderSortIcon("createdAt")}
               </div>
             </TableHead>
+            <TableHead>Data płatności</TableHead>
             <TableHead className="cursor-pointer" onClick={() => handleSort("totalItems")}>
               <div className="flex items-center">
                 Produkty
@@ -421,6 +423,13 @@ function OrdersTable() {
                 <TableCell>
                   <TableCellLink href={`/admin/zamowienia/${order.id}`}>
                     {format(new Date(order.createdAt), "dd.MM.yyyy | HH:mm")}
+                  </TableCellLink>
+                </TableCell>
+                <TableCell>
+                  <TableCellLink href={`/admin/zamowienia/${order.id}`}>
+                    {order.paidAt
+                      ? format(new Date(order.paidAt), "dd.MM.yyyy | HH:mm")
+                      : "—"}
                   </TableCellLink>
                 </TableCell>
                 <TableCell>

@@ -59,6 +59,7 @@ type Order = {
   discountCodeValue?: string | null;
   discountAmountInCents?: number;
   createdAt: string;
+  paidAt: string | null;
   status: OrderStatus;
   paymentMethod: string | null;
   user: {
@@ -283,9 +284,16 @@ export default function OrderDetailsPage() {
                 </Badge>
               </div>
 
-              <div className="text-sm text-muted-foreground">Data zamówienia:</div>
+              <div className="text-sm text-muted-foreground">Data utworzenia:</div>
               <div className="text-sm font-medium">
                 {format(new Date(order.createdAt), "dd.MM.yyyy | HH:mm")}
+              </div>
+
+              <div className="text-sm text-muted-foreground">Data płatności:</div>
+              <div className="text-sm font-medium">
+                {order.paidAt
+                  ? format(new Date(order.paidAt), "dd.MM.yyyy | HH:mm")
+                  : "—"}
               </div>
 
               <div className="text-sm text-muted-foreground">Kwota:</div>

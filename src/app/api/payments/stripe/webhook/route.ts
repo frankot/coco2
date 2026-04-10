@@ -26,7 +26,7 @@ export const POST = createRouteHandler(async ({ req }) => {
       return { received: true, skipped: true };
     }
     await prisma.$transaction([
-      prisma.order.update({ where: { id: orderId }, data: { status: "PAID" } }),
+      prisma.order.update({ where: { id: orderId }, data: { status: "PAID", paidAt: new Date() } }),
       prisma.payment.update({
         where: { id: payment.id },
         data: { status: "COMPLETED", transactionId: session.payment_intent },

@@ -71,7 +71,7 @@ export default function CheckoutPage() {
     city: "",
     postalCode: "",
     country: "Polska",
-    paymentMethod: "COD" as PaymentMethod,
+    paymentMethod: "STRIPE" as PaymentMethod,
     shippingMethodId: "",
   });
 
@@ -973,21 +973,24 @@ export default function CheckoutPage() {
                   onValueChange={handlePaymentMethodChange}
                   className="space-y-3"
                 >
-                  <div className="flex items-center space-x-3 rounded-md border p-3">
-                    <RadioGroupItem id="cod" value="COD" />
-                    <Label
-                      htmlFor="cod"
-                      className="flex items-center gap-2 font-normal w-full cursor-pointer"
-                    >
-                      <BanknoteIcon className="h-5 w-5" />
-                      <div className="grid gap-0.5">
-                        <span className="font-medium">Pobranie (COD)</span>
-                        <span className="text-muted-foreground text-sm">
-                          Zapłać kurierowi przy odbiorze
-                        </span>
-                      </div>
-                    </Label>
-                  </div>
+                  {/* COD - only for HURT users */}
+                  {session?.user?.accountType === "HURT" && (
+                    <div className="flex items-center space-x-3 rounded-md border p-3">
+                      <RadioGroupItem id="cod" value="COD" />
+                      <Label
+                        htmlFor="cod"
+                        className="flex items-center gap-2 font-normal w-full cursor-pointer"
+                      >
+                        <BanknoteIcon className="h-5 w-5" />
+                        <div className="grid gap-0.5">
+                          <span className="font-medium">Pobranie (COD)</span>
+                          <span className="text-muted-foreground text-sm">
+                            Zapłać kurierowi przy odbiorze
+                          </span>
+                        </div>
+                      </Label>
+                    </div>
+                  )}
                   <div className="flex items-center space-x-3 rounded-md border p-3">
                     <RadioGroupItem id="credit-card" value="STRIPE" />
                     <Label

@@ -70,7 +70,11 @@ export const PATCH = createRouteHandler(
 
     const updatedOrder = await prisma.order.update({
       where: { id: orderId },
-      data: { status: body.status, paymentMethod: body.paymentMethod },
+      data: {
+        status: body.status,
+        paymentMethod: body.paymentMethod,
+        ...(body.status === "PAID" ? { paidAt: new Date() } : {}),
+      },
       include: ORDER_DETAIL_INCLUDE,
     });
 

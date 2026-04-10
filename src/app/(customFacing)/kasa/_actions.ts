@@ -59,6 +59,17 @@ export async function createOrder(formData: OrderFormData) {
     // Validate form data
     const validatedData = orderFormSchema.parse(formData);
 
+    // COD only for HURT users
+    if (validatedData.paymentMethod === "COD") {
+      const session = await getServerSession(authOptions);
+      if (!session?.user?.accountType || session.user.accountType !== "HURT") {
+        return {
+          success: false,
+          error: "Płatność za pobraniem dostępna tylko dla klientów hurtowych",
+        };
+      }
+    }
+
     // Get product IDs from cart
     const productIds = validatedData.cartItems.map((item) => item.id);
 
@@ -343,6 +354,7 @@ export async function createOrder(formData: OrderFormData) {
           data: {
             userId: verifiedUserId,
             status: validatedData.paymentMethod === "COD" ? "PAID" : "PENDING",
+            paidAt: validatedData.paymentMethod === "COD" ? new Date() : undefined,
             paymentMethod: validatedData.paymentMethod,
             pricePaidInCents: totalPriceInCents,
             subtotalInCents: subtotalInCents,

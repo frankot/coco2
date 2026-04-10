@@ -178,6 +178,7 @@ export const OrderScalarFieldEnum = {
   discountAmountInCents: 'discountAmountInCents',
   apaczkaPointId: 'apaczkaPointId',
   apaczkaPointSupplier: 'apaczkaPointSupplier',
+  paidAt: 'paidAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

@@ -29,6 +29,7 @@ export const ORDER_LIST_SELECT = {
   id: true,
   pricePaidInCents: true,
   createdAt: true,
+  paidAt: true,
   status: true,
   paymentMethod: true,
   apaczkaOrderId: true,
