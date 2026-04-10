@@ -4,13 +4,22 @@ import { format } from "date-fns";
 
 export const GET = createRouteHandler(
   async ({ req, prisma }) => {
+    const url = new URL(req.url);
+    const formatParam = url.searchParams.get("format");
+    const limitParam = url.searchParams.get("limit");
+    const parsedLimit = limitParam ? Number(limitParam) : undefined;
+    const take =
+      formatParam === "csv" || !Number.isFinite(parsedLimit) || (parsedLimit ?? 0) <= 0
+        ? undefined
+        : parsedLimit;
+
     const emails = await prisma.newsletterEmail.findMany({
       orderBy: { createdAt: "desc" },
+      ...(take ? { take } : {}),
     });
 
     // CSV export
-    const url = new URL(req.url);
-    if (url.searchParams.get("format") === "csv") {
+    if (formatParam === "csv") {
       const header = "email;data_dolaczenia";
       const rows = emails.map(
         (e) => `${e.email};${format(new Date(e.createdAt), "yyyy-MM-dd HH:mm")}`

@@ -181,13 +181,19 @@ function ProductsTable() {
               <TableCell>
                 <div className="flex gap-1">
                   {product.visibleToDetal && (
-                    <span className="text-xs bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded">D</span>
+                    <span className="text-xs bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded">
+                      D
+                    </span>
                   )}
                   {product.visibleToDetalB2B && (
-                    <span className="text-xs bg-purple-100 text-purple-800 px-1.5 py-0.5 rounded">B2B</span>
+                    <span className="text-xs bg-purple-100 text-purple-800 px-1.5 py-0.5 rounded">
+                      B2B
+                    </span>
                   )}
                   {product.visibleToHurt && (
-                    <span className="text-xs bg-orange-100 text-orange-800 px-1.5 py-0.5 rounded">H</span>
+                    <span className="text-xs bg-orange-100 text-orange-800 px-1.5 py-0.5 rounded">
+                      H
+                    </span>
                   )}
                 </div>
               </TableCell>

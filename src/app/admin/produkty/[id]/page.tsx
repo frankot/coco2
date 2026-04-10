@@ -7,11 +7,7 @@ import { Pencil, ArrowLeft, Package, Eye, EyeOff } from "lucide-react";
 import { ActiveToggleButton, DeleteButton } from "../_components/ProductActions";
 import PageHeader from "../../_components/pageHeader";
 
-export default async function ProductPreviewPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export default async function ProductPreviewPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
   const product = await prisma.product.findUnique({
@@ -82,7 +78,12 @@ export default async function ProductPreviewPage({
                       key={i}
                       className="relative aspect-square rounded-md overflow-hidden border "
                     >
-                      <Image src={img} alt={`${product.name} ${i + 2}`} fill className="object-cover" />
+                      <Image
+                        src={img}
+                        alt={`${product.name} ${i + 2}`}
+                        fill
+                        className="object-cover"
+                      />
                     </div>
                   ))}
                 </div>
@@ -181,9 +182,7 @@ function VisibilityBadge({ label, active }: { label: string; active: boolean }) 
   return (
     <span
       className={`inline-flex items-center gap-1 text-xs px-2 py-1 rounded-md font-medium ${
-        active
-          ? "bg-primary/10 text-primary"
-          : "bg-muted text-muted-foreground"
+        active ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"
       }`}
     >
       {active ? <Eye className="size-3" /> : <EyeOff className="size-3" />}

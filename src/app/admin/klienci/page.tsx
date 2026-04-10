@@ -4,6 +4,14 @@ import { Button } from "@/components/ui/button";
 import PageHeader from "../_components/pageHeader";
 import Link from "next/link";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
   Table,
   TableBody,
   TableCell,
@@ -48,26 +56,36 @@ export default function AdminClientsPage() {
     <>
       <div className="flex justify-between items-center gap-4">
         <PageHeader>Klienci</PageHeader>
-        <Button>
-          <Link href="/admin/klienci/new">Dodaj klienta</Link>
-        </Button>
+        <div className="flex items-center gap-3">
+          <NewsletterDialog />
+          <Button asChild>
+            <Link href="/admin/klienci/new">Dodaj klienta</Link>
+          </Button>
+        </div>
       </div>
       <ClientsTable />
-      <NewsletterSection />
     </>
   );
 }
 
-function NewsletterSection() {
+function NewsletterDialog() {
   const [emails, setEmails] = useState<NewsletterEmail[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
     async function fetchEmails() {
+      setLoading(true);
+
       try {
-        const res = await fetch(`/api/admin/newsletter?timestamp=${Date.now()}`, {
+        const res = await fetch(`/api/admin/newsletter?limit=20&timestamp=${Date.now()}`, {
           cache: "no-store",
         });
+
         if (res.ok) setEmails(await res.json());
       } catch (err) {
         console.error("Error fetching newsletter emails:", err);
@@ -75,48 +93,63 @@ function NewsletterSection() {
         setLoading(false);
       }
     }
+
     fetchEmails();
-  }, []);
+  }, [isOpen]);
 
   const handleExportCSV = () => {
     window.open("/api/admin/newsletter?format=csv", "_blank");
   };
 
-  if (loading) return null;
-
   return (
-    <div className="mt-12">
-      <div className="flex justify-between items-center mb-4">
-        <div className="flex items-center gap-2">
-          <Mail className="size-5 text-muted-foreground" />
-          <h2 className="text-lg font-semibold">Newsletter</h2>
-          <span className="text-sm text-muted-foreground">({emails.length})</span>
-        </div>
-        {emails.length > 0 && (
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        <Button variant="outline">
+          <Mail className="size-4 mr-2" />
+          Newsletter
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>Newsletter</DialogTitle>
+          <DialogDescription>
+            Ostatnie 20 adresow zapisanych do newslettera. Pelna lista jest dostepna w eksporcie
+            CSV.
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="flex items-center justify-between gap-3 border-b pb-4">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Mail className="size-4" />
+            <span>{loading ? "Ladowanie..." : `Widoczne rekordy: ${emails.length}`}</span>
+          </div>
           <Button variant="outline" size="sm" onClick={handleExportCSV}>
             <Download className="size-4 mr-2" />
             Eksportuj CSV
           </Button>
-        )}
-      </div>
-      {emails.length === 0 ? (
-        <p className="text-sm text-muted-foreground">Brak zapisanych emaili</p>
-      ) : (
-        <div className="flex flex-wrap gap-2">
-          {emails.map((entry) => (
-            <div
-              key={entry.id}
-              className="flex items-center gap-2 rounded-lg border px-3 py-1.5 text-sm bg-muted/50"
-            >
-              <span>{entry.email}</span>
-              <span className="text-xs text-muted-foreground">
-                {format(new Date(entry.createdAt), "dd.MM.yyyy")}
-              </span>
-            </div>
-          ))}
         </div>
-      )}
-    </div>
+
+        <div className="max-h-[60vh] space-y-2 overflow-y-auto pr-1">
+          {loading ? (
+            <p className="py-8 text-center text-sm text-muted-foreground">Ladowanie zapisow...</p>
+          ) : emails.length === 0 ? (
+            <p className="py-8 text-center text-sm text-muted-foreground">Brak zapisanych emaili</p>
+          ) : (
+            emails.map((entry) => (
+              <div
+                key={entry.id}
+                className="flex items-center justify-between gap-4 rounded-lg border bg-muted/30 px-4 py-3"
+              >
+                <span className="min-w-0 truncate text-sm font-medium">{entry.email}</span>
+                <span className="shrink-0 text-xs text-muted-foreground">
+                  {format(new Date(entry.createdAt), "dd.MM.yyyy | HH:mm")}
+                </span>
+              </div>
+            ))
+          )}
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
 

@@ -8,13 +8,7 @@ import { toast } from "sonner";
 import { useRefresh } from "@/providers/RefreshProvider";
 import { Trash2 } from "lucide-react";
 
-export function ActiveToggleButton({
-  id,
-  isAvailable,
-}: {
-  id: string;
-  isAvailable: boolean;
-}) {
+export function ActiveToggleButton({ id, isAvailable }: { id: string; isAvailable: boolean }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const { triggerRefresh } = useRefresh();
