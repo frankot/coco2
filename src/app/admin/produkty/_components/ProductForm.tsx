@@ -53,7 +53,7 @@ export default function ProductForm({ product }: { product?: Product | null }) {
 
   // Handle successful form submission
   if (state?.success) {
-    router.push("/admin/produkty");
+    router.push(product ? `/admin/produkty/${product.id}` : "/admin/produkty");
     router.refresh();
   }
 

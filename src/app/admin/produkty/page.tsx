@@ -12,7 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { CheckCircle2, MoreVertical, XCircle, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
+import { MoreVertical, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuItem,
@@ -20,7 +20,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { ActiveToggleDropdownItem, DeleteDropdownItem } from "./_components/ProductActions";
+import { ActiveToggleButton, DeleteDropdownItem } from "./_components/ProductActions";
 import { useState, useEffect, useCallback } from "react";
 import AdminLoading from "../loading";
 import { useRouter } from "next/navigation";
@@ -142,9 +142,6 @@ function ProductsTable() {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-0">
-              <span className="sr-only">Dostepnosc</span>
-            </TableHead>
             <TableHead>Nazwa</TableHead>
             <TableHead className="cursor-pointer" onClick={() => handleSort("price")}>
               <div className="flex items-center">
@@ -159,6 +156,7 @@ function ProductsTable() {
               </div>
             </TableHead>
             <TableHead>Widoczność</TableHead>
+            <TableHead>Status</TableHead>
             <TableHead className="w-0">
               <span className="sr-only">Akcje</span>
             </TableHead>
@@ -167,21 +165,6 @@ function ProductsTable() {
         <TableBody>
           {sortedProducts.map((product) => (
             <TableRow key={product.id}>
-              <TableCell>
-                <TableCellLink href={`/admin/produkty/${product.id}`}>
-                  {product.isAvailable ? (
-                    <>
-                      <span className="sr-only">Dostepne</span>
-                      <CheckCircle2 className="size-8 text-green-500" />
-                    </>
-                  ) : (
-                    <>
-                      <span className="sr-only">Niedostepne</span>
-                      <XCircle className="size-8 text-red-500" />
-                    </>
-                  )}
-                </TableCellLink>
-              </TableCell>
               <TableCell>
                 <TableCellLink href={`/admin/produkty/${product.id}`}>{product.name}</TableCellLink>
               </TableCell>
@@ -209,6 +192,9 @@ function ProductsTable() {
                 </div>
               </TableCell>
               <TableCell>
+                <ActiveToggleButton id={product.id} isAvailable={product.isAvailable} />
+              </TableCell>
+              <TableCell>
                 <DropdownMenu>
                   <DropdownMenuTrigger>
                     <MoreVertical className="size-4 cursor-pointer" />
@@ -216,9 +202,8 @@ function ProductsTable() {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
                     <DropdownMenuItem asChild>
-                      <Link href={`/admin/produkty/${product.id}`}>Edytuj</Link>
+                      <Link href={`/admin/produkty/edytuj/${product.id}`}>Edytuj</Link>
                     </DropdownMenuItem>
-                    <ActiveToggleDropdownItem id={product.id} isAvailable={product.isAvailable} />
                     <DropdownMenuSeparator />
                     <DeleteDropdownItem id={product.id} disabled={product._count.orders > 0} />
                   </DropdownMenuContent>
