@@ -14,6 +14,7 @@ export type CartItem = {
   priceInCents: number;
   quantity: number;
   imagePath: string;
+  itemsPerPack: number;
 };
 
 interface CartSheetProps {
@@ -119,6 +120,10 @@ export function CartSheet({ isOpen, onClose }: CartSheetProps) {
                         <p className="text-primary font-medium text-lg">
                           {formatPrice(item.priceInCents)}
                         </p>
+                        <p className="text-xs text-gray-500">
+                          {(item.itemsPerPack || 1) * item.quantity} szt. ({item.quantity} ×{" "}
+                          {item.itemsPerPack || 1})
+                        </p>
 
                         <div className="flex items-center gap-3 mt-3">
                           <div className="flex items-center gap-2 bg-gray-50 rounded-lg p-1">
@@ -130,7 +135,9 @@ export function CartSheet({ isOpen, onClose }: CartSheetProps) {
                             >
                               <Minus className="h-4 w-4" />
                             </Button>
-                            <span className="w-8 text-center font-medium">{item.quantity}</span>
+                            <span className="w-8 text-center font-medium">
+                              {(item.itemsPerPack || 1) * item.quantity}
+                            </span>
                             <Button
                               variant="ghost"
                               size="icon"

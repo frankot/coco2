@@ -59,7 +59,9 @@ function BlogTable() {
   const fetchPosts = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/admin/blog?page=${page}&timestamp=${Date.now()}`, { cache: "no-store" });
+      const res = await fetch(`/api/admin/blog?page=${page}&timestamp=${Date.now()}`, {
+        cache: "no-store",
+      });
       if (res.ok) {
         const json = await res.json();
         setPosts(json.data);
@@ -84,48 +86,48 @@ function BlogTable() {
 
   return (
     <>
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Nagłówek</TableHead>
-          <TableHead>Slug</TableHead>
-          <TableHead>Data</TableHead>
-          <TableHead className="w-0">Akcje</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {posts.map((p) => (
-          <TableRow key={p.id}>
-            <TableCell>
-              <TableCellLink href={`/admin/blog/${p.id}`}>{p.title}</TableCellLink>
-            </TableCell>
-            <TableCell>
-              <TableCellLink href={`/admin/blog/${p.id}`}>{p.slug}</TableCellLink>
-            </TableCell>
-            <TableCell>
-              <TableCellLink href={`/admin/blog/${p.id}`}>
-                {new Date(p.createdAt).toLocaleString()}
-              </TableCellLink>
-            </TableCell>
-            <TableCell>
-              <DropdownMenu>
-                <DropdownMenuTrigger>
-                  <MoreVertical className="size-4 cursor-pointer" />
-                  <span className="sr-only">Otwórz menu</span>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem asChild>
-                    <Link href={`/admin/blog/${p.id}`}>Edytuj</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DeleteDropdownItem id={p.id} />
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </TableCell>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Nagłówek</TableHead>
+            <TableHead>Slug</TableHead>
+            <TableHead>Data</TableHead>
+            <TableHead className="w-0">Akcje</TableHead>
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHeader>
+        <TableBody>
+          {posts.map((p) => (
+            <TableRow key={p.id}>
+              <TableCell>
+                <TableCellLink href={`/admin/blog/${p.id}`}>{p.title}</TableCellLink>
+              </TableCell>
+              <TableCell>
+                <TableCellLink href={`/admin/blog/${p.id}`}>{p.slug}</TableCellLink>
+              </TableCell>
+              <TableCell>
+                <TableCellLink href={`/admin/blog/${p.id}`}>
+                  {new Date(p.createdAt).toLocaleString()}
+                </TableCellLink>
+              </TableCell>
+              <TableCell>
+                <DropdownMenu>
+                  <DropdownMenuTrigger>
+                    <MoreVertical className="size-4 cursor-pointer" />
+                    <span className="sr-only">Otwórz menu</span>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem asChild>
+                      <Link href={`/admin/blog/${p.id}`}>Edytuj</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DeleteDropdownItem id={p.id} />
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
       <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
     </>
   );

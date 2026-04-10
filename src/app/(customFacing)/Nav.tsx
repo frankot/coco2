@@ -296,6 +296,11 @@ export function Nav({ children }: { children: React.ReactNode }) {
 
             {/* Right side - Cart & Account */}
             <div className="flex-1 flex items-center justify-end space-x-4">
+              {status === "authenticated" && (
+                <span className="text-sm text-muted-foreground whitespace-nowrap">
+                  Witaj, {session?.user?.name?.split(" ")[0] || "Uzytkowniku"}
+                </span>
+              )}
               <CartButton onClick={() => setIsCartOpen(true)} itemCount={cartItemCount} />
               <UserAccountMenu />
             </div>
@@ -332,14 +337,17 @@ export function Nav({ children }: { children: React.ReactNode }) {
                   </div>
                 </nav>
                 <div className="flex flex-col items-center gap-6 pb-8">
-                  <Link href="/">          <Image
-                    src="/logo.png"
-                    alt="Logo"
-                    width={160}
-                    height={160}
-                    className="h-44 w-auto opacity-80"
-                  /></Link>
-        
+                  <Link href="/">
+                    {" "}
+                    <Image
+                      src="/logo.png"
+                      alt="Logo"
+                      width={160}
+                      height={160}
+                      className="h-44 w-auto opacity-80"
+                    />
+                  </Link>
+
                   <div className="flex items-center gap-4">
                     <Link
                       href="https://instagram.com/drcoco"

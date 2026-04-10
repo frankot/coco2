@@ -100,9 +100,11 @@ export default function ProductCard({ product }: ProductCardProps) {
 
         {/* Centered price */}
         <div className="text-center space-y-2">
-          <div className="text-xl font-bold text-black">{formatPLN(product.priceInCents)}</div>
+          <div className="text-xl font-bold text-black">
+            {formatPLN(Math.round(product.priceInCents / product.itemsPerPack))}
+          </div>
           <div className="inline-block bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium">
-            {formatPLN(Math.round(product.priceInCents / product.itemsPerPack))} / za szt. w zest.
+            {formatPLN(product.priceInCents)} / zestaw
           </div>
         </div>
 

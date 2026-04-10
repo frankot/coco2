@@ -227,7 +227,9 @@ export default function ProductPageClient({ params }: { params: Promise<{ id: st
                   >
                     <Minus className="w-4 h-4" />
                   </button>
-                  <span className="px-4 py-2 font-medium min-w-[60px] text-center">{quantity}</span>
+                  <span className="px-4 py-2 font-medium min-w-[60px] text-center">
+                    {quantity * itemsPerPack}
+                  </span>
                   <button
                     onClick={() => setQuantity(quantity + 1)}
                     className="p-2 hover:bg-gray-100 transition-colors"
@@ -235,7 +237,9 @@ export default function ProductPageClient({ params }: { params: Promise<{ id: st
                     <Plus className="w-4 h-4" />
                   </button>
                 </div>
-                <span className="text-sm text-gray-600">szt.</span>
+                <span className="text-sm text-gray-600">
+                  szt. ({quantity} × {itemsPerPack})
+                </span>
               </div>
 
               <Button

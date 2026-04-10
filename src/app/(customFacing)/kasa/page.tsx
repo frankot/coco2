@@ -853,7 +853,7 @@ export default function CheckoutPage() {
 
   // Main checkout form (for logged in users or guest mode)
   return (
-    <div className="container max-w-6xl py-10 px-4 md:px-6 lg:px-8">
+    <div className="container max-w-6xl py-10 mt-10  px-4 md:px-6 lg:px-8">
       <h1 className="text-3xl font-bold mb-6">Kasa</h1>
 
       {error && (

@@ -9,7 +9,6 @@ import { formatPLN } from "@/lib/formatter";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 
-
 // Import Product type from Prisma
 import type { Product as PrismaProduct } from "@/app/generated/prisma/client";
 
@@ -22,6 +21,7 @@ export type CartItem = {
   priceInCents: number;
   quantity: number;
   imagePath: string;
+  itemsPerPack: number;
 };
 
 type CartProps = {
@@ -192,6 +192,10 @@ const CartItemComponent = memo(function CartItemComponent({
           </button>
         </div>
         <p className="text-primary text-md font-medium my-2">{formatPLN(item.priceInCents)}</p>
+        <p className="text-xs text-gray-500">
+          {(item.itemsPerPack || 1) * item.quantity} szt. ({item.quantity} ×{" "}
+          {item.itemsPerPack || 1})
+        </p>
         <div className="flex items-center mt-3">
           <button
             onClick={handleDecrement}
@@ -199,7 +203,9 @@ const CartItemComponent = memo(function CartItemComponent({
           >
             <Minus size={16} />
           </button>
-          <span className="mx-3 w-8 text-center font-medium">{item.quantity}</span>
+          <span className="mx-3 w-8 text-center font-medium">
+            {(item.itemsPerPack || 1) * item.quantity}
+          </span>
           <button
             onClick={handleIncrement}
             className="p-1.5 border rounded-md text-primary hover:bg-gray-100 transition-colors"
@@ -243,11 +249,7 @@ const CartContent = memo(function CartContent({
 });
 
 // CartFooter component - memoized
-const CartFooter = memo(function CartFooter({
-  items,
-}: {
-  items: CartItem[];
-}) {
+const CartFooter = memo(function CartFooter({ items }: { items: CartItem[] }) {
   const subtotal = items.reduce((sum, item) => sum + item.priceInCents * item.quantity, 0);
 
   if (items.length === 0) return null;
@@ -411,11 +413,7 @@ export default function Cart({ isOpen, onClose, navbarHeight, onOpenCart }: Cart
         )}
 
         {/* Cart footer - only show if items exist */}
-        {hasCartItems && (
-          <CartFooter
-            items={cartItems}
-          />
-        )}
+        {hasCartItems && <CartFooter items={cartItems} />}
       </CartSidePanel>
     </>
   );
@@ -449,6 +447,7 @@ export const useCart = () => {
           priceInCents: product.priceInCents,
           quantity: quantity,
           imagePath: product.imagePaths[0] || "",
+          itemsPerPack: product.itemsPerPack || 1,
         });
       }
 
@@ -460,7 +459,8 @@ export const useCart = () => {
         window.dispatchEvent(new Event("openCartSheet"));
       }
 
-      toast.success(`Dodano ${quantity} × ${product.name} do koszyka`, {
+      const totalBottles = quantity * (product.itemsPerPack || 1);
+      toast.success(`Dodano ${totalBottles} szt. ${product.name} do koszyka`, {
         ...toastStyles,
         duration: 3000,
       });

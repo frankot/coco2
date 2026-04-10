@@ -97,59 +97,57 @@ function RabatyTable() {
 
   return (
     <>
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead className="w-0">
-            <span className="sr-only">Status</span>
-          </TableHead>
-          <TableHead>Kod</TableHead>
-          <TableHead>Typ</TableHead>
-          <TableHead>Wartość</TableHead>
-          <TableHead>Jednorazowy</TableHead>
-          <TableHead>Użycia</TableHead>
-          <TableHead>Data utworzenia</TableHead>
-          <TableHead className="w-0">
-            <span className="sr-only">Akcje</span>
-          </TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {codes.map((code) => (
-          <TableRow key={code.id}>
-            <TableCell>
-              {code.isActive ? (
-                <CheckCircle2 className="size-6 text-green-500" />
-              ) : (
-                <XCircle className="size-6 text-red-500" />
-              )}
-            </TableCell>
-            <TableCell className="font-mono font-medium">{code.code}</TableCell>
-            <TableCell>
-              {code.discountType === "PERCENTAGE" ? "Procentowy" : "Kwotowy"}
-            </TableCell>
-            <TableCell>{formatAmount(code)}</TableCell>
-            <TableCell>{code.isSingleUse ? "Tak" : "Nie"}</TableCell>
-            <TableCell>{code.usedCount}</TableCell>
-            <TableCell>{format(new Date(code.createdAt), "dd.MM.yyyy")}</TableCell>
-            <TableCell>
-              <DropdownMenu>
-                <DropdownMenuTrigger>
-                  <MoreVertical className="size-4 cursor-pointer" />
-                  <span className="sr-only">Otwórz menu</span>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <ActiveToggleDropdownItem id={code.id} isActive={code.isActive} />
-                  <DropdownMenuSeparator />
-                  <DeleteDropdownItem id={code.id} disabled={code.usedCount > 0} />
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </TableCell>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-0">
+              <span className="sr-only">Status</span>
+            </TableHead>
+            <TableHead>Kod</TableHead>
+            <TableHead>Typ</TableHead>
+            <TableHead>Wartość</TableHead>
+            <TableHead>Jednorazowy</TableHead>
+            <TableHead>Użycia</TableHead>
+            <TableHead>Data utworzenia</TableHead>
+            <TableHead className="w-0">
+              <span className="sr-only">Akcje</span>
+            </TableHead>
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
-    <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+        </TableHeader>
+        <TableBody>
+          {codes.map((code) => (
+            <TableRow key={code.id}>
+              <TableCell>
+                {code.isActive ? (
+                  <CheckCircle2 className="size-6 text-green-500" />
+                ) : (
+                  <XCircle className="size-6 text-red-500" />
+                )}
+              </TableCell>
+              <TableCell className="font-mono font-medium">{code.code}</TableCell>
+              <TableCell>{code.discountType === "PERCENTAGE" ? "Procentowy" : "Kwotowy"}</TableCell>
+              <TableCell>{formatAmount(code)}</TableCell>
+              <TableCell>{code.isSingleUse ? "Tak" : "Nie"}</TableCell>
+              <TableCell>{code.usedCount}</TableCell>
+              <TableCell>{format(new Date(code.createdAt), "dd.MM.yyyy")}</TableCell>
+              <TableCell>
+                <DropdownMenu>
+                  <DropdownMenuTrigger>
+                    <MoreVertical className="size-4 cursor-pointer" />
+                    <span className="sr-only">Otwórz menu</span>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <ActiveToggleDropdownItem id={code.id} isActive={code.isActive} />
+                    <DropdownMenuSeparator />
+                    <DeleteDropdownItem id={code.id} disabled={code.usedCount > 0} />
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+      <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
     </>
   );
 }
