@@ -88,7 +88,9 @@ function getStatusLabel(status: string) {
   }
 }
 
-function getStatusBadgeVariant(status: string): "default" | "secondary" | "outline" | "destructive" {
+function getStatusBadgeVariant(
+  status: string
+): "default" | "secondary" | "outline" | "destructive" {
   switch (status) {
     case "PAID":
     case "DELIVERED":
@@ -150,52 +152,53 @@ export default function AdminDashboard() {
       </div>
 
       <Tabs defaultValue="overview" className="space-y-4">
- 
-    <Card>
-            <CardHeader>
-              <CardTitle>Ostatnie zamówienia</CardTitle>
-              <CardDescription>Najnowsze zamówienia z szybkim podglądem</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {stats.latestOrders.length === 0 ? (
-                <p className="text-sm text-muted-foreground">Brak zamówień.</p>
-              ) : (
-                <div className="grid gap-3 md:grid-cols-2">
-                  {stats.latestOrders.map((order) => (
-                    <div key={order.id} className="flex items-center justify-between rounded-lg border p-3">
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                          <span className="font-mono text-xs ">#{order.id.slice(0, 7)}</span>
-                          <Badge variant={getStatusBadgeVariant(order.status)}>
-                            {getStatusLabel(order.status)}
-                          </Badge>
-                        </div>
-                        <p className="text-sm text-muted-foreground">{order.email}</p>
+        <Card>
+          <CardHeader>
+            <CardTitle>Ostatnie zamówienia</CardTitle>
+            <CardDescription>Najnowsze zamówienia z szybkim podglądem</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {stats.latestOrders.length === 0 ? (
+              <p className="text-sm text-muted-foreground">Brak zamówień.</p>
+            ) : (
+              <div className="grid gap-3 md:grid-cols-2">
+                {stats.latestOrders.map((order) => (
+                  <div
+                    key={order.id}
+                    className="flex items-center justify-between rounded-lg border p-3"
+                  >
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono text-xs ">#{order.id.slice(0, 7)}</span>
+                        <Badge variant={getStatusBadgeVariant(order.status)}>
+                          {getStatusLabel(order.status)}
+                        </Badge>
                       </div>
-
-                      <div className="text-right">
-                        <p className="font-medium">{formatPLN(order.pricePaidInCents)}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {new Date(order.createdAt).toLocaleDateString("pl-PL")}
-                        </p>
-                      </div>
-
-                      <Link
-                        href={`/admin/zamowienia/${order.id}`}
-                        className="inline-flex items-center gap-1 text-sm text-primary hover:underline"
-                      >
-                        Szczegóły
-                        <ArrowUpRight className="h-3.5 w-3.5" />
-                      </Link>
+                      <p className="text-sm text-muted-foreground">{order.email}</p>
                     </div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card> 
+
+                    <div className="text-right">
+                      <p className="font-medium">{formatPLN(order.pricePaidInCents)}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {new Date(order.createdAt).toLocaleDateString("pl-PL")}
+                      </p>
+                    </div>
+
+                    <Link
+                      href={`/admin/zamowienia/${order.id}`}
+                      className="inline-flex items-center gap-1 text-sm text-primary hover:underline"
+                    >
+                      Szczegóły
+                      <ArrowUpRight className="h-3.5 w-3.5" />
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
         <TabsContent value="overview" className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Przychód łącznie</CardTitle>
@@ -203,7 +206,9 @@ export default function AdminDashboard() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{formatPLN(stats.totalRevenueInCents)}</div>
-                <p className="text-xs text-muted-foreground">Suma zamówień opłaconych i realizowanych</p>
+                <p className="text-xs text-muted-foreground">
+                  Suma zamówień opłaconych i realizowanych
+                </p>
               </CardContent>
             </Card>
 
@@ -224,7 +229,9 @@ export default function AdminDashboard() {
                 <Package className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{formatPLN(stats.averageOrderValueInCents)}</div>
+                <div className="text-2xl font-bold">
+                  {formatPLN(stats.averageOrderValueInCents)}
+                </div>
                 <p className="text-xs text-muted-foreground">Średnio na 1 zamówienie</p>
               </CardContent>
             </Card>
@@ -235,7 +242,9 @@ export default function AdminDashboard() {
                 <Percent className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{formatPLN(stats.totalDiscountGrantedInCents)}</div>
+                <div className="text-2xl font-bold">
+                  {formatPLN(stats.totalDiscountGrantedInCents)}
+                </div>
                 <p className="text-xs text-muted-foreground">Łączna wartość wszystkich rabatów</p>
               </CardContent>
             </Card>
@@ -272,7 +281,8 @@ export default function AdminDashboard() {
               <CardContent>
                 <div className="text-2xl font-bold">{stats.ordersCount}</div>
                 <p className="text-xs text-muted-foreground">
-                  {stats.pendingOrdersCount} oczekujących • {stats.processingOrdersCount} w realizacji
+                  {stats.pendingOrdersCount} oczekujących • {stats.processingOrdersCount} w
+                  realizacji
                 </p>
               </CardContent>
             </Card>
@@ -313,8 +323,8 @@ export default function AdminDashboard() {
                             <div
                               className="w-full rounded-sm bg-primary/80 transition-all hover:bg-primary"
                               style={{ height }}
-                              title={`${day.orders} zamówień`}>
-                            </div>
+                              title={`${day.orders} zamówień`}
+                            ></div>
                           </div>
                         );
                       })}
@@ -371,8 +381,6 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
           </div>
-
-      
         </TabsContent>
       </Tabs>
     </div>

@@ -91,6 +91,7 @@ export default function AdminOrdersPage() {
         <div className="flex items-center gap-2">
           <Button
             variant="default"
+            title="Potwierdzenie wyśle wszystkie opłacone zamówienia do Apaczki (nadanie przesyłek) oraz do wFirma (wygenerowanie faktur)."
             onClick={async () => {
               try {
                 const res = await confirmAllApaczka(true);
@@ -141,7 +142,7 @@ export default function AdminOrdersPage() {
               }
             }}
           >
-            Potwierdź opłacone 
+            Potwierdź opłacone
           </Button>
           <Button
             variant="outline"

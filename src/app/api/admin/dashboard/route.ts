@@ -110,9 +110,8 @@ export const GET = createRouteHandler(
       totalRevenueInCents: allRevenueAgg._sum.pricePaidInCents ?? 0,
       monthRevenueInCents: monthRevenueAgg._sum.pricePaidInCents ?? 0,
       totalDiscountGrantedInCents,
-      averageOrderValueInCents: ordersCount > 0
-        ? Math.round((allRevenueAgg._sum.pricePaidInCents ?? 0) / ordersCount)
-        : 0,
+      averageOrderValueInCents:
+        ordersCount > 0 ? Math.round((allRevenueAgg._sum.pricePaidInCents ?? 0) / ordersCount) : 0,
       statusDistribution: ordersByStatus.map((item) => ({
         status: item.status,
         count: item._count._all,

@@ -323,7 +323,12 @@ export default function OrderDetailsPage() {
                 <Separator />
                 <div className="flex flex-wrap gap-2">
                   {order.wfirmaInvoiceId && (
-                    <Button variant="outline" size="sm" onClick={downloadInvoice} disabled={invoiceDownloading}>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={downloadInvoice}
+                      disabled={invoiceDownloading}
+                    >
                       <Download className="mr-2 h-4 w-4" />
                       {invoiceDownloading ? "Pobieranie..." : "Pobierz fakturę"}
                     </Button>
