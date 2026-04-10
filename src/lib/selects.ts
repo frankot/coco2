@@ -3,6 +3,9 @@ export const PRODUCT_LIST_SELECT = {
   name: true,
   price: true,
   isAvailable: true,
+  visibleToDetal: true,
+  visibleToDetalB2B: true,
+  visibleToHurt: true,
   _count: { select: { orderItems: true } },
 };
 

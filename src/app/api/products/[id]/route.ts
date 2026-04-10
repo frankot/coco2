@@ -14,6 +14,17 @@ export const GET = createRouteHandler(async ({ params }) => {
   if (!product) throw new ApiError("Product not found", 404);
 
   const session = await getServerSession(authOptions);
+  const accountType = session?.user?.accountType;
+
+  // Visibility check (guests treated as DETAL)
+  if (
+    ((!accountType || accountType === "DETAL") && !product.visibleToDetal) ||
+    (accountType === "DETAL_B2B" && !product.visibleToDetalB2B) ||
+    (accountType === "HURT" && !product.visibleToHurt)
+  ) {
+    throw new ApiError("Product not found", 404);
+  }
+
   const [resolved] = await resolveProductPrices([product], session?.user?.id);
   return resolved;
 });

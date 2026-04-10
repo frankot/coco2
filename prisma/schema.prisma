@@ -53,6 +53,9 @@ model Product {
   content        String?     // Markdown content
   composition    Json?       // Composition/nutritional info
   isAvailable    Boolean     @default(true)
+  visibleToDetal    Boolean  @default(true)
+  visibleToDetalB2B Boolean  @default(true)
+  visibleToHurt     Boolean  @default(true)
   itemsPerPack   Int         @default(12)
   weightKg       Float       @default(0.5)   // Weight per unit in kg
   lengthCm       Int         @default(20)    // Package length in cm

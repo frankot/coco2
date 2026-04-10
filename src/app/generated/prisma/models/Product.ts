@@ -55,6 +55,9 @@ export type ProductMinAggregateOutputType = {
   description: string | null
   content: string | null
   isAvailable: boolean | null
+  visibleToDetal: boolean | null
+  visibleToDetalB2B: boolean | null
+  visibleToHurt: boolean | null
   itemsPerPack: number | null
   weightKg: number | null
   lengthCm: number | null
@@ -73,6 +76,9 @@ export type ProductMaxAggregateOutputType = {
   description: string | null
   content: string | null
   isAvailable: boolean | null
+  visibleToDetal: boolean | null
+  visibleToDetalB2B: boolean | null
+  visibleToHurt: boolean | null
   itemsPerPack: number | null
   weightKg: number | null
   lengthCm: number | null
@@ -93,6 +99,9 @@ export type ProductCountAggregateOutputType = {
   content: number
   composition: number
   isAvailable: number
+  visibleToDetal: number
+  visibleToDetalB2B: number
+  visibleToHurt: number
   itemsPerPack: number
   weightKg: number
   lengthCm: number
@@ -134,6 +143,9 @@ export type ProductMinAggregateInputType = {
   description?: true
   content?: true
   isAvailable?: true
+  visibleToDetal?: true
+  visibleToDetalB2B?: true
+  visibleToHurt?: true
   itemsPerPack?: true
   weightKg?: true
   lengthCm?: true
@@ -152,6 +164,9 @@ export type ProductMaxAggregateInputType = {
   description?: true
   content?: true
   isAvailable?: true
+  visibleToDetal?: true
+  visibleToDetalB2B?: true
+  visibleToHurt?: true
   itemsPerPack?: true
   weightKg?: true
   lengthCm?: true
@@ -172,6 +187,9 @@ export type ProductCountAggregateInputType = {
   content?: true
   composition?: true
   isAvailable?: true
+  visibleToDetal?: true
+  visibleToDetalB2B?: true
+  visibleToHurt?: true
   itemsPerPack?: true
   weightKg?: true
   lengthCm?: true
@@ -280,6 +298,9 @@ export type ProductGroupByOutputType = {
   content: string | null
   composition: runtime.JsonValue | null
   isAvailable: boolean
+  visibleToDetal: boolean
+  visibleToDetalB2B: boolean
+  visibleToHurt: boolean
   itemsPerPack: number
   weightKg: number
   lengthCm: number
@@ -324,6 +345,9 @@ export type ProductWhereInput = {
   content?: Prisma.StringNullableFilter<"Product"> | string | null
   composition?: Prisma.JsonNullableFilter<"Product">
   isAvailable?: Prisma.BoolFilter<"Product"> | boolean
+  visibleToDetal?: Prisma.BoolFilter<"Product"> | boolean
+  visibleToDetalB2B?: Prisma.BoolFilter<"Product"> | boolean
+  visibleToHurt?: Prisma.BoolFilter<"Product"> | boolean
   itemsPerPack?: Prisma.IntFilter<"Product"> | number
   weightKg?: Prisma.FloatFilter<"Product"> | number
   lengthCm?: Prisma.IntFilter<"Product"> | number
@@ -347,6 +371,9 @@ export type ProductOrderByWithRelationInput = {
   content?: Prisma.SortOrderInput | Prisma.SortOrder
   composition?: Prisma.SortOrderInput | Prisma.SortOrder
   isAvailable?: Prisma.SortOrder
+  visibleToDetal?: Prisma.SortOrder
+  visibleToDetalB2B?: Prisma.SortOrder
+  visibleToHurt?: Prisma.SortOrder
   itemsPerPack?: Prisma.SortOrder
   weightKg?: Prisma.SortOrder
   lengthCm?: Prisma.SortOrder
@@ -373,6 +400,9 @@ export type ProductWhereUniqueInput = Prisma.AtLeast<{
   content?: Prisma.StringNullableFilter<"Product"> | string | null
   composition?: Prisma.JsonNullableFilter<"Product">
   isAvailable?: Prisma.BoolFilter<"Product"> | boolean
+  visibleToDetal?: Prisma.BoolFilter<"Product"> | boolean
+  visibleToDetalB2B?: Prisma.BoolFilter<"Product"> | boolean
+  visibleToHurt?: Prisma.BoolFilter<"Product"> | boolean
   itemsPerPack?: Prisma.IntFilter<"Product"> | number
   weightKg?: Prisma.FloatFilter<"Product"> | number
   lengthCm?: Prisma.IntFilter<"Product"> | number
@@ -396,6 +426,9 @@ export type ProductOrderByWithAggregationInput = {
   content?: Prisma.SortOrderInput | Prisma.SortOrder
   composition?: Prisma.SortOrderInput | Prisma.SortOrder
   isAvailable?: Prisma.SortOrder
+  visibleToDetal?: Prisma.SortOrder
+  visibleToDetalB2B?: Prisma.SortOrder
+  visibleToHurt?: Prisma.SortOrder
   itemsPerPack?: Prisma.SortOrder
   weightKg?: Prisma.SortOrder
   lengthCm?: Prisma.SortOrder
@@ -425,6 +458,9 @@ export type ProductScalarWhereWithAggregatesInput = {
   content?: Prisma.StringNullableWithAggregatesFilter<"Product"> | string | null
   composition?: Prisma.JsonNullableWithAggregatesFilter<"Product">
   isAvailable?: Prisma.BoolWithAggregatesFilter<"Product"> | boolean
+  visibleToDetal?: Prisma.BoolWithAggregatesFilter<"Product"> | boolean
+  visibleToDetalB2B?: Prisma.BoolWithAggregatesFilter<"Product"> | boolean
+  visibleToHurt?: Prisma.BoolWithAggregatesFilter<"Product"> | boolean
   itemsPerPack?: Prisma.IntWithAggregatesFilter<"Product"> | number
   weightKg?: Prisma.FloatWithAggregatesFilter<"Product"> | number
   lengthCm?: Prisma.IntWithAggregatesFilter<"Product"> | number
@@ -446,6 +482,9 @@ export type ProductCreateInput = {
   content?: string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: boolean
+  visibleToDetal?: boolean
+  visibleToDetalB2B?: boolean
+  visibleToHurt?: boolean
   itemsPerPack?: number
   weightKg?: number
   lengthCm?: number
@@ -469,6 +508,9 @@ export type ProductUncheckedCreateInput = {
   content?: string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: boolean
+  visibleToDetal?: boolean
+  visibleToDetalB2B?: boolean
+  visibleToHurt?: boolean
   itemsPerPack?: number
   weightKg?: number
   lengthCm?: number
@@ -492,6 +534,9 @@ export type ProductUpdateInput = {
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  visibleToDetal?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  visibleToDetalB2B?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  visibleToHurt?: Prisma.BoolFieldUpdateOperationsInput | boolean
   itemsPerPack?: Prisma.IntFieldUpdateOperationsInput | number
   weightKg?: Prisma.FloatFieldUpdateOperationsInput | number
   lengthCm?: Prisma.IntFieldUpdateOperationsInput | number
@@ -515,6 +560,9 @@ export type ProductUncheckedUpdateInput = {
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  visibleToDetal?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  visibleToDetalB2B?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  visibleToHurt?: Prisma.BoolFieldUpdateOperationsInput | boolean
   itemsPerPack?: Prisma.IntFieldUpdateOperationsInput | number
   weightKg?: Prisma.FloatFieldUpdateOperationsInput | number
   lengthCm?: Prisma.IntFieldUpdateOperationsInput | number
@@ -538,6 +586,9 @@ export type ProductCreateManyInput = {
   content?: string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: boolean
+  visibleToDetal?: boolean
+  visibleToDetalB2B?: boolean
+  visibleToHurt?: boolean
   itemsPerPack?: number
   weightKg?: number
   lengthCm?: number
@@ -559,6 +610,9 @@ export type ProductUpdateManyMutationInput = {
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  visibleToDetal?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  visibleToDetalB2B?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  visibleToHurt?: Prisma.BoolFieldUpdateOperationsInput | boolean
   itemsPerPack?: Prisma.IntFieldUpdateOperationsInput | number
   weightKg?: Prisma.FloatFieldUpdateOperationsInput | number
   lengthCm?: Prisma.IntFieldUpdateOperationsInput | number
@@ -580,6 +634,9 @@ export type ProductUncheckedUpdateManyInput = {
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  visibleToDetal?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  visibleToDetalB2B?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  visibleToHurt?: Prisma.BoolFieldUpdateOperationsInput | boolean
   itemsPerPack?: Prisma.IntFieldUpdateOperationsInput | number
   weightKg?: Prisma.FloatFieldUpdateOperationsInput | number
   lengthCm?: Prisma.IntFieldUpdateOperationsInput | number
@@ -609,6 +666,9 @@ export type ProductCountOrderByAggregateInput = {
   content?: Prisma.SortOrder
   composition?: Prisma.SortOrder
   isAvailable?: Prisma.SortOrder
+  visibleToDetal?: Prisma.SortOrder
+  visibleToDetalB2B?: Prisma.SortOrder
+  visibleToHurt?: Prisma.SortOrder
   itemsPerPack?: Prisma.SortOrder
   weightKg?: Prisma.SortOrder
   lengthCm?: Prisma.SortOrder
@@ -638,6 +698,9 @@ export type ProductMaxOrderByAggregateInput = {
   description?: Prisma.SortOrder
   content?: Prisma.SortOrder
   isAvailable?: Prisma.SortOrder
+  visibleToDetal?: Prisma.SortOrder
+  visibleToDetalB2B?: Prisma.SortOrder
+  visibleToHurt?: Prisma.SortOrder
   itemsPerPack?: Prisma.SortOrder
   weightKg?: Prisma.SortOrder
   lengthCm?: Prisma.SortOrder
@@ -656,6 +719,9 @@ export type ProductMinOrderByAggregateInput = {
   description?: Prisma.SortOrder
   content?: Prisma.SortOrder
   isAvailable?: Prisma.SortOrder
+  visibleToDetal?: Prisma.SortOrder
+  visibleToDetalB2B?: Prisma.SortOrder
+  visibleToHurt?: Prisma.SortOrder
   itemsPerPack?: Prisma.SortOrder
   weightKg?: Prisma.SortOrder
   lengthCm?: Prisma.SortOrder
@@ -769,6 +835,9 @@ export type ProductCreateWithoutOrderItemsInput = {
   content?: string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: boolean
+  visibleToDetal?: boolean
+  visibleToDetalB2B?: boolean
+  visibleToHurt?: boolean
   itemsPerPack?: number
   weightKg?: number
   lengthCm?: number
@@ -791,6 +860,9 @@ export type ProductUncheckedCreateWithoutOrderItemsInput = {
   content?: string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: boolean
+  visibleToDetal?: boolean
+  visibleToDetalB2B?: boolean
+  visibleToHurt?: boolean
   itemsPerPack?: number
   weightKg?: number
   lengthCm?: number
@@ -829,6 +901,9 @@ export type ProductUpdateWithoutOrderItemsInput = {
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  visibleToDetal?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  visibleToDetalB2B?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  visibleToHurt?: Prisma.BoolFieldUpdateOperationsInput | boolean
   itemsPerPack?: Prisma.IntFieldUpdateOperationsInput | number
   weightKg?: Prisma.FloatFieldUpdateOperationsInput | number
   lengthCm?: Prisma.IntFieldUpdateOperationsInput | number
@@ -851,6 +926,9 @@ export type ProductUncheckedUpdateWithoutOrderItemsInput = {
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  visibleToDetal?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  visibleToDetalB2B?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  visibleToHurt?: Prisma.BoolFieldUpdateOperationsInput | boolean
   itemsPerPack?: Prisma.IntFieldUpdateOperationsInput | number
   weightKg?: Prisma.FloatFieldUpdateOperationsInput | number
   lengthCm?: Prisma.IntFieldUpdateOperationsInput | number
@@ -873,6 +951,9 @@ export type ProductCreateWithoutCustomPricesInput = {
   content?: string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: boolean
+  visibleToDetal?: boolean
+  visibleToDetalB2B?: boolean
+  visibleToHurt?: boolean
   itemsPerPack?: number
   weightKg?: number
   lengthCm?: number
@@ -895,6 +976,9 @@ export type ProductUncheckedCreateWithoutCustomPricesInput = {
   content?: string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: boolean
+  visibleToDetal?: boolean
+  visibleToDetalB2B?: boolean
+  visibleToHurt?: boolean
   itemsPerPack?: number
   weightKg?: number
   lengthCm?: number
@@ -933,6 +1017,9 @@ export type ProductUpdateWithoutCustomPricesInput = {
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  visibleToDetal?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  visibleToDetalB2B?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  visibleToHurt?: Prisma.BoolFieldUpdateOperationsInput | boolean
   itemsPerPack?: Prisma.IntFieldUpdateOperationsInput | number
   weightKg?: Prisma.FloatFieldUpdateOperationsInput | number
   lengthCm?: Prisma.IntFieldUpdateOperationsInput | number
@@ -955,6 +1042,9 @@ export type ProductUncheckedUpdateWithoutCustomPricesInput = {
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  visibleToDetal?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  visibleToDetalB2B?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  visibleToHurt?: Prisma.BoolFieldUpdateOperationsInput | boolean
   itemsPerPack?: Prisma.IntFieldUpdateOperationsInput | number
   weightKg?: Prisma.FloatFieldUpdateOperationsInput | number
   lengthCm?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1017,6 +1107,9 @@ export type ProductSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   content?: boolean
   composition?: boolean
   isAvailable?: boolean
+  visibleToDetal?: boolean
+  visibleToDetalB2B?: boolean
+  visibleToHurt?: boolean
   itemsPerPack?: boolean
   weightKg?: boolean
   lengthCm?: boolean
@@ -1041,6 +1134,9 @@ export type ProductSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   content?: boolean
   composition?: boolean
   isAvailable?: boolean
+  visibleToDetal?: boolean
+  visibleToDetalB2B?: boolean
+  visibleToHurt?: boolean
   itemsPerPack?: boolean
   weightKg?: boolean
   lengthCm?: boolean
@@ -1062,6 +1158,9 @@ export type ProductSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   content?: boolean
   composition?: boolean
   isAvailable?: boolean
+  visibleToDetal?: boolean
+  visibleToDetalB2B?: boolean
+  visibleToHurt?: boolean
   itemsPerPack?: boolean
   weightKg?: boolean
   lengthCm?: boolean
@@ -1083,6 +1182,9 @@ export type ProductSelectScalar = {
   content?: boolean
   composition?: boolean
   isAvailable?: boolean
+  visibleToDetal?: boolean
+  visibleToDetalB2B?: boolean
+  visibleToHurt?: boolean
   itemsPerPack?: boolean
   weightKg?: boolean
   lengthCm?: boolean
@@ -1093,7 +1195,7 @@ export type ProductSelectScalar = {
   imagePublicIds?: boolean
 }
 
-export type ProductOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "price" | "priceInCents" | "imagePaths" | "description" | "content" | "composition" | "isAvailable" | "itemsPerPack" | "weightKg" | "lengthCm" | "widthCm" | "heightCm" | "createdAt" | "updatedAt" | "imagePublicIds", ExtArgs["result"]["product"]>
+export type ProductOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "price" | "priceInCents" | "imagePaths" | "description" | "content" | "composition" | "isAvailable" | "visibleToDetal" | "visibleToDetalB2B" | "visibleToHurt" | "itemsPerPack" | "weightKg" | "lengthCm" | "widthCm" | "heightCm" | "createdAt" | "updatedAt" | "imagePublicIds", ExtArgs["result"]["product"]>
 export type ProductInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   orderItems?: boolean | Prisma.Product$orderItemsArgs<ExtArgs>
   customPrices?: boolean | Prisma.Product$customPricesArgs<ExtArgs>
@@ -1119,6 +1221,9 @@ export type $ProductPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     content: string | null
     composition: runtime.JsonValue | null
     isAvailable: boolean
+    visibleToDetal: boolean
+    visibleToDetalB2B: boolean
+    visibleToHurt: boolean
     itemsPerPack: number
     weightKg: number
     lengthCm: number
@@ -1562,6 +1667,9 @@ export interface ProductFieldRefs {
   readonly content: Prisma.FieldRef<"Product", 'String'>
   readonly composition: Prisma.FieldRef<"Product", 'Json'>
   readonly isAvailable: Prisma.FieldRef<"Product", 'Boolean'>
+  readonly visibleToDetal: Prisma.FieldRef<"Product", 'Boolean'>
+  readonly visibleToDetalB2B: Prisma.FieldRef<"Product", 'Boolean'>
+  readonly visibleToHurt: Prisma.FieldRef<"Product", 'Boolean'>
   readonly itemsPerPack: Prisma.FieldRef<"Product", 'Int'>
   readonly weightKg: Prisma.FieldRef<"Product", 'Float'>
   readonly lengthCm: Prisma.FieldRef<"Product", 'Int'>

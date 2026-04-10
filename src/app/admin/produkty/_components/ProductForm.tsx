@@ -352,6 +352,43 @@ export default function ProductForm({ product }: { product?: Product | null }) {
         </div>
       </div>
 
+      {/* Widoczność produktu */}
+      <div className="space-y-4 border-t pt-6">
+        <h3 className="text-lg font-semibold">Widoczność produktu</h3>
+        <div className="flex flex-wrap gap-6">
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              name="visibleToDetal"
+              defaultChecked={product?.visibleToDetal ?? true}
+              className="h-4 w-4"
+            />
+            <span>Detal</span>
+          </label>
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              name="visibleToDetalB2B"
+              defaultChecked={product?.visibleToDetalB2B ?? true}
+              className="h-4 w-4"
+            />
+            <span>Detal B2B</span>
+          </label>
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              name="visibleToHurt"
+              defaultChecked={product?.visibleToHurt ?? true}
+              className="h-4 w-4"
+            />
+            <span>Hurt</span>
+          </label>
+        </div>
+        <div className="text-sm text-muted-foreground">
+          Określ dla jakich typów kont produkt będzie widoczny w sklepie
+        </div>
+      </div>
+
       {/* Images Section */}
       <div className="space-y-4">
         <Label>Zdjęcia produktu</Label>

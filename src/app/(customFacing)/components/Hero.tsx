@@ -1,5 +1,7 @@
 import prisma from "@/db";
 import { HeroClient } from "./HeroClient";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 // Define Product type
 type Product = {
@@ -12,10 +14,16 @@ type Product = {
 };
 
 async function getLatestProducts() {
+  const session = await getServerSession(authOptions);
+  const accountType = session?.user?.accountType;
+
+  const where: any = { isAvailable: true };
+  if (!accountType || accountType === "DETAL") where.visibleToDetal = true;
+  else if (accountType === "DETAL_B2B") where.visibleToDetalB2B = true;
+  else if (accountType === "HURT") where.visibleToHurt = true;
+
   const products = await prisma.product.findMany({
-    where: {
-      isAvailable: true,
-    },
+    where,
     orderBy: {
       id: "desc",
     },

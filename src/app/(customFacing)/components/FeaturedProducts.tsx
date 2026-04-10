@@ -5,17 +5,23 @@ import { authOptions } from "@/lib/auth";
 import { resolveProductPrices } from "@/lib/resolve-prices";
 
 async function getLatestProducts() {
+  const session = await getServerSession(authOptions);
+  const accountType = session?.user?.accountType;
+
+  // Visibility filter (guests treated as DETAL)
+  const where: any = { isAvailable: true };
+  if (!accountType || accountType === "DETAL") where.visibleToDetal = true;
+  else if (accountType === "DETAL_B2B") where.visibleToDetalB2B = true;
+  else if (accountType === "HURT") where.visibleToHurt = true;
+
   const products = await prisma.product.findMany({
-    where: {
-      isAvailable: true,
-    },
+    where,
     orderBy: {
       createdAt: "desc",
     },
     take: 3,
   });
 
-  const session = await getServerSession(authOptions);
   return resolveProductPrices(products, session?.user?.id);
 }
 
