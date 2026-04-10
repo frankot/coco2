@@ -357,7 +357,7 @@ export default function UserProfilePage() {
   );
 
   return (
-    <div className="container py-10 lg:mt-20 mx-auto px-4 md:px-6 lg:px-8">
+    <div className="container py-10 lg:mt-16 mx-auto px-4 md:px-6 lg:px-8">
       <Tabs value={activeTab} onValueChange={onTabChange} className="space-y-4">
         <TabsList>
           <TabsTrigger value="profile" className="flex items-center gap-2">

@@ -16,9 +16,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Separator } from "@/components/ui/separator";
-import { ShoppingBag, ArrowLeft } from "lucide-react";
+import { ShoppingBag, ArrowLeft, Download, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "sonner";
 
 type OrderStatus = "PENDING" | "PAID" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED";
 
@@ -49,6 +50,9 @@ type Order = {
   billingAddress: Address;
   shippingAddress: Address;
   orderItems: OrderItem[];
+  wfirmaInvoiceId?: string | null;
+  wfirmaInvoiceNumber?: string | null;
+  apaczkaTrackingUrl?: string | null;
 };
 
 export default function OrderDetailsPage() {
@@ -56,6 +60,7 @@ export default function OrderDetailsPage() {
   const { data: session, status } = useSession();
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
+  const [invoiceDownloading, setInvoiceDownloading] = useState(false);
 
   // Redirect if not authenticated
   if (status === "unauthenticated") {
@@ -81,6 +86,26 @@ export default function OrderDetailsPage() {
       fetchOrder();
     }
   }, [orderId, session]);
+
+  // Invoice Download
+  const downloadInvoice = async () => {
+    setInvoiceDownloading(true);
+    try {
+      const response = await fetch(`/api/user/orders/${orderId}/invoice`);
+      if (!response.ok) throw new Error("Nie udało się pobrać faktury");
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `Faktura_${order?.wfirmaInvoiceNumber || orderId}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Błąd pobierania faktury");
+    } finally {
+      setTimeout(() => setInvoiceDownloading(false), 5000);
+    }
+  };
 
   // Get status display name in Polish
   const getStatusDisplayName = (status: OrderStatus) => {
@@ -121,7 +146,7 @@ export default function OrderDetailsPage() {
   };
 
   const OrderSkeleton = () => (
-    <div className="container py-10 space-y-6 pt-44 mx-auto">
+    <div className="container py-10 space-y-6  mx-auto">
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-2">
           <Skeleton className="h-6 w-6 rounded-full" />
@@ -192,7 +217,7 @@ export default function OrderDetailsPage() {
 
   if (!order) {
     return (
-      <div className="container py-10">
+      <div className="">
         <div className="text-center">
           <h2 className="text-xl font-bold">Nie znaleziono zamówienia</h2>
           <Button variant="outline" className="mt-4" asChild>
@@ -210,7 +235,7 @@ export default function OrderDetailsPage() {
   const totalAmount = (order.pricePaidInCents / 100).toFixed(2);
 
   return (
-    <div className="container py-10 space-y-6 mt-44 mx-auto">
+    <div className="container py-10 space-y-6 mt-10 lg:mt-16 mx-auto">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold flex items-center gap-2">
           <ShoppingBag className="h-6 w-6" />
@@ -254,6 +279,29 @@ export default function OrderDetailsPage() {
               <div className="text-sm text-muted-foreground">Liczba produktów:</div>
               <div className="text-sm font-medium">{order.orderItems.length}</div>
             </div>
+
+            {/* Invoice & Tracking */}
+            {(order.wfirmaInvoiceId || order.apaczkaTrackingUrl) && (
+              <>
+                <Separator />
+                <div className="flex flex-wrap gap-2">
+                  {order.wfirmaInvoiceId && (
+                    <Button variant="outline" size="sm" onClick={downloadInvoice} disabled={invoiceDownloading}>
+                      <Download className="mr-2 h-4 w-4" />
+                      {invoiceDownloading ? "Pobieranie..." : "Pobierz fakturę"}
+                    </Button>
+                  )}
+                  {order.apaczkaTrackingUrl && (
+                    <Button variant="outline" size="sm" asChild>
+                      <a href={order.apaczkaTrackingUrl} target="_blank" rel="noopener noreferrer">
+                        <ExternalLink className="mr-2 h-4 w-4" />
+                        Śledź przesyłkę
+                      </a>
+                    </Button>
+                  )}
+                </div>
+              </>
+            )}
           </CardContent>
         </Card>
 

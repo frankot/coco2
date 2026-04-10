@@ -1,43 +1,37 @@
-import prisma from "@/db";
+import { NextResponse } from "next/server";
 import { createRouteHandler, ApiError, getRequiredParam } from "@/lib/api";
+import prisma from "@/db";
+import wFirma from "@/lib/wfirma";
 
 export const GET = createRouteHandler(
   async ({ session, params }) => {
     if (!session?.user?.email) throw new ApiError("Unauthorized", 401);
     const orderId = getRequiredParam(params as any, "orderId");
+
     const order = await prisma.order.findFirst({
       where: {
         id: orderId,
         user: { email: session.user.email },
       },
       select: {
-        id: true,
-        pricePaidInCents: true,
-        createdAt: true,
-        status: true,
-        billingAddress: true,
-        shippingAddress: true,
         wfirmaInvoiceId: true,
         wfirmaInvoiceNumber: true,
-        apaczkaTrackingUrl: true,
-        orderItems: {
-          select: {
-            id: true,
-            quantity: true,
-            pricePerItemInCents: true,
-            product: {
-              select: {
-                id: true,
-                name: true,
-                priceInCents: true,
-              },
-            },
-          },
-        },
       },
     });
+
     if (!order) throw new ApiError("Order not found", 404);
-    return order;
+    if (!order.wfirmaInvoiceId) throw new ApiError("Invoice not found for this order", 404);
+
+    const pdf = await wFirma.downloadInvoice(order.wfirmaInvoiceId);
+    const filename = `Faktura_${order.wfirmaInvoiceNumber || order.wfirmaInvoiceId}.pdf`;
+
+    return new NextResponse(pdf, {
+      headers: {
+        "Content-Type": "application/pdf",
+        "Content-Disposition": `attachment; filename="${filename}"`,
+        "Cache-Control": "no-store",
+      },
+    });
   },
   { auth: "user" }
 );
