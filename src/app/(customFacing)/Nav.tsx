@@ -316,7 +316,6 @@ export function Nav({ children }: { children: React.ReactNode }) {
           </Link>
 
           <div className="flex items-center gap-2 ml-auto">
-            <CartButton onClick={() => setIsCartOpen(true)} itemCount={cartItemCount} />
             <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon">
@@ -370,6 +369,15 @@ export function Nav({ children }: { children: React.ReactNode }) {
           </div>
         </div>
       </nav>
+
+      <div
+        className={cn(
+          "lg:hidden fixed bottom-4 bg-primary p-1 rounded right-4 z-50 transition-opacity",
+          isMobileMenuOpen && "opacity-0 pointer-events-none"
+        )}
+      >
+        <CartButton onClick={() => setIsCartOpen(true)} itemCount={cartItemCount} />
+      </div>
 
       {/* Cart Sheet */}
       <CartSheet isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
