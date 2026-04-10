@@ -5,6 +5,7 @@ import { ORDER_DETAIL_INCLUDE } from "@/lib/selects";
 import { generateAndSendInvoice } from "@/lib/invoice";
 import { confirmOrderInApaczka } from "@/lib/apaczka-confirm";
 import { Apaczka } from "@/lib/apaczka";
+import { sendOrderShippedEmail } from "@/lib/order-emails";
 import { z } from "zod";
 
 const ORDER_STATUSES = ["PENDING", "PAID", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED"] as const;
@@ -89,6 +90,26 @@ export const PATCH = createRouteHandler(
           });
         });
       }
+    }
+
+    const movedToShipped = previousStatus !== "SHIPPED" && body.status === "SHIPPED";
+
+    if (movedToShipped) {
+      sendOrderShippedEmail({
+        id: updatedOrder.id,
+        paymentMethod: updatedOrder.paymentMethod,
+        pricePaidInCents: updatedOrder.pricePaidInCents,
+        subtotalInCents: updatedOrder.subtotalInCents,
+        shippingCostInCents: updatedOrder.shippingCostInCents,
+        discountAmountInCents: updatedOrder.discountAmountInCents,
+        apaczkaTrackingUrl: updatedOrder.apaczkaTrackingUrl,
+        apaczkaWaybillNumber: updatedOrder.apaczkaWaybillNumber,
+        shippingServiceName: updatedOrder.shippingServiceName,
+        user: updatedOrder.user,
+        orderItems: updatedOrder.orderItems,
+      }).catch((error) => {
+        console.error("[EMAIL] Failed to send shipped email", { orderId, error });
+      });
     }
 
     // Cancellation side effects

@@ -6,7 +6,7 @@ import { z } from "zod";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { createOrUpdateUser } from "@/lib/auth-utils";
-import mailer from "@/lib/mailer";
+import { sendOrderPlacedEmail } from "@/lib/order-emails";
 
 function normalizePhonePL(input: string): string | null {
   if (!input) return null;
@@ -388,47 +388,35 @@ export async function createOrder(formData: OrderFormData) {
 
     revalidatePath("/");
 
-    // Send order confirmation email if an email provider is configured
+    // Send order confirmation email
     try {
-      const user = await prisma.user.findUnique({ where: { id: verifiedUserId } });
-      if (user?.email) {
-        const { getOrigin } = await import("@/lib/get-origin");
-        const siteUrl = getOrigin();
-        const orderUrl = `${siteUrl.replace(/\/$/, "")}/kasa/zlozone-zamowienie?orderId=${orderId}&payment=${validatedData.paymentMethod}`;
+      const orderForEmail = await prisma.order.findUnique({
+        where: { id: orderId },
+        include: {
+          user: { select: { email: true, firstName: true, lastName: true } },
+          orderItems: {
+            select: {
+              quantity: true,
+              pricePerItemInCents: true,
+              product: { select: { name: true } },
+            },
+          },
+        },
+      });
 
-        const paymentLabel = validatedData.paymentMethod === "COD" ? "Pobranie" : "Online";
-
-        const html = `
-          <div style="font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; color:#111;">
-            <div style="max-width:600px;margin:0 auto;padding:24px;background:#ffffff;border-radius:8px;">
-              <div style="text-align:center;margin-bottom:18px;">
-                <img src="${siteUrl}/logo.png" alt="Logo" style="height:56px;object-fit:contain;" onerror="this.style.display='none'" />
-              </div>
-              <h1 style="font-size:20px;margin:0 0 8px;color:#0f172a;text-align:center;">Dziękujemy za zamówienie!</h1>
-              <p style="margin:0 0 18px;text-align:center;color:#6b7280;">Twoje zamówienie <strong style="font-family:monospace">${orderId}</strong> zostało przyjęte. Wkrótce je przygotujemy i wyślemy.</p>
-
-              <div style="background:#f8fafc;padding:12px;border-radius:6px;margin-bottom:18px;">
-                <strong>Szczegóły zamówienia</strong>
-                <div style="margin-top:8px;font-size:14px;color:#374151;">
-                  <div>Kwota: <strong>${(totalPriceInCents / 100).toFixed(2)} PLN</strong></div>
-                  <div>Płatność: <strong>${paymentLabel}</strong></div>
-                </div>
-              </div>
-
-              <div style="text-align:center;margin-bottom:18px;">
-                <a href="${orderUrl}" style="display:inline-block;background:#111827;color:#fff;padding:10px 18px;border-radius:6px;text-decoration:none;font-weight:600;">Zobacz zamówienie</a>
-              </div>
-
-              <p style="color:#6b7280;font-size:13px;margin:0;">Jeśli masz pytania, odpisz na tę wiadomość lub odwiedź naszą stronę.</p>
-
-              <div style="margin-top:18px;color:#9ca3af;font-size:12px;text-align:center;">Pozdrawiamy,<br/>Zespół</div>
-            </div>
-          </div>
-        `;
-        await mailer.sendMail({
-          to: user.email,
-          subject: `Potwierdzenie zamówienia ${orderId}`,
-          html,
+      if (orderForEmail?.user?.email) {
+        await sendOrderPlacedEmail({
+          id: orderForEmail.id,
+          paymentMethod: orderForEmail.paymentMethod,
+          pricePaidInCents: orderForEmail.pricePaidInCents,
+          subtotalInCents: orderForEmail.subtotalInCents,
+          shippingCostInCents: orderForEmail.shippingCostInCents,
+          discountAmountInCents: orderForEmail.discountAmountInCents,
+          apaczkaTrackingUrl: orderForEmail.apaczkaTrackingUrl,
+          apaczkaWaybillNumber: orderForEmail.apaczkaWaybillNumber,
+          shippingServiceName: orderForEmail.shippingServiceName,
+          user: orderForEmail.user,
+          orderItems: orderForEmail.orderItems,
         });
       }
     } catch (e) {

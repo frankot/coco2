@@ -1,7 +1,6 @@
 import prisma from "@/db";
 import Apaczka from "@/lib/apaczka";
-import { getOrigin } from "@/lib/get-origin";
-import mailer from "@/lib/mailer";
+import { sendOrderProcessingEmail } from "@/lib/order-emails";
 
 function normalizePhonePL(input: string | null | undefined): string | undefined {
   if (!input) return undefined;
@@ -15,7 +14,7 @@ function normalizePhonePL(input: string | null | undefined): string | undefined 
 
 /**
  * Confirms an order in the Apaczka shipping API, updates DB with tracking info,
- * and sends shipment notification email. Throws on failure.
+ * and sends processing notification email. Throws on failure.
  */
 export async function confirmOrderInApaczka(orderId: string) {
   const order = await prisma.order.findUnique({
@@ -204,7 +203,7 @@ export async function confirmOrderInApaczka(orderId: string) {
   const sent = await Apaczka.sendOrder(apOrder);
   const ap = sent.response.order;
 
-  await prisma.order.update({
+  const updatedOrder = await prisma.order.update({
     where: { id: order.id },
     data: {
       apaczkaOrderId: String(ap.id),
@@ -214,47 +213,37 @@ export async function confirmOrderInApaczka(orderId: string) {
       shippingServiceName: ap.service_name,
       apaczkaConfirmedAt: new Date(),
     },
+    include: {
+      user: { select: { email: true, firstName: true, lastName: true } },
+      orderItems: {
+        select: {
+          quantity: true,
+          pricePerItemInCents: true,
+          product: { select: { name: true } },
+        },
+      },
+    },
   });
 
-  // Send shipment notification email
+  // Send processing notification email
   try {
-    if (order.user?.email) {
-      const siteUrl = getOrigin();
-      const html = `
-        <div style="font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; color:#111;">
-          <div style="max-width:600px;margin:0 auto;padding:24px;background:#ffffff;border-radius:8px;">
-            <div style="text-align:center;margin-bottom:18px;">
-              <img src="${siteUrl}/logo.png" alt="Logo" style="height:56px;object-fit:contain;" onerror="this.style.display='none'" />
-            </div>
-            <h1 style="font-size:20px;margin:0 0 8px;color:#0f172a;text-align:center;">Twoja przesyłka jest w drodze!</h1>
-            <p style="margin:0 0 18px;text-align:center;color:#6b7280;">Twoje zamówienie <strong style="font-family:monospace">${order.id}</strong> zostało nadane i jest w drodze do Ciebie.</p>
-
-            <div style="background:#f8fafc;padding:12px;border-radius:6px;margin-bottom:18px;">
-              <strong>Informacje o przesyłce</strong>
-              <div style="margin-top:8px;font-size:14px;color:#374151;">
-                <div>Numer przesyłki: <strong style="font-family:monospace">${ap.waybill_number}</strong></div>
-                <div style="margin-top:4px;">Przewoźnik: <strong>${ap.service_name || "Apaczka"}</strong></div>
-              </div>
-            </div>
-
-            <div style="text-align:center;margin-bottom:18px;">
-              <a href="${ap.tracking_url}" style="display:inline-block;background:#111827;color:#fff;padding:10px 18px;border-radius:6px;text-decoration:none;font-weight:600;">Śledź przesyłkę</a>
-            </div>
-
-            <p style="color:#6b7280;font-size:13px;margin:0;">Jeśli masz pytania, odpisz na tę wiadomość lub odwiedź naszą stronę.</p>
-
-            <div style="margin-top:18px;color:#9ca3af;font-size:12px;text-align:center;">Pozdrawiamy,<br/>Zespół</div>
-          </div>
-        </div>
-      `;
-      await mailer.sendMail({
-        to: order.user.email,
-        subject: `Przesyłka nadana - Zamówienie ${order.id}`,
-        html,
+    if (updatedOrder.user?.email) {
+      await sendOrderProcessingEmail({
+        id: updatedOrder.id,
+        paymentMethod: updatedOrder.paymentMethod,
+        pricePaidInCents: updatedOrder.pricePaidInCents,
+        subtotalInCents: updatedOrder.subtotalInCents,
+        shippingCostInCents: updatedOrder.shippingCostInCents,
+        discountAmountInCents: updatedOrder.discountAmountInCents,
+        apaczkaTrackingUrl: updatedOrder.apaczkaTrackingUrl,
+        apaczkaWaybillNumber: updatedOrder.apaczkaWaybillNumber,
+        shippingServiceName: updatedOrder.shippingServiceName,
+        user: updatedOrder.user,
+        orderItems: updatedOrder.orderItems,
       });
     }
   } catch (e) {
-    console.error("Failed to send shipment email for order", order.id, e);
+    console.error("Failed to send processing email for order", order.id, e);
   }
 
   return { success: true, apaczka: ap };

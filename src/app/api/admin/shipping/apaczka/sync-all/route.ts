@@ -1,6 +1,7 @@
 import { createRouteHandler } from "@/lib/api";
 import prisma from "@/db";
 import Apaczka from "@/lib/apaczka";
+import { sendOrderShippedEmail } from "@/lib/order-emails";
 
 function mapApaczkaToLocal(status?: string | null) {
   if (!status) return null;
@@ -29,7 +30,7 @@ export const POST = createRouteHandler(
         const ap = await Apaczka.getOrder(String(o.apaczkaOrderId));
         const order = (ap as any).response?.order ?? (ap as any).order ?? (ap as any).response;
         const localStatus = mapApaczkaToLocal(order?.status) ?? o.status;
-        await prisma.order.update({
+        const updated = await prisma.order.update({
           where: { id: o.id },
           data: {
             apaczkaStatus: order?.status ?? undefined,
@@ -37,7 +38,39 @@ export const POST = createRouteHandler(
             apaczkaTrackingUrl: order?.tracking_url ?? undefined,
             status: localStatus as any,
           },
+          include: {
+            user: { select: { email: true, firstName: true, lastName: true } },
+            orderItems: {
+              select: {
+                quantity: true,
+                pricePerItemInCents: true,
+                product: { select: { name: true } },
+              },
+            },
+          },
         });
+
+        if (o.status !== "SHIPPED" && localStatus === "SHIPPED") {
+          sendOrderShippedEmail({
+            id: updated.id,
+            paymentMethod: updated.paymentMethod,
+            pricePaidInCents: updated.pricePaidInCents,
+            subtotalInCents: updated.subtotalInCents,
+            shippingCostInCents: updated.shippingCostInCents,
+            discountAmountInCents: updated.discountAmountInCents,
+            apaczkaTrackingUrl: updated.apaczkaTrackingUrl,
+            apaczkaWaybillNumber: updated.apaczkaWaybillNumber,
+            shippingServiceName: updated.shippingServiceName,
+            user: updated.user,
+            orderItems: updated.orderItems,
+          }).catch((error) => {
+            console.error("[EMAIL] Failed to send shipped email from sync", {
+              orderId: updated.id,
+              error,
+            });
+          });
+        }
+
         results.push({ id: o.id, ok: true, newStatus: String(localStatus) });
       } catch (e: any) {
         // Log detailed error server-side for debugging
