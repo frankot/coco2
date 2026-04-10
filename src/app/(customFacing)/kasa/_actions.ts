@@ -116,7 +116,14 @@ export async function createOrder(formData: OrderFormData) {
     try {
       const products = await prisma.product.findMany({
         where: { id: { in: productIds } },
-        select: { id: true, weightKg: true, lengthCm: true, widthCm: true, heightCm: true, priceInCents: true },
+        select: {
+          id: true,
+          weightKg: true,
+          lengthCm: true,
+          widthCm: true,
+          heightCm: true,
+          priceInCents: true,
+        },
       });
       const prodMap = new Map(products.map((p) => [p.id, p]));
 
@@ -186,7 +193,10 @@ export async function createOrder(formData: OrderFormData) {
       if (priceTable) {
         const serviceId = String(validatedData.shippingMethodId);
         if (priceTable[serviceId]) {
-          const grossStr = (priceTable[serviceId] as any).price_gross ?? (priceTable[serviceId] as any).price ?? "0";
+          const grossStr =
+            (priceTable[serviceId] as any).price_gross ??
+            (priceTable[serviceId] as any).price ??
+            "0";
           shippingCostInCents = Math.round(parseFloat(grossStr));
         } else {
           // If specific service not found, use cheapest available
@@ -219,7 +229,7 @@ export async function createOrder(formData: OrderFormData) {
         }
 
         if (discount.discountType === "PERCENTAGE") {
-          discountAmountInCents = Math.floor(subtotalInCents * discount.discountAmount / 100);
+          discountAmountInCents = Math.floor((subtotalInCents * discount.discountAmount) / 100);
         } else {
           discountAmountInCents = discount.discountAmount;
         }

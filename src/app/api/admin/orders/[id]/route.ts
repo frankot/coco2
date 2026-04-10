@@ -8,7 +8,14 @@ import { Apaczka } from "@/lib/apaczka";
 import { sendOrderShippedEmail } from "@/lib/order-emails";
 import { z } from "zod";
 
-const ORDER_STATUSES = ["PENDING", "PAID", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED"] as const;
+const ORDER_STATUSES = [
+  "PENDING",
+  "PAID",
+  "PROCESSING",
+  "SHIPPED",
+  "DELIVERED",
+  "CANCELLED",
+] as const;
 type OrderStatus = (typeof ORDER_STATUSES)[number];
 
 // Valid status transitions: from -> allowed destinations
@@ -56,10 +63,7 @@ export const PATCH = createRouteHandler(
       const currentStatus = order.status as OrderStatus;
       const allowed = VALID_TRANSITIONS[currentStatus];
       if (!allowed.includes(body.status)) {
-        throw new ApiError(
-          `Nie można zmienić statusu z ${currentStatus} na ${body.status}`,
-          400
-        );
+        throw new ApiError(`Nie można zmienić statusu z ${currentStatus} na ${body.status}`, 400);
       }
 
       previousStatus = currentStatus;

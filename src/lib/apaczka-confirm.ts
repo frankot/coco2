@@ -22,7 +22,11 @@ export async function confirmOrderInApaczka(orderId: string) {
     include: {
       user: true,
       shippingAddress: true,
-      orderItems: { include: { product: { select: { weightKg: true, lengthCm: true, widthCm: true, heightCm: true } } } },
+      orderItems: {
+        include: {
+          product: { select: { weightKg: true, lengthCm: true, widthCm: true, heightCm: true } },
+        },
+      },
     },
   });
 
