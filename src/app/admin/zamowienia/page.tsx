@@ -141,7 +141,7 @@ export default function AdminOrdersPage() {
               }
             }}
           >
-            Potwierdź wszystkie w Apaczka
+            Potwierdź opłacone 
           </Button>
           <Button
             variant="outline"

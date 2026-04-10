@@ -15,6 +15,7 @@ export const GET = createRouteHandler(
         pricePaidInCents: true,
         createdAt: true,
         status: true,
+        paymentMethod: true,
         billingAddress: true,
         shippingAddress: true,
         wfirmaInvoiceId: true,

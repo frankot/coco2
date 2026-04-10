@@ -296,12 +296,19 @@ export default function OrderDetailsPage() {
             <div className="flex flex-wrap gap-2">
               {order.wfirmaInvoiceId && (
                 <div>
-                  <Button variant="outline" size="sm" onClick={downloadInvoice} disabled={invoiceDownloading}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={downloadInvoice}
+                    disabled={invoiceDownloading}
+                  >
                     <Download className="mr-2 h-4 w-4" />
                     {invoiceDownloading ? "Pobieranie..." : "Pobierz fakturę"}
                   </Button>
                   {invoiceDownloading && (
-                    <p className="text-xs text-muted-foreground mt-1">Trwa generowanie faktury...</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Trwa generowanie faktury...
+                    </p>
                   )}
                 </div>
               )}

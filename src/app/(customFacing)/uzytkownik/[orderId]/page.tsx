@@ -47,6 +47,7 @@ type Order = {
   pricePaidInCents: number;
   createdAt: string;
   status: OrderStatus;
+  paymentMethod: "COD" | "STRIPE";
   billingAddress: Address;
   shippingAddress: Address;
   orderItems: OrderItem[];
@@ -61,6 +62,7 @@ export default function OrderDetailsPage() {
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [invoiceDownloading, setInvoiceDownloading] = useState(false);
+  const [isRetryingPayment, setIsRetryingPayment] = useState(false);
 
   // Redirect if not authenticated
   if (status === "unauthenticated") {
@@ -104,6 +106,32 @@ export default function OrderDetailsPage() {
       toast.error(error instanceof Error ? error.message : "Błąd pobierania faktury");
     } finally {
       setTimeout(() => setInvoiceDownloading(false), 5000);
+    }
+  };
+
+  const retryStripePayment = async () => {
+    if (!order) return;
+
+    setIsRetryingPayment(true);
+    try {
+      const response = await fetch("/api/payments/stripe/retry-checkout-session", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ orderId: order.id }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.url) {
+        throw new Error(data.error || "Nie udało się ponowić płatności");
+      }
+
+      window.location.href = data.url;
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Nie udało się ponowić płatności");
+      setIsRetryingPayment(false);
     }
   };
 
@@ -279,6 +307,15 @@ export default function OrderDetailsPage() {
               <div className="text-sm text-muted-foreground">Liczba produktów:</div>
               <div className="text-sm font-medium">{order.orderItems.length}</div>
             </div>
+
+            {order.status === "PENDING" && order.paymentMethod === "STRIPE" && (
+              <>
+                <Separator />
+                <Button size="sm" onClick={retryStripePayment} disabled={isRetryingPayment}>
+                  {isRetryingPayment ? "Przekierowanie..." : "Ponów płatność online"}
+                </Button>
+              </>
+            )}
 
             {/* Invoice & Tracking */}
             {(order.wfirmaInvoiceId || order.apaczkaTrackingUrl) && (
