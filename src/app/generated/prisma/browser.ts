@@ -53,7 +53,17 @@ export type OrderItem = Prisma.OrderItemModel
  */
 export type Payment = Prisma.PaymentModel
 /**
+ * Model NewsletterEmail
+ * 
+ */
+export type NewsletterEmail = Prisma.NewsletterEmailModel
+/**
  * Model CustomPrice
  * 
  */
 export type CustomPrice = Prisma.CustomPriceModel
+/**
+ * Model DiscountCode
+ * 
+ */
+export type DiscountCode = Prisma.DiscountCodeModel

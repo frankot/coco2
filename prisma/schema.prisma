@@ -42,6 +42,11 @@ enum AddressType {
   BOTH
 }
 
+enum DiscountType {
+  PERCENTAGE
+  FIXED_AMOUNT
+}
+
 model Product {
   id             String      @id @default(uuid())
   name           String
@@ -137,6 +142,10 @@ model Order {
   // wFirma correction invoice
   wfirmaCorrectionInvoiceId     String?
   wfirmaCorrectionInvoiceNumber String?
+  // Discount code
+  discountCodeId        String?
+  discountCodeValue     String?
+  discountAmountInCents Int          @default(0)
   // Apaczka pickup/point delivery selection (for door-to-point)
   apaczkaPointId       String?
   apaczkaPointSupplier String?
@@ -145,6 +154,7 @@ model Order {
   user                User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   billingAddress      Address      @relation("BillingAddress", fields: [billingAddressId], references: [id])
   shippingAddress     Address      @relation("ShippingAddress", fields: [shippingAddressId], references: [id])
+  discountCodeRef     DiscountCode? @relation(fields: [discountCodeId], references: [id])
   orderItems          OrderItem[]
   payments            Payment[]
 }
@@ -175,6 +185,12 @@ model Payment {
   user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+model NewsletterEmail {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+}
+
 model CustomPrice {
   id           String   @id @default(uuid())
   userId       String
@@ -186,4 +202,17 @@ model CustomPrice {
   product      Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@unique([userId, productId])
+}
+
+model DiscountCode {
+  id             String       @id @default(uuid())
+  code           String       @unique
+  discountType   DiscountType
+  discountAmount Int
+  isActive       Boolean      @default(true)
+  isSingleUse    Boolean      @default(false)
+  usedCount      Int          @default(0)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  orders         Order[]
 }

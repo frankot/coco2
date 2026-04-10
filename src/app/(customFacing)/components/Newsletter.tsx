@@ -1,11 +1,44 @@
 "use client";
 
-import { CalendarCheck, ShieldCheck } from "lucide-react";
+import { useState } from "react";
+import { CalendarCheck, ShieldCheck, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
 
 export function Newsletter() {
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [message, setMessage] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email) return;
+
+    setStatus("loading");
+    try {
+      const res = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        setStatus("error");
+        setMessage(data.error || "Wystąpił błąd");
+        return;
+      }
+
+      setStatus("success");
+      setMessage("Dziękujemy za zapisanie się do newslettera!");
+      setEmail("");
+    } catch {
+      setStatus("error");
+      setMessage("Wystąpił błąd połączenia");
+    }
+  };
+
   return (
     <div className="relative isolate overflow-hidden bg-primary py-16 sm:py-24 lg:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
@@ -24,17 +57,32 @@ export function Newsletter() {
               Zostaw nam swój mail, a my będziemy dawać Ci znać o promocjach, nowych dropach i tym,
               co ciekawego dzieje się w świecie Dr. Coco. Bez lania wody (chyba, że kokosowej).
             </p>
-            <div className="mt-6 flex max-w-md gap-x-4">
-              <Input
-                type="email"
-                required
-                placeholder="Twój adres email"
-                className="bg-white/5 border-white/10 text-white placeholder:text-white/50"
-              />
-              <Button className="bg-yellow-300 text-primary hover:bg-yellow-400 font-medium px-6">
-                Zapisz się
-              </Button>
-            </div>
+
+            {status === "success" ? (
+              <p className="mt-6 text-yellow-300 font-medium">{message}</p>
+            ) : (
+              <form onSubmit={handleSubmit} className="mt-6 flex max-w-md gap-x-4">
+                <Input
+                  type="email"
+                  required
+                  placeholder="Twój adres email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="bg-white/5 border-white/10 text-white placeholder:text-white/50"
+                  disabled={status === "loading"}
+                />
+                <Button
+                  type="submit"
+                  className="bg-yellow-300 text-primary hover:bg-yellow-400 font-medium px-6"
+                  disabled={status === "loading"}
+                >
+                  {status === "loading" ? <Loader2 className="size-4 animate-spin" /> : "Zapisz się"}
+                </Button>
+              </form>
+            )}
+            {status === "error" && (
+              <p className="mt-2 text-red-300 text-sm">{message}</p>
+            )}
           </motion.div>
 
           <motion.dl

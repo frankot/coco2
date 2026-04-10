@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { CreditCard, BanknoteIcon, ShoppingBag, LogIn, User, Trash2, Loader2 } from "lucide-react";
+import { CreditCard, BanknoteIcon, ShoppingBag, LogIn, User, Trash2, Loader2, X } from "lucide-react";
 import { formatPLN } from "@/lib/formatter";
 import { createOrder } from "./_actions";
 import { ApaczkaService } from "@/types/apaczka";
@@ -36,6 +36,7 @@ export default function CheckoutPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [newsletterConsent, setNewsletterConsent] = useState(false);
   const [shippingMethods, setShippingMethods] = useState<ApaczkaService[]>([]);
   const [selectedShippingMethod, setSelectedShippingMethod] = useState<string | null>(null);
   const [isLoadingShipping, setIsLoadingShipping] = useState(false);
@@ -50,6 +51,16 @@ export default function CheckoutPage() {
   const pointInputRef = useRef<HTMLInputElement | null>(null);
   const supplierInputRef = useRef<HTMLInputElement | null>(null);
   const apaczkaMapRef = useRef<any>(null);
+
+  // Discount code state
+  const [discountCodeInput, setDiscountCodeInput] = useState("");
+  const [appliedDiscount, setAppliedDiscount] = useState<{
+    code: string;
+    discountAmountInCents: number;
+    label: string;
+  } | null>(null);
+  const [isValidatingDiscount, setIsValidatingDiscount] = useState(false);
+  const [discountError, setDiscountError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     firstName: session?.user?.name?.split(" ")[0] || "",
@@ -618,6 +629,8 @@ export default function CheckoutPage() {
         shippingMethodId: resolvedServiceId,
         apaczkaPointId: selectedPointId || undefined,
         apaczkaPointSupplier: selectedSupplier || undefined,
+        newsletterConsent,
+        discountCode: appliedDiscount?.code || undefined,
       };
 
       // Submit order to server action
@@ -726,7 +739,52 @@ export default function CheckoutPage() {
   // Calculate totals
   const subtotal = cartItems.reduce((sum, item) => sum + item.priceInCents * item.quantity, 0);
   const shipping = getShippingCost();
-  const total = subtotal + shipping;
+  const discountAmount = appliedDiscount?.discountAmountInCents ?? 0;
+  const total = subtotal - discountAmount + shipping;
+
+  // Validate discount code
+  const handleApplyDiscount = async () => {
+    const code = discountCodeInput.trim();
+    if (!code) return;
+
+    setIsValidatingDiscount(true);
+    setDiscountError(null);
+
+    try {
+      const response = await fetch("/api/discount/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code, subtotalInCents: subtotal }),
+      });
+
+      if (response.status === 429) {
+        setDiscountError("Zbyt wiele prób. Spróbuj ponownie za chwilę.");
+        return;
+      }
+
+      const data = await response.json();
+      if (data.valid) {
+        setAppliedDiscount({
+          code: code.toUpperCase(),
+          discountAmountInCents: data.discountAmountInCents,
+          label: data.label,
+        });
+        setDiscountError(null);
+      } else {
+        setDiscountError(data.error || "Nieprawidłowy kod rabatowy");
+      }
+    } catch {
+      setDiscountError("Błąd weryfikacji kodu. Spróbuj ponownie.");
+    } finally {
+      setIsValidatingDiscount(false);
+    }
+  };
+
+  const handleRemoveDiscount = () => {
+    setAppliedDiscount(null);
+    setDiscountCodeInput("");
+    setDiscountError(null);
+  };
 
   // Check if cart is empty
   if (isClient && cartItems.length === 0) {
@@ -1109,6 +1167,20 @@ export default function CheckoutPage() {
                 </label>
               </div>
 
+              {/* Newsletter */}
+              <div className="flex items-start gap-3 p-4 bg-white shadow rounded-lg">
+                <input
+                  type="checkbox"
+                  id="newsletterConsent"
+                  checked={newsletterConsent}
+                  onChange={(e) => setNewsletterConsent(e.target.checked)}
+                  className="mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
+                />
+                <label htmlFor="newsletterConsent" className="text-sm leading-relaxed cursor-pointer">
+                  Chcę otrzymywać newsletter z promocjami i nowościami
+                </label>
+              </div>
+
               <Button
                 type="submit"
                 size="lg"
@@ -1183,11 +1255,58 @@ export default function CheckoutPage() {
               ))}
             </div>
 
+            {/* Discount Code */}
+            <div className="border-t mx-4 pt-4">
+              {appliedDiscount ? (
+                <div className="flex items-center justify-between bg-green-50 rounded-md px-3 py-2 mb-2">
+                  <div className="text-sm text-green-700">
+                    <span className="font-mono font-medium">{appliedDiscount.code}</span>
+                    <span className="ml-1">(-{appliedDiscount.label})</span>
+                  </div>
+                  <button type="button" onClick={handleRemoveDiscount} className="text-green-700 hover:text-green-900">
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+              ) : (
+                <div className="mb-2">
+                  <div className="flex gap-2">
+                    <Input
+                      value={discountCodeInput}
+                      onChange={(e) => setDiscountCodeInput(e.target.value)}
+                      placeholder="Kod rabatowy"
+                      className="uppercase text-sm"
+                      onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); handleApplyDiscount(); } }}
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={handleApplyDiscount}
+                      disabled={isValidatingDiscount || !discountCodeInput.trim()}
+                      className="shrink-0"
+                    >
+                      {isValidatingDiscount ? "..." : "Zastosuj"}
+                    </Button>
+                  </div>
+                  {discountError && (
+                    <p className="text-xs text-destructive mt-1">{discountError}</p>
+                  )}
+                </div>
+              )}
+            </div>
+
             <div className="border-t mx-4 pt-4 space-y-2">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Suma częściowa</span>
                 <span>{formatPLN(subtotal)}</span>
               </div>
+
+              {discountAmount > 0 && (
+                <div className="flex justify-between text-green-600">
+                  <span>Rabat ({appliedDiscount?.label})</span>
+                  <span>-{formatPLN(discountAmount)}</span>
+                </div>
+              )}
 
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Dostawa</span>

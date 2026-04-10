@@ -12,7 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { User, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
+import { User, ArrowUpDown, ArrowUp, ArrowDown, Mail, Download } from "lucide-react";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { ClientActionsMenu } from "./_components/ClientActions";
@@ -36,6 +36,13 @@ type Client = {
 type SortField = "accountType" | "createdAt" | "orders" | "totalSpent";
 type SortDirection = "asc" | "desc";
 
+// Newsletter email type
+type NewsletterEmail = {
+  id: string;
+  email: string;
+  createdAt: string;
+};
+
 export default function AdminClientsPage() {
   return (
     <>
@@ -46,7 +53,70 @@ export default function AdminClientsPage() {
         </Button>
       </div>
       <ClientsTable />
+      <NewsletterSection />
     </>
+  );
+}
+
+function NewsletterSection() {
+  const [emails, setEmails] = useState<NewsletterEmail[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchEmails() {
+      try {
+        const res = await fetch(`/api/admin/newsletter?timestamp=${Date.now()}`, {
+          cache: "no-store",
+        });
+        if (res.ok) setEmails(await res.json());
+      } catch (err) {
+        console.error("Error fetching newsletter emails:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchEmails();
+  }, []);
+
+  const handleExportCSV = () => {
+    window.open("/api/admin/newsletter?format=csv", "_blank");
+  };
+
+  if (loading) return null;
+
+  return (
+    <div className="mt-12">
+      <div className="flex justify-between items-center mb-4">
+        <div className="flex items-center gap-2">
+          <Mail className="size-5 text-muted-foreground" />
+          <h2 className="text-lg font-semibold">Newsletter</h2>
+          <span className="text-sm text-muted-foreground">({emails.length})</span>
+        </div>
+        {emails.length > 0 && (
+          <Button variant="outline" size="sm" onClick={handleExportCSV}>
+            <Download className="size-4 mr-2" />
+            Eksportuj CSV
+          </Button>
+        )}
+      </div>
+      {emails.length === 0 ? (
+        <p className="text-sm text-muted-foreground">Brak zapisanych emaili</p>
+      ) : (
+        <div className="flex flex-wrap gap-2">
+          {emails.map((entry) => (
+            <div
+              key={entry.id}
+              className="flex items-center gap-2 rounded-lg border px-3 py-1.5 text-sm bg-muted/50"
+            >
+              <span>{entry.email}</span>
+              <span className="text-xs text-muted-foreground">
+                {format(new Date(entry.createdAt), "dd.MM.yyyy")}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
 

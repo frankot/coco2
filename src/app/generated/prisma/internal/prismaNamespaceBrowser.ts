@@ -58,7 +58,9 @@ export const ModelName = {
   Order: 'Order',
   OrderItem: 'OrderItem',
   Payment: 'Payment',
-  CustomPrice: 'CustomPrice'
+  NewsletterEmail: 'NewsletterEmail',
+  CustomPrice: 'CustomPrice',
+  DiscountCode: 'DiscountCode'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -171,6 +173,9 @@ export const OrderScalarFieldEnum = {
   wfirmaInvoiceSentAt: 'wfirmaInvoiceSentAt',
   wfirmaCorrectionInvoiceId: 'wfirmaCorrectionInvoiceId',
   wfirmaCorrectionInvoiceNumber: 'wfirmaCorrectionInvoiceNumber',
+  discountCodeId: 'discountCodeId',
+  discountCodeValue: 'discountCodeValue',
+  discountAmountInCents: 'discountAmountInCents',
   apaczkaPointId: 'apaczkaPointId',
   apaczkaPointSupplier: 'apaczkaPointSupplier',
   createdAt: 'createdAt',
@@ -208,6 +213,15 @@ export const PaymentScalarFieldEnum = {
 export type PaymentScalarFieldEnum = (typeof PaymentScalarFieldEnum)[keyof typeof PaymentScalarFieldEnum]
 
 
+export const NewsletterEmailScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  createdAt: 'createdAt'
+} as const
+
+export type NewsletterEmailScalarFieldEnum = (typeof NewsletterEmailScalarFieldEnum)[keyof typeof NewsletterEmailScalarFieldEnum]
+
+
 export const CustomPriceScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -218,6 +232,21 @@ export const CustomPriceScalarFieldEnum = {
 } as const
 
 export type CustomPriceScalarFieldEnum = (typeof CustomPriceScalarFieldEnum)[keyof typeof CustomPriceScalarFieldEnum]
+
+
+export const DiscountCodeScalarFieldEnum = {
+  id: 'id',
+  code: 'code',
+  discountType: 'discountType',
+  discountAmount: 'discountAmount',
+  isActive: 'isActive',
+  isSingleUse: 'isSingleUse',
+  usedCount: 'usedCount',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type DiscountCodeScalarFieldEnum = (typeof DiscountCodeScalarFieldEnum)[keyof typeof DiscountCodeScalarFieldEnum]
 
 
 export const SortOrder = {

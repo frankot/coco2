@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback, memo } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Plus, Minus, Trash2, X, ShoppingBag, Check } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -243,74 +242,27 @@ const CartContent = memo(function CartContent({
   );
 });
 
-// CartFooter component - memoized with precalculated values
+// CartFooter component - memoized
 const CartFooter = memo(function CartFooter({
   items,
-  discount,
-  discountCode,
-  isApplyingDiscount,
-  onDiscountCodeChange,
-  onApplyDiscount,
 }: {
   items: CartItem[];
-  discount: number;
-  discountCode: string;
-  isApplyingDiscount: boolean;
-  onDiscountCodeChange: (code: string) => void;
-  onApplyDiscount: () => void;
 }) {
-  // Calculate cart totals
   const subtotal = items.reduce((sum, item) => sum + item.priceInCents * item.quantity, 0);
-  const discountAmount = Math.round(subtotal * (discount / 100));
-  const total = subtotal - discountAmount;
 
   if (items.length === 0) return null;
 
-  const handleDiscountCodeChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      onDiscountCodeChange(e.target.value);
-    },
-    [onDiscountCodeChange]
-  );
-
   return (
     <div className="p-6 border-t">
-      {/* Discount code */}
-      <div className="mb-6">
-        <p className="font-medium mb-2">Kod rabatowy</p>
-        <div className="flex gap-2">
-          <Input
-            value={discountCode}
-            onChange={handleDiscountCodeChange}
-            placeholder="COCO10"
-            className="bg-gray-50"
-          />
-          <Button
-            onClick={onApplyDiscount}
-            variant="outline"
-            disabled={isApplyingDiscount || !discountCode.trim()}
-            className="shrink-0"
-          >
-            {isApplyingDiscount ? "..." : "Dodaj"}
-          </Button>
-        </div>
-      </div>
-
       {/* Cart summary */}
       <div className="space-y-3 mb-6">
         <div className="flex justify-between">
           <span>Suma</span>
           <span className="font-medium">{formatPLN(subtotal)}</span>
         </div>
-        {discount > 0 && (
-          <div className="flex justify-between text-green-600">
-            <span>Rabat ({discount}%)</span>
-            <span>-{formatPLN(discountAmount)}</span>
-          </div>
-        )}
         <div className="flex justify-between text-xl font-bold pt-3 border-t text-primary">
           <span>Do zapłaty</span>
-          <span>{formatPLN(total)}</span>
+          <span>{formatPLN(subtotal)}</span>
         </div>
       </div>
 
@@ -356,9 +308,6 @@ const CartSidePanel = memo(function CartSidePanel({
 // Main Cart component
 export default function Cart({ isOpen, onClose, navbarHeight, onOpenCart }: CartProps) {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const [discountCode, setDiscountCode] = useState("");
-  const [isApplyingDiscount, setIsApplyingDiscount] = useState(false);
-  const [discount, setDiscount] = useState(0); // Discount percentage
   const [isInitialized, setIsInitialized] = useState(false);
   const [isFloatingButtonVisible, setIsFloatingButtonVisible] = useState(false);
   // Load cart from local storage - optimized with error handling
@@ -427,12 +376,6 @@ export default function Cart({ isOpen, onClose, navbarHeight, onOpenCart }: Cart
     setCartItems((prev) => prev.filter((item) => item.id !== id));
   }, []);
 
-  // TODO: Implement server-side discount validation before enabling this feature.
-  // Client-only discounts are misleading — the order total on the server ignores them.
-  const applyDiscount = useCallback(() => {
-    alert("Kody rabatowe będą dostępne wkrótce");
-  }, []);
-
   // Memoized derived values
   const hasCartItems = cartItems.length > 0;
   const showEmptyCart = isOpen && !hasCartItems;
@@ -471,11 +414,6 @@ export default function Cart({ isOpen, onClose, navbarHeight, onOpenCart }: Cart
         {hasCartItems && (
           <CartFooter
             items={cartItems}
-            discount={discount}
-            discountCode={discountCode}
-            isApplyingDiscount={isApplyingDiscount}
-            onDiscountCodeChange={setDiscountCode}
-            onApplyDiscount={applyDiscount}
           />
         )}
       </CartSidePanel>

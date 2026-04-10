@@ -63,11 +63,30 @@ export const POST = createRouteHandler(async ({ req }) => {
     };
   });
 
+  // Apply discount as Stripe coupon if order has one
+  let discounts: { coupon: string }[] = [];
+  if (orderId) {
+    const order = await prisma.order.findUnique({
+      where: { id: orderId },
+      select: { discountAmountInCents: true, discountCodeValue: true },
+    });
+    if (order?.discountAmountInCents && order.discountAmountInCents > 0) {
+      const coupon = await stripe.coupons.create({
+        amount_off: order.discountAmountInCents,
+        currency: "pln",
+        duration: "once",
+        name: `Rabat: ${order.discountCodeValue || "kod"}`,
+      });
+      discounts = [{ coupon: coupon.id }];
+    }
+  }
+
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ["card", "blik", "p24"],
     mode: "payment",
     locale: "pl",
     line_items: lineItems,
+    ...(discounts.length > 0 ? { discounts } : {}),
     // include customer email so Stripe can send a receipt to the customer in test mode
     ...(customerEmail
       ? { customer_email: customerEmail, payment_intent_data: { receipt_email: customerEmail } }

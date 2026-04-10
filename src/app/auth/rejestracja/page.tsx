@@ -27,6 +27,7 @@ function RegisterForm() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [newsletterConsent, setNewsletterConsent] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -67,7 +68,7 @@ function RegisterForm() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password, firstName, lastName }),
+        body: JSON.stringify({ email, password, firstName, lastName, newsletterConsent }),
       });
 
       const data = await response.json();
@@ -206,6 +207,21 @@ function RegisterForm() {
                   )}
                 </button>
               </div>
+            </div>
+
+            {/* Newsletter */}
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="newsletterConsent"
+                checked={newsletterConsent}
+                onChange={(e) => setNewsletterConsent(e.target.checked)}
+                className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
+                disabled={isLoading}
+              />
+              <label htmlFor="newsletterConsent" className="text-sm cursor-pointer">
+                Chcę otrzymywać newsletter z promocjami i nowościami
+              </label>
             </div>
 
             <Button type="submit" className="w-full" disabled={isLoading}>

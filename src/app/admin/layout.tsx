@@ -22,6 +22,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <NavLink href="/admin/produkty">Produkty</NavLink>
         <NavLink href="/admin/zamowienia">Zamówienia</NavLink>
         <NavLink href="/admin/klienci">Klienci</NavLink>
+        <NavLink href="/admin/rabaty">Rabaty</NavLink>
         <div className="absolute right-10">
           <LogOut />
         </div>

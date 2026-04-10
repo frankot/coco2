@@ -391,7 +391,9 @@ export const ModelName = {
   Order: 'Order',
   OrderItem: 'OrderItem',
   Payment: 'Payment',
-  CustomPrice: 'CustomPrice'
+  NewsletterEmail: 'NewsletterEmail',
+  CustomPrice: 'CustomPrice',
+  DiscountCode: 'DiscountCode'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -407,7 +409,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "product" | "blogPost" | "user" | "address" | "order" | "orderItem" | "payment" | "customPrice"
+    modelProps: "product" | "blogPost" | "user" | "address" | "order" | "orderItem" | "payment" | "newsletterEmail" | "customPrice" | "discountCode"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -929,6 +931,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    NewsletterEmail: {
+      payload: Prisma.$NewsletterEmailPayload<ExtArgs>
+      fields: Prisma.NewsletterEmailFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.NewsletterEmailFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NewsletterEmailPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.NewsletterEmailFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NewsletterEmailPayload>
+        }
+        findFirst: {
+          args: Prisma.NewsletterEmailFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NewsletterEmailPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.NewsletterEmailFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NewsletterEmailPayload>
+        }
+        findMany: {
+          args: Prisma.NewsletterEmailFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NewsletterEmailPayload>[]
+        }
+        create: {
+          args: Prisma.NewsletterEmailCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NewsletterEmailPayload>
+        }
+        createMany: {
+          args: Prisma.NewsletterEmailCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.NewsletterEmailCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NewsletterEmailPayload>[]
+        }
+        delete: {
+          args: Prisma.NewsletterEmailDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NewsletterEmailPayload>
+        }
+        update: {
+          args: Prisma.NewsletterEmailUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NewsletterEmailPayload>
+        }
+        deleteMany: {
+          args: Prisma.NewsletterEmailDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.NewsletterEmailUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.NewsletterEmailUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NewsletterEmailPayload>[]
+        }
+        upsert: {
+          args: Prisma.NewsletterEmailUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NewsletterEmailPayload>
+        }
+        aggregate: {
+          args: Prisma.NewsletterEmailAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateNewsletterEmail>
+        }
+        groupBy: {
+          args: Prisma.NewsletterEmailGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.NewsletterEmailGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.NewsletterEmailCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.NewsletterEmailCountAggregateOutputType> | number
+        }
+      }
+    }
     CustomPrice: {
       payload: Prisma.$CustomPricePayload<ExtArgs>
       fields: Prisma.CustomPriceFieldRefs
@@ -1000,6 +1076,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.CustomPriceCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.CustomPriceCountAggregateOutputType> | number
+        }
+      }
+    }
+    DiscountCode: {
+      payload: Prisma.$DiscountCodePayload<ExtArgs>
+      fields: Prisma.DiscountCodeFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.DiscountCodeFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiscountCodePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.DiscountCodeFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiscountCodePayload>
+        }
+        findFirst: {
+          args: Prisma.DiscountCodeFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiscountCodePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.DiscountCodeFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiscountCodePayload>
+        }
+        findMany: {
+          args: Prisma.DiscountCodeFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiscountCodePayload>[]
+        }
+        create: {
+          args: Prisma.DiscountCodeCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiscountCodePayload>
+        }
+        createMany: {
+          args: Prisma.DiscountCodeCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.DiscountCodeCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiscountCodePayload>[]
+        }
+        delete: {
+          args: Prisma.DiscountCodeDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiscountCodePayload>
+        }
+        update: {
+          args: Prisma.DiscountCodeUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiscountCodePayload>
+        }
+        deleteMany: {
+          args: Prisma.DiscountCodeDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.DiscountCodeUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.DiscountCodeUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiscountCodePayload>[]
+        }
+        upsert: {
+          args: Prisma.DiscountCodeUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DiscountCodePayload>
+        }
+        aggregate: {
+          args: Prisma.DiscountCodeAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateDiscountCode>
+        }
+        groupBy: {
+          args: Prisma.DiscountCodeGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DiscountCodeGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.DiscountCodeCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DiscountCodeCountAggregateOutputType> | number
         }
       }
     }
@@ -1136,6 +1286,9 @@ export const OrderScalarFieldEnum = {
   wfirmaInvoiceSentAt: 'wfirmaInvoiceSentAt',
   wfirmaCorrectionInvoiceId: 'wfirmaCorrectionInvoiceId',
   wfirmaCorrectionInvoiceNumber: 'wfirmaCorrectionInvoiceNumber',
+  discountCodeId: 'discountCodeId',
+  discountCodeValue: 'discountCodeValue',
+  discountAmountInCents: 'discountAmountInCents',
   apaczkaPointId: 'apaczkaPointId',
   apaczkaPointSupplier: 'apaczkaPointSupplier',
   createdAt: 'createdAt',
@@ -1173,6 +1326,15 @@ export const PaymentScalarFieldEnum = {
 export type PaymentScalarFieldEnum = (typeof PaymentScalarFieldEnum)[keyof typeof PaymentScalarFieldEnum]
 
 
+export const NewsletterEmailScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  createdAt: 'createdAt'
+} as const
+
+export type NewsletterEmailScalarFieldEnum = (typeof NewsletterEmailScalarFieldEnum)[keyof typeof NewsletterEmailScalarFieldEnum]
+
+
 export const CustomPriceScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -1183,6 +1345,21 @@ export const CustomPriceScalarFieldEnum = {
 } as const
 
 export type CustomPriceScalarFieldEnum = (typeof CustomPriceScalarFieldEnum)[keyof typeof CustomPriceScalarFieldEnum]
+
+
+export const DiscountCodeScalarFieldEnum = {
+  id: 'id',
+  code: 'code',
+  discountType: 'discountType',
+  discountAmount: 'discountAmount',
+  isActive: 'isActive',
+  isSingleUse: 'isSingleUse',
+  usedCount: 'usedCount',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type DiscountCodeScalarFieldEnum = (typeof DiscountCodeScalarFieldEnum)[keyof typeof DiscountCodeScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1378,6 +1555,20 @@ export type EnumPaymentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$Pr
 export type ListEnumPaymentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentStatus[]'>
     
 
+
+/**
+ * Reference to a field of type 'DiscountType'
+ */
+export type EnumDiscountTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DiscountType'>
+    
+
+
+/**
+ * Reference to a field of type 'DiscountType[]'
+ */
+export type ListEnumDiscountTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DiscountType[]'>
+    
+
 /**
  * Batch Payload for updateMany & deleteMany & createMany
  */
@@ -1480,7 +1671,9 @@ export type GlobalOmitConfig = {
   order?: Prisma.OrderOmit
   orderItem?: Prisma.OrderItemOmit
   payment?: Prisma.PaymentOmit
+  newsletterEmail?: Prisma.NewsletterEmailOmit
   customPrice?: Prisma.CustomPriceOmit
+  discountCode?: Prisma.DiscountCodeOmit
 }
 
 /* Types for Logging */

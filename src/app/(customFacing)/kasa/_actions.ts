@@ -47,6 +47,8 @@ const orderFormSchema = z.object({
   userId: z.string().optional(),
   apaczkaPointId: z.string().optional(),
   apaczkaPointSupplier: z.string().optional(),
+  newsletterConsent: z.boolean().optional(),
+  discountCode: z.string().optional(),
 });
 
 type OrderFormData = z.infer<typeof orderFormSchema>;
@@ -200,7 +202,35 @@ export async function createOrder(formData: OrderFormData) {
       console.error("Apaczka valuation failed, using fallback shipping cost:", e);
     }
 
-    const totalPriceInCents = subtotalInCents + shippingCostInCents;
+    // Validate and apply discount code
+    let discountAmountInCents = 0;
+    let verifiedDiscountCodeId: string | null = null;
+    let verifiedDiscountCodeValue: string | null = null;
+
+    if (validatedData.discountCode) {
+      const normalizedCode = validatedData.discountCode.trim().toUpperCase();
+      if (normalizedCode.length >= 3) {
+        const discount = await prisma.discountCode.findUnique({
+          where: { code: normalizedCode },
+        });
+
+        if (!discount || !discount.isActive || (discount.isSingleUse && discount.usedCount > 0)) {
+          return { success: false, error: "Kod rabatowy jest nieprawidłowy lub wygasł" };
+        }
+
+        if (discount.discountType === "PERCENTAGE") {
+          discountAmountInCents = Math.floor(subtotalInCents * discount.discountAmount / 100);
+        } else {
+          discountAmountInCents = discount.discountAmount;
+        }
+        discountAmountInCents = Math.min(discountAmountInCents, subtotalInCents);
+
+        verifiedDiscountCodeId = discount.id;
+        verifiedDiscountCodeValue = normalizedCode;
+      }
+    }
+
+    const totalPriceInCents = subtotalInCents - discountAmountInCents + shippingCostInCents;
 
     // Handle user - first check if a userId was provided or if there's a logged in user
     let userId = validatedData.userId;
@@ -308,6 +338,9 @@ export async function createOrder(formData: OrderFormData) {
             shippingCostInCents: shippingCostInCents,
             billingAddressId: address.id,
             shippingAddressId: address.id,
+            discountCodeId: verifiedDiscountCodeId || undefined,
+            discountCodeValue: verifiedDiscountCodeValue || undefined,
+            discountAmountInCents,
             shippingServiceId: finalServiceId,
             apaczkaPointId: validatedData.apaczkaPointId?.trim() || undefined,
             apaczkaPointSupplier: validatedData.apaczkaPointSupplier
@@ -335,6 +368,14 @@ export async function createOrder(formData: OrderFormData) {
             paymentMethodType: validatedData.paymentMethod,
           },
         });
+
+        // 4. Atomically increment discount code usage
+        if (verifiedDiscountCodeId) {
+          await tx.discountCode.update({
+            where: { id: verifiedDiscountCodeId },
+            data: { usedCount: { increment: 1 } },
+          });
+        }
 
         return order;
       });
@@ -392,6 +433,19 @@ export async function createOrder(formData: OrderFormData) {
       }
     } catch (e) {
       console.error("Failed to send order confirmation email", e);
+    }
+
+    // Newsletter opt-in
+    if (validatedData.newsletterConsent && validatedData.email) {
+      try {
+        await prisma.newsletterEmail.upsert({
+          where: { email: validatedData.email },
+          create: { email: validatedData.email },
+          update: {},
+        });
+      } catch (e) {
+        console.error("Failed to save newsletter subscription", e);
+      }
     }
 
     return { success: true, orderId };
