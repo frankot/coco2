@@ -14,13 +14,21 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ShoppingBag, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
+import { ShoppingBag, ArrowUpDown, ArrowUp, ArrowDown, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { useState, useEffect } from "react";
 import AdminLoading from "../loading";
 import { OrderActionsMenu, confirmAllApaczka } from "./_components/OrderActions";
 import Pagination from "../_components/Pagination";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
 // Type definitions
 type OrderStatus = "PENDING" | "PAID" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED";
@@ -60,6 +68,9 @@ type SortDirection = "asc" | "desc";
 
 export default function AdminOrdersPage() {
   const [isDeletingAll, setIsDeletingAll] = useState(false);
+  const [isConfirming, setIsConfirming] = useState(false);
+  const [turnInDialogOpen, setTurnInDialogOpen] = useState(false);
+  const [turnInData, setTurnInData] = useState<string | null>(null);
 
   const handleDeleteAllOrders = async () => {
     if (
@@ -72,7 +83,6 @@ export default function AdminOrdersPage() {
     try {
       const result = await deleteAllOrders();
       if (result.success) {
-        // Refresh the page to show updated data
         window.location.reload();
       } else {
         alert(result.message);
@@ -84,65 +94,87 @@ export default function AdminOrdersPage() {
     }
   };
 
+  const downloadTurnIn = () => {
+    if (!turnInData) return;
+    const link = document.createElement("a");
+    link.href = `data:application/pdf;base64,${turnInData}`;
+    link.download = `Zbiorcze_Potwierdzenie_Nadan_${Date.now()}.pdf`;
+    link.click();
+    setTurnInDialogOpen(false);
+    setTurnInData(null);
+  };
+
+  const handleConfirmAll = async () => {
+    setIsConfirming(true);
+    try {
+      const res = await confirmAllApaczka(true);
+      const created = res.created?.length || 0;
+      const failed = res.failed?.length || 0;
+
+      if (created > 0 && failed === 0) {
+        toast.success(`Utworzono ${created} przesyłek w Apaczka`);
+      } else if (created > 0 && failed > 0) {
+        toast.warning(`Utworzono: ${created}, błędy: ${failed}`, { duration: 6000 });
+        res.failed.forEach((f: any) => {
+          toast.error(`Zamówienie ${f.id}: ${f.error}`, { duration: 10000 });
+        });
+      } else if (failed > 0) {
+        toast.error(`Wszystkie przesyłki zakończyły się błędem (${failed})`, { duration: 6000 });
+        res.failed.forEach((f: any) => {
+          toast.error(`Zamówienie ${f.id}: ${f.error}`, { duration: 10000 });
+        });
+      } else {
+        toast.info("Brak zamówień do potwierdzenia");
+      }
+
+      // Show dialog for zbiorowe potwierdzenie instead of auto-download
+      if (res.turnIn) {
+        setTurnInData(res.turnIn);
+        setTurnInDialogOpen(true);
+      }
+
+      if (created > 0) {
+        window.location.reload();
+      }
+    } catch (e: any) {
+      toast.error(`Błąd potwierdzania Apaczka: ${e?.message ?? e}`, { duration: 6000 });
+      console.error("confirmAllApaczka error:", e);
+    } finally {
+      setIsConfirming(false);
+    }
+  };
+
   return (
     <>
+      {/* Zbiorowe potwierdzenie dialog */}
+      <Dialog open={turnInDialogOpen} onOpenChange={setTurnInDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Zbiorcze potwierdzenie nadań</DialogTitle>
+            <DialogDescription>
+              Potwierdzenie nadań zostało wygenerowane. Czy chcesz pobrać PDF?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => { setTurnInDialogOpen(false); setTurnInData(null); }}>
+              Zamknij
+            </Button>
+            <Button onClick={downloadTurnIn}>Pobierz PDF</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <div className="flex justify-between items-center gap-4">
         <PageHeader>Zamówienia</PageHeader>
         <div className="flex items-center gap-2">
           <Button
             variant="default"
-            title="Potwierdzenie wyśle wszystkie opłacone zamówienia do Apaczki (nadanie przesyłek) oraz do wFirma (wygenerowanie faktur)."
-            onClick={async () => {
-              try {
-                const res = await confirmAllApaczka(true);
-                const created = res.created?.length || 0;
-                const failed = res.failed?.length || 0;
-
-                console.info("confirmAllApaczka result:", {
-                  created: res.created,
-                  failed: res.failed,
-                  turnIn: res.turnIn,
-                });
-
-                // Show success/failure summary
-                if (created > 0 && failed === 0) {
-                  toast.success(`Utworzono ${created} przesyłek w Apaczka`);
-                } else if (created > 0 && failed > 0) {
-                  toast.warning(`Utworzono: ${created}, błędy: ${failed}`, { duration: 6000 });
-                  // Show detailed error messages for failed orders
-                  res.failed.forEach((f: any) => {
-                    toast.error(`Zamówienie ${f.id}: ${f.error}`, { duration: 10000 });
-                  });
-                } else if (failed > 0) {
-                  toast.error(`Wszystkie przesyłki zakończyły się błędem (${failed})`, {
-                    duration: 6000,
-                  });
-                  // Show detailed error messages
-                  res.failed.forEach((f: any) => {
-                    toast.error(`Zamówienie ${f.id}: ${f.error}`, { duration: 10000 });
-                  });
-                } else {
-                  toast.info("Brak zamówień do potwierdzenia");
-                }
-
-                if (res.turnIn) {
-                  // Download base64 PDF
-                  const link = document.createElement("a");
-                  link.href = `data:application/pdf;base64,${res.turnIn}`;
-                  link.download = `Zbiorcze_Potwierdzenie_Nadan_${Date.now()}.pdf`;
-                  link.click();
-                }
-
-                if (created > 0) {
-                  window.location.reload();
-                }
-              } catch (e: any) {
-                toast.error(`Błąd potwierdzania Apaczka: ${e?.message ?? e}`, { duration: 6000 });
-                console.error("confirmAllApaczka error:", e);
-              }
-            }}
+            disabled={isConfirming}
+            title="Potwierdzi wszystkie opłacone zamówienia — wyśle do Apaczki i zmieni status na W realizacji."
+            onClick={handleConfirmAll}
           >
-            Potwierdź opłacone
+            {isConfirming && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {isConfirming ? "Potwierdzanie..." : "Potwierdź opłacone"}
           </Button>
           <Button
             variant="outline"

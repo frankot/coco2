@@ -23,6 +23,7 @@ import {
   CheckCircle,
   XCircle,
   Download,
+  Loader2,
 } from "lucide-react";
 import Link from "next/link";
 import AdminLoading from "../../loading";
@@ -92,6 +93,8 @@ export default function OrderDetailsPage() {
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [invoiceDownloading, setInvoiceDownloading] = useState(false);
+  const [labelDownloading, setLabelDownloading] = useState(false);
+  const [statusUpdating, setStatusUpdating] = useState(false);
 
   useEffect(() => {
     const fetchOrder = async () => {
@@ -116,18 +119,16 @@ export default function OrderDetailsPage() {
   }, [id]);
 
   const updateOrderStatus = async (status: OrderStatus) => {
+    setStatusUpdating(true);
     try {
       const response = await fetch(`/api/admin/orders/${id}`, {
         method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status }),
       });
 
       if (response.ok) {
         const updatedOrder = await response.json();
-        // If cancelled from details page, redirect back to orders list
         if (status === "CANCELLED") {
           toast.success(`Zamówienie zostało anulowane`);
           router.push("/admin/zamowienia");
@@ -141,6 +142,27 @@ export default function OrderDetailsPage() {
     } catch (error) {
       console.error("Error updating order status:", error);
       toast.error("Wystąpił błąd podczas aktualizacji statusu");
+    } finally {
+      setStatusUpdating(false);
+    }
+  };
+
+  const downloadLabel = async () => {
+    setLabelDownloading(true);
+    try {
+      const res = await fetch(`/api/admin/shipping/apaczka/waybill/${id}`);
+      if (!res.ok) throw new Error("Nie udało się pobrać listu przewozowego");
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `List_przewozowy_${id}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (e: any) {
+      toast.error(e?.message || "Błąd pobierania listu przewozowego");
+    } finally {
+      setTimeout(() => setLabelDownloading(false), 5000);
     }
   };
 
@@ -295,22 +317,26 @@ export default function OrderDetailsPage() {
 
             <div className="flex flex-wrap gap-2">
               {order.wfirmaInvoiceId && (
-                <div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={downloadInvoice}
-                    disabled={invoiceDownloading}
-                  >
-                    <Download className="mr-2 h-4 w-4" />
-                    {invoiceDownloading ? "Pobieranie..." : "Pobierz fakturę"}
-                  </Button>
-                  {invoiceDownloading && (
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Trwa generowanie faktury...
-                    </p>
-                  )}
-                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={downloadInvoice}
+                  disabled={invoiceDownloading}
+                >
+                  <Download className="mr-2 h-4 w-4" />
+                  {invoiceDownloading ? "Pobieranie..." : "Pobierz fakturę"}
+                </Button>
+              )}
+              {order.apaczkaOrderId && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={downloadLabel}
+                  disabled={labelDownloading}
+                >
+                  <Download className="mr-2 h-4 w-4" />
+                  {labelDownloading ? "Pobieranie..." : "Pobierz list przewozowy"}
+                </Button>
               )}
             </div>
 
@@ -321,14 +347,15 @@ export default function OrderDetailsPage() {
                   <Button
                     variant="outline"
                     size="sm"
+                    disabled={statusUpdating}
                     onClick={() => updateOrderStatus("PROCESSING")}
                   >
-                    <Package className="mr-2 h-4 w-4" />
-                    Rozpocznij realizację
+                    {statusUpdating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Package className="mr-2 h-4 w-4" />}
+                    {statusUpdating ? "Wysyłanie do Apaczki..." : "Rozpocznij realizację"}
                   </Button>
                 )}
                 {order.status === "PROCESSING" && (
-                  <Button variant="outline" size="sm" onClick={() => updateOrderStatus("SHIPPED")}>
+                  <Button variant="outline" size="sm" disabled={statusUpdating} onClick={() => updateOrderStatus("SHIPPED")}>
                     <Truck className="mr-2 h-4 w-4" />
                     Oznacz jako wysłane
                   </Button>
@@ -337,6 +364,7 @@ export default function OrderDetailsPage() {
                   <Button
                     variant="outline"
                     size="sm"
+                    disabled={statusUpdating}
                     onClick={() => updateOrderStatus("DELIVERED")}
                   >
                     <CheckCircle className="mr-2 h-4 w-4" />
@@ -350,6 +378,7 @@ export default function OrderDetailsPage() {
                   <Button
                     variant="destructive"
                     size="sm"
+                    disabled={statusUpdating}
                     onClick={() => updateOrderStatus("CANCELLED")}
                   >
                     <XCircle className="mr-2 h-4 w-4" />

@@ -7,6 +7,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { createOrUpdateUser } from "@/lib/auth-utils";
 import { sendOrderPlacedEmail } from "@/lib/order-emails";
+import { generateAndSendInvoice } from "@/lib/invoice";
 
 function normalizePhonePL(input: string): string | null {
   if (!input) return null;
@@ -431,6 +432,13 @@ export async function createOrder(formData: OrderFormData) {
       }
     } catch (e) {
       console.error("Failed to send order confirmation email", e);
+    }
+
+    // Invoice generation for COD (already PAID at creation)
+    if (validatedData.paymentMethod === "COD") {
+      generateAndSendInvoice(orderId).catch((e) => {
+        console.error("[WFIRMA] Invoice generation failed for COD order", orderId, e);
+      });
     }
 
     // Newsletter opt-in

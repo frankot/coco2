@@ -2,7 +2,6 @@ import { NextRequest } from "next/server";
 import prisma from "@/db";
 import { createRouteHandler, ApiError, getRequiredParam, readJson } from "@/lib/api";
 import { ORDER_DETAIL_INCLUDE } from "@/lib/selects";
-import { generateAndSendInvoice } from "@/lib/invoice";
 import { confirmOrderInApaczka } from "@/lib/apaczka-confirm";
 import { Apaczka } from "@/lib/apaczka";
 import { sendOrderShippedEmail } from "@/lib/order-emails";
@@ -77,22 +76,17 @@ export const PATCH = createRouteHandler(
 
     const movedToProcessing = previousStatus !== "PROCESSING" && body.status === "PROCESSING";
 
-    if (movedToProcessing) {
-      // Send to Apaczka when moving to PROCESSING (if not already sent)
-      if (!updatedOrder.apaczkaOrderId) {
-        confirmOrderInApaczka(orderId).catch((error) => {
-          console.error("[APACZKA] Order confirmation failed", { orderId, error });
+    if (movedToProcessing && !updatedOrder.apaczkaOrderId) {
+      try {
+        await confirmOrderInApaczka(orderId);
+        // Re-fetch to include Apaczka data in response
+        const refreshed = await prisma.order.findUnique({
+          where: { id: orderId },
+          include: ORDER_DETAIL_INCLUDE,
         });
-      }
-
-      // Generate invoice for all payment methods
-      if (!updatedOrder.wfirmaInvoiceId) {
-        generateAndSendInvoice(orderId).catch((error) => {
-          console.error("[WFIRMA] Invoice generation failed after moving order to processing", {
-            orderId,
-            error,
-          });
-        });
+        if (refreshed) return refreshed;
+      } catch (error) {
+        console.error("[APACZKA] Order confirmation failed", { orderId, error });
       }
     }
 

@@ -1,8 +1,8 @@
 import { createRouteHandler, ApiError, readJson } from "@/lib/api";
 import prisma from "@/db";
 import Apaczka from "@/lib/apaczka";
-import { getOrigin } from "@/lib/get-origin";
 import mailer from "@/lib/mailer";
+import { renderEmailLayout } from "@/lib/email-layout";
 function normalizePhonePL(input: string | null | undefined): string | undefined {
   if (!input) return undefined;
   const digits = input.replace(/\D+/g, "");
@@ -302,34 +302,21 @@ export const POST = createRouteHandler(
         // Try to notify customer by email about shipment
         try {
           if (order.user?.email) {
-            const siteUrl = getOrigin();
-            const html = `
-              <div style="font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; color:#111;">
-                <div style="max-width:600px;margin:0 auto;padding:24px;background:#ffffff;border-radius:8px;">
-                  <div style="text-align:center;margin-bottom:18px;">
-                    <img src="${siteUrl}/logo.png" alt="Logo" style="height:56px;object-fit:contain;" onerror="this.style.display='none'" />
-                  </div>
-                  <h1 style="font-size:20px;margin:0 0 8px;color:#0f172a;text-align:center;">Twoja przesyłka jest w drodze!</h1>
-                  <p style="margin:0 0 18px;text-align:center;color:#6b7280;">Twoje zamówienie <strong style="font-family:monospace">${order.id}</strong> zostało nadane i jest w drodze do Ciebie.</p>
-
-                  <div style="background:#f8fafc;padding:12px;border-radius:6px;margin-bottom:18px;">
-                    <strong>Informacje o przesyłce</strong>
-                    <div style="margin-top:8px;font-size:14px;color:#374151;">
-                      <div>Numer przesyłki: <strong style="font-family:monospace">${ap.waybill_number}</strong></div>
-                      <div style="margin-top:4px;">Przewoźnik: <strong>${ap.service_name || "Apaczka"}</strong></div>
-                    </div>
-                  </div>
-
-                  <div style="text-align:center;margin-bottom:18px;">
-                    <a href="${ap.tracking_url}" style="display:inline-block;background:#111827;color:#fff;padding:10px 18px;border-radius:6px;text-decoration:none;font-weight:600;">Śledź przesyłkę</a>
-                  </div>
-
-                  <p style="color:#6b7280;font-size:13px;margin:0;">Jeśli masz pytania, odpisz na tę wiadomość lub odwiedź naszą stronę.</p>
-
-                  <div style="margin-top:18px;color:#9ca3af;font-size:12px;text-align:center;">Pozdrawiamy,<br/>Zespół</div>
-                </div>
+            const emailBody = `
+              <p style="margin:0 0 14px;font-size:14px;color:#0d160f;">Twoje zamówienie <strong style="font-family:ui-monospace,Menlo,Monaco,monospace;">${order.id}</strong> zostało nadane i jest w drodze do Ciebie.</p>
+              <div style="background:#eef9f9;border:1px solid #76c3c5;border-radius:10px;padding:14px;margin:0 0 14px;">
+                <div style="font-size:14px;color:#0d160f;margin-bottom:6px;">Numer przesyłki: <strong>${ap.waybill_number}</strong></div>
+                <div style="font-size:14px;color:#0d160f;">Przewoźnik: <strong>${ap.service_name || "Apaczka"}</strong></div>
               </div>
+              <p style="margin:0;font-size:14px;color:#2b6a4b;">Kliknij poniżej, aby sprawdzić gdzie jest Twoja paczka.</p>
             `;
+            const html = renderEmailLayout({
+              title: "Twoja przesyłka jest w drodze!",
+              intro: "Przekazaliśmy przesyłkę kurierowi.",
+              body: emailBody,
+              ctaLabel: "Śledź przesyłkę",
+              ctaHref: ap.tracking_url,
+            });
             await mailer.sendMail({
               to: order.user.email,
               subject: `Przesyłka nadana - Zamówienie ${order.id}`,
