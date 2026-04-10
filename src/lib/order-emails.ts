@@ -95,11 +95,11 @@ function renderSummary(order: EmailOrder) {
   return `
     <div style="background:#eef9f9;border:1px solid #76c3c5;border-radius:10px;padding:14px;margin:18px 0;">
       <div style="display:flex;justify-content:space-between;font-size:14px;color:#0d160f;margin-bottom:8px;">
-        <span>Wartość produktów</span>
+        <span>Wartość produktów </span>
         <strong>${formatCurrency(order.subtotalInCents)}</strong>
       </div>
       <div style="display:flex;justify-content:space-between;font-size:14px;color:#0d160f;margin-bottom:8px;">
-        <span>Dostawa</span>
+        <span>Dostawa </span>
         <strong>${formatCurrency(order.shippingCostInCents)}</strong>
       </div>
       ${
@@ -108,7 +108,7 @@ function renderSummary(order: EmailOrder) {
           : ""
       }
       <div style="display:flex;justify-content:space-between;font-size:16px;color:#0d160f;padding-top:8px;border-top:1px solid #76c3c5;font-weight:700;">
-        <span>Do zapłaty</span>
+        <span>Do zapłaty </span>
         <strong>${formatCurrency(order.pricePaidInCents)}</strong>
       </div>
     </div>
