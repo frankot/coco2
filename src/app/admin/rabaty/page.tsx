@@ -24,6 +24,7 @@ import { useState, useEffect, useCallback } from "react";
 import AdminLoading from "../loading";
 import { useRefresh } from "@/providers/RefreshProvider";
 import { format } from "date-fns";
+import Pagination from "../_components/Pagination";
 
 type DiscountCode = {
   id: string;
@@ -53,24 +54,27 @@ export default function AdminRabatyPage() {
 function RabatyTable() {
   const [codes, setCodes] = useState<DiscountCode[]>([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const { refreshCounter } = useRefresh();
 
   const fetchCodes = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch(`/api/admin/rabaty?timestamp=${Date.now()}`, {
+      const response = await fetch(`/api/admin/rabaty?page=${page}&timestamp=${Date.now()}`, {
         cache: "no-store",
       });
       if (response.ok) {
-        const data = await response.json();
-        setCodes(data);
+        const json = await response.json();
+        setCodes(json.data);
+        setTotalPages(json.totalPages);
       }
     } catch (error) {
       console.error("Error fetching discount codes:", error);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [page]);
 
   useEffect(() => {
     fetchCodes();
@@ -92,6 +96,7 @@ function RabatyTable() {
   }
 
   return (
+    <>
     <Table>
       <TableHeader>
         <TableRow>
@@ -144,5 +149,7 @@ function RabatyTable() {
         ))}
       </TableBody>
     </Table>
+    <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+    </>
   );
 }

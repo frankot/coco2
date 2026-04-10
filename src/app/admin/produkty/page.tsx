@@ -25,6 +25,7 @@ import { useState, useEffect, useCallback } from "react";
 import AdminLoading from "../loading";
 import { useRouter } from "next/navigation";
 import { useRefresh } from "@/providers/RefreshProvider";
+import Pagination from "../_components/Pagination";
 
 // Type for product data
 type Product = {
@@ -61,6 +62,8 @@ function ProductsTable() {
   const [loading, setLoading] = useState(true);
   const [sortField, setSortField] = useState<SortField | null>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const router = useRouter();
   const { refreshCounter } = useRefresh();
 
@@ -68,23 +71,24 @@ function ProductsTable() {
   const fetchProducts = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch(`/api/admin/products?timestamp=${Date.now()}`, {
+      const response = await fetch(`/api/admin/products?page=${page}&timestamp=${Date.now()}`, {
         cache: "no-store",
       });
       if (response.ok) {
-        const data = await response.json();
-        setProducts(data);
+        const json = await response.json();
+        setProducts(json.data);
+        setTotalPages(json.totalPages);
       }
     } catch (error) {
       console.error("Error fetching products:", error);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [page]);
 
   useEffect(() => {
     fetchProducts();
-  }, [fetchProducts, refreshCounter]); // Add refreshCounter as dependency
+  }, [fetchProducts, refreshCounter]);
 
   // Handle sorting
   const handleSort = (field: SortField) => {
@@ -219,6 +223,7 @@ function ProductsTable() {
           ))}
         </TableBody>
       </Table>
+      <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
 
       <div className="mt-8 flex justify-end">
         <Button variant="destructive">

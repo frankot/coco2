@@ -20,6 +20,7 @@ import { Badge } from "@/components/ui/badge";
 import { useState, useEffect } from "react";
 import AdminLoading from "../loading";
 import { OrderActionsMenu, confirmAllApaczka } from "./_components/OrderActions";
+import Pagination from "../_components/Pagination";
 
 // Type definitions
 type OrderStatus = "PENDING" | "PAID" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED";
@@ -187,19 +188,22 @@ function OrdersTable() {
   const [loading, setLoading] = useState(true);
   const [sortField, setSortField] = useState<SortField | null>("createdAt");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   // Fetch orders
   useEffect(() => {
     const fetchOrders = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`/api/admin/orders?timestamp=${Date.now()}`, {
+        const response = await fetch(`/api/admin/orders?page=${page}&timestamp=${Date.now()}`, {
           cache: "no-store",
         });
 
         if (response.ok) {
-          const data = await response.json();
-          setOrders(data);
+          const json = await response.json();
+          setOrders(json.data);
+          setTotalPages(json.totalPages);
         }
       } catch (error) {
         console.error("Error fetching orders:", error);
@@ -209,7 +213,7 @@ function OrdersTable() {
     };
 
     fetchOrders();
-  }, []);
+  }, [page]);
 
   // Handle sorting
   const handleSort = (field: SortField) => {
@@ -409,6 +413,7 @@ function OrdersTable() {
           })}
         </TableBody>
       </Table>
+      <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
 
       <div className="mt-8 flex justify-end">
         <Button variant="destructive">

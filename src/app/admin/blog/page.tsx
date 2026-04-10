@@ -25,6 +25,7 @@ import { useState, useEffect, useCallback } from "react";
 import AdminLoading from "../loading";
 import { useRouter } from "next/navigation";
 import { useRefresh } from "@/providers/RefreshProvider";
+import Pagination from "../_components/Pagination";
 
 type BlogPost = {
   id: string;
@@ -50,23 +51,26 @@ export default function AdminBlogPage() {
 function BlogTable() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const router = useRouter();
   const { refreshCounter } = useRefresh();
 
   const fetchPosts = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/admin/blog?timestamp=${Date.now()}`, { cache: "no-store" });
+      const res = await fetch(`/api/admin/blog?page=${page}&timestamp=${Date.now()}`, { cache: "no-store" });
       if (res.ok) {
-        const data = await res.json();
-        setPosts(data);
+        const json = await res.json();
+        setPosts(json.data);
+        setTotalPages(json.totalPages);
       }
     } catch (err) {
       console.error(err);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [page]);
 
   useEffect(() => {
     fetchPosts();
@@ -79,6 +83,7 @@ function BlogTable() {
   }
 
   return (
+    <>
     <Table>
       <TableHeader>
         <TableRow>
@@ -121,5 +126,7 @@ function BlogTable() {
         ))}
       </TableBody>
     </Table>
+      <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+    </>
   );
 }
