@@ -5,5 +5,11 @@
       "main": true,
       "preview": false
     }
-  }
+  },
+  "crons": [
+    {
+      "path": "/api/cron/sync-apaczka",
+      "schedule": "0 8 * * *"
+    }
+  ]
 }
