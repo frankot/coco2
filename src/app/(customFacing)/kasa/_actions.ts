@@ -33,8 +33,6 @@ const orderFormSchema = z.object({
   postalCode: z.string().min(1, "Kod pocztowy jest wymagany"),
   country: z.string().default("Polska"),
   paymentMethod: z.enum(["COD", "STRIPE"]),
-  // Accept COD as a payment method too
-  // Note: DB currently contains BANK_TRANSFER for historical entries. New orders should use COD.
   shippingMethodId: z.string().min(1, "Wybierz metodę dostawy"),
   cartItems: z.array(
     z.object({
@@ -50,7 +48,27 @@ const orderFormSchema = z.object({
   apaczkaPointSupplier: z.string().optional(),
   newsletterConsent: z.boolean().optional(),
   discountCode: z.string().optional(),
-});
+  // Separate shipping address
+  sameAddress: z.boolean().default(true),
+  shippingStreet: z.string().optional(),
+  shippingCity: z.string().optional(),
+  shippingPostalCode: z.string().optional(),
+  shippingCountry: z.string().optional(),
+  shippingPhoneNumber: z.string().optional(),
+  // Faktura VAT
+  wantsFaktura: z.boolean().default(false),
+  companyName: z.string().optional(),
+  nip: z.string().optional(),
+}).refine(
+  (data) => data.sameAddress || (data.shippingStreet && data.shippingCity && data.shippingPostalCode),
+  { message: "Adres dostawy jest wymagany", path: ["shippingStreet"] }
+).refine(
+  (data) => !data.wantsFaktura || (data.companyName && data.companyName.trim().length > 0),
+  { message: "Nazwa firmy jest wymagana", path: ["companyName"] }
+).refine(
+  (data) => !data.wantsFaktura || (data.nip && /^\d{10}$/.test(data.nip.replace(/[\s-]/g, ""))),
+  { message: "NIP musi zawierać 10 cyfr", path: ["nip"] }
+);
 
 type OrderFormData = z.infer<typeof orderFormSchema>;
 
@@ -123,6 +141,27 @@ export async function createOrder(formData: OrderFormData) {
       0
     );
 
+    // Early phone normalization (needed for Apaczka valuation)
+    const normalizedPhone = normalizePhonePL(validatedData.phoneNumber);
+    if (!normalizedPhone) {
+      return {
+        success: false,
+        error: "Niepoprawny numer telefonu. Podaj 9 cyfr (PL) lub numer z prefiksem +48.",
+      };
+    }
+
+    let normalizedShippingPhone = normalizedPhone;
+    if (!validatedData.sameAddress && validatedData.shippingPhoneNumber) {
+      const parsed = normalizePhonePL(validatedData.shippingPhoneNumber);
+      if (!parsed) {
+        return {
+          success: false,
+          error: "Niepoprawny numer telefonu dostawy. Podaj 9 cyfr (PL) lub numer z prefiksem +48.",
+        };
+      }
+      normalizedShippingPhone = parsed;
+    }
+
     // Compute shipping cost via Apaczka order_valuation
     let shippingCostInCents = 1500; // fallback
     try {
@@ -154,6 +193,11 @@ export async function createOrder(formData: OrderFormData) {
       }
       totalHeight = Math.min(totalHeight, 100);
 
+      // Use shipping address for valuation when addresses differ
+      const receiverStreet = validatedData.sameAddress ? validatedData.street : (validatedData.shippingStreet || validatedData.street);
+      const receiverCity = validatedData.sameAddress ? validatedData.city : (validatedData.shippingCity || validatedData.city);
+      const receiverPostalCode = validatedData.sameAddress ? validatedData.postalCode : (validatedData.shippingPostalCode || validatedData.postalCode);
+
       const Apaczka = (await import("@/lib/apaczka")).default;
       const order = {
         service_id: Number(validatedData.shippingMethodId) || 0,
@@ -174,15 +218,15 @@ export async function createOrder(formData: OrderFormData) {
           receiver: {
             country_code: "PL",
             name: `${validatedData.firstName} ${validatedData.lastName}`,
-            line1: validatedData.street,
+            line1: receiverStreet,
             line2: "",
-            postal_code: validatedData.postalCode,
+            postal_code: receiverPostalCode,
             state_code: "",
-            city: validatedData.city,
+            city: receiverCity,
             is_residential: 1,
             contact_person: `${validatedData.firstName} ${validatedData.lastName}`,
             email: validatedData.email,
-            phone: normalizePhonePL(validatedData.phoneNumber) || "",
+            phone: normalizedShippingPhone || "",
           },
         },
         shipment: [
@@ -291,15 +335,6 @@ export async function createOrder(formData: OrderFormData) {
     // Now userId is definitely not undefined - if we got here, userId exists and is valid
     const verifiedUserId = userId as string;
 
-    // Validate phone before entering transaction
-    const normalizedPhone = normalizePhonePL(validatedData.phoneNumber);
-    if (!normalizedPhone) {
-      return {
-        success: false,
-        error: "Niepoprawny numer telefonu. Podaj 9 cyfr (PL) lub numer z prefiksem +48.",
-      };
-    }
-
     // Resolve Apaczka D2P service outside transaction (external API call)
     let finalServiceId = validatedData.shippingMethodId;
     if (validatedData.apaczkaPointId && validatedData.apaczkaPointSupplier) {
@@ -321,8 +356,8 @@ export async function createOrder(formData: OrderFormData) {
     let orderId: string;
     try {
       const result = await prisma.$transaction(async (tx) => {
-        // 1. Find or create address
-        const existingAddress = await tx.address.findFirst({
+        // 1. Find or create billing address
+        const existingBilling = await tx.address.findFirst({
           where: {
             userId: verifiedUserId,
             street: validatedData.street,
@@ -331,9 +366,9 @@ export async function createOrder(formData: OrderFormData) {
           },
         });
 
-        const address = existingAddress
+        const billingAddress = existingBilling
           ? await tx.address.update({
-              where: { id: existingAddress.id },
+              where: { id: existingBilling.id },
               data: { phoneNumber: normalizedPhone, country: validatedData.country },
             })
           : await tx.address.create({
@@ -345,11 +380,43 @@ export async function createOrder(formData: OrderFormData) {
                 country: validatedData.country,
                 phoneNumber: normalizedPhone,
                 isDefault: true,
-                addressType: "BOTH",
+                addressType: validatedData.sameAddress ? "BOTH" : "BILLING",
               },
             });
 
-        // 2. Create order with nested orderItems
+        // 2. Find or create shipping address (if different)
+        let shippingAddressId = billingAddress.id;
+        if (!validatedData.sameAddress && validatedData.shippingStreet && validatedData.shippingCity && validatedData.shippingPostalCode) {
+          const existingShipping = await tx.address.findFirst({
+            where: {
+              userId: verifiedUserId,
+              street: validatedData.shippingStreet,
+              city: validatedData.shippingCity,
+              postalCode: validatedData.shippingPostalCode,
+            },
+          });
+
+          const shippingAddress = existingShipping
+            ? await tx.address.update({
+                where: { id: existingShipping.id },
+                data: { phoneNumber: normalizedShippingPhone, country: validatedData.shippingCountry || "Polska" },
+              })
+            : await tx.address.create({
+                data: {
+                  userId: verifiedUserId,
+                  street: validatedData.shippingStreet,
+                  city: validatedData.shippingCity,
+                  postalCode: validatedData.shippingPostalCode,
+                  country: validatedData.shippingCountry || "Polska",
+                  phoneNumber: normalizedShippingPhone,
+                  isDefault: false,
+                  addressType: "SHIPPING",
+                },
+              });
+          shippingAddressId = shippingAddress.id;
+        }
+
+        // 3. Create order with nested orderItems
         const order = await tx.order.create({
           data: {
             userId: verifiedUserId,
@@ -359,8 +426,11 @@ export async function createOrder(formData: OrderFormData) {
             pricePaidInCents: totalPriceInCents,
             subtotalInCents: subtotalInCents,
             shippingCostInCents: shippingCostInCents,
-            billingAddressId: address.id,
-            shippingAddressId: address.id,
+            billingAddressId: billingAddress.id,
+            shippingAddressId: shippingAddressId,
+            wantsFaktura: validatedData.wantsFaktura,
+            companyName: validatedData.wantsFaktura ? validatedData.companyName?.trim() : undefined,
+            nip: validatedData.wantsFaktura ? validatedData.nip?.replace(/[\s-]/g, "") : undefined,
             discountCodeId: verifiedDiscountCodeId || undefined,
             discountCodeValue: verifiedDiscountCodeValue || undefined,
             discountAmountInCents,
@@ -380,7 +450,7 @@ export async function createOrder(formData: OrderFormData) {
           include: { orderItems: true },
         });
 
-        // 3. Create payment record
+        // 4. Create payment record
         await tx.payment.create({
           data: {
             orderId: order.id,
@@ -392,7 +462,7 @@ export async function createOrder(formData: OrderFormData) {
           },
         });
 
-        // 4. Atomically increment discount code usage
+        // 5. Atomically increment discount code usage
         if (verifiedDiscountCodeId) {
           await tx.discountCode.update({
             where: { id: verifiedDiscountCodeId },

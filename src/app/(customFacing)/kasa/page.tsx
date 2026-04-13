@@ -62,6 +62,11 @@ export default function CheckoutPage() {
   const [isValidatingDiscount, setIsValidatingDiscount] = useState(false);
   const [discountError, setDiscountError] = useState<string | null>(null);
 
+  // Separate shipping address toggle
+  const [sameAddress, setSameAddress] = useState(true);
+  // Faktura VAT toggle
+  const [wantsFaktura, setWantsFaktura] = useState(false);
+
   const [formData, setFormData] = useState({
     firstName: session?.user?.name?.split(" ")[0] || "",
     lastName: session?.user?.name?.split(" ")[1] || "",
@@ -73,6 +78,15 @@ export default function CheckoutPage() {
     country: "Polska",
     paymentMethod: "STRIPE" as PaymentMethod,
     shippingMethodId: "",
+    // Shipping address fields
+    shippingStreet: "",
+    shippingCity: "",
+    shippingPostalCode: "",
+    shippingCountry: "Polska",
+    shippingPhoneNumber: "",
+    // Faktura fields
+    companyName: "",
+    nip: "",
   });
 
   // Load cart items from localStorage and listen for price updates
@@ -315,10 +329,12 @@ export default function CheckoutPage() {
   }, []);
 
   // Fetch shipping valuation from Apaczka when cart/address change
+  const valuationPostalCode = sameAddress ? formData.postalCode : (formData.shippingPostalCode || formData.postalCode);
+  const valuationCity = sameAddress ? formData.city : (formData.shippingCity || formData.city);
+
   useEffect(() => {
-    if (cartItems.length === 0 || !formData.postalCode || !formData.city) return;
-    // Require a plausible postal code (XX-XXX)
-    if (!/^\d{2}-\d{3}$/.test(formData.postalCode)) return;
+    if (cartItems.length === 0 || !valuationPostalCode || !valuationCity) return;
+    if (!/^\d{2}-\d{3}$/.test(valuationPostalCode)) return;
 
     const controller = new AbortController();
     const fetchValuation = async () => {
@@ -329,8 +345,8 @@ export default function CheckoutPage() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             cartItems: cartItems.map((item) => ({ id: item.id, quantity: item.quantity })),
-            postalCode: formData.postalCode,
-            city: formData.city,
+            postalCode: valuationPostalCode,
+            city: valuationCity,
           }),
           signal: controller.signal,
         });
@@ -358,7 +374,7 @@ export default function CheckoutPage() {
       clearTimeout(debounce);
       controller.abort();
     };
-  }, [cartItems, formData.postalCode, formData.city]);
+  }, [cartItems, valuationPostalCode, valuationCity]);
 
   // Compute visible services depending on selected payment method
   const visibleServices = (() => {
@@ -625,12 +641,20 @@ export default function CheckoutPage() {
         ...formData,
         cartItems,
         userId: session?.user?.id,
-        // supply the resolved numeric service id for server-side processing
         shippingMethodId: resolvedServiceId,
         apaczkaPointId: selectedPointId || undefined,
         apaczkaPointSupplier: selectedSupplier || undefined,
         newsletterConsent,
         discountCode: appliedDiscount?.code || undefined,
+        sameAddress,
+        wantsFaktura,
+        companyName: wantsFaktura ? formData.companyName : undefined,
+        nip: wantsFaktura ? formData.nip : undefined,
+        shippingStreet: sameAddress ? undefined : formData.shippingStreet,
+        shippingCity: sameAddress ? undefined : formData.shippingCity,
+        shippingPostalCode: sameAddress ? undefined : formData.shippingPostalCode,
+        shippingCountry: sameAddress ? undefined : formData.shippingCountry,
+        shippingPhoneNumber: sameAddress ? undefined : formData.shippingPhoneNumber,
       };
 
       // Submit order to server action
@@ -906,9 +930,52 @@ export default function CheckoutPage() {
                 </div>
               </Card>
 
-              {/* Shipping Address */}
+              {/* Billing Address */}
               <Card className="p-4 md:p-6">
-                <h2 className="text-lg md:text-xl font-semibold mb-4">Adres dostawy</h2>
+                <h2 className="text-lg md:text-xl font-semibold mb-4">Adres rozliczeniowy</h2>
+
+                {/* Faktura VAT */}
+                <div className="flex items-center gap-3 mb-4 p-3 rounded-md border bg-muted/30">
+                  <input
+                    type="checkbox"
+                    id="wantsFaktura"
+                    checked={wantsFaktura}
+                    onChange={(e) => setWantsFaktura(e.target.checked)}
+                    className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
+                  />
+                  <label htmlFor="wantsFaktura" className="text-sm font-medium cursor-pointer">
+                    Chcę fakturę VAT
+                  </label>
+                </div>
+
+                {wantsFaktura && (
+                  <div className="space-y-4 mb-4 p-3 rounded-md border border-primary/20 bg-primary/5">
+                    <div className="space-y-2">
+                      <Label htmlFor="companyName">Nazwa firmy</Label>
+                      <Input
+                        id="companyName"
+                        name="companyName"
+                        value={formData.companyName}
+                        onChange={handleInputChange}
+                        required
+                        placeholder="Nazwa firmy"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="nip">NIP</Label>
+                      <Input
+                        id="nip"
+                        name="nip"
+                        value={formData.nip}
+                        onChange={handleInputChange}
+                        required
+                        placeholder="0000000000"
+                        maxLength={13}
+                      />
+                    </div>
+                  </div>
+                )}
+
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="street">Ulica i numer</Label>
@@ -963,6 +1030,79 @@ export default function CheckoutPage() {
                     />
                   </div>
                 </div>
+              </Card>
+
+              {/* Same Address Checkbox + Shipping Address */}
+              <Card className="p-4 md:p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <input
+                    type="checkbox"
+                    id="sameAddress"
+                    checked={sameAddress}
+                    onChange={(e) => setSameAddress(e.target.checked)}
+                    className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
+                  />
+                  <label htmlFor="sameAddress" className="text-sm font-medium cursor-pointer">
+                    Adres dostawy taki sam jak adres rozliczeniowy
+                  </label>
+                </div>
+
+                {!sameAddress && (
+                  <div className="space-y-4">
+                    <h2 className="text-lg md:text-xl font-semibold">Adres dostawy</h2>
+                    <div className="space-y-2">
+                      <Label htmlFor="shippingStreet">Ulica i numer</Label>
+                      <Input
+                        id="shippingStreet"
+                        name="shippingStreet"
+                        value={formData.shippingStreet}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="shippingPhoneNumber">Telefon</Label>
+                      <Input
+                        id="shippingPhoneNumber"
+                        name="shippingPhoneNumber"
+                        value={formData.shippingPhoneNumber}
+                        onChange={handleInputChange}
+                      />
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="shippingCity">Miasto</Label>
+                        <Input
+                          id="shippingCity"
+                          name="shippingCity"
+                          value={formData.shippingCity}
+                          onChange={handleInputChange}
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="shippingPostalCode">Kod pocztowy</Label>
+                        <Input
+                          id="shippingPostalCode"
+                          name="shippingPostalCode"
+                          value={formData.shippingPostalCode}
+                          onChange={handleInputChange}
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="shippingCountry">Kraj</Label>
+                      <Input
+                        id="shippingCountry"
+                        name="shippingCountry"
+                        value={formData.shippingCountry}
+                        onChange={handleInputChange}
+                        required
+                      />
+                    </div>
+                  </div>
+                )}
               </Card>
 
               {/* Payment Method */}

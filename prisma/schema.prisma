@@ -149,6 +149,10 @@ model Order {
   // Apaczka pickup/point delivery selection (for door-to-point)
   apaczkaPointId       String?
   apaczkaPointSupplier String?
+  // Faktura (invoice) data
+  wantsFaktura        Boolean   @default(false)
+  companyName         String?
+  nip                 String?
   paidAt              DateTime?
   createdAt           DateTime     @default(now())
   updatedAt           DateTime     @updatedAt

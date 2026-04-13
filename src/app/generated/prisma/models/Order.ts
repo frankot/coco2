@@ -67,6 +67,9 @@ export type OrderMinAggregateOutputType = {
   discountAmountInCents: number | null
   apaczkaPointId: string | null
   apaczkaPointSupplier: string | null
+  wantsFaktura: boolean | null
+  companyName: string | null
+  nip: string | null
   paidAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -99,6 +102,9 @@ export type OrderMaxAggregateOutputType = {
   discountAmountInCents: number | null
   apaczkaPointId: string | null
   apaczkaPointSupplier: string | null
+  wantsFaktura: boolean | null
+  companyName: string | null
+  nip: string | null
   paidAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -131,6 +137,9 @@ export type OrderCountAggregateOutputType = {
   discountAmountInCents: number
   apaczkaPointId: number
   apaczkaPointSupplier: number
+  wantsFaktura: number
+  companyName: number
+  nip: number
   paidAt: number
   createdAt: number
   updatedAt: number
@@ -179,6 +188,9 @@ export type OrderMinAggregateInputType = {
   discountAmountInCents?: true
   apaczkaPointId?: true
   apaczkaPointSupplier?: true
+  wantsFaktura?: true
+  companyName?: true
+  nip?: true
   paidAt?: true
   createdAt?: true
   updatedAt?: true
@@ -211,6 +223,9 @@ export type OrderMaxAggregateInputType = {
   discountAmountInCents?: true
   apaczkaPointId?: true
   apaczkaPointSupplier?: true
+  wantsFaktura?: true
+  companyName?: true
+  nip?: true
   paidAt?: true
   createdAt?: true
   updatedAt?: true
@@ -243,6 +258,9 @@ export type OrderCountAggregateInputType = {
   discountAmountInCents?: true
   apaczkaPointId?: true
   apaczkaPointSupplier?: true
+  wantsFaktura?: true
+  companyName?: true
+  nip?: true
   paidAt?: true
   createdAt?: true
   updatedAt?: true
@@ -362,6 +380,9 @@ export type OrderGroupByOutputType = {
   discountAmountInCents: number
   apaczkaPointId: string | null
   apaczkaPointSupplier: string | null
+  wantsFaktura: boolean
+  companyName: string | null
+  nip: string | null
   paidAt: Date | null
   createdAt: Date
   updatedAt: Date
@@ -417,6 +438,9 @@ export type OrderWhereInput = {
   discountAmountInCents?: Prisma.IntFilter<"Order"> | number
   apaczkaPointId?: Prisma.StringNullableFilter<"Order"> | string | null
   apaczkaPointSupplier?: Prisma.StringNullableFilter<"Order"> | string | null
+  wantsFaktura?: Prisma.BoolFilter<"Order"> | boolean
+  companyName?: Prisma.StringNullableFilter<"Order"> | string | null
+  nip?: Prisma.StringNullableFilter<"Order"> | string | null
   paidAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Order"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Order"> | Date | string
@@ -455,6 +479,9 @@ export type OrderOrderByWithRelationInput = {
   discountAmountInCents?: Prisma.SortOrder
   apaczkaPointId?: Prisma.SortOrderInput | Prisma.SortOrder
   apaczkaPointSupplier?: Prisma.SortOrderInput | Prisma.SortOrder
+  wantsFaktura?: Prisma.SortOrder
+  companyName?: Prisma.SortOrderInput | Prisma.SortOrder
+  nip?: Prisma.SortOrderInput | Prisma.SortOrder
   paidAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -496,6 +523,9 @@ export type OrderWhereUniqueInput = Prisma.AtLeast<{
   discountAmountInCents?: Prisma.IntFilter<"Order"> | number
   apaczkaPointId?: Prisma.StringNullableFilter<"Order"> | string | null
   apaczkaPointSupplier?: Prisma.StringNullableFilter<"Order"> | string | null
+  wantsFaktura?: Prisma.BoolFilter<"Order"> | boolean
+  companyName?: Prisma.StringNullableFilter<"Order"> | string | null
+  nip?: Prisma.StringNullableFilter<"Order"> | string | null
   paidAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Order"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Order"> | Date | string
@@ -534,6 +564,9 @@ export type OrderOrderByWithAggregationInput = {
   discountAmountInCents?: Prisma.SortOrder
   apaczkaPointId?: Prisma.SortOrderInput | Prisma.SortOrder
   apaczkaPointSupplier?: Prisma.SortOrderInput | Prisma.SortOrder
+  wantsFaktura?: Prisma.SortOrder
+  companyName?: Prisma.SortOrderInput | Prisma.SortOrder
+  nip?: Prisma.SortOrderInput | Prisma.SortOrder
   paidAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -574,6 +607,9 @@ export type OrderScalarWhereWithAggregatesInput = {
   discountAmountInCents?: Prisma.IntWithAggregatesFilter<"Order"> | number
   apaczkaPointId?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
   apaczkaPointSupplier?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
+  wantsFaktura?: Prisma.BoolWithAggregatesFilter<"Order"> | boolean
+  companyName?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
+  nip?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
   paidAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Order"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Order"> | Date | string
@@ -602,6 +638,9 @@ export type OrderCreateInput = {
   discountAmountInCents?: number
   apaczkaPointId?: string | null
   apaczkaPointSupplier?: string | null
+  wantsFaktura?: boolean
+  companyName?: string | null
+  nip?: string | null
   paidAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -640,6 +679,9 @@ export type OrderUncheckedCreateInput = {
   discountAmountInCents?: number
   apaczkaPointId?: string | null
   apaczkaPointSupplier?: string | null
+  wantsFaktura?: boolean
+  companyName?: string | null
+  nip?: string | null
   paidAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -670,6 +712,9 @@ export type OrderUpdateInput = {
   discountAmountInCents?: Prisma.IntFieldUpdateOperationsInput | number
   apaczkaPointId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apaczkaPointSupplier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wantsFaktura?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  companyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -708,6 +753,9 @@ export type OrderUncheckedUpdateInput = {
   discountAmountInCents?: Prisma.IntFieldUpdateOperationsInput | number
   apaczkaPointId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apaczkaPointSupplier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wantsFaktura?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  companyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -742,6 +790,9 @@ export type OrderCreateManyInput = {
   discountAmountInCents?: number
   apaczkaPointId?: string | null
   apaczkaPointSupplier?: string | null
+  wantsFaktura?: boolean
+  companyName?: string | null
+  nip?: string | null
   paidAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -770,6 +821,9 @@ export type OrderUpdateManyMutationInput = {
   discountAmountInCents?: Prisma.IntFieldUpdateOperationsInput | number
   apaczkaPointId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apaczkaPointSupplier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wantsFaktura?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  companyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -802,6 +856,9 @@ export type OrderUncheckedUpdateManyInput = {
   discountAmountInCents?: Prisma.IntFieldUpdateOperationsInput | number
   apaczkaPointId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apaczkaPointSupplier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wantsFaktura?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  companyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -844,6 +901,9 @@ export type OrderCountOrderByAggregateInput = {
   discountAmountInCents?: Prisma.SortOrder
   apaczkaPointId?: Prisma.SortOrder
   apaczkaPointSupplier?: Prisma.SortOrder
+  wantsFaktura?: Prisma.SortOrder
+  companyName?: Prisma.SortOrder
+  nip?: Prisma.SortOrder
   paidAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -883,6 +943,9 @@ export type OrderMaxOrderByAggregateInput = {
   discountAmountInCents?: Prisma.SortOrder
   apaczkaPointId?: Prisma.SortOrder
   apaczkaPointSupplier?: Prisma.SortOrder
+  wantsFaktura?: Prisma.SortOrder
+  companyName?: Prisma.SortOrder
+  nip?: Prisma.SortOrder
   paidAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -915,6 +978,9 @@ export type OrderMinOrderByAggregateInput = {
   discountAmountInCents?: Prisma.SortOrder
   apaczkaPointId?: Prisma.SortOrder
   apaczkaPointSupplier?: Prisma.SortOrder
+  wantsFaktura?: Prisma.SortOrder
+  companyName?: Prisma.SortOrder
+  nip?: Prisma.SortOrder
   paidAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -1163,6 +1229,9 @@ export type OrderCreateWithoutUserInput = {
   discountAmountInCents?: number
   apaczkaPointId?: string | null
   apaczkaPointSupplier?: string | null
+  wantsFaktura?: boolean
+  companyName?: string | null
+  nip?: string | null
   paidAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1199,6 +1268,9 @@ export type OrderUncheckedCreateWithoutUserInput = {
   discountAmountInCents?: number
   apaczkaPointId?: string | null
   apaczkaPointSupplier?: string | null
+  wantsFaktura?: boolean
+  companyName?: string | null
+  nip?: string | null
   paidAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1262,6 +1334,9 @@ export type OrderScalarWhereInput = {
   discountAmountInCents?: Prisma.IntFilter<"Order"> | number
   apaczkaPointId?: Prisma.StringNullableFilter<"Order"> | string | null
   apaczkaPointSupplier?: Prisma.StringNullableFilter<"Order"> | string | null
+  wantsFaktura?: Prisma.BoolFilter<"Order"> | boolean
+  companyName?: Prisma.StringNullableFilter<"Order"> | string | null
+  nip?: Prisma.StringNullableFilter<"Order"> | string | null
   paidAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Order"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Order"> | Date | string
@@ -1290,6 +1365,9 @@ export type OrderCreateWithoutBillingAddressInput = {
   discountAmountInCents?: number
   apaczkaPointId?: string | null
   apaczkaPointSupplier?: string | null
+  wantsFaktura?: boolean
+  companyName?: string | null
+  nip?: string | null
   paidAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1326,6 +1404,9 @@ export type OrderUncheckedCreateWithoutBillingAddressInput = {
   discountAmountInCents?: number
   apaczkaPointId?: string | null
   apaczkaPointSupplier?: string | null
+  wantsFaktura?: boolean
+  companyName?: string | null
+  nip?: string | null
   paidAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1366,6 +1447,9 @@ export type OrderCreateWithoutShippingAddressInput = {
   discountAmountInCents?: number
   apaczkaPointId?: string | null
   apaczkaPointSupplier?: string | null
+  wantsFaktura?: boolean
+  companyName?: string | null
+  nip?: string | null
   paidAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1402,6 +1486,9 @@ export type OrderUncheckedCreateWithoutShippingAddressInput = {
   discountAmountInCents?: number
   apaczkaPointId?: string | null
   apaczkaPointSupplier?: string | null
+  wantsFaktura?: boolean
+  companyName?: string | null
+  nip?: string | null
   paidAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1474,6 +1561,9 @@ export type OrderCreateWithoutOrderItemsInput = {
   discountAmountInCents?: number
   apaczkaPointId?: string | null
   apaczkaPointSupplier?: string | null
+  wantsFaktura?: boolean
+  companyName?: string | null
+  nip?: string | null
   paidAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1511,6 +1601,9 @@ export type OrderUncheckedCreateWithoutOrderItemsInput = {
   discountAmountInCents?: number
   apaczkaPointId?: string | null
   apaczkaPointSupplier?: string | null
+  wantsFaktura?: boolean
+  companyName?: string | null
+  nip?: string | null
   paidAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1556,6 +1649,9 @@ export type OrderUpdateWithoutOrderItemsInput = {
   discountAmountInCents?: Prisma.IntFieldUpdateOperationsInput | number
   apaczkaPointId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apaczkaPointSupplier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wantsFaktura?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  companyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1593,6 +1689,9 @@ export type OrderUncheckedUpdateWithoutOrderItemsInput = {
   discountAmountInCents?: Prisma.IntFieldUpdateOperationsInput | number
   apaczkaPointId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apaczkaPointSupplier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wantsFaktura?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  companyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1622,6 +1721,9 @@ export type OrderCreateWithoutPaymentsInput = {
   discountAmountInCents?: number
   apaczkaPointId?: string | null
   apaczkaPointSupplier?: string | null
+  wantsFaktura?: boolean
+  companyName?: string | null
+  nip?: string | null
   paidAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1659,6 +1761,9 @@ export type OrderUncheckedCreateWithoutPaymentsInput = {
   discountAmountInCents?: number
   apaczkaPointId?: string | null
   apaczkaPointSupplier?: string | null
+  wantsFaktura?: boolean
+  companyName?: string | null
+  nip?: string | null
   paidAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1704,6 +1809,9 @@ export type OrderUpdateWithoutPaymentsInput = {
   discountAmountInCents?: Prisma.IntFieldUpdateOperationsInput | number
   apaczkaPointId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apaczkaPointSupplier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wantsFaktura?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  companyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1741,6 +1849,9 @@ export type OrderUncheckedUpdateWithoutPaymentsInput = {
   discountAmountInCents?: Prisma.IntFieldUpdateOperationsInput | number
   apaczkaPointId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apaczkaPointSupplier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wantsFaktura?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  companyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1770,6 +1881,9 @@ export type OrderCreateWithoutDiscountCodeRefInput = {
   discountAmountInCents?: number
   apaczkaPointId?: string | null
   apaczkaPointSupplier?: string | null
+  wantsFaktura?: boolean
+  companyName?: string | null
+  nip?: string | null
   paidAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1806,6 +1920,9 @@ export type OrderUncheckedCreateWithoutDiscountCodeRefInput = {
   discountAmountInCents?: number
   apaczkaPointId?: string | null
   apaczkaPointSupplier?: string | null
+  wantsFaktura?: boolean
+  companyName?: string | null
+  nip?: string | null
   paidAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1865,6 +1982,9 @@ export type OrderCreateManyUserInput = {
   discountAmountInCents?: number
   apaczkaPointId?: string | null
   apaczkaPointSupplier?: string | null
+  wantsFaktura?: boolean
+  companyName?: string | null
+  nip?: string | null
   paidAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1893,6 +2013,9 @@ export type OrderUpdateWithoutUserInput = {
   discountAmountInCents?: Prisma.IntFieldUpdateOperationsInput | number
   apaczkaPointId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apaczkaPointSupplier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wantsFaktura?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  companyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1929,6 +2052,9 @@ export type OrderUncheckedUpdateWithoutUserInput = {
   discountAmountInCents?: Prisma.IntFieldUpdateOperationsInput | number
   apaczkaPointId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apaczkaPointSupplier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wantsFaktura?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  companyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1962,6 +2088,9 @@ export type OrderUncheckedUpdateManyWithoutUserInput = {
   discountAmountInCents?: Prisma.IntFieldUpdateOperationsInput | number
   apaczkaPointId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apaczkaPointSupplier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wantsFaktura?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  companyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1993,6 +2122,9 @@ export type OrderCreateManyBillingAddressInput = {
   discountAmountInCents?: number
   apaczkaPointId?: string | null
   apaczkaPointSupplier?: string | null
+  wantsFaktura?: boolean
+  companyName?: string | null
+  nip?: string | null
   paidAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2024,6 +2156,9 @@ export type OrderCreateManyShippingAddressInput = {
   discountAmountInCents?: number
   apaczkaPointId?: string | null
   apaczkaPointSupplier?: string | null
+  wantsFaktura?: boolean
+  companyName?: string | null
+  nip?: string | null
   paidAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2052,6 +2187,9 @@ export type OrderUpdateWithoutBillingAddressInput = {
   discountAmountInCents?: Prisma.IntFieldUpdateOperationsInput | number
   apaczkaPointId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apaczkaPointSupplier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wantsFaktura?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  companyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2088,6 +2226,9 @@ export type OrderUncheckedUpdateWithoutBillingAddressInput = {
   discountAmountInCents?: Prisma.IntFieldUpdateOperationsInput | number
   apaczkaPointId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apaczkaPointSupplier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wantsFaktura?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  companyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2121,6 +2262,9 @@ export type OrderUncheckedUpdateManyWithoutBillingAddressInput = {
   discountAmountInCents?: Prisma.IntFieldUpdateOperationsInput | number
   apaczkaPointId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apaczkaPointSupplier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wantsFaktura?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  companyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2149,6 +2293,9 @@ export type OrderUpdateWithoutShippingAddressInput = {
   discountAmountInCents?: Prisma.IntFieldUpdateOperationsInput | number
   apaczkaPointId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apaczkaPointSupplier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wantsFaktura?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  companyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2185,6 +2332,9 @@ export type OrderUncheckedUpdateWithoutShippingAddressInput = {
   discountAmountInCents?: Prisma.IntFieldUpdateOperationsInput | number
   apaczkaPointId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apaczkaPointSupplier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wantsFaktura?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  companyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2218,6 +2368,9 @@ export type OrderUncheckedUpdateManyWithoutShippingAddressInput = {
   discountAmountInCents?: Prisma.IntFieldUpdateOperationsInput | number
   apaczkaPointId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apaczkaPointSupplier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wantsFaktura?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  companyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2249,6 +2402,9 @@ export type OrderCreateManyDiscountCodeRefInput = {
   discountAmountInCents?: number
   apaczkaPointId?: string | null
   apaczkaPointSupplier?: string | null
+  wantsFaktura?: boolean
+  companyName?: string | null
+  nip?: string | null
   paidAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2277,6 +2433,9 @@ export type OrderUpdateWithoutDiscountCodeRefInput = {
   discountAmountInCents?: Prisma.IntFieldUpdateOperationsInput | number
   apaczkaPointId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apaczkaPointSupplier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wantsFaktura?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  companyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2313,6 +2472,9 @@ export type OrderUncheckedUpdateWithoutDiscountCodeRefInput = {
   discountAmountInCents?: Prisma.IntFieldUpdateOperationsInput | number
   apaczkaPointId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apaczkaPointSupplier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wantsFaktura?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  companyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2346,6 +2508,9 @@ export type OrderUncheckedUpdateManyWithoutDiscountCodeRefInput = {
   discountAmountInCents?: Prisma.IntFieldUpdateOperationsInput | number
   apaczkaPointId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   apaczkaPointSupplier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  wantsFaktura?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  companyName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2418,6 +2583,9 @@ export type OrderSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   discountAmountInCents?: boolean
   apaczkaPointId?: boolean
   apaczkaPointSupplier?: boolean
+  wantsFaktura?: boolean
+  companyName?: boolean
+  nip?: boolean
   paidAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -2457,6 +2625,9 @@ export type OrderSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   discountAmountInCents?: boolean
   apaczkaPointId?: boolean
   apaczkaPointSupplier?: boolean
+  wantsFaktura?: boolean
+  companyName?: boolean
+  nip?: boolean
   paidAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -2493,6 +2664,9 @@ export type OrderSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   discountAmountInCents?: boolean
   apaczkaPointId?: boolean
   apaczkaPointSupplier?: boolean
+  wantsFaktura?: boolean
+  companyName?: boolean
+  nip?: boolean
   paidAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -2529,12 +2703,15 @@ export type OrderSelectScalar = {
   discountAmountInCents?: boolean
   apaczkaPointId?: boolean
   apaczkaPointSupplier?: boolean
+  wantsFaktura?: boolean
+  companyName?: boolean
+  nip?: boolean
   paidAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type OrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "status" | "paymentMethod" | "pricePaidInCents" | "subtotalInCents" | "shippingCostInCents" | "billingAddressId" | "shippingAddressId" | "shippingServiceId" | "shippingServiceName" | "apaczkaOrderId" | "apaczkaWaybillNumber" | "apaczkaTrackingUrl" | "apaczkaStatus" | "apaczkaConfirmedAt" | "wfirmaInvoiceId" | "wfirmaInvoiceNumber" | "wfirmaInvoiceSentAt" | "wfirmaCorrectionInvoiceId" | "wfirmaCorrectionInvoiceNumber" | "discountCodeId" | "discountCodeValue" | "discountAmountInCents" | "apaczkaPointId" | "apaczkaPointSupplier" | "paidAt" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
+export type OrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "status" | "paymentMethod" | "pricePaidInCents" | "subtotalInCents" | "shippingCostInCents" | "billingAddressId" | "shippingAddressId" | "shippingServiceId" | "shippingServiceName" | "apaczkaOrderId" | "apaczkaWaybillNumber" | "apaczkaTrackingUrl" | "apaczkaStatus" | "apaczkaConfirmedAt" | "wfirmaInvoiceId" | "wfirmaInvoiceNumber" | "wfirmaInvoiceSentAt" | "wfirmaCorrectionInvoiceId" | "wfirmaCorrectionInvoiceNumber" | "discountCodeId" | "discountCodeValue" | "discountAmountInCents" | "apaczkaPointId" | "apaczkaPointSupplier" | "wantsFaktura" | "companyName" | "nip" | "paidAt" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
 export type OrderInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   billingAddress?: boolean | Prisma.AddressDefaultArgs<ExtArgs>
@@ -2594,6 +2771,9 @@ export type $OrderPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     discountAmountInCents: number
     apaczkaPointId: string | null
     apaczkaPointSupplier: string | null
+    wantsFaktura: boolean
+    companyName: string | null
+    nip: string | null
     paidAt: Date | null
     createdAt: Date
     updatedAt: Date
@@ -3052,6 +3232,9 @@ export interface OrderFieldRefs {
   readonly discountAmountInCents: Prisma.FieldRef<"Order", 'Int'>
   readonly apaczkaPointId: Prisma.FieldRef<"Order", 'String'>
   readonly apaczkaPointSupplier: Prisma.FieldRef<"Order", 'String'>
+  readonly wantsFaktura: Prisma.FieldRef<"Order", 'Boolean'>
+  readonly companyName: Prisma.FieldRef<"Order", 'String'>
+  readonly nip: Prisma.FieldRef<"Order", 'String'>
   readonly paidAt: Prisma.FieldRef<"Order", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Order", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Order", 'DateTime'>

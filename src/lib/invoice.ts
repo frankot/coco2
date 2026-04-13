@@ -10,7 +10,10 @@ function formatPriceFromCents(cents: number) {
 
 function buildContractorName(order: {
   user: { firstName: string | null; lastName: string | null; email: string };
+  wantsFaktura: boolean;
+  companyName: string | null;
 }) {
+  if (order.wantsFaktura && order.companyName) return order.companyName;
   const fullName = [order.user.firstName, order.user.lastName].filter(Boolean).join(" ").trim();
   return fullName || order.user.email;
 }
@@ -37,6 +40,7 @@ export async function generateAndSendInvoice(orderId: string): Promise<void> {
         },
       },
     },
+    // wantsFaktura, companyName, nip are scalar fields included automatically
   });
 
   if (!order) {
@@ -78,6 +82,7 @@ export async function generateAndSendInvoice(orderId: string): Promise<void> {
         country: order.billingAddress.country,
         email: order.user.email,
         phone: order.billingAddress.phoneNumber,
+        nip: order.wantsFaktura ? order.nip : null,
       },
       paymentMethod: order.paymentMethod === "COD" ? "cod" : "transfer",
       paymentState: order.paymentMethod === "COD" ? "unpaid" : "paid",

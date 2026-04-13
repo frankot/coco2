@@ -18,9 +18,14 @@ export const GET = createRouteHandler(
         paymentMethod: true,
         billingAddress: true,
         shippingAddress: true,
+        billingAddressId: true,
+        shippingAddressId: true,
         wfirmaInvoiceId: true,
         wfirmaInvoiceNumber: true,
         apaczkaTrackingUrl: true,
+        wantsFaktura: true,
+        companyName: true,
+        nip: true,
         orderItems: {
           select: {
             id: true,

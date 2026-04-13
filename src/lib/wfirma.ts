@@ -34,6 +34,7 @@ export type CreateInvoiceParams = {
     country: string;
     email?: string;
     phone?: string | null;
+    nip?: string | null;
   };
   paymentMethod: "transfer" | "cod";
   paymentState: "paid" | "unpaid";
@@ -233,6 +234,7 @@ export const wFirma = {
 <country>${escapeXml(normalizedCountry)}</country>
 ${params.contractor.email ? `<email>${escapeXml(params.contractor.email)}</email>` : ""}
 ${params.contractor.phone ? `<phone>${escapeXml(params.contractor.phone)}</phone>` : ""}
+${params.contractor.nip ? `<nip>${escapeXml(params.contractor.nip)}</nip>` : ""}
 </contractor>
 <type>normal</type>
 <paymentmethod>${params.paymentMethod}</paymentmethod>

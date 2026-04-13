@@ -50,10 +50,15 @@ type Order = {
   paymentMethod: "COD" | "STRIPE";
   billingAddress: Address;
   shippingAddress: Address;
+  billingAddressId: string;
+  shippingAddressId: string;
   orderItems: OrderItem[];
   wfirmaInvoiceId?: string | null;
   wfirmaInvoiceNumber?: string | null;
   apaczkaTrackingUrl?: string | null;
+  wantsFaktura?: boolean;
+  companyName?: string | null;
+  nip?: string | null;
 };
 
 export default function OrderDetailsPage() {
@@ -365,18 +370,34 @@ export default function OrderDetailsPage() {
               </div>
             </div>
 
-            <Separator />
+            {order.billingAddressId !== order.shippingAddressId && (
+              <>
+                <Separator />
+                <div>
+                  <h3 className="font-medium mb-2">Adres rozliczeniowy</h3>
+                  <div className="text-sm space-y-1">
+                    <p>{order.billingAddress.street}</p>
+                    <p>
+                      {order.billingAddress.postalCode} {order.billingAddress.city}
+                    </p>
+                    <p>{order.billingAddress.country}</p>
+                  </div>
+                </div>
+              </>
+            )}
 
-            <div>
-              <h3 className="font-medium mb-2">Adres rozliczeniowy</h3>
-              <div className="text-sm space-y-1">
-                <p>{order.billingAddress.street}</p>
-                <p>
-                  {order.billingAddress.postalCode} {order.billingAddress.city}
-                </p>
-                <p>{order.billingAddress.country}</p>
-              </div>
-            </div>
+            {order.wantsFaktura && (order.companyName || order.nip) && (
+              <>
+                <Separator />
+                <div>
+                  <h3 className="font-medium mb-2">Dane do faktury</h3>
+                  <div className="text-sm space-y-1">
+                    {order.companyName && <p className="font-medium">{order.companyName}</p>}
+                    {order.nip && <p>NIP: {order.nip}</p>}
+                  </div>
+                </div>
+              </>
+            )}
           </CardContent>
         </Card>
       </div>

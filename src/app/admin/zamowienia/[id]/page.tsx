@@ -86,6 +86,10 @@ type Order = {
   wfirmaInvoiceId?: string | null;
   wfirmaInvoiceNumber?: string | null;
   wfirmaInvoiceSentAt?: string | null;
+  // Faktura data
+  wantsFaktura?: boolean;
+  companyName?: string | null;
+  nip?: string | null;
 };
 
 export default function OrderDetailsPage() {
@@ -447,6 +451,12 @@ export default function OrderDetailsPage() {
           </CardHeader>
           <CardContent className="space-y-2">
             <div className="grid grid-cols-1 gap-1">
+              {order.wantsFaktura && order.companyName && (
+                <div className="text-sm font-semibold text-primary">{order.companyName}</div>
+              )}
+              {order.wantsFaktura && order.nip && (
+                <div className="text-sm">NIP: {order.nip}</div>
+              )}
               <div className="text-sm">
                 <span className="font-medium">
                   {order.user.firstName} {order.user.lastName}
