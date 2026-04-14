@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Building2, MapPin, CreditCard, Phone } from "lucide-react";
 import { ChangeTypeButton, DeleteButton } from "../_components/ClientActions";
 import CustomPricing from "./_components/CustomPricing";
 
@@ -27,7 +27,7 @@ async function ClientDetailContent({ id }: { id: string }) {
     where: { id },
     include: {
       addresses: {
-        orderBy: { createdAt: "desc" },
+        orderBy: [{ isDefault: "desc" }, { createdAt: "desc" }],
       },
       orders: {
         orderBy: { createdAt: "desc" },
@@ -38,6 +38,9 @@ async function ClientDetailContent({ id }: { id: string }) {
           pricePaidInCents: true,
           createdAt: true,
           paymentMethod: true,
+          wantsFaktura: true,
+          companyName: true,
+          nip: true,
         },
       },
       _count: {
@@ -54,6 +57,24 @@ async function ClientDetailContent({ id }: { id: string }) {
   }
 
   const totalSpent = client.orders.reduce((sum, order) => sum + (order.pricePaidInCents || 0), 0);
+
+  // Company Info from latest faktura order
+  const latestFaktura = client.orders.find((o) => o.wantsFaktura && o.companyName);
+
+  // Split Addresses
+  const billingAddresses = client.addresses.filter(
+    (a) => a.addressType === "BILLING" || a.addressType === "BOTH"
+  );
+  const shippingAddresses = client.addresses.filter(
+    (a) => a.addressType === "SHIPPING" || a.addressType === "BOTH"
+  );
+
+  const accountTypeVariant =
+    client.accountType === "ADMIN"
+      ? "destructive"
+      : client.accountType === "HURT" || client.accountType === "DETAL_B2B"
+        ? "default"
+        : "secondary";
 
   return (
     <div className="space-y-6">
@@ -72,92 +93,157 @@ async function ClientDetailContent({ id }: { id: string }) {
         </div>
       </div>
 
-      {/* User Information Card */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Informacje o kliencie</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <p className="text-sm text-muted-foreground">Email</p>
-              <p className="font-medium">{client.email}</p>
+      {/* Top Grid: Client Info + Stats */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Client Info */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Informacje o kliencie</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-x-4 gap-y-3">
+              <div className="col-span-2">
+                <p className="text-xs text-muted-foreground">Email</p>
+                <p className="font-medium break-all">{client.email}</p>
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Imię</p>
+                <p className="font-medium">{client.firstName || "-"}</p>
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Nazwisko</p>
+                <p className="font-medium">{client.lastName || "-"}</p>
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Typ konta</p>
+                <Badge variant={accountTypeVariant}>{client.accountType}</Badge>
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">ID klienta</p>
+                <p className="font-mono text-xs break-all">{client.id}</p>
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Data rejestracji</p>
+                <p className="font-medium text-sm">
+                  {format(new Date(client.createdAt), "dd.MM.yyyy HH:mm")}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs text-muted-foreground">Ostatnia aktualizacja</p>
+                <p className="font-medium text-sm">
+                  {format(new Date(client.updatedAt), "dd.MM.yyyy HH:mm")}
+                </p>
+              </div>
             </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Typ konta</p>
-              <Badge
-                variant={
-                  client.accountType === "ADMIN"
-                    ? "destructive"
-                    : client.accountType === "HURT" || client.accountType === "DETAL_B2B"
-                      ? "default"
-                      : "secondary"
-                }
-              >
-                {client.accountType}
-              </Badge>
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Imię</p>
-              <p className="font-medium">{client.firstName || "-"}</p>
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Nazwisko</p>
-              <p className="font-medium">{client.lastName || "-"}</p>
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Data rejestracji</p>
-              <p className="font-medium">
-                {format(new Date(client.createdAt), "dd.MM.yyyy HH:mm")}
-              </p>
-            </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Łącznie wydane</p>
-              <p className="font-medium">{(totalSpent / 100).toFixed(2)} PLN</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
 
-      {/* Addresses Card */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Adresy ({client._count.addresses})</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {client.addresses.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Brak dodanych adresów</p>
-          ) : (
-            <div className="space-y-4">
-              {client.addresses.map((address) => (
-                <div key={address.id} className="border-l-2 border-primary pl-4 py-2">
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-1">
-                      <p className="font-medium">
-                        {address.street}, {address.postalCode} {address.city}
-                      </p>
-                      <p className="text-sm text-muted-foreground">{address.country}</p>
-                      {address.phoneNumber && (
-                        <p className="text-sm text-muted-foreground">Tel: {address.phoneNumber}</p>
-                      )}
-                      <div className="flex gap-2 mt-2">
-                        {address.isDefault && (
-                          <Badge variant="outline" className="text-xs">
-                            Domyślny
-                          </Badge>
-                        )}
-                        <Badge variant="secondary" className="text-xs">
-                          {address.addressType}
-                        </Badge>
-                      </div>
-                    </div>
+        {/* Stats + Company */}
+        <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Statystyki</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <p className="text-xs text-muted-foreground">Zamówienia</p>
+                  <p className="text-2xl font-semibold">{client._count.orders}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Adresy</p>
+                  <p className="text-2xl font-semibold">{client._count.addresses}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Łącznie wydane</p>
+                  <p className="text-2xl font-semibold">
+                    {(totalSpent / 100).toFixed(2)}{" "}
+                    <span className="text-sm font-normal">PLN</span>
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Company Info */}
+          {latestFaktura && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Building2 className="h-4 w-4" />
+                  Dane firmy (faktura)
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 gap-x-4 gap-y-3">
+                  <div className="col-span-2">
+                    <p className="text-xs text-muted-foreground">Nazwa firmy</p>
+                    <p className="font-medium">{latestFaktura.companyName}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">NIP</p>
+                    <p className="font-medium font-mono">{latestFaktura.nip || "-"}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">Źródło</p>
+                    <Link
+                      href={`/admin/zamowienia/${latestFaktura.id}`}
+                      className="font-mono text-xs text-primary hover:underline"
+                    >
+                      {latestFaktura.id}
+                    </Link>
                   </div>
                 </div>
-              ))}
-            </div>
+              </CardContent>
+            </Card>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
+
+      {/* Addresses Grid: Billing | Shipping */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Billing */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <CreditCard className="h-4 w-4" />
+              Adresy do faktury ({billingAddresses.length})
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {billingAddresses.length === 0 ? (
+              <p className="text-sm text-muted-foreground">Brak adresów do faktury</p>
+            ) : (
+              <div className="space-y-3">
+                {billingAddresses.map((address) => (
+                  <AddressBlock key={address.id} address={address} />
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Shipping */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <MapPin className="h-4 w-4" />
+              Adresy do dostawy ({shippingAddresses.length})
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {shippingAddresses.length === 0 ? (
+              <p className="text-sm text-muted-foreground">Brak adresów do dostawy</p>
+            ) : (
+              <div className="space-y-3">
+                {shippingAddresses.map((address) => (
+                  <AddressBlock key={address.id} address={address} />
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Custom Pricing for B2B/Hurt */}
       {(client.accountType === "HURT" || client.accountType === "DETAL_B2B") && (
@@ -173,23 +259,25 @@ async function ClientDetailContent({ id }: { id: string }) {
           {client.orders.length === 0 ? (
             <p className="text-sm text-muted-foreground">Brak zamówień</p>
           ) : (
-            <div className="space-y-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {client.orders.map((order) => (
                 <Link
                   key={order.id}
                   href={`/admin/zamowienia/${order.id}`}
-                  className="block border-l-2 border-primary pl-4 py-2 hover:bg-accent transition-colors"
+                  className="block border rounded-md p-3 hover:bg-accent transition-colors"
                 >
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-1">
-                      <p className="font-mono text-sm font-medium">{order.id}</p>
-                      <p className="text-sm text-muted-foreground">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="space-y-1 min-w-0">
+                      <p className="font-mono text-sm font-medium truncate">{order.id}</p>
+                      <p className="text-xs text-muted-foreground">
                         {format(new Date(order.createdAt), "dd.MM.yyyy HH:mm")}
                       </p>
                     </div>
-                    <div className="text-right space-y-1">
-                      <p className="font-medium">{(order.pricePaidInCents / 100).toFixed(2)} PLN</p>
-                      <div className="flex gap-2 justify-end">
+                    <div className="text-right space-y-1 shrink-0">
+                      <p className="font-medium">
+                        {(order.pricePaidInCents / 100).toFixed(2)} PLN
+                      </p>
+                      <div className="flex gap-1 justify-end flex-wrap">
                         <Badge
                           variant={
                             order.status === "DELIVERED"
@@ -198,6 +286,7 @@ async function ClientDetailContent({ id }: { id: string }) {
                                 ? "destructive"
                                 : "secondary"
                           }
+                          className="text-xs"
                         >
                           {order.status}
                         </Badge>
@@ -209,15 +298,62 @@ async function ClientDetailContent({ id }: { id: string }) {
                   </div>
                 </Link>
               ))}
-              {client._count.orders > 10 && (
-                <p className="text-sm text-muted-foreground text-center pt-2">
-                  Wyświetlono 10 z {client._count.orders} zamówień
-                </p>
-              )}
             </div>
+          )}
+          {client._count.orders > 10 && (
+            <p className="text-sm text-muted-foreground text-center pt-3">
+              Wyświetlono 10 z {client._count.orders} zamówień
+            </p>
           )}
         </CardContent>
       </Card>
+    </div>
+  );
+}
+
+function AddressBlock({
+  address,
+}: {
+  address: {
+    id: string;
+    street: string;
+    city: string;
+    postalCode: string;
+    country: string;
+    phoneNumber: string | null;
+    isDefault: boolean;
+    addressType: "BILLING" | "SHIPPING" | "BOTH";
+    createdAt: Date;
+  };
+}) {
+  return (
+    <div className="border-l-2 border-primary pl-4 py-2">
+      <div className="space-y-1">
+        <p className="font-medium">{address.street}</p>
+        <p className="text-sm">
+          {address.postalCode} {address.city}
+        </p>
+        <p className="text-sm text-muted-foreground">{address.country}</p>
+        {address.phoneNumber && (
+          <p className="text-sm text-muted-foreground flex items-center gap-1">
+            <Phone className="h-3 w-3" />
+            {address.phoneNumber}
+          </p>
+        )}
+        <div className="flex gap-2 pt-1 flex-wrap">
+          {address.isDefault && (
+            <Badge variant="outline" className="text-xs">
+              Domyślny
+            </Badge>
+          )}
+          <Badge variant="secondary" className="text-xs">
+            {address.addressType}
+          </Badge>
+          <span className="text-xs text-muted-foreground ml-auto">
+            {format(new Date(address.createdAt), "dd.MM.yyyy")}
+          </span>
+        </div>
+      </div>
     </div>
   );
 }

@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { CreditCard, BanknoteIcon, ShoppingBag, LogIn, User, Trash2, Loader2, X } from "lucide-react";
+import { toast } from "sonner";
 import { formatPLN } from "@/lib/formatter";
 import { createOrder } from "./_actions";
 import { ApaczkaService } from "@/types/apaczka";
@@ -105,6 +106,39 @@ export default function CheckoutPage() {
     loadCart();
     window.addEventListener("cartUpdated", loadCart);
     return () => window.removeEventListener("cartUpdated", loadCart);
+  }, []);
+
+  // Re-check product availability on checkout entry
+  useEffect(() => {
+    const validateCartAvailability = async () => {
+      try {
+        const savedCart = localStorage.getItem("cart");
+        if (!savedCart) return;
+        const parsed: CartItem[] = JSON.parse(savedCart);
+        if (!Array.isArray(parsed) || parsed.length === 0) return;
+
+        const res = await fetch("/api/products");
+        if (!res.ok) return;
+        const available: { id: string }[] = await res.json();
+        const availableIds = new Set(available.map((p) => p.id));
+
+        const removed = parsed.filter((item) => !availableIds.has(item.id));
+        if (removed.length === 0) return;
+
+        const kept = parsed.filter((item) => availableIds.has(item.id));
+        localStorage.setItem("cart", JSON.stringify(kept));
+        window.dispatchEvent(new Event("cartUpdated"));
+        setCartItems(kept);
+
+        toast.error(
+          `Usunięto z koszyka niedostępne produkty: ${removed.map((p) => p.name).join(", ")}`,
+          { duration: 6000 }
+        );
+      } catch (e) {
+        console.error("Failed to validate cart availability:", e);
+      }
+    };
+    validateCartAvailability();
   }, []);
 
   // Load Apaczka map widget for pickup points

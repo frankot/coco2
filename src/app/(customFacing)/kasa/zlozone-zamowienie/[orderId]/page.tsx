@@ -50,6 +50,16 @@ export default async function OrderConfirmationPage({
   const search = await searchParams;
   const sessionId = search?.session_id;
 
+  // Status Labels PL
+  const statusLabels: Record<typeof order.status, string> = {
+    PENDING: "Oczekujące",
+    PAID: "Opłacone",
+    PROCESSING: "W realizacji",
+    SHIPPED: "Wysłane",
+    DELIVERED: "Dostarczone",
+    CANCELLED: "Anulowane",
+  };
+
   return (
     <div className="container max-w-3xl py-10 mt-10">
       <Card className="p-6">
@@ -80,7 +90,7 @@ export default async function OrderConfirmationPage({
 
           <div>
             <h2 className="font-semibold mb-2">Status zamówienia</h2>
-            <p>{order.status}</p>
+            <p>{statusLabels[order.status]}</p>
           </div>
 
           <div>

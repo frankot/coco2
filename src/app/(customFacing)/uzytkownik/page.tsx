@@ -279,6 +279,8 @@ export default function UserProfilePage() {
     switch (status) {
       case "PENDING":
         return "secondary";
+      case "PAID":
+        return "default";
       case "PROCESSING":
         return "default";
       case "SHIPPED":
@@ -558,14 +560,13 @@ export default function UserProfilePage() {
                     </TableHeader>
                     <TableBody>
                       {orders.map((order) => (
-                        <TableRow key={order.id}>
-                          <TableCell>
-                            <Link
-                              href={`/uzytkownik/${order.id}`}
-                              className="text-primary hover:underline"
-                            >
-                              #{order.id.substring(0, 8)}
-                            </Link>
+                        <TableRow
+                          key={order.id}
+                          onClick={() => router.push(`/uzytkownik/${order.id}`)}
+                          className="cursor-pointer"
+                        >
+                          <TableCell className="text-primary font-medium">
+                            #{order.id.substring(0, 8)}
                           </TableCell>
                           <TableCell>
                             <Badge variant={getStatusBadgeVariant(order.status)}>

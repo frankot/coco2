@@ -165,6 +165,8 @@ export default function OrderDetailsPage() {
     switch (status) {
       case "PENDING":
         return "secondary";
+      case "PAID":
+        return "default";
       case "PROCESSING":
         return "default";
       case "SHIPPED":
