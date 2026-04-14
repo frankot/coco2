@@ -19,7 +19,7 @@ type OrderStatus = (typeof ORDER_STATUSES)[number];
 
 // Valid status transitions: from -> allowed destinations
 const VALID_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
-  PENDING: ["PAID", "CANCELLED"],
+  PENDING: ["PAID", "PROCESSING", "SHIPPED", "CANCELLED"],
   PAID: ["PROCESSING", "CANCELLED"],
   PROCESSING: ["SHIPPED", "CANCELLED"],
   SHIPPED: ["DELIVERED", "CANCELLED"],
@@ -73,7 +73,11 @@ export const PATCH = createRouteHandler(
       data: {
         status: body.status,
         paymentMethod: body.paymentMethod,
-        ...(body.status === "PAID" ? { paidAt: new Date() } : {}),
+        ...(body.status === "PAID" ||
+        (previousStatus === "PENDING" &&
+          (body.status === "PROCESSING" || body.status === "SHIPPED"))
+          ? { paidAt: new Date() }
+          : {}),
       },
       include: ORDER_DETAIL_INCLUDE,
     });

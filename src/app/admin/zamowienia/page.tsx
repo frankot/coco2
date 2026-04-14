@@ -64,7 +64,7 @@ type Order = {
 };
 
 // Sorting type
-type SortField = "createdAt" | "status" | "totalItems" | "totalAmount";
+type SortField = "createdAt" | "paidAt" | "status" | "totalItems" | "totalAmount";
 type SortDirection = "asc" | "desc";
 
 export default function AdminOrdersPage() {
@@ -220,7 +220,7 @@ export default function AdminOrdersPage() {
 function OrdersTable() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-  const [sortField, setSortField] = useState<SortField | null>("createdAt");
+  const [sortField, setSortField] = useState<SortField>("createdAt");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -230,9 +230,10 @@ function OrdersTable() {
     const fetchOrders = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`/api/admin/orders?page=${page}&timestamp=${Date.now()}`, {
-          cache: "no-store",
-        });
+        const response = await fetch(
+          `/api/admin/orders?page=${page}&sortField=${sortField}&sortDir=${sortDirection}&timestamp=${Date.now()}`,
+          { cache: "no-store" }
+        );
 
         if (response.ok) {
           const json = await response.json();
@@ -247,52 +248,18 @@ function OrdersTable() {
     };
 
     fetchOrders();
-  }, [page]);
+  }, [page, sortField, sortDirection]);
 
   // Handle sorting
   const handleSort = (field: SortField) => {
     if (sortField === field) {
-      // Toggle direction if already sorting by this field
       setSortDirection(sortDirection === "asc" ? "desc" : "asc");
     } else {
-      // Set new field and default to ascending
       setSortField(field);
       setSortDirection("asc");
     }
+    setPage(1);
   };
-
-  // Sort orders
-  const sortedOrders = [...orders].sort((a, b) => {
-    if (!sortField) return 0;
-
-    // Determine sort direction multiplier
-    const multiplier = sortDirection === "asc" ? 1 : -1;
-
-    switch (sortField) {
-      case "createdAt":
-        return multiplier * (new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
-
-      case "status":
-        const statusOrder = {
-          PENDING: 0,
-          PAID: 1,
-          PROCESSING: 2,
-          SHIPPED: 3,
-          DELIVERED: 4,
-          CANCELLED: 5,
-        };
-        return multiplier * (statusOrder[a.status] - statusOrder[b.status]);
-
-      case "totalItems":
-        return multiplier * (a._count.orderItems - b._count.orderItems);
-
-      case "totalAmount":
-        return multiplier * (a.pricePaidInCents - b.pricePaidInCents);
-
-      default:
-        return 0;
-    }
-  });
 
   // Render sort icon
   const renderSortIcon = (field: SortField) => {
@@ -375,7 +342,12 @@ function OrdersTable() {
                 {renderSortIcon("createdAt")}
               </div>
             </TableHead>
-            <TableHead>Data płatności</TableHead>
+            <TableHead className="cursor-pointer" onClick={() => handleSort("paidAt")}>
+              <div className="flex items-center">
+                Data płatności
+                {renderSortIcon("paidAt")}
+              </div>
+            </TableHead>
             <TableHead className="cursor-pointer" onClick={() => handleSort("totalItems")}>
               <div className="flex items-center">
                 Produkty
@@ -394,7 +366,7 @@ function OrdersTable() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {sortedOrders.map((order) => {
+          {orders.map((order) => {
             // Format to PLN (złoty)
             const formattedTotal = (order.pricePaidInCents / 100).toFixed(2);
 

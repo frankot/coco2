@@ -935,7 +935,7 @@ export default function CheckoutPage() {
                 <h2 className="text-lg md:text-xl font-semibold mb-4">Adres rozliczeniowy</h2>
 
                 {/* Faktura VAT */}
-                <div className="flex items-center gap-3 mb-4 p-3 rounded-md border bg-muted/30">
+                <div className="flex items-center gap-3 mb-4 p-3 rounded-md border ">
                   <input
                     type="checkbox"
                     id="wantsFaktura"

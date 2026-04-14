@@ -29,6 +29,19 @@ import { Button } from "@/components/ui/button";
 
 type OrderStatus = "PENDING" | "PAID" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED";
 
+export function getOverrideCopy(target: "PAID" | "PROCESSING" | "SHIPPED" | null) {
+  switch (target) {
+    case "PAID":
+      return "Nie otrzymaliśmy płatności za to zamówienie. Zostanie oznaczone jako opłacone, a data płatności zostanie ustawiona na teraz.";
+    case "PROCESSING":
+      return "Nie otrzymaliśmy płatności za to zamówienie. Zostanie oznaczone jako opłacone i rozpoczniemy realizację. Zamówienie zostanie automatycznie potwierdzone w Apaczce (utworzona etykieta nadawcza). Data płatności zostanie ustawiona na teraz.";
+    case "SHIPPED":
+      return "Nie otrzymaliśmy płatności za to zamówienie. Zostanie oznaczone jako opłacone i wysłane. NIE zostanie utworzone zlecenie w Apaczce (pomijamy etap realizacji) — jeśli potrzebujesz etykiety nadawczej, musisz utworzyć ją ręcznie. E-mail o wysyłce zostanie wysłany do klienta. Data płatności zostanie ustawiona na teraz.";
+    default:
+      return "";
+  }
+}
+
 // Combined component that owns both the dropdown and dialog states
 export function OrderActionsMenu({
   id,
@@ -42,6 +55,9 @@ export function OrderActionsMenu({
   wfirmaInvoiceId: string | null;
 }) {
   const [cancelOpen, setCancelOpen] = useState(false);
+  const [overrideTarget, setOverrideTarget] = useState<
+    "PAID" | "PROCESSING" | "SHIPPED" | null
+  >(null);
   const [labelDownloading, setLabelDownloading] = useState(false);
   const [invoiceDownloading, setInvoiceDownloading] = useState(false);
   const isCancelDisabled = currentStatus === "DELIVERED" || currentStatus === "CANCELLED";
@@ -125,9 +141,38 @@ export function OrderActionsMenu({
     }
   };
 
-  // Render status-specific items
+  const confirmOverride = async () => {
+    if (!overrideTarget) return;
+    const target = overrideTarget;
+    setOverrideTarget(null);
+    await updateStatus(target);
+  };
+
   const renderStatusItems = () => {
     switch (currentStatus) {
+      case "PENDING":
+        return (
+          <>
+            <DropdownMenuItem className="cursor-pointer" onSelect={() => setOverrideTarget("PAID")}>
+              <CheckCircle className="mr-2 h-4 w-4" />
+              <span>Oznacz jako opłacone</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onSelect={() => setOverrideTarget("PROCESSING")}
+            >
+              <Package className="mr-2 h-4 w-4" />
+              <span>Rozpocznij realizację</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onSelect={() => setOverrideTarget("SHIPPED")}
+            >
+              <Truck className="mr-2 h-4 w-4" />
+              <span>Oznacz jako wysłane</span>
+            </DropdownMenuItem>
+          </>
+        );
       case "PAID":
         return (
           <DropdownMenuItem className="cursor-pointer" onClick={() => updateStatus("PROCESSING")}>
@@ -194,6 +239,24 @@ export function OrderActionsMenu({
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+
+      <Dialog
+        open={overrideTarget !== null}
+        onOpenChange={(o) => !o && setOverrideTarget(null)}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Potwierdź zmianę statusu bez płatności</DialogTitle>
+            <DialogDescription>{getOverrideCopy(overrideTarget)}</DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setOverrideTarget(null)}>
+              Anuluj
+            </Button>
+            <Button onClick={confirmOverride}>Potwierdź</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={cancelOpen} onOpenChange={setCancelOpen}>
         <DialogContent>

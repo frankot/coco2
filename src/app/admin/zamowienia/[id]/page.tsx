@@ -28,6 +28,22 @@ import {
 import Link from "next/link";
 import AdminLoading from "../../loading";
 import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { getOverrideCopy } from "../_components/OrderActions";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ChevronDown } from "lucide-react";
 
 // Type definitions
 type OrderStatus = "PENDING" | "PAID" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED";
@@ -100,6 +116,9 @@ export default function OrderDetailsPage() {
   const [invoiceDownloading, setInvoiceDownloading] = useState(false);
   const [labelDownloading, setLabelDownloading] = useState(false);
   const [statusUpdating, setStatusUpdating] = useState(false);
+  const [overrideTarget, setOverrideTarget] = useState<
+    "PAID" | "PROCESSING" | "SHIPPED" | null
+  >(null);
 
   useEffect(() => {
     const fetchOrder = async () => {
@@ -254,19 +273,131 @@ export default function OrderDetailsPage() {
   const totalAmount = (order.pricePaidInCents / 100).toFixed(2);
   const discountAmount = ((order.discountAmountInCents ?? 0) / 100).toFixed(2);
 
+  const confirmOverride = async () => {
+    if (!overrideTarget) return;
+    const target = overrideTarget;
+    setOverrideTarget(null);
+    await updateOrderStatus(target);
+  };
+
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <Dialog
+        open={overrideTarget !== null}
+        onOpenChange={(o) => !o && setOverrideTarget(null)}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Potwierdź zmianę statusu bez płatności</DialogTitle>
+            <DialogDescription>{getOverrideCopy(overrideTarget)}</DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setOverrideTarget(null)}>
+              Anuluj
+            </Button>
+            <Button onClick={confirmOverride}>Potwierdź</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <div className="flex justify-between items-center gap-4">
+               <Button variant="outline" asChild>
+            <Link href="/admin/zamowienia">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Wróć do listy zamówień
+            </Link>
+          </Button>
         <h1 className="text-2xl font-bold flex items-center gap-2">
           <ShoppingBag className="h-6 w-6" />
           Zamówienie #{order.id.substring(0, 8)}
         </h1>
-        <Button variant="outline" asChild>
-          <Link href="/admin/zamowienia">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Wróć do listy zamówień
-          </Link>
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          {order.status === "PENDING" && (
+            <DropdownMenu modal={false}>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" disabled={statusUpdating}>
+                  Zmień status
+                  <ChevronDown className="ml-2 h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  onSelect={() => setOverrideTarget("PAID")}
+                >
+                  <CheckCircle className="mr-2 h-4 w-4" />
+                  <span>Oznacz jako opłacone</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  onSelect={() => setOverrideTarget("PROCESSING")}
+                >
+                  <Package className="mr-2 h-4 w-4" />
+                  <span>Rozpocznij realizację</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  onSelect={() => setOverrideTarget("SHIPPED")}
+                >
+                  <Truck className="mr-2 h-4 w-4" />
+                  <span>Oznacz jako wysłane</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+          {order.status === "PAID" && (
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={statusUpdating}
+              onClick={() => updateOrderStatus("PROCESSING")}
+            >
+              {statusUpdating ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Package className="mr-2 h-4 w-4" />
+              )}
+              {statusUpdating ? "Wysyłanie do Apaczki..." : "Rozpocznij realizację"}
+            </Button>
+          )}
+          {order.status === "PROCESSING" && (
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={statusUpdating}
+              onClick={() => updateOrderStatus("SHIPPED")}
+            >
+              <Truck className="mr-2 h-4 w-4" />
+              Oznacz jako wysłane
+            </Button>
+          )}
+          {order.status === "SHIPPED" && (
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={statusUpdating}
+              onClick={() => updateOrderStatus("DELIVERED")}
+            >
+              <CheckCircle className="mr-2 h-4 w-4" />
+              Oznacz jako dostarczone
+            </Button>
+          )}
+          {(order.status === "PENDING" ||
+            order.status === "PAID" ||
+            order.status === "PROCESSING" ||
+            order.status === "SHIPPED") && (
+            <Button
+              variant="destructive"
+              size="sm"
+              disabled={statusUpdating}
+              onClick={() => updateOrderStatus("CANCELLED")}
+            >
+              <XCircle className="mr-2 h-4 w-4" />
+              Anuluj zamówienie
+            </Button>
+          )}
+   
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
@@ -325,7 +456,6 @@ export default function OrderDetailsPage() {
               </div>
             </div>
 
-            <Separator className="my-4" />
 
             <div className="flex flex-wrap gap-2">
               {order.wfirmaInvoiceId && (
@@ -352,67 +482,25 @@ export default function OrderDetailsPage() {
               )}
             </div>
 
-            <div className="space-y-2">
-              <h3 className="font-medium">Zmień status</h3>
-              <div className="flex flex-wrap gap-2">
-                {order.status === "PAID" && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    disabled={statusUpdating}
-                    onClick={() => updateOrderStatus("PROCESSING")}
-                  >
-                    {statusUpdating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Package className="mr-2 h-4 w-4" />}
-                    {statusUpdating ? "Wysyłanie do Apaczki..." : "Rozpocznij realizację"}
-                  </Button>
-                )}
-                {order.status === "PROCESSING" && (
-                  <Button variant="outline" size="sm" disabled={statusUpdating} onClick={() => updateOrderStatus("SHIPPED")}>
-                    <Truck className="mr-2 h-4 w-4" />
-                    Oznacz jako wysłane
-                  </Button>
-                )}
-                {order.status === "SHIPPED" && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    disabled={statusUpdating}
-                    onClick={() => updateOrderStatus("DELIVERED")}
-                  >
-                    <CheckCircle className="mr-2 h-4 w-4" />
-                    Oznacz jako dostarczone
-                  </Button>
-                )}
-                {(order.status === "PENDING" ||
-                  order.status === "PAID" ||
-                  order.status === "PROCESSING" ||
-                  order.status === "SHIPPED") && (
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    disabled={statusUpdating}
-                    onClick={() => updateOrderStatus("CANCELLED")}
-                  >
-                    <XCircle className="mr-2 h-4 w-4" />
-                    Anuluj zamówienie
-                  </Button>
-                )}
-              </div>
-            </div>
           </CardContent>
         </Card>
 
         {/* Customer details */}
-        <Card>
+        <Card className="relative">
+          <Button
+            variant="outline"
+            size="sm"
+            asChild
+            className="absolute top-4 right-4"
+          >
+            <Link href={`/admin/klienci/${order.user.id}`}>Zobacz profil klienta</Link>
+          </Button>
           <CardHeader>
             <CardTitle>Dane klienta</CardTitle>
             <CardDescription>Informacje o kliencie</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-2">
-              <div className="text-sm text-muted-foreground">ID klienta:</div>
-              <div className="text-sm font-medium">{order.user.id}</div>
-
               <div className="text-sm text-muted-foreground">Email:</div>
               <div className="text-sm font-medium">{order.user.email}</div>
 
@@ -434,65 +522,52 @@ export default function OrderDetailsPage() {
 
             <Separator className="my-4" />
 
-            <Button variant="outline" size="sm" asChild className="w-full">
-              <Link href={`/admin/klienci/${order.user.id}`}>Zobacz profil klienta</Link>
-            </Button>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <h3 className="font-medium mb-2">Adres dostawy</h3>
+                <div className="grid grid-cols-1 gap-1">
+                  <div className="text-sm">
+                    <span className="font-medium">
+                      {order.user.firstName} {order.user.lastName}
+                    </span>
+                  </div>
+                  <div className="text-sm">{order.shippingAddress.street}</div>
+                  <div className="text-sm">{order.shippingAddress.phoneNumber || "—"}</div>
+                  <div className="text-sm">
+                    {order.shippingAddress.postalCode} {order.shippingAddress.city}
+                  </div>
+                  <div className="text-sm">{order.shippingAddress.country}</div>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="font-medium mb-2">Adres rozliczeniowy</h3>
+                <div className="grid grid-cols-1 gap-1">
+                  {order.wantsFaktura && order.companyName && (
+                    <div className="text-sm font-semibold text-primary">{order.companyName}</div>
+                  )}
+                  {order.wantsFaktura && order.nip && (
+                    <div className="text-sm">NIP: {order.nip}</div>
+                  )}
+                  <div className="text-sm">
+                    <span className="font-medium">
+                      {order.user.firstName} {order.user.lastName}
+                    </span>
+                  </div>
+                  <div className="text-sm">{order.billingAddress.street}</div>
+                  <div className="text-sm">
+                    {order.billingAddress.postalCode} {order.billingAddress.city}
+                  </div>
+                  <div className="text-sm">{order.billingAddress.country}</div>
+                </div>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Address details */}
+      {/* Address + Products row */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Billing Address */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Adres rozliczeniowy</CardTitle>
-            <CardDescription>Dane do faktury</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <div className="grid grid-cols-1 gap-1">
-              {order.wantsFaktura && order.companyName && (
-                <div className="text-sm font-semibold text-primary">{order.companyName}</div>
-              )}
-              {order.wantsFaktura && order.nip && (
-                <div className="text-sm">NIP: {order.nip}</div>
-              )}
-              <div className="text-sm">
-                <span className="font-medium">
-                  {order.user.firstName} {order.user.lastName}
-                </span>
-              </div>
-              <div className="text-sm">{order.billingAddress.street}</div>
-              <div className="text-sm">
-                {order.billingAddress.postalCode} {order.billingAddress.city}
-              </div>
-              <div className="text-sm">{order.billingAddress.country}</div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Shipping Address */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Adres dostawy</CardTitle>
-            <CardDescription>Dane do wysyłki</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <div className="grid grid-cols-1 gap-1">
-              <div className="text-sm">
-                <span className="font-medium">
-                  {order.user.firstName} {order.user.lastName}
-                </span>
-              </div>
-              <div className="text-sm">{order.shippingAddress.street}</div>
-              <div className="text-sm">{order.shippingAddress.phoneNumber || "—"}</div>
-              <div className="text-sm">
-                {order.shippingAddress.postalCode} {order.shippingAddress.city}
-              </div>
-              <div className="text-sm">{order.shippingAddress.country}</div>
-            </div>
-          </CardContent>
-        </Card>
         {/* Apaczka pickup point (if used) */}
         {(order.apaczkaPointId || order.apaczkaPointSupplier) && (
           <Card>
@@ -526,48 +601,47 @@ export default function OrderDetailsPage() {
             </CardContent>
           </Card>
         )}
-      </div>
 
-      {/* Order items */}
-      <Card className="mt-6">
-        <CardHeader>
-          <CardTitle>Produkty</CardTitle>
-          <CardDescription>Lista produktów w zamówieniu</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Produkt</TableHead>
-                <TableHead>Cena jednostkowa</TableHead>
-                <TableHead>Ilość</TableHead>
-                <TableHead className="text-right">Suma</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {order.orderItems.map((item) => {
-                const unitPrice = (item.pricePerItemInCents / 100).toFixed(2);
-                const totalPrice = ((item.pricePerItemInCents * item.quantity) / 100).toFixed(2);
-
-                return (
-                  <TableRow key={item.id}>
-                    <TableCell className="font-medium">{item.product.name}</TableCell>
-                    <TableCell>{unitPrice} PLN</TableCell>
-                    <TableCell>{item.quantity}</TableCell>
-                    <TableCell className="text-right">{totalPrice} PLN</TableCell>
+        {/* Order items */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Produkty</CardTitle>
+            <CardDescription>Lista produktów w zamówieniu</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="max-h-80 overflow-y-auto">
+              <Table>
+                <TableHeader className="sticky top-0 bg-background z-10">
+                  <TableRow>
+                    <TableHead>Produkt</TableHead>
+                    <TableHead>Cena jednostkowa</TableHead>
+                    <TableHead>Ilość</TableHead>
+                    <TableHead className="text-right">Suma</TableHead>
                   </TableRow>
-                );
-              })}
-              <TableRow>
-                <TableCell colSpan={3} className="text-right font-bold">
-                  Suma całkowita:
-                </TableCell>
-                <TableCell className="text-right font-bold">{totalAmount} PLN</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+                </TableHeader>
+                <TableBody>
+                  {order.orderItems.map((item) => {
+                    const unitPrice = (item.pricePerItemInCents / 100).toFixed(2);
+                    const totalPrice = ((item.pricePerItemInCents * item.quantity) / 100).toFixed(2);
+
+                    return (
+                      <TableRow key={item.id}>
+                        <TableCell className="font-medium">{item.product.name}</TableCell>
+                        <TableCell>{unitPrice} PLN</TableCell>
+                        <TableCell>{item.quantity}</TableCell>
+                        <TableCell className="text-right">{totalPrice} PLN</TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </div>
+            <div className="flex justify-end border-t pt-3 mt-2 pr-4 font-bold text-sm">
+              Suma całkowita: <span className="ml-2">{totalAmount} PLN</span>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
