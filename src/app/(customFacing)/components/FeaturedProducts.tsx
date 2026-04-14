@@ -4,29 +4,30 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { resolveProductPrices } from "@/lib/resolve-prices";
 
-async function getLatestProducts() {
+async function getFeaturedProducts() {
   const session = await getServerSession(authOptions);
   const accountType = session?.user?.accountType;
+  const featuredSlugs = ["dr-coco-1l", "dr-coco-280ml", "dr-coco-330ml"];
 
   // Visibility filter (guests treated as DETAL)
-  const where: any = { isAvailable: true };
+  const where: any = { isAvailable: true, slug: { in: featuredSlugs } };
   if (!accountType || accountType === "DETAL") where.visibleToDetal = true;
   else if (accountType === "DETAL_B2B") where.visibleToDetalB2B = true;
   else if (accountType === "HURT") where.visibleToHurt = true;
 
   const products = await prisma.product.findMany({
     where,
-    orderBy: {
-      createdAt: "desc",
-    },
-    take: 3,
   });
 
-  return resolveProductPrices(products, session?.user?.id);
+  const orderedProducts = featuredSlugs
+    .map((slug) => products.find((product) => product.slug === slug))
+    .filter((product): product is (typeof products)[number] => Boolean(product));
+
+  return resolveProductPrices(orderedProducts, session?.user?.id);
 }
 
 export default async function FeaturedProducts() {
-  const products = await getLatestProducts();
+  const products = await getFeaturedProducts();
 
   if (products.length === 0) {
     return null;
@@ -43,6 +44,7 @@ export default async function FeaturedProducts() {
               className="featured-product-item"
               style={{ "--stagger-delay": `${index * 120}ms` } as React.CSSProperties}
             >
+              
               <ProductCard product={product} />
             </div>
           ))}
