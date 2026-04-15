@@ -8,7 +8,7 @@ import { getCustomPriceMap } from "@/lib/resolve-prices";
 
 export const POST = createRouteHandler(async ({ req }) => {
   const body = await readJson(req);
-  const { orderId, items } = body;
+  const { orderId, items, token } = body;
   const customerEmail = body.email as string | undefined;
   const origin = getOrigin();
   if (!origin) throw new ApiError("No origin found", 500);
@@ -91,7 +91,7 @@ export const POST = createRouteHandler(async ({ req }) => {
     ...(customerEmail
       ? { customer_email: customerEmail, payment_intent_data: { receipt_email: customerEmail } }
       : {}),
-    success_url: `${origin}/kasa/zlozone-zamowienie/${orderId}?success=true&session_id={CHECKOUT_SESSION_ID}`,
+    success_url: `${origin}/kasa/zlozone-zamowienie/${orderId}?success=true&session_id={CHECKOUT_SESSION_ID}${token ? `&token=${encodeURIComponent(token)}` : ""}`,
     cancel_url: `${origin}/kasa?canceled=true`,
     metadata: { orderId },
   });

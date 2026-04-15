@@ -7,6 +7,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkBreaks from "remark-breaks";
 import rehypeRaw from "rehype-raw";
+import rehypeSanitize, { defaultSchema } from "rehype-sanitize";
 import { Button } from "@/components/ui/button";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -107,7 +108,7 @@ export default async function BlogDetail({ params }: Props) {
             <div className="prose prose-lg max-w-none text-gray-700">
               <ReactMarkdown
                 remarkPlugins={[remarkGfm, remarkBreaks]}
-                rehypePlugins={[rehypeRaw]}
+                rehypePlugins={[rehypeRaw, [rehypeSanitize, defaultSchema]]}
                 components={{
                   h1: ({ children }) => (
                     <h1 className="text-4xl font-bold leading-tight mt-6 mb-3">{children}</h1>

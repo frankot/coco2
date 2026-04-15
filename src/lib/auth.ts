@@ -4,6 +4,7 @@ import { NextAuthOptions } from "next-auth";
 import { verifyUserCredentials } from "@/lib/auth-utils";
 import { findUserByEmail } from "@/lib/auth-server";
 import { compare } from "bcrypt";
+import { loginLimiter } from "@/lib/rate-limit";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -60,6 +61,9 @@ export const authOptions: NextAuthOptions = {
           if (!credentials?.email || !credentials?.password) {
             return null;
           }
+
+          const limit = await loginLimiter.limit(credentials.email.toLowerCase());
+          if (!limit.success) return null;
 
           // Use our verifyUserCredentials function that uses server components
           const result = await verifyUserCredentials({

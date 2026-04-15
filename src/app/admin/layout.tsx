@@ -3,6 +3,9 @@ import { LogOut } from "./_components/LogOut";
 import Image from "next/image";
 import { RefreshProvider } from "@/providers/RefreshProvider";
 import type { Metadata } from "next";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Panel administracyjny",
@@ -11,7 +14,11 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+  const session = await getServerSession(authOptions);
+  if (session?.user?.role !== "ADMIN") {
+    redirect("/auth/zaloguj?callbackUrl=/admin");
+  }
   return (
     <>
       <div className="fixed inset-0 flex items-center justify-center -z-10 opacity-10 pointer-events-none">

@@ -7,11 +7,13 @@ import { toast } from "sonner";
 export default function VerifySessionClient({
   sessionId,
   orderId,
+  token,
 }: {
   sessionId?: string;
   orderId: string;
+  token?: string;
 }) {
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
@@ -21,41 +23,41 @@ export default function VerifySessionClient({
     }
 
     let mounted = true;
+    const cleanUrl = token
+      ? `/kasa/zlozone-zamowienie/${orderId}?token=${encodeURIComponent(token)}`
+      : `/kasa/zlozone-zamowienie/${orderId}`;
 
     const verify = async () => {
       try {
         const res = await fetch("/api/payments/stripe/verify-session", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ sessionId, orderId }),
+          body: JSON.stringify({ sessionId, orderId, token }),
         });
         const data = await res.json();
-        console.info("verify-session response", data);
         if (!mounted) return;
         if (data.success && data.paid) {
-          toast.success("Płatność zakończona pomyślnie");
-          // If Stripe provided a receipt URL, open it in a new tab (sandbox/testing)
+          toast.success(
+            data.pending
+              ? "Płatność potwierdzona — księgowanie w toku"
+              : "Płatność zakończona pomyślnie"
+          );
           if (data.receiptUrl) {
             try {
               window.open(data.receiptUrl, "_blank");
-            } catch (e) {
-              console.info("Could not open receipt URL automatically", e);
-            }
+            } catch {}
           }
-          // Replace URL to remove session_id so we don't verify again
-          router.replace(`/kasa/zlozone-zamowienie/${orderId}`);
+          router.replace(cleanUrl);
         } else if (data.success && !data.paid) {
           toast.error("Płatność nie została zrealizowana");
-          // remove session_id to avoid repeated attempts
-          router.replace(`/kasa/zlozone-zamowienie/${orderId}`);
+          router.replace(cleanUrl);
         } else {
           toast.error("Błąd weryfikacji płatności");
-          router.replace(`/kasa/zlozone-zamowienie/${orderId}`);
+          router.replace(cleanUrl);
         }
-      } catch (e: any) {
-        console.error("verify-session error", e);
+      } catch {
         toast.error("Błąd weryfikacji płatności");
-        if (mounted) router.replace(`/kasa/zlozone-zamowienie/${orderId}`);
+        if (mounted) router.replace(cleanUrl);
       } finally {
         if (mounted) setLoading(false);
       }
@@ -66,7 +68,7 @@ export default function VerifySessionClient({
     return () => {
       mounted = false;
     };
-  }, [sessionId, orderId, router]);
+  }, [sessionId, orderId, token, router]);
 
   return null;
 }

@@ -1,6 +1,7 @@
 "use server";
 
 import prisma from "@/db";
+import crypto from "crypto";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { getServerSession } from "next-auth";
@@ -8,6 +9,9 @@ import { authOptions } from "@/lib/auth";
 import { createOrUpdateUser } from "@/lib/auth-utils";
 import { sendOrderPlacedEmail } from "@/lib/order-emails";
 import { generateAndSendInvoice } from "@/lib/invoice";
+import { isValidNip } from "@/lib/validators/nip";
+import { valuationKey, getCached, setCached } from "@/lib/apaczka-cache";
+import { logError } from "@/lib/logger";
 
 function normalizePhonePL(input: string): string | null {
   if (!input) return null;
@@ -39,7 +43,7 @@ const orderFormSchema = z.object({
       id: z.string(),
       name: z.string(),
       priceInCents: z.number(),
-      quantity: z.number().min(1).max(500, "Maksymalna ilość to 500"),
+      quantity: z.number().min(1).max(50, "Maksymalna ilość to 50"),
       imagePath: z.string(),
     })
   ),
@@ -66,8 +70,8 @@ const orderFormSchema = z.object({
   (data) => !data.wantsFaktura || (data.companyName && data.companyName.trim().length > 0),
   { message: "Nazwa firmy jest wymagana", path: ["companyName"] }
 ).refine(
-  (data) => !data.wantsFaktura || (data.nip && /^\d{10}$/.test(data.nip.replace(/[\s-]/g, ""))),
-  { message: "NIP musi zawierać 10 cyfr", path: ["nip"] }
+  (data) => !data.wantsFaktura || (data.nip != null && isValidNip(data.nip)),
+  { message: "Nieprawidłowy numer NIP", path: ["nip"] }
 );
 
 type OrderFormData = z.infer<typeof orderFormSchema>;
@@ -76,6 +80,11 @@ export async function createOrder(formData: OrderFormData) {
   try {
     // Validate form data
     const validatedData = orderFormSchema.parse(formData);
+
+    const totalItems = validatedData.cartItems.reduce((s, i) => s + i.quantity, 0);
+    if (totalItems > 200) {
+      return { success: false, error: "Maksymalna łączna liczba sztuk w koszyku to 200" };
+    }
 
     // COD only for HURT users
     if (validatedData.paymentMethod === "COD") {
@@ -198,6 +207,15 @@ export async function createOrder(formData: OrderFormData) {
       const receiverCity = validatedData.sameAddress ? validatedData.city : (validatedData.shippingCity || validatedData.city);
       const receiverPostalCode = validatedData.sameAddress ? validatedData.postalCode : (validatedData.shippingPostalCode || validatedData.postalCode);
 
+      const cacheKey = valuationKey({
+        serviceId: String(validatedData.shippingMethodId),
+        receiverPostal: receiverPostalCode,
+        items: validatedData.cartItems.map((i) => ({ id: i.id, quantity: i.quantity })),
+      });
+      const cached = getCached(cacheKey);
+      if (cached !== null) {
+        shippingCostInCents = cached;
+      } else {
       const Apaczka = (await import("@/lib/apaczka")).default;
       const order = {
         service_id: Number(validatedData.shippingMethodId) || 0,
@@ -264,8 +282,10 @@ export async function createOrder(formData: OrderFormData) {
           }
         }
       }
+      setCached(cacheKey, shippingCostInCents);
+      }
     } catch (e) {
-      console.error("Apaczka valuation failed, using fallback shipping cost:", e);
+      logError("kasa.apaczka.valuation", e);
     }
 
     // Validate and apply discount code
@@ -352,6 +372,10 @@ export async function createOrder(formData: OrderFormData) {
       }
     }
 
+    // One-time order access token (for guest verify-session + success page)
+    const accessTokenRaw = crypto.randomBytes(24).toString("hex");
+    const accessTokenHash = crypto.createHash("sha256").update(accessTokenRaw).digest("hex");
+
     // Atomic transaction: address + order + orderItems + payment
     let orderId: string;
     try {
@@ -416,39 +440,56 @@ export async function createOrder(formData: OrderFormData) {
           shippingAddressId = shippingAddress.id;
         }
 
-        // 3. Create order with nested orderItems
-        const order = await tx.order.create({
-          data: {
-            userId: verifiedUserId,
-            status: validatedData.paymentMethod === "COD" ? "PAID" : "PENDING",
-            paidAt: validatedData.paymentMethod === "COD" ? new Date() : undefined,
-            paymentMethod: validatedData.paymentMethod,
-            pricePaidInCents: totalPriceInCents,
-            subtotalInCents: subtotalInCents,
-            shippingCostInCents: shippingCostInCents,
-            billingAddressId: billingAddress.id,
-            shippingAddressId: shippingAddressId,
-            wantsFaktura: validatedData.wantsFaktura,
-            companyName: validatedData.wantsFaktura ? validatedData.companyName?.trim() : undefined,
-            nip: validatedData.wantsFaktura ? validatedData.nip?.replace(/[\s-]/g, "") : undefined,
-            discountCodeId: verifiedDiscountCodeId || undefined,
-            discountCodeValue: verifiedDiscountCodeValue || undefined,
-            discountAmountInCents,
-            shippingServiceId: finalServiceId,
-            apaczkaPointId: validatedData.apaczkaPointId?.trim() || undefined,
-            apaczkaPointSupplier: validatedData.apaczkaPointSupplier
-              ? validatedData.apaczkaPointSupplier.trim().toUpperCase()
-              : undefined,
-            orderItems: {
-              create: validatedData.cartItems.map((item) => ({
-                productId: item.id,
-                quantity: item.quantity,
-                pricePerItemInCents: productMap.get(item.id)!.priceInCents,
-              })),
-            },
+        // 3. Create order with nested orderItems — retry on 8-char id collision
+        const orderData = {
+          userId: verifiedUserId,
+          status: (validatedData.paymentMethod === "COD" ? "PAID" : "PENDING") as "PAID" | "PENDING",
+          paidAt: validatedData.paymentMethod === "COD" ? new Date() : undefined,
+          paymentMethod: validatedData.paymentMethod,
+          pricePaidInCents: totalPriceInCents,
+          subtotalInCents: subtotalInCents,
+          shippingCostInCents: shippingCostInCents,
+          billingAddressId: billingAddress.id,
+          shippingAddressId: shippingAddressId,
+          wantsFaktura: validatedData.wantsFaktura,
+          companyName: validatedData.wantsFaktura ? validatedData.companyName?.trim() : undefined,
+          nip: validatedData.wantsFaktura ? validatedData.nip?.replace(/[\s-]/g, "") : undefined,
+          discountCodeId: verifiedDiscountCodeId || undefined,
+          discountCodeValue: verifiedDiscountCodeValue || undefined,
+          discountAmountInCents,
+          shippingServiceId: finalServiceId,
+          apaczkaPointId: validatedData.apaczkaPointId?.trim() || undefined,
+          apaczkaPointSupplier: validatedData.apaczkaPointSupplier
+            ? validatedData.apaczkaPointSupplier.trim().toUpperCase()
+            : undefined,
+          accessTokenHash,
+          orderItems: {
+            create: validatedData.cartItems.map((item) => ({
+              productId: item.id,
+              quantity: item.quantity,
+              pricePerItemInCents: productMap.get(item.id)!.priceInCents,
+            })),
           },
-          include: { orderItems: true },
-        });
+        };
+
+        const MAX_ORDER_ID_RETRIES = 5;
+        let order: any;
+        for (let attempt = 0; attempt < MAX_ORDER_ID_RETRIES; attempt++) {
+          try {
+            order = await tx.order.create({
+              data: orderData,
+              include: { orderItems: true },
+            });
+            break;
+          } catch (e: any) {
+            const target = e?.meta?.target;
+            const isIdConflict =
+              e?.code === "P2002" &&
+              (Array.isArray(target) ? target.includes("id") : target === "id" || target === "Order_pkey");
+            if (isIdConflict && attempt < MAX_ORDER_ID_RETRIES - 1) continue;
+            throw e;
+          }
+        }
 
         // 4. Create payment record
         await tx.payment.create({
@@ -475,7 +516,7 @@ export async function createOrder(formData: OrderFormData) {
 
       orderId = result.id;
     } catch (error) {
-      console.error("Failed to create order:", error);
+      logError("kasa.createOrder.tx", error);
       return { success: false, error: "Nie udało się utworzyć zamówienia" };
     }
 
@@ -508,18 +549,19 @@ export async function createOrder(formData: OrderFormData) {
           apaczkaTrackingUrl: orderForEmail.apaczkaTrackingUrl,
           apaczkaWaybillNumber: orderForEmail.apaczkaWaybillNumber,
           shippingServiceName: orderForEmail.shippingServiceName,
+          accessToken: accessTokenRaw,
           user: orderForEmail.user,
           orderItems: orderForEmail.orderItems,
         });
       }
     } catch (e) {
-      console.error("Failed to send order confirmation email", e);
+      logError("kasa.orderEmail", e, { orderId });
     }
 
     // Invoice generation for COD (already PAID at creation)
     if (validatedData.paymentMethod === "COD") {
       generateAndSendInvoice(orderId).catch((e) => {
-        console.error("[WFIRMA] Invoice generation failed for COD order", orderId, e);
+        logError("kasa.codInvoice", e, { orderId });
       });
     }
 
@@ -532,13 +574,13 @@ export async function createOrder(formData: OrderFormData) {
           update: {},
         });
       } catch (e) {
-        console.error("Failed to save newsletter subscription", e);
+        logError("kasa.newsletterSubscribe", e);
       }
     }
 
-    return { success: true, orderId };
+    return { success: true, orderId, accessToken: accessTokenRaw };
   } catch (error) {
-    console.error("Failed to create order:", error);
+    logError("kasa.createOrder", error);
     return { success: false, error: "Nie udało się utworzyć zamówienia" };
   }
 }

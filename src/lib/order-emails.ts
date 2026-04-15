@@ -26,6 +26,7 @@ type EmailOrder = {
   apaczkaTrackingUrl?: string | null;
   apaczkaWaybillNumber?: string | null;
   shippingServiceName?: string | null;
+  accessToken?: string | null;
   user: EmailOrderUser;
   orderItems: EmailOrderItem[];
 };
@@ -123,7 +124,8 @@ export async function sendOrderPlacedEmail(order: EmailOrder) {
   if (!order.user?.email) return false;
 
   const siteUrl = getOrigin().replace(/\/$/, "");
-  const orderUrl = `${siteUrl}/kasa/zlozone-zamowienie?orderId=${order.id}&payment=${order.paymentMethod}`;
+  const tokenParam = order.accessToken ? `&token=${encodeURIComponent(order.accessToken)}` : "";
+  const orderUrl = `${siteUrl}/kasa/zlozone-zamowienie/${order.id}?payment=${order.paymentMethod}${tokenParam}`;
   const customerName = escapeHtml(getCustomerName(order.user));
 
   const body = `

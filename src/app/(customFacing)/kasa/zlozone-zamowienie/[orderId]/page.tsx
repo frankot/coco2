@@ -5,15 +5,20 @@ import { Card } from "@/components/ui/card";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import VerifySessionClient from "../verifyClient";
+import crypto from "crypto";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { notFound } from "next/navigation";
 
 export default async function OrderConfirmationPage({
   params,
   searchParams,
 }: {
   params: Promise<{ orderId: string }>;
-  searchParams: Promise<{ success?: string; session_id?: string }>;
+  searchParams: Promise<{ success?: string; session_id?: string; token?: string }>;
 }) {
   const { orderId } = await params;
+  const search = await searchParams;
   const order = await prisma.order.findUnique({
     where: { id: orderId },
     include: {
@@ -44,11 +49,21 @@ export default async function OrderConfirmationPage({
     );
   }
 
+  // Authorize: signed-in owner OR matching one-time token
+  const auth = await getServerSession(authOptions);
+  const isOwner = auth?.user?.id && auth.user.id === order.userId;
+  let tokenOk = false;
+  if (!isOwner && search?.token && order.accessTokenHash) {
+    const provided = crypto.createHash("sha256").update(search.token).digest("hex");
+    tokenOk = provided === order.accessTokenHash;
+  }
+  if (!isOwner && !tokenOk) notFound();
+
   const isStripePayment = order.paymentMethod === "STRIPE";
   const payment = order.payments[0];
   const isPaymentCompleted = payment?.status === "COMPLETED";
-  const search = await searchParams;
   const sessionId = search?.session_id;
+  const verifyToken = search?.token;
 
   // Status Labels PL
   const statusLabels: Record<typeof order.status, string> = {
@@ -82,7 +97,9 @@ export default async function OrderConfirmationPage({
         </div>
 
         <div className="space-y-6">
-          {sessionId ? <VerifySessionClient sessionId={sessionId} orderId={orderId} /> : null}
+          {sessionId ? (
+            <VerifySessionClient sessionId={sessionId} orderId={orderId} token={verifyToken} />
+          ) : null}
           <div>
             <h2 className="font-semibold mb-2">Numer zamówienia</h2>
             <p className="font-mono">{order.id}</p>

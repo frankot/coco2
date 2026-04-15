@@ -709,6 +709,7 @@ export default function CheckoutPage() {
                 quantity: item.quantity,
               })),
               email: formData.email,
+              token: result.accessToken,
             }),
           });
 
@@ -732,7 +733,7 @@ export default function CheckoutPage() {
 
           // Redirect to order confirmation page
           router.push(
-            `/kasa/zlozone-zamowienie?orderId=${result.orderId}&payment=${formData.paymentMethod}`
+            `/kasa/zlozone-zamowienie/${result.orderId}?payment=${formData.paymentMethod}${result.accessToken ? `&token=${encodeURIComponent(result.accessToken)}` : ""}`
           );
         }
       } else {

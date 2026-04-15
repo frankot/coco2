@@ -2,7 +2,11 @@ import { stripe } from "@/lib/stripe";
 import { headers } from "next/headers";
 import { createRouteHandler, ApiError } from "@/lib/api";
 import prisma from "@/db";
+import mailer from "@/lib/mailer";
 import { generateAndSendInvoice } from "@/lib/invoice";
+import { renderEmailLayout } from "@/lib/email-layout";
+import { logError } from "@/lib/logger";
+
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
 export const POST = createRouteHandler(async ({ req }) => {
@@ -35,8 +39,34 @@ export const POST = createRouteHandler(async ({ req }) => {
 
     // Generate wFirma invoice on payment confirmation
     generateAndSendInvoice(orderId).catch((e) => {
-      console.error("[WFIRMA] Invoice generation failed for Stripe order", orderId, e);
+      logError("stripe.webhook.generateInvoice", e, { orderId });
     });
+
+    // Send confirmation email (moved from verify-session so we have a single writer)
+    try {
+      const order = await prisma.order.findUnique({
+        where: { id: orderId },
+        include: { user: true },
+      });
+      if (order?.user?.email) {
+        const emailBody = `
+          <p style="margin:0 0 14px;font-size:14px;color:#0d160f;">Cześć ${order.user.firstName ?? ""},</p>
+          <p style="margin:0;font-size:14px;color:#0d160f;">Dziękujemy za zamówienie <strong style="font-family:ui-monospace,Menlo,Monaco,monospace;">${order.id}</strong>. Płatność została zaksięgowana.</p>
+        `;
+        const html = renderEmailLayout({
+          title: "Płatność potwierdzona",
+          intro: "Twoja płatność została pomyślnie zaksięgowana.",
+          body: emailBody,
+        });
+        await mailer.sendMail({
+          to: order.user.email,
+          subject: `Potwierdzenie płatności zamówienia ${order.id}`,
+          html,
+        });
+      }
+    } catch (e) {
+      logError("stripe.webhook.confirmationEmail", e, { orderId });
+    }
   }
   return { received: true };
 });

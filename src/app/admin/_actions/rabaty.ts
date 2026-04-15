@@ -16,18 +16,23 @@ type FormState = {
   success?: boolean;
 };
 
-const discountCodeSchema = z.object({
-  code: z
-    .string()
-    .min(3, "Kod musi mieć co najmniej 3 znaki")
-    .max(20, "Kod może mieć maksymalnie 20 znaków")
-    .regex(/^[A-Za-z0-9-]+$/, "Kod może zawierać tylko litery, cyfry i myślniki"),
-  discountType: z.enum(["PERCENTAGE", "FIXED_AMOUNT"], {
-    errorMap: () => ({ message: "Nieprawidłowy typ rabatu" }),
-  }),
-  discountAmount: z.coerce.number().positive("Wartość musi być większa od 0"),
-  isSingleUse: z.string().optional(),
-});
+const discountCodeSchema = z
+  .object({
+    code: z
+      .string()
+      .min(3, "Kod musi mieć co najmniej 3 znaki")
+      .max(20, "Kod może mieć maksymalnie 20 znaków")
+      .regex(/^[A-Za-z0-9-]+$/, "Kod może zawierać tylko litery, cyfry i myślniki"),
+    discountType: z.enum(["PERCENTAGE", "FIXED_AMOUNT"], {
+      errorMap: () => ({ message: "Nieprawidłowy typ rabatu" }),
+    }),
+    discountAmount: z.coerce.number().positive("Wartość musi być większa od 0"),
+    isSingleUse: z.string().optional(),
+  })
+  .refine(
+    (data) => data.discountType !== "PERCENTAGE" || data.discountAmount <= 100,
+    { message: "Procent nie może przekraczać 100%", path: ["discountAmount"] }
+  );
 
 export async function addDiscountCode(
   prevState: FormState,
