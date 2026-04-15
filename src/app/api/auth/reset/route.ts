@@ -1,7 +1,7 @@
 import { createRouteHandler, readJson, ApiError } from "@/lib/api";
 import prisma from "@/db";
 import crypto from "crypto";
-import { hashPassword } from "@/lib/auth-server";
+import { hashPassword, verifyPassword } from "@/lib/auth-server";
 import { resetLimiter, getClientIp } from "@/lib/rate-limit";
 
 type Body = { token: string; password: string };
@@ -19,6 +19,17 @@ export const POST = createRouteHandler(async ({ req }) => {
   const record = await prisma.passwordResetToken.findUnique({ where: { tokenHash } });
   if (!record || record.usedAt || record.expiresAt < new Date()) {
     throw new ApiError("Invalid or expired token", 400);
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { id: record.userId },
+    select: { password: true },
+  });
+  if (!user) throw new ApiError("Invalid or expired token", 400);
+
+  const sameAsOld = await verifyPassword(password, user.password);
+  if (sameAsOld) {
+    throw new ApiError("Nowe hasło musi być inne niż dotychczasowe", 400);
   }
 
   const hashed = await hashPassword(password);
