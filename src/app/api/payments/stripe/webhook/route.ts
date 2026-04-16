@@ -29,12 +29,26 @@ export const POST = createRouteHandler(async ({ req }) => {
     if (payment.status === "COMPLETED") {
       return { received: true, skipped: true };
     }
+    const order = await prisma.order.findUnique({
+      where: { id: orderId },
+      select: { discountCodeId: true },
+    });
+
     await prisma.$transaction([
       prisma.order.update({ where: { id: orderId }, data: { status: "PAID", paidAt: new Date() } }),
       prisma.payment.update({
         where: { id: payment.id },
         data: { status: "COMPLETED", transactionId: session.payment_intent },
       }),
+      // Increment discount usage on successful payment (not at order creation)
+      ...(order?.discountCodeId
+        ? [
+            prisma.discountCode.update({
+              where: { id: order.discountCodeId },
+              data: { usedCount: { increment: 1 } },
+            }),
+          ]
+        : []),
     ]);
 
     // Generate wFirma invoice on payment confirmation
@@ -44,14 +58,14 @@ export const POST = createRouteHandler(async ({ req }) => {
 
     // Send confirmation email (moved from verify-session so we have a single writer)
     try {
-      const order = await prisma.order.findUnique({
+      const emailOrder = await prisma.order.findUnique({
         where: { id: orderId },
         include: { user: true },
       });
-      if (order?.user?.email) {
+      if (emailOrder?.user?.email) {
         const emailBody = `
-          <p style="margin:0 0 14px;font-size:14px;color:#0d160f;">Cześć ${order.user.firstName ?? ""},</p>
-          <p style="margin:0;font-size:14px;color:#0d160f;">Dziękujemy za zamówienie <strong style="font-family:ui-monospace,Menlo,Monaco,monospace;">${order.id}</strong>. Płatność została zaksięgowana.</p>
+          <p style="margin:0 0 14px;font-size:14px;color:#0d160f;">Cześć ${emailOrder.user.firstName ?? ""},</p>
+          <p style="margin:0;font-size:14px;color:#0d160f;">Dziękujemy za zamówienie <strong style="font-family:ui-monospace,Menlo,Monaco,monospace;">${emailOrder.id}</strong>. Płatność została zaksięgowana.</p>
         `;
         const html = renderEmailLayout({
           title: "Płatność potwierdzona",
@@ -59,8 +73,8 @@ export const POST = createRouteHandler(async ({ req }) => {
           body: emailBody,
         });
         await mailer.sendMail({
-          to: order.user.email,
-          subject: `Potwierdzenie płatności zamówienia ${order.id}`,
+          to: emailOrder.user.email,
+          subject: `Potwierdzenie płatności zamówienia ${emailOrder.id}`,
           html,
         });
       }

@@ -17,13 +17,13 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         try {
-          // Check if credentials exist
           if (!credentials?.username || !credentials?.password) {
             return null;
           }
 
-          // Verify admin credentials using env vars
-          // ADMIN_PASSWORD should be stored as a bcrypt hash in the env var
+          const limit = await loginLimiter.limit(credentials.username.toLowerCase());
+          if (!limit.success) return null;
+
           const isValidUsername = credentials.username === process.env.ADMIN_USERNAME;
           const adminPasswordHash = process.env.ADMIN_PASSWORD;
           if (!isValidUsername || !adminPasswordHash) {

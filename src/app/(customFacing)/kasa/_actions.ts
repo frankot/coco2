@@ -47,7 +47,6 @@ const orderFormSchema = z.object({
       imagePath: z.string(),
     })
   ),
-  userId: z.string().optional(),
   apaczkaPointId: z.string().optional(),
   apaczkaPointSupplier: z.string().optional(),
   newsletterConsent: z.boolean().optional(),
@@ -132,7 +131,7 @@ export async function createOrder(formData: OrderFormData) {
 
     // Resolve custom prices for authenticated user (B2B/HURT)
     const earlySession = await getServerSession(authOptions);
-    const earlyUserId = validatedData.userId || earlySession?.user?.id;
+    const earlyUserId = earlySession?.user?.id;
     if (earlyUserId) {
       const { getCustomPriceMap } = await import("@/lib/resolve-prices");
       const customPriceMap = await getCustomPriceMap(earlyUserId);
@@ -318,16 +317,10 @@ export async function createOrder(formData: OrderFormData) {
 
     const totalPriceInCents = subtotalInCents - discountAmountInCents + shippingCostInCents;
 
-    // Handle user - first check if a userId was provided or if there's a logged in user
-    let userId = validatedData.userId;
+    // Derive userId from session only — never trust client input
+    let userId = earlySession?.user?.id;
 
-    // If no userId was provided, try to get it from the session
-    if (!userId) {
-      const session = await getServerSession(authOptions);
-      userId = session?.user?.id;
-    }
-
-    // If we still don't have a userId, use createOrUpdateUser function
+    // Guest checkout: create or find user by email
     if (!userId) {
       const userResult = await createOrUpdateUser({
         email: validatedData.email,
@@ -503,8 +496,9 @@ export async function createOrder(formData: OrderFormData) {
           },
         });
 
-        // 5. Atomically increment discount code usage
-        if (verifiedDiscountCodeId) {
+        // 5. Increment discount usage only for COD (already PAID at creation)
+        // For STRIPE, increment happens in the webhook on checkout.session.completed
+        if (verifiedDiscountCodeId && validatedData.paymentMethod === "COD") {
           await tx.discountCode.update({
             where: { id: verifiedDiscountCodeId },
             data: { usedCount: { increment: 1 } },

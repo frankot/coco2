@@ -2,6 +2,7 @@ import { createRouteHandler, ApiError } from "@/lib/api";
 import Apaczka from "@/lib/apaczka";
 import prisma from "@/db";
 import { z } from "zod";
+import { apaczkaLimiter, getClientIp } from "@/lib/rate-limit";
 
 const valuationSchema = z.object({
   cartItems: z.array(
@@ -32,6 +33,10 @@ function getSenderAddress() {
 }
 
 export const POST = createRouteHandler(async ({ req }) => {
+  const ip = getClientIp(req);
+  const check = await apaczkaLimiter.limit(ip);
+  if (!check.success) throw new ApiError("Za dużo prób, spróbuj później", 429);
+
   const body = await req.json();
   const data = valuationSchema.parse(body);
 
