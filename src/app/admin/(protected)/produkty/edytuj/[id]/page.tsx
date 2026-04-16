@@ -1,4 +1,3 @@
-import PageHeader from "../../../../_components/pageHeader";
 import ProductForm from "../../_components/ProductForm";
 import prisma from "@/db";
 import { notFound } from "next/navigation";
@@ -14,10 +13,5 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
     notFound();
   }
 
-  return (
-    <>
-      <PageHeader>Edytuj produkt</PageHeader>
-      <ProductForm product={product} />
-    </>
-  );
+  return <ProductForm product={product} />;
 }
