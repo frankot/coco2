@@ -47,6 +47,10 @@ export async function generateAndSendInvoice(orderId: string): Promise<void> {
     throw new Error(`Order ${orderId} not found`);
   }
 
+  if (order.isB2BManual) {
+    return;
+  }
+
   if (order.wfirmaInvoiceId) {
     return;
   }

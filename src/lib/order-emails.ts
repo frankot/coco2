@@ -18,7 +18,7 @@ type EmailOrderUser = {
 
 type EmailOrder = {
   id: string;
-  paymentMethod: "BANK_TRANSFER" | "COD" | "STRIPE";
+  paymentMethod: "BANK_TRANSFER" | "COD" | "STRIPE" | "INVOICE_DEFERRED";
   pricePaidInCents: number;
   subtotalInCents: number;
   shippingCostInCents: number;
@@ -27,6 +27,7 @@ type EmailOrder = {
   apaczkaWaybillNumber?: string | null;
   shippingServiceName?: string | null;
   accessToken?: string | null;
+  isB2BManual?: boolean | null;
   user: EmailOrderUser;
   orderItems: EmailOrderItem[];
 };
@@ -55,6 +56,7 @@ function escapeHtml(value: string) {
 function paymentLabel(method: EmailOrder["paymentMethod"]) {
   if (method === "COD") return "Pobranie";
   if (method === "STRIPE") return "Płatność online";
+  if (method === "INVOICE_DEFERRED") return "Faktura z odroczonym terminem płatności";
   return "Przelew bankowy";
 }
 
@@ -93,6 +95,9 @@ function renderOrderItems(items: EmailOrderItem[]) {
 
 function renderSummary(order: EmailOrder) {
   const discount = Math.max(order.discountAmountInCents ?? 0, 0);
+  const shippingLine = order.isB2BManual
+    ? `<span>Dostawa </span><strong>Dostawa firmowa</strong>`
+    : `<span>Dostawa </span><strong>${formatCurrency(order.shippingCostInCents)}</strong>`;
 
   return `
     <div style="background:#eef9f9;border:1px solid #76c3c5;border-radius:10px;padding:14px;margin:18px 0;">
@@ -101,8 +106,7 @@ function renderSummary(order: EmailOrder) {
         <strong>${formatCurrency(order.subtotalInCents)}</strong>
       </div>
       <div style="display:flex;justify-content:space-between;font-size:14px;color:#0d160f;margin-bottom:8px;">
-        <span>Dostawa </span>
-        <strong>${formatCurrency(order.shippingCostInCents)}</strong>
+        ${shippingLine}
       </div>
       ${
         discount > 0
@@ -177,6 +181,22 @@ export async function sendOrderProcessingEmail(order: EmailOrder) {
 
 export async function sendOrderShippedEmail(order: EmailOrder) {
   if (!order.user?.email) return false;
+
+  if (order.isB2BManual) {
+    const body = `
+      <p style="margin:0 0 14px;font-size:14px;color:#0d160f;">Twoje zamówienie <strong style="font-family:ui-monospace,Menlo,Monaco,monospace;">${order.id}</strong> zostało wysłane.</p>
+      <p style="margin:0;font-size:14px;color:#2b6a4b;">Dostawa realizowana przez naszą firmę. Szczegóły dostawy ustalimy bezpośrednio.</p>
+    `;
+    return mailer.sendMail({
+      to: order.user.email,
+      subject: `Zamówienie ${order.id} zostało wysłane`,
+      html: renderLayout({
+        title: "Zamówienie wysłane",
+        intro: "Zamówienie zostało przekazane do dostawy.",
+        body,
+      }),
+    });
+  }
 
   const trackingUrl = order.apaczkaTrackingUrl || `${getOrigin().replace(/\/$/, "")}/uzytkownik`;
 

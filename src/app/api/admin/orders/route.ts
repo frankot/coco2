@@ -5,7 +5,13 @@ import type { Prisma } from "@/app/generated/prisma/client";
 
 const DEFAULT_LIMIT = 50;
 
-const SORT_FIELDS = ["createdAt", "paidAt", "status", "totalAmount", "totalItems"] as const;
+const SORT_FIELDS = [
+  "createdAt",
+  "paidAt",
+  "status",
+  "totalAmount",
+  "totalItems",
+] as const;
 type SortField = (typeof SORT_FIELDS)[number];
 const SORT_DIRS = ["asc", "desc"] as const;
 type SortDir = (typeof SORT_DIRS)[number];
@@ -44,14 +50,27 @@ export const GET = createRouteHandler(
 
     const orderBy = buildOrderBy(sortFieldParam, sortDirParam);
 
+    const showB2B = url.searchParams.get("showB2B") !== "false";
+    const showRegular = url.searchParams.get("showRegular") !== "false";
+
+    let where: Prisma.OrderWhereInput | undefined;
+    if (!showB2B && !showRegular) {
+      return { data: [], total: 0, page, totalPages: 0 };
+    } else if (showB2B && !showRegular) {
+      where = { isB2BManual: true };
+    } else if (!showB2B && showRegular) {
+      where = { isB2BManual: false };
+    }
+
     const [data, total] = await Promise.all([
       prisma.order.findMany({
+        where,
         select: ORDER_LIST_SELECT,
         orderBy,
         take: limit,
         skip: (page - 1) * limit,
       }),
-      prisma.order.count(),
+      prisma.order.count({ where }),
     ]);
 
     return { data, total, page, totalPages: Math.ceil(total / limit) };

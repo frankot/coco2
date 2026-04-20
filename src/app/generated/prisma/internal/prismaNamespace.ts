@@ -1382,6 +1382,7 @@ export const OrderScalarFieldEnum = {
   companyName: 'companyName',
   nip: 'nip',
   paidAt: 'paidAt',
+  isB2BManual: 'isB2BManual',
   accessTokenHash: 'accessTokenHash',
   accessTokenUsedAt: 'accessTokenUsedAt',
   createdAt: 'createdAt',

@@ -84,7 +84,7 @@ export const PATCH = createRouteHandler(
 
     const movedToProcessing = previousStatus !== "PROCESSING" && body.status === "PROCESSING";
 
-    if (movedToProcessing && !updatedOrder.apaczkaOrderId) {
+    if (movedToProcessing && !updatedOrder.apaczkaOrderId && !updatedOrder.isB2BManual) {
       try {
         await confirmOrderInApaczka(orderId);
         // Re-fetch to include Apaczka data in response
@@ -111,6 +111,7 @@ export const PATCH = createRouteHandler(
         apaczkaTrackingUrl: updatedOrder.apaczkaTrackingUrl,
         apaczkaWaybillNumber: updatedOrder.apaczkaWaybillNumber,
         shippingServiceName: updatedOrder.shippingServiceName,
+        isB2BManual: updatedOrder.isB2BManual,
         user: updatedOrder.user,
         orderItems: updatedOrder.orderItems,
       }).catch((error) => {

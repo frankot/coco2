@@ -24,6 +24,7 @@ export const POST = createRouteHandler(
       apaczkaOrderId: null as any,
       status: { in: ["PAID"] } as any,
       shippingServiceId: { not: null } as any,
+      isB2BManual: false,
     };
 
     const orders = await prisma.order.findMany({

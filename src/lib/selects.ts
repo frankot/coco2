@@ -36,6 +36,7 @@ export const ORDER_LIST_SELECT = {
   apaczkaWaybillNumber: true,
   wfirmaInvoiceId: true,
   wfirmaInvoiceNumber: true,
+  isB2BManual: true,
   user: { select: { id: true, email: true, accountType: true } },
   orderItems: {
     select: {

@@ -36,8 +36,8 @@ const orderFormSchema = z.object({
   city: z.string().min(1, "Miasto jest wymagane"),
   postalCode: z.string().min(1, "Kod pocztowy jest wymagany"),
   country: z.string().default("Polska"),
-  paymentMethod: z.enum(["COD", "STRIPE"]),
-  shippingMethodId: z.string().min(1, "Wybierz metodę dostawy"),
+  paymentMethod: z.enum(["COD", "STRIPE", "INVOICE_DEFERRED"]),
+  shippingMethodId: z.string().optional(),
   cartItems: z.array(
     z.object({
       id: z.string(),
@@ -85,15 +85,25 @@ export async function createOrder(formData: OrderFormData) {
       return { success: false, error: "Maksymalna łączna liczba sztuk w koszyku to 200" };
     }
 
-    // COD only for HURT users
+    // HURT-only payment gating
+    const gateSession = await getServerSession(authOptions);
+    const isHurt = gateSession?.user?.accountType === "HURT";
     if (validatedData.paymentMethod === "COD") {
-      const session = await getServerSession(authOptions);
-      if (!session?.user?.accountType || session.user.accountType !== "HURT") {
+      if (!isHurt) {
         return {
           success: false,
           error: "Płatność za pobraniem dostępna tylko dla klientów hurtowych",
         };
       }
+    }
+    if (validatedData.paymentMethod === "INVOICE_DEFERRED" && !isHurt) {
+      return {
+        success: false,
+        error: "Faktura z odroczonym terminem płatności dostępna tylko dla klientów hurtowych",
+      };
+    }
+    if (!isHurt && !validatedData.shippingMethodId) {
+      return { success: false, error: "Wybierz metodę dostawy" };
     }
 
     // Get product IDs from cart
@@ -171,8 +181,8 @@ export async function createOrder(formData: OrderFormData) {
     }
 
     // Compute shipping cost via Apaczka order_valuation
-    let shippingCostInCents = 1500; // fallback
-    try {
+    let shippingCostInCents = isHurt ? 0 : 1500; // HURT: delivery handled manually; else fallback
+    if (!isHurt) try {
       const products = await prisma.product.findMany({
         where: { id: { in: productIds } },
         select: {
@@ -349,8 +359,8 @@ export async function createOrder(formData: OrderFormData) {
     const verifiedUserId = userId as string;
 
     // Resolve Apaczka D2P service outside transaction (external API call)
-    let finalServiceId = validatedData.shippingMethodId;
-    if (validatedData.apaczkaPointId && validatedData.apaczkaPointSupplier) {
+    let finalServiceId: string | null = isHurt ? null : (validatedData.shippingMethodId ?? null);
+    if (!isHurt && validatedData.apaczkaPointId && validatedData.apaczkaPointSupplier) {
       try {
         const Apaczka = (await import("@/lib/apaczka")).default;
         const correctServiceId = await Apaczka.findD2PService(
@@ -434,27 +444,31 @@ export async function createOrder(formData: OrderFormData) {
         }
 
         // 3. Create order with nested orderItems — retry on 8-char id collision
+        // HURT: PENDING always (admin walks manually). Non-HURT COD: PAID at creation.
+        const startsPaid = !isHurt && validatedData.paymentMethod === "COD";
         const orderData = {
           userId: verifiedUserId,
-          status: (validatedData.paymentMethod === "COD" ? "PAID" : "PENDING") as "PAID" | "PENDING",
-          paidAt: validatedData.paymentMethod === "COD" ? new Date() : undefined,
+          status: (startsPaid ? "PAID" : "PENDING") as "PAID" | "PENDING",
+          paidAt: startsPaid ? new Date() : undefined,
           paymentMethod: validatedData.paymentMethod,
           pricePaidInCents: totalPriceInCents,
           subtotalInCents: subtotalInCents,
           shippingCostInCents: shippingCostInCents,
           billingAddressId: billingAddress.id,
           shippingAddressId: shippingAddressId,
+          isB2BManual: isHurt,
           wantsFaktura: validatedData.wantsFaktura,
           companyName: validatedData.wantsFaktura ? validatedData.companyName?.trim() : undefined,
           nip: validatedData.wantsFaktura ? validatedData.nip?.replace(/[\s-]/g, "") : undefined,
           discountCodeId: verifiedDiscountCodeId || undefined,
           discountCodeValue: verifiedDiscountCodeValue || undefined,
           discountAmountInCents,
-          shippingServiceId: finalServiceId,
-          apaczkaPointId: validatedData.apaczkaPointId?.trim() || undefined,
-          apaczkaPointSupplier: validatedData.apaczkaPointSupplier
-            ? validatedData.apaczkaPointSupplier.trim().toUpperCase()
-            : undefined,
+          shippingServiceId: isHurt ? null : finalServiceId,
+          apaczkaPointId: !isHurt ? validatedData.apaczkaPointId?.trim() || undefined : undefined,
+          apaczkaPointSupplier:
+            !isHurt && validatedData.apaczkaPointSupplier
+              ? validatedData.apaczkaPointSupplier.trim().toUpperCase()
+              : undefined,
           accessTokenHash,
           orderItems: {
             create: validatedData.cartItems.map((item) => ({
@@ -496,9 +510,9 @@ export async function createOrder(formData: OrderFormData) {
           },
         });
 
-        // 5. Increment discount usage only for COD (already PAID at creation)
-        // For STRIPE, increment happens in the webhook on checkout.session.completed
-        if (verifiedDiscountCodeId && validatedData.paymentMethod === "COD") {
+        // 5. Increment discount usage only when order starts PAID (non-HURT COD).
+        // For STRIPE + HURT flows, increment happens later (webhook / admin confirm).
+        if (verifiedDiscountCodeId && startsPaid) {
           await tx.discountCode.update({
             where: { id: verifiedDiscountCodeId },
             data: { usedCount: { increment: 1 } },
@@ -544,6 +558,7 @@ export async function createOrder(formData: OrderFormData) {
           apaczkaWaybillNumber: orderForEmail.apaczkaWaybillNumber,
           shippingServiceName: orderForEmail.shippingServiceName,
           accessToken: accessTokenRaw,
+          isB2BManual: orderForEmail.isB2BManual,
           user: orderForEmail.user,
           orderItems: orderForEmail.orderItems,
         });
@@ -552,8 +567,8 @@ export async function createOrder(formData: OrderFormData) {
       logError("kasa.orderEmail", e, { orderId });
     }
 
-    // Invoice generation for COD (already PAID at creation)
-    if (validatedData.paymentMethod === "COD") {
+    // Invoice generation for COD (already PAID at creation). HURT orders are handled manually.
+    if (!isHurt && validatedData.paymentMethod === "COD") {
       generateAndSendInvoice(orderId).catch((e) => {
         logError("kasa.codInvoice", e, { orderId });
       });

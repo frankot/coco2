@@ -31,7 +31,7 @@ export const POST = createRouteHandler(async ({ req }) => {
     }
     const order = await prisma.order.findUnique({
       where: { id: orderId },
-      select: { discountCodeId: true },
+      select: { discountCodeId: true, isB2BManual: true },
     });
 
     await prisma.$transaction([
@@ -51,10 +51,12 @@ export const POST = createRouteHandler(async ({ req }) => {
         : []),
     ]);
 
-    // Generate wFirma invoice on payment confirmation
-    generateAndSendInvoice(orderId).catch((e) => {
-      logError("stripe.webhook.generateInvoice", e, { orderId });
-    });
+    // Generate wFirma invoice on payment confirmation (skip for B2B manual orders)
+    if (!order?.isB2BManual) {
+      generateAndSendInvoice(orderId).catch((e) => {
+        logError("stripe.webhook.generateInvoice", e, { orderId });
+      });
+    }
 
     // Send confirmation email (moved from verify-session so we have a single writer)
     try {

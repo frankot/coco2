@@ -29,7 +29,22 @@ import { Button } from "@/components/ui/button";
 
 type OrderStatus = "PENDING" | "PAID" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED";
 
-export function getOverrideCopy(target: "PAID" | "PROCESSING" | "SHIPPED" | null) {
+export function getOverrideCopy(
+  target: "PAID" | "PROCESSING" | "SHIPPED" | null,
+  isB2BManual = false
+) {
+  if (isB2BManual) {
+    switch (target) {
+      case "PAID":
+        return "Zamówienie B2B (obsługa ręczna). Zostanie oznaczone jako opłacone, data płatności zostanie ustawiona na teraz. Apaczka i wFirma pozostają bez zmian — obsługa ręczna.";
+      case "PROCESSING":
+        return "Zamówienie B2B (obsługa ręczna). Zostanie oznaczone jako opłacone i rozpoczniemy realizację. NIE zostanie utworzone zlecenie w Apaczce ani faktura wFirma — dostawa i faktura obsługiwane ręcznie. Data płatności zostanie ustawiona na teraz.";
+      case "SHIPPED":
+        return "Zamówienie B2B (obsługa ręczna). Zostanie oznaczone jako opłacone i wysłane. Brak integracji z Apaczką i wFirmą. Data płatności zostanie ustawiona na teraz.";
+      default:
+        return "";
+    }
+  }
   switch (target) {
     case "PAID":
       return "Nie otrzymaliśmy płatności za to zamówienie. Zostanie oznaczone jako opłacone, a data płatności zostanie ustawiona na teraz.";
@@ -48,11 +63,13 @@ export function OrderActionsMenu({
   currentStatus,
   hasApaczkaOrderId,
   wfirmaInvoiceId,
+  isB2BManual = false,
 }: {
   id: string;
   currentStatus: OrderStatus;
   hasApaczkaOrderId: boolean;
   wfirmaInvoiceId: string | null;
+  isB2BManual?: boolean;
 }) {
   const [cancelOpen, setCancelOpen] = useState(false);
   const [overrideTarget, setOverrideTarget] = useState<
@@ -214,13 +231,13 @@ export function OrderActionsMenu({
             </DropdownMenuItem>
           </Link>
           {renderStatusItems()}
-          {hasApaczkaOrderId && (
+          {!isB2BManual && hasApaczkaOrderId && (
             <DropdownMenuItem className="cursor-pointer" onClick={downloadLabel} disabled={labelDownloading}>
               <Download className="mr-2 h-4 w-4" />
               <span>{labelDownloading ? "Pobieranie..." : "Pobierz etykietę"}</span>
             </DropdownMenuItem>
           )}
-          {wfirmaInvoiceId && (
+          {!isB2BManual && wfirmaInvoiceId && (
             <DropdownMenuItem className="cursor-pointer" onClick={downloadInvoice} disabled={invoiceDownloading}>
               <Download className="mr-2 h-4 w-4" />
               <span>{invoiceDownloading ? "Pobieranie..." : "Pobierz fakturę"}</span>
@@ -247,7 +264,7 @@ export function OrderActionsMenu({
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Potwierdź zmianę statusu bez płatności</DialogTitle>
-            <DialogDescription>{getOverrideCopy(overrideTarget)}</DialogDescription>
+            <DialogDescription>{getOverrideCopy(overrideTarget, isB2BManual)}</DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="ghost" onClick={() => setOverrideTarget(null)}>

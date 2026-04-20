@@ -34,7 +34,8 @@ export type OrderStatus = (typeof OrderStatus)[keyof typeof OrderStatus]
 export const PaymentMethod = {
   BANK_TRANSFER: 'BANK_TRANSFER',
   COD: 'COD',
-  STRIPE: 'STRIPE'
+  STRIPE: 'STRIPE',
+  INVOICE_DEFERRED: 'INVOICE_DEFERRED'
 } as const
 
 export type PaymentMethod = (typeof PaymentMethod)[keyof typeof PaymentMethod]

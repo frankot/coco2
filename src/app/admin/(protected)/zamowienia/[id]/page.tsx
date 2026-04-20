@@ -102,6 +102,7 @@ type Order = {
   wfirmaInvoiceId?: string | null;
   wfirmaInvoiceNumber?: string | null;
   wfirmaInvoiceSentAt?: string | null;
+  isB2BManual?: boolean;
   // Faktura data
   wantsFaktura?: boolean;
   companyName?: string | null;
@@ -289,7 +290,7 @@ export default function OrderDetailsPage() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Potwierdź zmianę statusu bez płatności</DialogTitle>
-            <DialogDescription>{getOverrideCopy(overrideTarget)}</DialogDescription>
+            <DialogDescription>{getOverrideCopy(overrideTarget, !!order?.isB2BManual)}</DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="ghost" onClick={() => setOverrideTarget(null)}>
@@ -357,7 +358,11 @@ export default function OrderDetailsPage() {
               ) : (
                 <Package className="mr-2 h-4 w-4" />
               )}
-              {statusUpdating ? "Wysyłanie do Apaczki..." : "Rozpocznij realizację"}
+              {statusUpdating
+                ? order.isB2BManual
+                  ? "Aktualizowanie..."
+                  : "Wysyłanie do Apaczki..."
+                : "Rozpocznij realizację"}
             </Button>
           )}
           {order.status === "PROCESSING" && (
@@ -413,10 +418,13 @@ export default function OrderDetailsPage() {
               <div className="text-sm font-medium">{order.id}</div>
 
               <div className="text-sm text-muted-foreground">Status:</div>
-              <div>
+              <div className="flex flex-wrap items-center gap-1">
                 <Badge variant={getStatusBadgeVariant(order.status)}>
                   {getStatusDisplayName(order.status, order.paymentMethod)}
                 </Badge>
+                {order.isB2BManual && (
+                  <Badge variant="outline">B2B ręczne</Badge>
+                )}
               </div>
 
               <div className="text-sm text-muted-foreground">Data utworzenia:</div>
@@ -458,7 +466,7 @@ export default function OrderDetailsPage() {
 
 
             <div className="flex flex-wrap gap-2">
-              {order.wfirmaInvoiceId && (
+              {!order.isB2BManual && order.wfirmaInvoiceId && (
                 <Button
                   variant="outline"
                   size="sm"
@@ -469,7 +477,7 @@ export default function OrderDetailsPage() {
                   {invoiceDownloading ? "Pobieranie..." : "Pobierz fakturę"}
                 </Button>
               )}
-              {order.apaczkaOrderId && (
+              {!order.isB2BManual && order.apaczkaOrderId && (
                 <Button
                   variant="outline"
                   size="sm"

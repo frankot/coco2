@@ -27,6 +27,7 @@ enum PaymentMethod {
   BANK_TRANSFER
   COD
   STRIPE
+  INVOICE_DEFERRED
 }
 
 enum PaymentStatus {
@@ -168,6 +169,8 @@ model Order {
   companyName         String?
   nip                 String?
   paidAt              DateTime?
+  // B2B manual handling flag — disables Apaczka/wFirma automation
+  isB2BManual         Boolean   @default(false)
   // One-time access token for guest order verification (success page + verify-session)
   accessTokenHash     String?
   accessTokenUsedAt   DateTime?

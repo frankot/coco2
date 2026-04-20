@@ -26,10 +26,11 @@ type CartItem = {
 };
 
 // Payment method type to match schema
-type PaymentMethod = "COD" | "STRIPE";
+type PaymentMethod = "COD" | "STRIPE" | "INVOICE_DEFERRED";
 
 export default function CheckoutPage() {
   const { data: session, status } = useSession();
+  const isHurt = session?.user?.accountType === "HURT";
   const router = useRouter();
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isClient, setIsClient] = useState(false);
@@ -143,6 +144,7 @@ export default function CheckoutPage() {
 
   // Load Apaczka map widget for pickup points
   useEffect(() => {
+    if (isHurt) return;
     // Only needed if user can choose a door-to-point method
     const hasDoorToPoint = shippingMethods.some((s) => s.door_to_point === "1");
     if (!hasDoorToPoint) return;
@@ -323,6 +325,10 @@ export default function CheckoutPage() {
 
   // Fetch shipping methods
   useEffect(() => {
+    if (isHurt) {
+      setIsLoadingShipping(false);
+      return;
+    }
     const fetchShippingMethods = async () => {
       setIsLoadingShipping(true);
       setShippingError(null);
@@ -360,13 +366,14 @@ export default function CheckoutPage() {
     };
 
     fetchShippingMethods();
-  }, []);
+  }, [isHurt]);
 
   // Fetch shipping valuation from Apaczka when cart/address change
   const valuationPostalCode = sameAddress ? formData.postalCode : (formData.shippingPostalCode || formData.postalCode);
   const valuationCity = sameAddress ? formData.city : (formData.shippingCity || formData.city);
 
   useEffect(() => {
+    if (isHurt) return;
     if (cartItems.length === 0 || !valuationPostalCode || !valuationCity) return;
     if (!/^\d{2}-\d{3}$/.test(valuationPostalCode)) return;
 
@@ -607,12 +614,14 @@ export default function CheckoutPage() {
       return;
     }
 
-    // If door-to-point selected, ensure a point is chosen
-    const selected = shippingMethods.find((m) => m.service_id === selectedShippingMethod);
-    const requiresPoint = selected?.door_to_point === "1";
-    if (requiresPoint && !selectedPointId) {
-      setError("Dla dostawy DPD punkt wymagany jest wybór punktu odbioru");
-      return;
+    // If door-to-point selected, ensure a point is chosen (skip entirely for HURT)
+    if (!isHurt) {
+      const selected = shippingMethods.find((m) => m.service_id === selectedShippingMethod);
+      const requiresPoint = selected?.door_to_point === "1";
+      if (requiresPoint && !selectedPointId) {
+        setError("Dla dostawy DPD punkt wymagany jest wybór punktu odbioru");
+        return;
+      }
     }
 
     setIsSubmitting(true);
@@ -621,6 +630,10 @@ export default function CheckoutPage() {
     try {
       // Resolve synthetic service ids to real Apaczka service ids
       let resolvedServiceId = formData.shippingMethodId;
+      // HURT: no shipping method used; leave empty
+      if (isHurt) {
+        resolvedServiceId = "";
+      } else {
       // If synthetic (ends with _COD, _PREPAID, _D2P) strip suffix and find underlying id
       if (resolvedServiceId && resolvedServiceId.endsWith("_COD")) {
         resolvedServiceId = resolvedServiceId.replace(/_COD$/, "");
@@ -668,6 +681,7 @@ export default function CheckoutPage() {
         setError("Wybierz punkt odbioru dla tej metody dostawy");
         setIsSubmitting(false);
         return;
+      }
       }
 
       // Prepare order data
@@ -776,6 +790,7 @@ export default function CheckoutPage() {
 
   // Calculate shipping cost based on selected method and Apaczka valuation
   const getShippingCost = () => {
+    if (isHurt) return 0;
     if (!selectedShippingMethod) return 0;
     // Resolve synthetic id (strip _COD, _PREPAID suffixes) to find price
     const realId = selectedShippingMethod
@@ -1148,24 +1163,6 @@ export default function CheckoutPage() {
                   onValueChange={handlePaymentMethodChange}
                   className="space-y-3"
                 >
-                  {/* COD - only for HURT users */}
-                  {session?.user?.accountType === "HURT" && (
-                    <div className="flex items-center space-x-3 rounded-md border p-3">
-                      <RadioGroupItem id="cod" value="COD" />
-                      <Label
-                        htmlFor="cod"
-                        className="flex items-center gap-2 font-normal w-full cursor-pointer"
-                      >
-                        <BanknoteIcon className="h-5 w-5" />
-                        <div className="grid gap-0.5">
-                          <span className="font-medium">Pobranie (COD)</span>
-                          <span className="text-muted-foreground text-sm">
-                            Zapłać kurierowi przy odbiorze
-                          </span>
-                        </div>
-                      </Label>
-                    </div>
-                  )}
                   <div className="flex items-center space-x-3 rounded-md border p-3">
                     <RadioGroupItem id="credit-card" value="STRIPE" />
                     <Label
@@ -1181,10 +1178,37 @@ export default function CheckoutPage() {
                       </div>
                     </Label>
                   </div>
+                  {isHurt && (
+                    <div className="flex items-center space-x-3 rounded-md border p-3">
+                      <RadioGroupItem id="invoice-deferred" value="INVOICE_DEFERRED" />
+                      <Label
+                        htmlFor="invoice-deferred"
+                        className="flex items-center gap-2 font-normal w-full cursor-pointer"
+                      >
+                        <BanknoteIcon className="h-5 w-5" />
+                        <div className="grid gap-0.5">
+                          <span className="font-medium">
+                            Faktura z odroczonym terminem płatności
+                          </span>
+                          <span className="text-muted-foreground text-sm">
+                            Opłać na podstawie faktury wystawionej przez nas
+                          </span>
+                        </div>
+                      </Label>
+                    </div>
+                  )}
                 </RadioGroup>
               </Card>
 
               {/* Shipping Method Selection */}
+              {isHurt ? (
+                <div className="space-y-2 bg-white shadow p-4 rounded-lg">
+                  <h3 className="text-lg font-semibold">Dostawa</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Dostawa dla klientów hurtowych ustalania jest ustalana indydwualnie po złożeniu zamówienia.
+                  </p>
+                </div>
+              ) : (
               <div className="space-y-4 bg-white  shadow p-4 rounded-lg">
                 <h3 className="text-lg font-semibold">Metoda dostawy</h3>
                 {isLoadingShipping ? (
@@ -1321,6 +1345,7 @@ export default function CheckoutPage() {
                   </RadioGroup>
                 )}
               </div>
+              )}
 
               {/* Terms and Conditions Acceptance */}
               <div className="flex items-start gap-3 p-4 bg-white shadow rounded-lg">
@@ -1488,7 +1513,13 @@ export default function CheckoutPage() {
 
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Dostawa</span>
-                <span>{isLoadingValuation ? "..." : formatPLN(shipping)}</span>
+                <span>
+                  {isHurt
+                    ? "Dostawa firmowa"
+                    : isLoadingValuation
+                      ? "..."
+                      : formatPLN(shipping)}
+                </span>
               </div>
               <div className="flex justify-between font-medium text-lg pt-2">
                 <span>Razem</span>

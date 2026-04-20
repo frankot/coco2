@@ -52,6 +52,7 @@ type Order = {
   apaczkaWaybillNumber?: string | null;
   wfirmaInvoiceId?: string | null;
   wfirmaInvoiceNumber?: string | null;
+  isB2BManual?: boolean;
   user: {
     id: string;
     email: string;
@@ -72,6 +73,8 @@ export default function AdminOrdersPage() {
   const [isConfirming, setIsConfirming] = useState(false);
   const [turnInDialogOpen, setTurnInDialogOpen] = useState(false);
   const [turnInData, setTurnInData] = useState<string | null>(null);
+  const [showB2B, setShowB2B] = useState(true);
+  const [showRegular, setShowRegular] = useState(true);
 
   const handleDeleteAllOrders = async () => {
     if (
@@ -166,7 +169,29 @@ export default function AdminOrdersPage() {
       </Dialog>
 
       <div className="flex justify-between items-center gap-4">
-        <PageHeader>Zamówienia</PageHeader>
+        <div className="flex items-center gap-6">
+          <PageHeader>Zamówienia</PageHeader>
+          <div className="flex items-center gap-4">
+            <label className="flex items-center gap-2 text-sm cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={showB2B}
+                onChange={(e) => setShowB2B(e.target.checked)}
+                className="h-4 w-4 cursor-pointer"
+              />
+              B2B
+            </label>
+            <label className="flex items-center gap-2 text-sm cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={showRegular}
+                onChange={(e) => setShowRegular(e.target.checked)}
+                className="h-4 w-4 cursor-pointer"
+              />
+              Regularne
+            </label>
+          </div>
+        </div>
         <div className="flex items-center gap-2">
           <Button
             variant="default"
@@ -175,7 +200,7 @@ export default function AdminOrdersPage() {
             onClick={handleConfirmAll}
           >
             {isConfirming && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {isConfirming ? "Potwierdzanie..." : "Potwierdź opłacone"}
+            {isConfirming ? "Potwierdzanie..." : "Apaczka - wyślij opłacone"}
           </Button>
           <Button
             variant="outline"
@@ -212,12 +237,12 @@ export default function AdminOrdersPage() {
           </Button>
         </div>
       </div>
-      <OrdersTable />
+      <OrdersTable showB2B={showB2B} showRegular={showRegular} />
     </>
   );
 }
 
-function OrdersTable() {
+function OrdersTable({ showB2B, showRegular }: { showB2B: boolean; showRegular: boolean }) {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [sortField, setSortField] = useState<SortField>("createdAt");
@@ -225,13 +250,18 @@ function OrdersTable() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
+  // Reset to first page when filters change
+  useEffect(() => {
+    setPage(1);
+  }, [showB2B, showRegular]);
+
   // Fetch orders
   useEffect(() => {
     const fetchOrders = async () => {
       setLoading(true);
       try {
         const response = await fetch(
-          `/api/admin/orders?page=${page}&sortField=${sortField}&sortDir=${sortDirection}&timestamp=${Date.now()}`,
+          `/api/admin/orders?page=${page}&sortField=${sortField}&sortDir=${sortDirection}&showB2B=${showB2B}&showRegular=${showRegular}&timestamp=${Date.now()}`,
           { cache: "no-store" }
         );
 
@@ -248,7 +278,7 @@ function OrdersTable() {
     };
 
     fetchOrders();
-  }, [page, sortField, sortDirection]);
+  }, [page, sortField, sortDirection, showB2B, showRegular]);
 
   // Handle sorting
   const handleSort = (field: SortField) => {
@@ -380,16 +410,18 @@ function OrdersTable() {
                 <TableCell>
                   <TableCellLink href={`/admin/zamowienia/${order.id}`}>
                     {order.user.email}
-                    <div className="mt-1 text-xs text-muted-foreground">
-                      Typ: {order.user.accountType}
-                    </div>
                   </TableCellLink>
                 </TableCell>
                 <TableCell>
                   <TableCellLink href={`/admin/zamowienia/${order.id}`}>
-                    <Badge variant={getStatusBadgeVariant(order.status)}>
-                      {getStatusDisplayName(order.status, order.paymentMethod)}
-                    </Badge>
+                    <div className="flex items-center gap-2">
+                      <Badge variant={getStatusBadgeVariant(order.status)}>
+                        {getStatusDisplayName(order.status, order.paymentMethod)}
+                      </Badge>
+                      {order.isB2BManual && (
+                        <span className="text-xs text-muted-foreground">(B2B ręczne)</span>
+                      )}
+                    </div>
                   </TableCellLink>
                 </TableCell>
                 <TableCell>
@@ -420,6 +452,7 @@ function OrdersTable() {
                     currentStatus={order.status}
                     hasApaczkaOrderId={!!order.apaczkaOrderId}
                     wfirmaInvoiceId={order.wfirmaInvoiceId ?? null}
+                    isB2BManual={!!order.isB2BManual}
                   />
                 </TableCell>
               </TableRow>
