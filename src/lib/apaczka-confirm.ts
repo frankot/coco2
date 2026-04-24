@@ -85,24 +85,24 @@ export async function confirmOrderInApaczka(orderId: string) {
     foreign_address_id: "",
   };
 
-  // Aggregate per-product dimensions
+  // Side-by-side packing: sum widths, max length/height
   let totalWeight = 0;
   let maxLength = 0;
-  let maxWidth = 0;
-  let totalHeight = 0;
+  let totalWidth = 0;
+  let maxHeight = 0;
   for (const item of order.orderItems) {
     totalWeight += item.product.weightKg * item.quantity;
     maxLength = Math.max(maxLength, item.product.lengthCm);
-    maxWidth = Math.max(maxWidth, item.product.widthCm);
-    totalHeight += item.product.heightCm * item.quantity;
+    totalWidth += item.product.widthCm * item.quantity;
+    maxHeight = Math.max(maxHeight, item.product.heightCm);
   }
-  totalHeight = Math.min(totalHeight, 100);
+  maxHeight = Math.min(maxHeight, 60);
 
   const shipment = [
     {
       dimension1: Math.max(maxLength, 1),
-      dimension2: Math.max(maxWidth, 1),
-      dimension3: Math.max(totalHeight, 1),
+      dimension2: Math.max(totalWidth, 1),
+      dimension3: Math.max(maxHeight, 1),
       weight: Math.max(Math.round(totalWeight * 10) / 10, 0.1),
       is_nstd: 0,
       shipment_type_code: "PACZKA",

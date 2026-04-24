@@ -47,6 +47,12 @@ export async function generateAndSendInvoice(orderId: string): Promise<void> {
     throw new Error(`Order ${orderId} not found`);
   }
 
+  // Never invoice an order that hasn't been confirmed paid.
+  const paidStatuses: typeof order.status[] = ["PAID", "PROCESSING", "SHIPPED", "DELIVERED"];
+  if (!paidStatuses.includes(order.status)) {
+    return;
+  }
+
   if (order.isB2BManual) {
     return;
   }

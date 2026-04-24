@@ -85,6 +85,14 @@ export async function createOrder(formData: OrderFormData) {
       return { success: false, error: "Maksymalna łączna liczba sztuk w koszyku to 200" };
     }
 
+    // Paczkomat/pickup-point: max 2 items total
+    if (totalItems > 2 && validatedData.apaczkaPointId) {
+      return {
+        success: false,
+        error: "Dostawa do paczkomatu/punktu dostępna tylko dla maks. 2 produktów. Wybierz inną metodę dostawy.",
+      };
+    }
+
     // HURT-only payment gating
     const gateSession = await getServerSession(authOptions);
     const isHurt = gateSession?.user?.accountType === "HURT";
@@ -196,20 +204,21 @@ export async function createOrder(formData: OrderFormData) {
       });
       const prodMap = new Map(products.map((p) => [p.id, p]));
 
+      // Side-by-side packing: sum widths, max length/height
       let totalWeight = 0;
       let maxLength = 0;
-      let maxWidth = 0;
-      let totalHeight = 0;
+      let totalWidth = 0;
+      let maxHeight = 0;
 
       for (const item of validatedData.cartItems) {
         const prod = prodMap.get(item.id);
         if (!prod) continue;
         totalWeight += prod.weightKg * item.quantity;
         maxLength = Math.max(maxLength, prod.lengthCm);
-        maxWidth = Math.max(maxWidth, prod.widthCm);
-        totalHeight += prod.heightCm * item.quantity;
+        totalWidth += prod.widthCm * item.quantity;
+        maxHeight = Math.max(maxHeight, prod.heightCm);
       }
-      totalHeight = Math.min(totalHeight, 100);
+      maxHeight = Math.min(maxHeight, 60);
 
       // Use shipping address for valuation when addresses differ
       const receiverStreet = validatedData.sameAddress ? validatedData.street : (validatedData.shippingStreet || validatedData.street);
@@ -259,8 +268,8 @@ export async function createOrder(formData: OrderFormData) {
         shipment: [
           {
             dimension1: Math.max(maxLength, 1),
-            dimension2: Math.max(maxWidth, 1),
-            dimension3: Math.max(totalHeight, 1),
+            dimension2: Math.max(totalWidth, 1),
+            dimension3: Math.max(maxHeight, 1),
             weight: Math.max(Math.round(totalWeight * 10) / 10, 0.1),
             is_nstd: 0,
             shipment_type_code: "PACZKA",

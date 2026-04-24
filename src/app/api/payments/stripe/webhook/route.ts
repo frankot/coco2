@@ -1,11 +1,7 @@
 import { stripe } from "@/lib/stripe";
 import { headers } from "next/headers";
 import { createRouteHandler, ApiError } from "@/lib/api";
-import prisma from "@/db";
-import mailer from "@/lib/mailer";
-import { generateAndSendInvoice } from "@/lib/invoice";
-import { renderEmailLayout } from "@/lib/email-layout";
-import { logError } from "@/lib/logger";
+import { confirmStripePayment } from "@/lib/confirm-stripe-payment";
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
@@ -22,67 +18,14 @@ export const POST = createRouteHandler(async ({ req }) => {
   }
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as any;
-    const orderId = session.metadata.orderId;
-    const payment = await prisma.payment.findFirst({ where: { orderId } });
-    if (!payment) throw new ApiError("Payment not found", 404);
-    // Idempotency: skip if already processed
-    if (payment.status === "COMPLETED") {
-      return { received: true, skipped: true };
-    }
-    const order = await prisma.order.findUnique({
-      where: { id: orderId },
-      select: { discountCodeId: true, isB2BManual: true },
-    });
-
-    await prisma.$transaction([
-      prisma.order.update({ where: { id: orderId }, data: { status: "PAID", paidAt: new Date() } }),
-      prisma.payment.update({
-        where: { id: payment.id },
-        data: { status: "COMPLETED", transactionId: session.payment_intent },
-      }),
-      // Increment discount usage on successful payment (not at order creation)
-      ...(order?.discountCodeId
-        ? [
-            prisma.discountCode.update({
-              where: { id: order.discountCodeId },
-              data: { usedCount: { increment: 1 } },
-            }),
-          ]
-        : []),
-    ]);
-
-    // Generate wFirma invoice on payment confirmation (skip for B2B manual orders)
-    if (!order?.isB2BManual) {
-      generateAndSendInvoice(orderId).catch((e) => {
-        logError("stripe.webhook.generateInvoice", e, { orderId });
-      });
-    }
-
-    // Send confirmation email (moved from verify-session so we have a single writer)
-    try {
-      const emailOrder = await prisma.order.findUnique({
-        where: { id: orderId },
-        include: { user: true },
-      });
-      if (emailOrder?.user?.email) {
-        const emailBody = `
-          <p style="margin:0 0 14px;font-size:14px;color:#0d160f;">Cześć ${emailOrder.user.firstName ?? ""},</p>
-          <p style="margin:0;font-size:14px;color:#0d160f;">Dziękujemy za zamówienie <strong style="font-family:ui-monospace,Menlo,Monaco,monospace;">${emailOrder.id}</strong>. Płatność została zaksięgowana.</p>
-        `;
-        const html = renderEmailLayout({
-          title: "Płatność potwierdzona",
-          intro: "Twoja płatność została pomyślnie zaksięgowana.",
-          body: emailBody,
-        });
-        await mailer.sendMail({
-          to: emailOrder.user.email,
-          subject: `Potwierdzenie płatności zamówienia ${emailOrder.id}`,
-          html,
-        });
-      }
-    } catch (e) {
-      logError("stripe.webhook.confirmationEmail", e, { orderId });
-    }
+    const orderId = session.metadata?.orderId;
+    if (!orderId) throw new ApiError("Missing orderId on session metadata", 400);
+    const piId =
+      typeof session.payment_intent === "string"
+        ? session.payment_intent
+        : session.payment_intent?.id ?? null;
+    const didTransition = await confirmStripePayment(orderId, piId);
+    return { received: true, skipped: !didTransition };
   }
   return { received: true };
 });

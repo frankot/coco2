@@ -2,10 +2,10 @@ import { stripe } from "@/lib/stripe";
 import { createRouteHandler, readJson, ApiError } from "@/lib/api";
 import prisma from "@/db";
 import crypto from "crypto";
-import { generateAndSendInvoice } from "@/lib/invoice";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { logError, logWarn } from "@/lib/logger";
+import { confirmStripePayment } from "@/lib/confirm-stripe-payment";
+import { logWarn } from "@/lib/logger";
 
 export const POST = createRouteHandler(async ({ req }) => {
   const body = await readJson(req);
@@ -27,37 +27,34 @@ export const POST = createRouteHandler(async ({ req }) => {
   const order = await prisma.order.findUnique({ where: { id: orderId } });
   if (!order) throw new ApiError("Not found", 404);
 
-  // Authorize: signed-in owner OR one-time access token
+  // Authorize: signed-in owner OR access token (hash match). We intentionally do
+  // not burn the token here — React StrictMode + reloads would fail the second
+  // call. The token is a URL secret; hash comparison is sufficient for a
+  // read-only verify endpoint.
   const auth = await getServerSession(authOptions);
   const isOwner = auth?.user?.id && auth.user.id === order.userId;
   let tokenOk = false;
-  if (!isOwner && token && order.accessTokenHash && !order.accessTokenUsedAt) {
+  if (!isOwner && token && order.accessTokenHash) {
     const provided = crypto.createHash("sha256").update(token).digest("hex");
     tokenOk = provided === order.accessTokenHash;
   }
   if (!isOwner && !tokenOk) throw new ApiError("Not found", 404);
-
-  // Burn the token after first use (only when used as auth)
-  if (tokenOk) {
-    await prisma.order.update({
-      where: { id: orderId },
-      data: { accessTokenUsedAt: new Date() },
-    });
-  }
 
   const paid = session.payment_status === "paid" || session.status === "complete";
   if (!paid) {
     return { success: false, paid: false };
   }
 
-  // Webhook is the canonical writer for Order.status / Payment.status.
-  // verify-session is read-only: re-read and report state to the client.
-  const payment = await prisma.payment.findFirst({ where: { orderId } });
+  // Fallback writer: if the webhook hasn't finalized the order yet (common in
+  // local sandboxes without `stripe listen`), transition it here. The helper is
+  // idempotent — if the webhook already ran, this is a no-op.
+  const piId =
+    typeof session.payment_intent === "string"
+      ? session.payment_intent
+      : (session.payment_intent as any)?.id ?? null;
+  await confirmStripePayment(orderId, piId);
 
-  // Best-effort invoice generation (idempotent — webhook also calls this).
-  generateAndSendInvoice(orderId as string).catch((e) => {
-    logError("verifySession.generateInvoice", e, { orderId });
-  });
+  const payment = await prisma.payment.findFirst({ where: { orderId } });
 
   let receiptUrl: string | undefined;
   try {

@@ -586,6 +586,23 @@ export default function CheckoutPage() {
     }
   }, [visibleServices, selectedShippingMethod, setFormData]);
 
+  // Paczkomat/pickup-point: max 2 items total (side-by-side packing limit)
+  const totalCartQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const paczkomatDisabled = totalCartQuantity > 2;
+
+  // If paczkomat becomes unavailable while selected, fall back to first non-map method
+  useEffect(() => {
+    if (paczkomatDisabled && selectedShippingMethod === "APACZKA_MAP") {
+      const fallback = visibleServices.find((s) => s.service_id !== "APACZKA_MAP");
+      if (fallback) {
+        setSelectedShippingMethod(fallback.service_id);
+        setFormData((prev) => ({ ...prev, shippingMethodId: fallback.service_id }));
+        setSelectedPointId("");
+        setSelectedSupplier("");
+      }
+    }
+  }, [paczkomatDisabled, selectedShippingMethod, visibleServices]);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({
@@ -1221,6 +1238,7 @@ export default function CheckoutPage() {
                   <RadioGroup
                     value={selectedShippingMethod || ""}
                     onValueChange={(value) => {
+                      if (value === "APACZKA_MAP" && paczkomatDisabled) return;
                       setSelectedShippingMethod(value);
                       setFormData((prev) => ({
                         ...prev,
@@ -1252,23 +1270,33 @@ export default function CheckoutPage() {
                         const isDoorToPoint =
                           method.door_to_point === "1" || method.service_id === "APACZKA_MAP";
                         const isActive = selectedShippingMethod === method.service_id;
+                        const isMapOption = method.service_id === "APACZKA_MAP";
+                        const isMethodDisabled = isMapOption && paczkomatDisabled;
                         const label =
                           method.service_id === "APACZKA_MAP" ? method.name : method.name;
                         return (
                           <div
                             key={method.service_id}
-                            className="flex flex-col gap-2 border rounded-md p-3"
+                            className={`flex flex-col gap-2 border rounded-md p-3 ${
+                              isMethodDisabled ? "opacity-60" : ""
+                            }`}
                           >
                             <div className="flex items-center space-x-2">
                               <RadioGroupItem
                                 value={method.service_id}
                                 id={`shipping-${method.service_id}`}
+                                disabled={isMethodDisabled}
                               />
                               <Label htmlFor={`shipping-${method.service_id}`}>
                                 {label} {method.delivery_time ? ` - ${method.delivery_time}` : ""}
                               </Label>
                             </div>
-                            {isDoorToPoint && isActive && (
+                            {isMethodDisabled && (
+                              <div className="pl-7 text-xs text-amber-700">
+                                Dostawa do paczkomatu/punktu dostępna tylko dla maks. 2 produktów w koszyku.
+                              </div>
+                            )}
+                            {isDoorToPoint && isActive && !isMethodDisabled && (
                               <div className="pl-7 mt-2 space-y-2">
                                 <div className="text-sm text-muted-foreground">
                                   Wybierz punkt dostawy na mapie poniżej.

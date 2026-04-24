@@ -55,11 +55,11 @@ export const POST = createRouteHandler(async ({ req }) => {
 
   const productMap = new Map(products.map((p) => [p.id, p]));
 
-  // Calculate total weight and find max dimensions across all items
+  // Side-by-side packing: sum widths, max length/height
   let totalWeightKg = 0;
   let maxLength = 0;
-  let maxWidth = 0;
-  let totalHeight = 0;
+  let totalWidth = 0;
+  let maxHeight = 0;
   let shipmentValueInCents = 0;
 
   for (const item of data.cartItems) {
@@ -69,13 +69,12 @@ export const POST = createRouteHandler(async ({ req }) => {
     }
     totalWeightKg += product.weightKg * item.quantity;
     maxLength = Math.max(maxLength, product.lengthCm);
-    maxWidth = Math.max(maxWidth, product.widthCm);
-    totalHeight += product.heightCm * item.quantity;
+    totalWidth += product.widthCm * item.quantity;
+    maxHeight = Math.max(maxHeight, product.heightCm);
     shipmentValueInCents += product.priceInCents * item.quantity;
   }
 
-  // Cap height at a reasonable max (e.g. 100cm)
-  totalHeight = Math.min(totalHeight, 100);
+  maxHeight = Math.min(maxHeight, 60);
 
   const order: Record<string, any> = {
     service_id: data.serviceId ? Number(data.serviceId) : 0,
@@ -98,8 +97,8 @@ export const POST = createRouteHandler(async ({ req }) => {
     shipment: [
       {
         dimension1: Math.max(maxLength, 1),
-        dimension2: Math.max(maxWidth, 1),
-        dimension3: Math.max(totalHeight, 1),
+        dimension2: Math.max(totalWidth, 1),
+        dimension3: Math.max(maxHeight, 1),
         weight: Math.max(Math.round(totalWeightKg * 10) / 10, 0.1),
         is_nstd: 0,
         shipment_type_code: "PACZKA",
