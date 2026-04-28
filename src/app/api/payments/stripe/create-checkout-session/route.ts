@@ -82,7 +82,7 @@ export const POST = createRouteHandler(async ({ req }) => {
   }
 
   const session = await stripe.checkout.sessions.create({
-    payment_method_types: ["card", "blik", "p24"],
+    payment_method_types: ["card", "blik"],
     mode: "payment",
     locale: "pl",
     line_items: lineItems,
