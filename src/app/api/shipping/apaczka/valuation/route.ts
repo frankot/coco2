@@ -1,5 +1,5 @@
 import { createRouteHandler, ApiError } from "@/lib/api";
-import Apaczka from "@/lib/apaczka";
+import Apaczka, { buildApaczkaShipments, type PackItem } from "@/lib/apaczka";
 import prisma from "@/db";
 import { z } from "zod";
 import { apaczkaLimiter, getClientIp } from "@/lib/rate-limit";
@@ -55,26 +55,24 @@ export const POST = createRouteHandler(async ({ req }) => {
 
   const productMap = new Map(products.map((p) => [p.id, p]));
 
-  // Side-by-side packing: sum widths, max length/height
-  let totalWeightKg = 0;
-  let maxLength = 0;
-  let totalWidth = 0;
-  let maxHeight = 0;
+  // Multipack: max 4 units per pack, 2x2 layer
   let shipmentValueInCents = 0;
+  const packItems: PackItem[] = [];
 
   for (const item of data.cartItems) {
     const product = productMap.get(item.id);
     if (!product) {
       throw new ApiError(`Produkt ${item.id} nie znaleziony`, 400);
     }
-    totalWeightKg += product.weightKg * item.quantity;
-    maxLength = Math.max(maxLength, product.lengthCm);
-    totalWidth += product.widthCm * item.quantity;
-    maxHeight = Math.max(maxHeight, product.heightCm);
     shipmentValueInCents += product.priceInCents * item.quantity;
+    packItems.push({
+      lengthCm: product.lengthCm,
+      widthCm: product.widthCm,
+      heightCm: product.heightCm,
+      weightKg: product.weightKg,
+      quantity: item.quantity,
+    });
   }
-
-  maxHeight = Math.min(maxHeight, 60);
 
   const order: Record<string, any> = {
     service_id: data.serviceId ? Number(data.serviceId) : 0,
@@ -94,16 +92,7 @@ export const POST = createRouteHandler(async ({ req }) => {
         phone: "",
       },
     },
-    shipment: [
-      {
-        dimension1: Math.max(maxLength, 1),
-        dimension2: Math.max(totalWidth, 1),
-        dimension3: Math.max(maxHeight, 1),
-        weight: Math.max(Math.round(totalWeightKg * 10) / 10, 0.1),
-        is_nstd: 0,
-        shipment_type_code: "PACZKA",
-      },
-    ],
+    shipment: buildApaczkaShipments(packItems),
     shipment_value: shipmentValueInCents,
     shipment_currency: "PLN",
     pickup: {

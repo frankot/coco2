@@ -65,6 +65,73 @@ async function post<T>(route: string, body: any): Promise<ApiResponse<T>> {
 
 export type OrderPayload = any; // We'll keep flexible, Zod-validate upstream
 
+// Multipack packing helper
+export type PackItem = {
+  lengthCm: number;
+  widthCm: number;
+  heightCm: number;
+  weightKg: number;
+  quantity: number;
+};
+
+type ShipmentEntry = {
+  dimension1: number;
+  dimension2: number;
+  dimension3: number;
+  weight: number;
+  is_nstd: 0 | 1;
+  shipment_type_code: string;
+};
+
+const PACK_SIZE = 4;
+
+export function buildApaczkaShipments(items: PackItem[]): ShipmentEntry[] {
+  type Unit = Omit<PackItem, "quantity">;
+  const units: Unit[] = [];
+  for (const it of items) {
+    for (let i = 0; i < it.quantity; i++) {
+      units.push({
+        lengthCm: it.lengthCm,
+        widthCm: it.widthCm,
+        heightCm: it.heightCm,
+        weightKg: it.weightKg,
+      });
+    }
+  }
+
+  const shipments: ShipmentEntry[] = [];
+  for (let i = 0; i < units.length; i += PACK_SIZE) {
+    const pack = units.slice(i, i + PACK_SIZE);
+    const n = pack.length;
+    const cols = Math.min(n, 2);
+    const rows = Math.ceil(n / 2);
+    const maxL = Math.max(...pack.map((u) => u.lengthCm));
+    const maxW = Math.max(...pack.map((u) => u.widthCm));
+    const maxH = Math.min(Math.max(...pack.map((u) => u.heightCm)), 60);
+    const totalW = pack.reduce((s, u) => s + u.weightKg, 0);
+    shipments.push({
+      dimension1: Math.max(rows * maxL, 1),
+      dimension2: Math.max(cols * maxW, 1),
+      dimension3: Math.max(maxH, 1),
+      weight: Math.max(Math.round(totalW * 10) / 10, 0.1),
+      is_nstd: 0,
+      shipment_type_code: "PACZKA",
+    });
+  }
+
+  if (shipments.length === 0) {
+    shipments.push({
+      dimension1: 1,
+      dimension2: 1,
+      dimension3: 1,
+      weight: 0.1,
+      is_nstd: 0,
+      shipment_type_code: "PACZKA",
+    });
+  }
+  return shipments;
+}
+
 export const Apaczka = {
   serviceStructure() {
     return post<{

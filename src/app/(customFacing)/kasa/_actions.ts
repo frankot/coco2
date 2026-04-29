@@ -204,21 +204,20 @@ export async function createOrder(formData: OrderFormData) {
       });
       const prodMap = new Map(products.map((p) => [p.id, p]));
 
-      // Side-by-side packing: sum widths, max length/height
-      let totalWeight = 0;
-      let maxLength = 0;
-      let totalWidth = 0;
-      let maxHeight = 0;
-
-      for (const item of validatedData.cartItems) {
-        const prod = prodMap.get(item.id);
-        if (!prod) continue;
-        totalWeight += prod.weightKg * item.quantity;
-        maxLength = Math.max(maxLength, prod.lengthCm);
-        totalWidth += prod.widthCm * item.quantity;
-        maxHeight = Math.max(maxHeight, prod.heightCm);
-      }
-      maxHeight = Math.min(maxHeight, 60);
+      // Multipack: max 4 units per pack, 2x2 layer
+      const packItems = validatedData.cartItems
+        .map((item) => {
+          const prod = prodMap.get(item.id);
+          if (!prod) return null;
+          return {
+            lengthCm: prod.lengthCm,
+            widthCm: prod.widthCm,
+            heightCm: prod.heightCm,
+            weightKg: prod.weightKg,
+            quantity: item.quantity,
+          };
+        })
+        .filter((p): p is NonNullable<typeof p> => p !== null);
 
       // Use shipping address for valuation when addresses differ
       const receiverStreet = validatedData.sameAddress ? validatedData.street : (validatedData.shippingStreet || validatedData.street);
@@ -234,7 +233,8 @@ export async function createOrder(formData: OrderFormData) {
       if (cached !== null) {
         shippingCostInCents = cached;
       } else {
-      const Apaczka = (await import("@/lib/apaczka")).default;
+      const apMod = await import("@/lib/apaczka");
+      const Apaczka = apMod.default;
       const order = {
         service_id: Number(validatedData.shippingMethodId) || 0,
         address: {
@@ -265,16 +265,7 @@ export async function createOrder(formData: OrderFormData) {
             phone: normalizedShippingPhone || "",
           },
         },
-        shipment: [
-          {
-            dimension1: Math.max(maxLength, 1),
-            dimension2: Math.max(totalWidth, 1),
-            dimension3: Math.max(maxHeight, 1),
-            weight: Math.max(Math.round(totalWeight * 10) / 10, 0.1),
-            is_nstd: 0,
-            shipment_type_code: "PACZKA",
-          },
-        ],
+        shipment: apMod.buildApaczkaShipments(packItems),
         shipment_value: subtotalInCents,
         shipment_currency: "PLN",
         pickup: { type: "SELF" },

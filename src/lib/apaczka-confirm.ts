@@ -1,5 +1,5 @@
 import prisma from "@/db";
-import Apaczka from "@/lib/apaczka";
+import Apaczka, { buildApaczkaShipments } from "@/lib/apaczka";
 import { sendOrderProcessingEmail } from "@/lib/order-emails";
 
 function normalizePhonePL(input: string | null | undefined): string | undefined {
@@ -85,29 +85,16 @@ export async function confirmOrderInApaczka(orderId: string) {
     foreign_address_id: "",
   };
 
-  // Side-by-side packing: sum widths, max length/height
-  let totalWeight = 0;
-  let maxLength = 0;
-  let totalWidth = 0;
-  let maxHeight = 0;
-  for (const item of order.orderItems) {
-    totalWeight += item.product.weightKg * item.quantity;
-    maxLength = Math.max(maxLength, item.product.lengthCm);
-    totalWidth += item.product.widthCm * item.quantity;
-    maxHeight = Math.max(maxHeight, item.product.heightCm);
-  }
-  maxHeight = Math.min(maxHeight, 60);
-
-  const shipment = [
-    {
-      dimension1: Math.max(maxLength, 1),
-      dimension2: Math.max(totalWidth, 1),
-      dimension3: Math.max(maxHeight, 1),
-      weight: Math.max(Math.round(totalWeight * 10) / 10, 0.1),
-      is_nstd: 0,
-      shipment_type_code: "PACZKA",
-    },
-  ];
+  // Multipack: max 4 units per pack, 2x2 layer
+  const shipment = buildApaczkaShipments(
+    order.orderItems.map((item) => ({
+      lengthCm: item.product.lengthCm,
+      widthCm: item.product.widthCm,
+      heightCm: item.product.heightCm,
+      weightKg: item.product.weightKg,
+      quantity: item.quantity,
+    }))
+  );
 
   const getPickupDate = () => {
     const now = new Date();

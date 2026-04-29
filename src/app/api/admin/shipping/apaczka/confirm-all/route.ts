@@ -1,6 +1,6 @@
 import { createRouteHandler, ApiError, readJson } from "@/lib/api";
 import prisma from "@/db";
-import Apaczka from "@/lib/apaczka";
+import Apaczka, { buildApaczkaShipments } from "@/lib/apaczka";
 import mailer from "@/lib/mailer";
 import { renderEmailLayout } from "@/lib/email-layout";
 function normalizePhonePL(input: string | null | undefined): string | undefined {
@@ -105,18 +105,16 @@ export const POST = createRouteHandler(
           foreign_address_id: "",
         };
 
-        // Side-by-side packing: sum widths, max length/height
-        let totalWeight = 0;
-        let maxLength = 0;
-        let totalWidth = 0;
-        let maxHeight = 0;
-        for (const item of order.orderItems) {
-          totalWeight += item.product.weightKg * item.quantity;
-          maxLength = Math.max(maxLength, item.product.lengthCm);
-          totalWidth += item.product.widthCm * item.quantity;
-          maxHeight = Math.max(maxHeight, item.product.heightCm);
-        }
-        maxHeight = Math.min(maxHeight, 60);
+        // Multipack: max 4 units per pack, 2x2 layer
+        const shipment = buildApaczkaShipments(
+          order.orderItems.map((item) => ({
+            lengthCm: item.product.lengthCm,
+            widthCm: item.product.widthCm,
+            heightCm: item.product.heightCm,
+            weightKg: item.product.weightKg,
+            quantity: item.quantity,
+          }))
+        );
 
         // Calculate pickup date: next business day (Mon-Fri) if after 14:00, otherwise today if business day
         const getPickupDate = () => {
@@ -146,16 +144,7 @@ export const POST = createRouteHandler(
             hours_from: "09:00",
             hours_to: "17:00",
           },
-          shipment: [
-            {
-              dimension1: Math.max(maxLength, 1),
-              dimension2: Math.max(totalWidth, 1),
-              dimension3: Math.max(maxHeight, 1),
-              weight: Math.max(Math.round(totalWeight * 10) / 10, 0.1),
-              is_nstd: 0,
-              shipment_type_code: "PACZKA",
-            },
-          ],
+          shipment,
           comment: `Zamówienie [${order.id}]`,
           content: `Szkło! Proszę nie rzucać!`,
           is_zebra: 0,
