@@ -85,34 +85,30 @@ type ShipmentEntry = {
 
 const PACK_SIZE = 4;
 
+// Hardcoded box dims per pack size (width, length, height in cm)
+function packDimensions(n: number): { width: number; length: number; height: number } {
+  if (n <= 1) return { width: 24, length: 26, height: 28 };
+  if (n === 2) return { width: 26, length: 48, height: 28 };
+  return { width: 52, length: 48, height: 28 };
+}
+
 export function buildApaczkaShipments(items: PackItem[]): ShipmentEntry[] {
-  type Unit = Omit<PackItem, "quantity">;
-  const units: Unit[] = [];
+  const units: { weightKg: number }[] = [];
   for (const it of items) {
     for (let i = 0; i < it.quantity; i++) {
-      units.push({
-        lengthCm: it.lengthCm,
-        widthCm: it.widthCm,
-        heightCm: it.heightCm,
-        weightKg: it.weightKg,
-      });
+      units.push({ weightKg: it.weightKg });
     }
   }
 
   const shipments: ShipmentEntry[] = [];
   for (let i = 0; i < units.length; i += PACK_SIZE) {
     const pack = units.slice(i, i + PACK_SIZE);
-    const n = pack.length;
-    const cols = Math.min(n, 2);
-    const rows = Math.ceil(n / 2);
-    const maxL = Math.max(...pack.map((u) => u.lengthCm));
-    const maxW = Math.max(...pack.map((u) => u.widthCm));
-    const maxH = Math.min(Math.max(...pack.map((u) => u.heightCm)), 60);
+    const { width, length, height } = packDimensions(pack.length);
     const totalW = pack.reduce((s, u) => s + u.weightKg, 0);
     shipments.push({
-      dimension1: Math.max(rows * maxL, 1),
-      dimension2: Math.max(cols * maxW, 1),
-      dimension3: Math.max(maxH, 1),
+      dimension1: length,
+      dimension2: width,
+      dimension3: height,
       weight: Math.max(Math.round(totalW * 10) / 10, 0.1),
       is_nstd: 0,
       shipment_type_code: "PACZKA",
@@ -120,10 +116,11 @@ export function buildApaczkaShipments(items: PackItem[]): ShipmentEntry[] {
   }
 
   if (shipments.length === 0) {
+    const { width, length, height } = packDimensions(1);
     shipments.push({
-      dimension1: 1,
-      dimension2: 1,
-      dimension3: 1,
+      dimension1: length,
+      dimension2: width,
+      dimension3: height,
       weight: 0.1,
       is_nstd: 0,
       shipment_type_code: "PACZKA",
