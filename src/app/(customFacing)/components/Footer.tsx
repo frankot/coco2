@@ -39,33 +39,7 @@ export function Footer() {
               >
                 <Instagram size={20} />
               </a>
-              <a
-                href={contactInfo.social.facebook}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2 rounded-full shadow-sm hover:bg-primary hover:text-white transition-colors"
-                aria-label="Facebook"
-              >
-                <Facebook size={20} />
-              </a>
-              <a
-                href={contactInfo.social.twitter}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2 rounded-full shadow-sm hover:bg-primary hover:text-white transition-colors"
-                aria-label="Twitter"
-              >
-                <Twitter size={20} />
-              </a>
-              <a
-                href={contactInfo.social.youtube}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2 rounded-full shadow-sm hover:bg-primary hover:text-white transition-colors"
-                aria-label="YouTube"
-              >
-                <Youtube size={20} />
-              </a>
+             
             </div>
           </div>
 
@@ -79,18 +53,18 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/shop" className="text-gray-600 hover:text-primary transition-colors">
+                <Link href="/sklep" className="text-gray-600 hover:text-primary transition-colors">
                   Sklep
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="text-gray-600 hover:text-primary transition-colors">
+                <Link href="/o-nas" className="text-gray-600 hover:text-primary transition-colors">
                   O nas
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/contact"
+                  href="/kontakt"
                   className="text-gray-600 hover:text-primary transition-colors"
                 >
                   Kontakt
@@ -162,6 +136,7 @@ export function Footer() {
                   Polityka cookies
                 </Link>
               </li>
+
             </ul>
           </div>
         </div>

@@ -1,6 +1,7 @@
 import { Nav, NavLink } from "./Nav";
 import { BackgroundWrapper } from "./components/BackgroundWrapper";
 import { Footer } from "./components/Footer";
+import { CookieBanner } from "./components/CookieBanner";
 
 export const dynamic = "force-dynamic";
 
@@ -18,6 +19,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       </Nav>
       <div className="">{children}</div>
       <Footer />
+      <CookieBanner />
     </BackgroundWrapper>
   );
 }

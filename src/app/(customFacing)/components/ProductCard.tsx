@@ -111,7 +111,15 @@ export function ProductCard({ product }: { product: Product }) {
 
         {/* Price and Actions */}
         <div className="flex items-center justify-between">
-          <div className="text-xl font-bold text-primary">{formatPLN(product.priceInCents)}</div>
+          <div>
+            <div className="text-xl font-bold text-primary">{formatPLN(product.priceInCents)}</div>
+            {product.itemsPerPack > 1 && (
+              <div className="text-xs text-gray-500 mt-0.5">
+                {product.itemsPerPack} szt. &middot;{" "}
+                {formatPLN(Math.round(product.priceInCents / product.itemsPerPack))}/szt.
+              </div>
+            )}
+          </div>
 
           <Button
             onClick={handleAddToCart}

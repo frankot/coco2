@@ -113,30 +113,7 @@ export default function NaszaHistoriaPage() {
           </div>
         </div>
 
-        {/* Bottom Image Strip */}
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-16">
-          <Image
-            src="https://images.unsplash.com/photo-1627502713399-e53b56a7a0b0?w=600&q=80"
-            alt="Młode kokosy"
-            width={600}
-            height={400}
-            className="w-full h-52 object-cover rounded-xl shadow-sm"
-          />
-          <Image
-            src="https://images.unsplash.com/photo-1587314168485-3236d6710814?w=600&q=80"
-            alt="Tropikalna plaża"
-            width={600}
-            height={400}
-            className="w-full h-52 object-cover rounded-xl shadow-sm"
-          />
-          <Image
-            src="https://images.unsplash.com/photo-1597302711628-99b1e84af3b7?w=600&q=80"
-            alt="Woda kokosowa"
-            width={600}
-            height={400}
-            className="w-full h-52 object-cover rounded-xl shadow-sm col-span-2 lg:col-span-1"
-          />
-        </div>
+   
 
         {/* CTA */}
         <div className="text-center py-12 border-t border-gray-200">

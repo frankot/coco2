@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight, Leaf } from "lucide-react";
 
@@ -159,7 +160,8 @@ export function HeroClient({ products }: HeroClientProps) {
                           variant="outline"
                           className="border-white/30 text-white hover:bg-white hover:text-primary bg-transparent backdrop-blur-sm px-8 py-2.5 text-sm font-normal"
                         >
-                          {slide.ctaText}
+                          <Link href="/o-nas">{slide.ctaText}</Link>
+             
                         </Button>
                       </div>
                     </div>

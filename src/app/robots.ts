@@ -6,7 +6,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/admin/", "/api/", "/kasa/", "/uzytkownik/", "/auth/"],
+        disallow: ["/admin/", "/api/", "/kasa/", "/uzytkownik/", "/auth/", "/rejestracja/"],
       },
     ],
     sitemap: "https://drcoco.pl/sitemap.xml",

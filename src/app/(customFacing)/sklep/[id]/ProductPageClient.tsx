@@ -215,6 +215,10 @@ export default function ProductPageClient({ params }: { params: Promise<{ id: st
               <div className="text-sm text-gray-600">
                 {formatPLN(pricePerUnit)} / za szt. • Zestaw {itemsPerPack} sztuk
               </div>
+              <div className="text-xs text-gray-400">
+                Najniższa cena w ciągu ostatnich 30 dni:{" "}
+                <span className="font-medium">{formatPLN(product.priceInCents)}</span>
+              </div>
             </div>
 
             {/* Quantity and Add to Cart */}
