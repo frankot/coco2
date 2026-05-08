@@ -103,3 +103,45 @@ Check these files when working on relevant areas:
 |------|--------|
 | `.claude/docs/architectural_patterns.md` | Server actions, API handler factory, auth flow, Zod validation, cart state, Prisma patterns, form handling, animations |
 | `.claude/docs/code_review.md` | Pre-production review: 6 CRITICAL, 15 HIGH, 12 MEDIUM findings — security vulns, data integrity, business logic issues |
+
+## Language — English Only
+
+All replies in English. Even if user prompt or data is Polish/other, reply in English.
+
+## context-mode — Context Protection
+
+context-mode extension active via `~/.pi/agent/extensions/context-mode/`.
+Provides `ctx_execute` + `ctx_batch_execute` Pi-native tools.
+Use them to keep raw data OUT of the context window.
+
+### Think in Code — MANDATORY
+
+Analyze/count/filter/compare/search/transform data: **write code** via `ctx_execute(language, code)`, `console.log()` only the answer.
+PROGRAM the analysis, don't COMPUTE it by reading files into context.
+One script replaces ten Read calls — saves ~100x context.
+
+Languages: `javascript`, `typescript` (needs bun/tsx), `bash`, `python`, `ruby`, `perl`.
+JS/TS: Node.js built-ins available (`fs`, `path`, `child_process`). Always `try/catch`.
+
+### When to use sandbox vs bash/read
+
+| Instead of | Use | Why |
+|------------|-----|-----|
+| `Read 10 files` to analyze | `ctx_execute("javascript", code)` | 3 KB result vs 300 KB raw |
+| `grep -r` with lots of matches | `ctx_execute("bash", "grep ...")` | Only matches enter context |
+| `curl` / `wget` | `ctx_execute("javascript", "fetch(...)")` | Only stdout enters context |
+| `npm test` | `bash` (keep using bash for side effects) | Build/side-effect ops are fine |
+| `git` / `mkdir` / `ls` | `bash` (keep using bash) | Small output, fine in context |
+| Bulk analysis (8+ queries) | `ctx_batch_execute(commands, concurrency: 4)` | One call, parallel execution |
+
+### Tool reference
+
+| Tool | Params | Use |
+|------|--------|-----|
+| `ctx_execute` | `language`, `code`, `timeout?` | Single script, returns stdout only |
+| `ctx_batch_execute` | `commands[{label, language, code}], concurrency?` | Parallel batch (max 8), concurrency 1-8 |
+
+### Output style
+
+Terse, technical, no filler. Drop articles, pleasantries, hedging.
+Write artifacts to FILES, never inline.

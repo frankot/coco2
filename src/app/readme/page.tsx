@@ -2,6 +2,7 @@ import { readFileSync } from "fs";
 import { join } from "path";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import rehypeSlug from "rehype-slug";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
@@ -62,6 +63,7 @@ export default function ReadmePage() {
         <article className="prose prose-sm sm:prose lg:prose-lg prose-slate max-w-none">
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
+            rehypePlugins={[rehypeSlug]}
             components={{
               h1: ({ node, ...props }) => (
                 <h1 {...props} className="text-3xl font-bold text-slate-900 mt-8 mb-4 first:mt-0" />
