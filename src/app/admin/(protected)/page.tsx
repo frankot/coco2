@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
@@ -16,6 +17,7 @@ import {
   Percent,
   Package,
   ArrowUpRight,
+  Book,
 } from "lucide-react";
 import Loading from "@/components/ui/loading";
 
@@ -149,6 +151,12 @@ export default function AdminDashboard() {
     <div className="flex-1 space-y-4 p-8 pt-6">
       <div className="flex items-center justify-between space-y-2">
         <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
+        <Button variant="outline" size="sm" asChild>
+          <Link href="/admin/readme">
+            <Book className="h-4 w-4 mr-2" />
+            Manual
+          </Link>
+        </Button>
       </div>
 
       <Tabs defaultValue="overview" className="space-y-4">

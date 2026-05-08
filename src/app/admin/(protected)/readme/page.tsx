@@ -3,9 +3,7 @@ import { join } from "path";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeSlug from "rehype-slug";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+
 
 import { getOrigin } from "@/lib/get-origin";
 
@@ -16,10 +14,6 @@ export default function ReadmePage() {
 
   // Replace backtick-wrapped URLs with markdown links
   content = content.replace(/`(\/admin\/[^`]+)`/g, (match, url) => {
-    return `[${url}](${appUrl}${url})`;
-  });
-
-  content = content.replace(/`(\/readme)`/g, (match, url) => {
     return `[${url}](${appUrl}${url})`;
   });
 
@@ -45,18 +39,9 @@ export default function ReadmePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
-      {/* Header with back button */}
-      <div className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200 shadow-sm">
-        <div className="max-w-5xl mx-auto px-4 py-3 sm:px-6 lg:px-8 flex items-center justify-between">
-          <h1 className="text-xl font-bold text-slate-900">MANUAL</h1>
-          <Button variant="outline" size="sm" asChild>
-            <Link href="/">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Wróć
-            </Link>
-          </Button>
-        </div>
-      </div>
+      <h1 className="text-2xl font-bold text-slate-900 px-4 pt-8 max-w-5xl mx-auto sm:px-6 lg:px-8">
+        MANUAL
+      </h1>
 
       {/* Main content */}
       <main className="max-w-5xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
