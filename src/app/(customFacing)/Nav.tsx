@@ -256,10 +256,10 @@ export function Nav({ children }: { children: React.ReactNode }) {
   // Simplified logo sizing - use same height for consistency
   const maxScroll = 150;
   const scrollProgress = isMainPage ? Math.min(scrollY / maxScroll, 1) : 1;
-  const logoMarginTop = isMainPage ? 58 - scrollProgress * 58 : 0;
-  const logoPadding = isMainPage ? 10 - scrollProgress * 10 : 0;
+  const logoMarginTop = isMainPage ? 46 - scrollProgress * 46 : 0;
+  const logoPadding = isMainPage ? 8 - scrollProgress * 8 : 0;
 
-  const logoHeightPx = isMainPage ? 132 - scrollProgress * 52 : 80;
+  const logoHeightPx = isMainPage ? 106 - scrollProgress * 26 : 80;
 
   return (
     <>
