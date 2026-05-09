@@ -831,7 +831,8 @@ export default function CheckoutPage() {
 
   // Calculate totals
   const subtotal = cartItems.reduce((sum, item) => sum + item.priceInCents * item.quantity, 0);
-  const shipping = getShippingCost();
+  const shippingCostDisplay = getShippingCost();
+  const shipping = shippingCostDisplay ?? 1500; // default 15 PLN internally, shown only when real valuation exists
   const discountAmount = appliedDiscount?.discountAmountInCents ?? 0;
   const total = subtotal - discountAmount + shipping;
 
@@ -1546,11 +1547,11 @@ export default function CheckoutPage() {
                 <span>
                   {isHurt
                     ? "Dostawa firmowa"
-                    : shipping === null
+                    : shippingCostDisplay === null
                       ? "—"
                       : isLoadingValuation
                         ? "..."
-                        : formatPLN(shipping)}
+                        : formatPLN(shippingCostDisplay)}
                 </span>
               </div>
               <div className="flex justify-between font-medium text-lg pt-2">
