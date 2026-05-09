@@ -806,9 +806,12 @@ export default function CheckoutPage() {
   };
 
   // Calculate shipping cost based on selected method and Apaczka valuation
-  const getShippingCost = () => {
+  const getShippingCost = (): number | null => {
     if (isHurt) return 0;
-    if (!selectedShippingMethod) return 0;
+    if (!selectedShippingMethod) return null;
+    // Only show price when address data is filled
+    if (!valuationPostalCode || !valuationCity) return null;
+    if (!/^\d{2}-\d{3}$/.test(valuationPostalCode)) return null;
     // Resolve synthetic id (strip _COD, _PREPAID suffixes) to find price
     const realId = selectedShippingMethod
       .replace(/_COD$/, "")
@@ -823,8 +826,7 @@ export default function CheckoutPage() {
         .filter((p) => p && p > 0);
       if (d2pPrices.length > 0) return Math.min(...d2pPrices);
     }
-    // Fallback while valuation is loading
-    return 1500;
+    return null;
   };
 
   // Calculate totals
@@ -944,7 +946,7 @@ export default function CheckoutPage() {
 
   // Main checkout form (for logged in users or guest mode)
   return (
-    <div className="container max-w-6xl py-10 mt-10  px-4 md:px-6 lg:px-8">
+    <div className="container max-w-6xl py-10 mt-0  px-4 md:px-6 lg:px-8">
       <h1 className="text-3xl font-bold mb-6">Kasa</h1>
 
       {error && (
@@ -1544,9 +1546,11 @@ export default function CheckoutPage() {
                 <span>
                   {isHurt
                     ? "Dostawa firmowa"
-                    : isLoadingValuation
-                      ? "..."
-                      : formatPLN(shipping)}
+                    : shipping === null
+                      ? "—"
+                      : isLoadingValuation
+                        ? "..."
+                        : formatPLN(shipping)}
                 </span>
               </div>
               <div className="flex justify-between font-medium text-lg pt-2">
