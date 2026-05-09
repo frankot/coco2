@@ -454,9 +454,10 @@ export const useCart = () => {
       localStorage.setItem("cart", JSON.stringify(existingCart));
       window.dispatchEvent(new Event("cartUpdated"));
 
-      // If cart was empty and we just added the first item, open cart sheet
+      // If cart was empty and we just added the first item, open cart sheet (no toast)
       if (wasCartEmpty) {
         window.dispatchEvent(new Event("openCartSheet"));
+        return true;
       }
 
       const totalBottles = quantity * (product.itemsPerPack || 1);
