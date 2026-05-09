@@ -265,7 +265,7 @@ export function Nav({ children }: { children: React.ReactNode }) {
     <>
       {/* Desktop Navigation */}
       <nav className="hidden lg:block w-full fixed top-0 left-0 right-0 z-50 py-2 bg-stone-50 border-b border-stone-200/50 shadow-xs lg:mb-20">
-        <div className="container mx-auto max-w-7xl px-4 lg:px-8 ">
+        <div className="container mx-auto max-w-7xl px-4 lg:px-16 ">
           <div className="flex h-14 items-center">
             {/* Left side - Navigation */}
             <div className="flex-1 flex items-center space-x-8">{children}</div>
@@ -288,6 +288,7 @@ export function Nav({ children }: { children: React.ReactNode }) {
                   alt="Logo"
                   width={144}
                   height={144}
+                  priority
                   className="w-auto transition-all duration-300 ease-out"
                   style={{ height: `${logoHeightPx}px` }}
                 />
@@ -309,75 +310,87 @@ export function Nav({ children }: { children: React.ReactNode }) {
       </nav>
 
       {/* Mobile Navigation */}
-      <nav className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-stone-50 border-b border-stone-200/50 shadow-xs">
-        <div className="flex h-16 items-center justify-between px-4">
-          <Link href="/" className="absolute left-1/2 -translate-x-1/2">
-            <Image src="/logo.png" alt="Logo" width={80} height={80} className="h-14 w-auto" />
-          </Link>
+      <nav className="lg:hidden relative w-full bg-stone-50 border-b border-stone-200/50 shadow-xs">
+        <div className="flex h-20 items-center justify-between px-4">
+          {/* Left — Menu */}
+          <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <Menu className="size-6" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-[300px] sm:w-[400px] flex flex-col">
+              <SheetTitle className="sr-only">Menu nawigacyjne</SheetTitle>
+              <nav
+                className="flex flex-col space-y-4 mt-8 flex-1"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                {children}
 
-          <div className="flex items-center gap-2 ml-auto">
-            <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-              <SheetTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <Menu className="size-6" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="left" className="w-[300px] sm:w-[400px] flex flex-col">
-                <SheetTitle className="sr-only">Menu nawigacyjne</SheetTitle>
-                <nav
-                  className="flex flex-col space-y-4 mt-8 flex-1"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  {children}
-
-                  {/* Mobile Account Section */}
-                  <div className="pt-4 border-t">
-                    <MobileAccountSection onLinkClick={() => setIsMobileMenuOpen(false)} />
-                  </div>
-                </nav>
-                <div className="flex flex-col items-center gap-6 pb-8">
-                  <Link href="/">
-                    {" "}
-                    <Image
-                      src="/logo.png"
-                      alt="Logo"
-                      width={160}
-                      height={160}
-                      className="h-44 w-auto opacity-80"
-                    />
-                  </Link>
-
-                  <div className="flex items-center gap-4">
-                    <Link
-                      href="https://instagram.com/drcoco"
-                      target="_blank"
-                      className="text-primary hover:text-primary/80 transition-colors"
-                    >
-                      <Instagram className="h-7 w-7" />
-                    </Link>
-                    <Link
-                      href="https://facebook.com/drcoco"
-                      target="_blank"
-                      className="text-primary hover:text-primary/80 transition-colors"
-                    >
-                      <Facebook className="h-7 w-7" />
-                    </Link>
-                  </div>
+                {/* Mobile Account Section */}
+                <div className="pt-4 border-t">
+                  <MobileAccountSection onLinkClick={() => setIsMobileMenuOpen(false)} />
                 </div>
-              </SheetContent>
-            </Sheet>
+              </nav>
+              <div className="flex flex-col items-center gap-6 pb-8">
+                <Link href="/">
+                  <Image
+                    src="/logo.png"
+                    alt="Logo"
+                    width={160}
+                    height={160}
+                    className="h-44 w-auto opacity-80"
+                  />
+                </Link>
+
+                <div className="flex items-center gap-4">
+                  <Link
+                    href="https://instagram.com/drcoco"
+                    target="_blank"
+                    className="text-primary hover:text-primary/80 transition-colors"
+                  >
+                    <Instagram className="h-7 w-7" />
+                  </Link>
+                  <Link
+                    href="https://facebook.com/drcoco"
+                    target="_blank"
+                    className="text-primary hover:text-primary/80 transition-colors"
+                  >
+                    <Facebook className="h-7 w-7" />
+                  </Link>
+                </div>
+              </div>
+            </SheetContent>
+          </Sheet>
+
+          {/* Center — Logo */}
+          <div
+            className="absolute left-1/2 -translate-x-1/2 mt-2 overflow-visible z-20"
+            style={{
+              borderRadius: "50%",
+              backgroundColor: "rgb(250 250 249)",
+              padding: "3px",
+            }}
+          >
+            <Link href="/">
+              <Image
+                src="/logo.png"
+                alt="Logo"
+                width={144}
+                height={144}
+                priority
+                className="w-auto"
+                style={{ height: "80px" }}
+              />
+            </Link>
+          </div>
+
+          {/* Right — Cart */}
+          <div className="flex items-center gap-2 ml-auto">
+            <CartButton onClick={() => setIsCartOpen(true)} itemCount={cartItemCount} />
           </div>
         </div>
       </nav>
-
-      <div
-        className={cn(
-          "lg:hidden fixed bottom-4 bg-primary p-1 rounded right-4 z-50 transition-opacity",
-          isMobileMenuOpen && "opacity-0 pointer-events-none"
-        )}
-      >
-        <CartButton onClick={() => setIsCartOpen(true)} itemCount={cartItemCount} />
-      </div>
 
       {/* Cart Sheet */}
       <CartSheet isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />

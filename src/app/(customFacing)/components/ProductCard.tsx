@@ -10,7 +10,7 @@ import { useCart } from "@/app/(customFacing)/components/Cart";
 import { toast } from "sonner";
 import type { Product } from "@/app/(customFacing)/components/Cart";
 
-export function ProductCard({ product }: { product: Product }) {
+export function ProductCard({ product, priority }: { product: Product; priority?: boolean }) {
   const [isFavorite, setIsFavorite] = useState(false);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -46,14 +46,16 @@ export function ProductCard({ product }: { product: Product }) {
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Product Image */}
-      <div className="relative aspect-square overflow-hidden ">
+      <div className="relative aspect-square overflow-hidden">
         <Link href={`/sklep/${product.slug || product.id}`}>
           {mainImage && (
-            <>
+            <div className="relative w-full h-full">
               <Image
                 src={mainImage}
                 alt={product.name}
                 fill
+                priority={priority}
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
                 className={`object-contain group-hover:scale-105 transition-all duration-300 ${
                   hasMultipleImages && isHovered ? "opacity-0" : "opacity-100"
                 }`}
@@ -63,12 +65,13 @@ export function ProductCard({ product }: { product: Product }) {
                   src={hoverImage}
                   alt={`${product.name} - second view`}
                   fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
                   className={`object-contain group-hover:scale-105 transition-all duration-300 absolute inset-0 ${
                     isHovered ? "opacity-100" : "opacity-0"
                   }`}
                 />
               )}
-            </>
+            </div>
           )}
         </Link>
 

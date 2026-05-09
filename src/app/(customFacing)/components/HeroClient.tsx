@@ -94,7 +94,7 @@ export function HeroClient({ products }: HeroClientProps) {
   };
 
   return (
-    <section className="relative h-[20rem] mt-16 lg:h-[35rem] lg:mt-[72px] w-full overflow-hidden">
+    <section className="relative h-[20rem] mt-0 lg:h-[35rem] lg:mt-[72px] w-full overflow-hidden">
       {/* Carousel Container */}
       <div className="relative h-full w-full" onClick={handleSlideAreaClick}>
         {/* Slides Container */}
@@ -102,7 +102,10 @@ export function HeroClient({ products }: HeroClientProps) {
           className="flex h-full transition-transform duration-700 ease-in-out"
           style={{ transform: `translateX(-${currentSlide * 100}%)` }}
         >
-          {carouselSlides.map((slide, index) => (
+          {carouselSlides.map((slide, index) => {
+            // 4th slide (index 3) should be left-aligned
+            const isLeftAligned = index % 2 === 0 || index === 3;
+            return (
             <div key={slide.id} className="min-w-full h-full relative">
               {/* Background Image */}
               <div className="absolute inset-0">
@@ -120,23 +123,23 @@ export function HeroClient({ products }: HeroClientProps) {
 
               {/* Content - Alternating positions */}
               <div className="relative z-10 h-full">
-                <div className="container mx-auto px-6 lg:px-12 h-full">
+                <div className="container mx-auto px-6 lg:px-24 h-full">
                   <div
                     className={`h-full flex ${
-                      index % 2 === 0
+                      isLeftAligned
                         ? "items-end justify-start pb-16 lg:pb-28"
                         : "items-start justify-end pt-24 lg:pt-28"
                     }`}
                   >
                     <div
                       className={`max-w-md lg:max-w-lg space-y-4 ${
-                        index % 2 === 0 ? "text-left" : "text-right"
+                        isLeftAligned ? "text-left" : "text-right"
                       }`}
                     >
                       {/* Simple Badge */}
                       <div
                         className={`inline-flex items-center gap-1.5 text-white/80 text-xs font-medium tracking-wide uppercase ${
-                          index % 2 === 0 ? "" : "flex-row-reverse"
+                          isLeftAligned ? "" : "flex-row-reverse"
                         }`}
                       >
                         <Leaf className="w-3.5 h-3.5" />
@@ -169,7 +172,8 @@ export function HeroClient({ products }: HeroClientProps) {
                 </div>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Minimal Navigation Dots */}

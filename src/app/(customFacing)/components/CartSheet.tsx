@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetOverlay } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Minus, Plus, Trash2, ShoppingBag, Sparkles } from "lucide-react";
 import Image from "next/image";
@@ -73,11 +73,10 @@ export function CartSheet({ isOpen, onClose }: CartSheetProps) {
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetOverlay className="bg-black/30" />
-      <SheetContent className="w-full p-0 sm:max-w-lg bg-gradient-to-br from-stone-50 to-stone-100/50 backdrop-blur">
+      <SheetContent className="w-full p-0 sm:max-w-lg bg-white">
         <div className="h-full flex flex-col">
           {/* Header */}
-          <SheetHeader className=" pb-4 border-b border-stone-200/50">
+          <SheetHeader className=" pb-4 border-b border-gray-200">
             <SheetTitle className="text-2xl font-bold text-gray-900 flex items-center gap-3">
               <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
                 <ShoppingBag className="w-5 h-5 text-primary" />
@@ -103,14 +102,15 @@ export function CartSheet({ isOpen, onClose }: CartSheetProps) {
                 {cartItems.map((item) => (
                   <div
                     key={item.id}
-                    className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200"
+                    className="bg-stone-50 rounded-2xl p-4 border border-gray-200/60"
                   >
                     <div className="flex gap-4 items-center">
-                      <div className="relative h-20 w-20 rounded-xl overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 flex-shrink-0">
+                      <div className="relative size-28 rounded-xl overflow-hidden  flex-shrink-0">
                         <Image
                           src={item.imagePath}
                           alt={item.name}
                           fill
+                          sizes="80px"
                           className="object-contain p-2"
                         />
                       </div>
@@ -173,7 +173,7 @@ export function CartSheet({ isOpen, onClose }: CartSheetProps) {
 
           {/* Footer */}
           {cartItems.length > 0 && (
-            <div className="p-6 border-t border-stone-200/50 bg-white/50 backdrop-blur-sm rounded-t-2xl">
+            <div className="px-6 pt-6 pb-10 md:pb-0  border-t border-gray-200 bg-white">
               <div className="space-y-4">
                 {/* Subtotal */}
                 <div className="flex justify-between items-center">
