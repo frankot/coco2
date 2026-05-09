@@ -46,8 +46,9 @@ export default function ProductCard({ product }: ProductCardProps) {
   const hasMultipleImages = product.imagePaths.length > 1;
 
   return (
-    <div
-      className="rounded-xl overflow-hidden hover:scale-[1.02] transition-all duration-300 group"
+    <Link
+      href={`/sklep/${product.slug || product.id}`}
+      className="rounded-xl overflow-hidden hover:scale-[1.02] transition-all duration-300 group block"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -89,14 +90,14 @@ export default function ProductCard({ product }: ProductCardProps) {
       {/* Product info */}
       <div className="p-6 space-y-4">
         {/* Product name */}
-        <Link href={`/sklep/${product.slug || product.id}`} className="block group">
+        <div>
           <h3 className="text-lg font-bold text-primary group-hover:text-primary/80 transition-colors line-clamp-2 text-center">
             {product.name}
           </h3>
           <p className="text-sm font-bold text-primary text-center mt-1">
             (zestaw {product.itemsPerPack} sztuk)
           </p>
-        </Link>
+        </div>
 
         {/* Centered price */}
         <div className="text-center space-y-2">
@@ -114,7 +115,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             size="lg"
             className="w-fit text-white hover:bg-primary hover:text-white/70 font-medium"
             disabled={!product.isAvailable || isAddingToCart}
-            onClick={handleAddToCart}
+            onClick={(e) => { e.preventDefault(); handleAddToCart(); }}
           >
             {isAddingToCart ? (
               <>
@@ -130,6 +131,6 @@ export default function ProductCard({ product }: ProductCardProps) {
           </Button>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
