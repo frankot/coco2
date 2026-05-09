@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { ComponentProps } from "react";
-import { Menu, User, Instagram, Facebook } from "lucide-react";
+import { Menu, User, Instagram, Facebook, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
@@ -124,7 +124,7 @@ function UserAccountMenu() {
           <User className="size-7" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align="end" className="border-stone-200/60">
         <DropdownMenuLabel>Moje konto</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
@@ -259,12 +259,12 @@ export function Nav({ children }: { children: React.ReactNode }) {
   const logoMarginTop = isMainPage ? 58 - scrollProgress * 58 : 0;
   const logoPadding = isMainPage ? 10 - scrollProgress * 10 : 0;
 
-  const logoHeightPx = isMainPage ? 106 - scrollProgress * 26 : 80;
+  const logoHeightPx = isMainPage ? 132 - scrollProgress * 52 : 80;
 
   return (
     <>
       {/* Desktop Navigation */}
-      <nav className="hidden lg:block w-full fixed top-0 left-0 right-0 z-50 py-2 bg-stone-50 border-b border-gray-200 shadow-xs lg:mb-20">
+      <nav className="hidden lg:block w-full fixed top-0 left-0 right-0 z-50 py-2 bg-stone-50 border-b border-stone-200/50 shadow-xs lg:mb-20">
         <div className="container mx-auto max-w-7xl px-4 lg:px-8 ">
           <div className="flex h-14 items-center">
             {/* Left side - Navigation */}
@@ -276,7 +276,7 @@ export function Nav({ children }: { children: React.ReactNode }) {
               style={{
                 marginTop: `${logoMarginTop}px`,
                 transformOrigin: "center",
-                borderRadius: `${isMainPage && scrollProgress < 1 ? "50%" : "0"}`,
+                borderRadius: "50%",
                 backgroundColor:
                   isMainPage && scrollProgress < 1 ? "rgb(250 250 249)" : "transparent",
                 padding: `${logoPadding}px`,
@@ -309,7 +309,7 @@ export function Nav({ children }: { children: React.ReactNode }) {
       </nav>
 
       {/* Mobile Navigation */}
-      <nav className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-stone-50 border-b border-gray-200 shadow-xs">
+      <nav className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-stone-50 border-b border-stone-200/50 shadow-xs">
         <div className="flex h-16 items-center justify-between px-4">
           <Link href="/" className="absolute left-1/2 -translate-x-1/2">
             <Image src="/logo.png" alt="Logo" width={80} height={80} className="h-14 w-auto" />
@@ -395,5 +395,43 @@ export function NavLink(props: Omit<ComponentProps<typeof Link>, "className">) {
         pathname === props.href && "text-primary"
       )}
     />
+  );
+}
+
+interface NavDropdownItem {
+  href: string;
+  label: string;
+}
+
+interface NavDropdownProps {
+  label: string;
+  items: NavDropdownItem[];
+}
+
+export function NavDropdown({ label, items }: NavDropdownProps) {
+  const pathname = usePathname();
+  const isActive = items.some((item) => pathname === item.href);
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          className={cn(
+            "text-base font-medium hover:text-primary transition-colors inline-flex items-center gap-1 outline-none focus-visible:outline-none",
+            isActive && "text-primary"
+          )}
+        >
+          {label}
+          <ChevronDown className="size-3.5 mt-0.5" />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start" className="border-stone-200/60">
+        {items.map((item) => (
+          <DropdownMenuItem key={item.href} asChild>
+            <Link href={item.href}>{item.label}</Link>
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

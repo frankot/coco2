@@ -1,7 +1,6 @@
 import { About } from "./components/About";
 import { Hero } from "./components/Hero";
 import { Newsletter } from "./components/Newsletter";
-import { FeaturedArticles } from "./components/FeaturedArticles";
 import FeaturedProducts from "./components/FeaturedProducts";
 import type { Metadata } from "next";
 
@@ -53,10 +52,6 @@ export default function Home() {
 
         <FeaturedProducts />
         <About />
-
-        <FeaturedArticles />
-
-        {/* <Features /> */}
 
         <Newsletter />
       </main>

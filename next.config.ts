@@ -32,6 +32,16 @@ const nextConfig: NextConfig = {
   // Empty turbopack config to silence the warning (most apps work without config)
   turbopack: {},
 
+  async redirects() {
+    return [
+      {
+        source: "/o-nas",
+        destination: "/nasza-historia",
+        permanent: true,
+      },
+    ];
+  },
+
   experimental: {
     serverActions: {
       bodySizeLimit: "2mb",

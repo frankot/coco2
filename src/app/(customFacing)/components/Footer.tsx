@@ -58,8 +58,8 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/o-nas" className="text-gray-600 hover:text-primary transition-colors">
-                  O nas
+                <Link href="/nasza-historia" className="text-gray-600 hover:text-primary transition-colors">
+                  Nasza historia
                 </Link>
               </li>
               <li>
