@@ -30,7 +30,7 @@ export default async function BlogListPage() {
   const posts = await prisma.blogPost.findMany({ orderBy: { createdAt: "desc" } });
 
   return (
-    <div className="min-h-screen mt-16">
+    <div className="min-h-screen lg:mt-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <PageHeader
           accent="Blog"

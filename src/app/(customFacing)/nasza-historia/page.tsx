@@ -35,7 +35,7 @@ export const metadata: Metadata = {
 
 export default function NaszaHistoriaPage() {
   return (
-    <div className="min-h-screen mt-16">
+    <div className="min-h-screen lg:mt-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <PageHeader
           accent="Nasza historia"
@@ -49,7 +49,7 @@ export default function NaszaHistoriaPage() {
             alt="O Dr.Coco"
             width={500}
             height={600}
-            className="hidden lg:block float-right ml-8 mb-6 w-[45%] h-auto object-cover rounded-2xl shadow-lg"
+            className="hidden lg:block float-right ml-8 mb-6 w-[45%] h-auto object-cover   rounded-2xl shadow-lg"
           />
 
           {/* Mobile Image */}

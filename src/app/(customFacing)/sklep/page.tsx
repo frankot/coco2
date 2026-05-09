@@ -74,7 +74,7 @@ export default function ShopPage() {
   const showNoResults = searchTerm.length > 0 && totalVisible === 0;
 
   return (
-    <div className="min-h-screen mt-16">
+    <div className="min-h-screen lg:mt-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {loading ? (
           <div className="space-y-10">

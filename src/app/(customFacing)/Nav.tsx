@@ -7,7 +7,7 @@ import { ComponentProps } from "react";
 import { Menu, User, Instagram, Facebook, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { useSession, signOut } from "next-auth/react";
 import {
   DropdownMenu,
@@ -139,7 +139,89 @@ function UserAccountMenu() {
   );
 }
 
-export function Nav({ children }: { children: React.ReactNode }) {
+type NavItemData =
+  | { type: "link"; href: string; label: string }
+  | { type: "dropdown"; label: string; items: { href: string; label: string }[] };
+
+// Mobile accordion — no Radix portals, no sheet close on expand
+function MobileNavAccordion({
+  items,
+  onLinkClick,
+}: {
+  items: NavItemData[];
+  onLinkClick: () => void;
+}) {
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const pathname = usePathname();
+
+  return (
+    <div className="flex flex-col space-y-1">
+      {items.map((item) => {
+        if (item.type === "link") {
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={cn(
+                "flex items-center px-4 py-2.5 rounded-md transition-colors text-base",
+                pathname === item.href
+                  ? "text-primary font-medium"
+                  : "text-gray-700 hover:bg-accent"
+              )}
+              onClick={onLinkClick}
+            >
+              {item.label}
+            </Link>
+          );
+        }
+
+        const isOpen = openDropdown === item.label;
+        const isActive = item.items.some((sub) => pathname === sub.href);
+
+        return (
+          <div key={item.label}>
+            <button
+              onClick={() => setOpenDropdown(isOpen ? null : item.label)}
+              className={cn(
+                "flex items-center justify-between w-full px-4 py-2.5 rounded-md transition-colors text-base",
+                isActive ? "text-primary font-medium" : "text-gray-700 hover:bg-accent"
+              )}
+            >
+              <span>{item.label}</span>
+              <ChevronDown
+                className={cn(
+                  "size-4 transition-transform duration-200",
+                  isOpen && "rotate-180"
+                )}
+              />
+            </button>
+            {isOpen && (
+              <div className="ml-4 mt-1 mb-1 flex flex-col space-y-0.5 border-l-2 border-primary/20 pl-3">
+                {item.items.map((sub) => (
+                  <Link
+                    key={sub.href}
+                    href={sub.href}
+                    className={cn(
+                      "flex items-center px-4 py-2 rounded-md transition-colors text-sm",
+                      pathname === sub.href
+                        ? "text-primary font-medium"
+                        : "text-gray-600 hover:bg-accent"
+                    )}
+                    onClick={onLinkClick}
+                  >
+                    {sub.label}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+export function Nav({ children, navItems }: { children: React.ReactNode; navItems?: NavItemData[] }) {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -310,7 +392,7 @@ export function Nav({ children }: { children: React.ReactNode }) {
       </nav>
 
       {/* Mobile Navigation */}
-      <nav className="lg:hidden relative w-full bg-stone-50 border-b border-stone-200/50 shadow-xs">
+      <nav className="lg:hidden relative w-full bg-stone-50 border-b border-stone-200/50 shadow-xs overflow-hidden">
         <div className="flex h-20 items-center justify-between px-4">
           {/* Left — Menu */}
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
@@ -321,11 +403,27 @@ export function Nav({ children }: { children: React.ReactNode }) {
             </SheetTrigger>
             <SheetContent side="left" className="w-[300px] sm:w-[400px] flex flex-col">
               <SheetTitle className="sr-only">Menu nawigacyjne</SheetTitle>
-              <nav
-                className="flex flex-col space-y-4 mt-8 flex-1"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                {children}
+              <SheetDescription className="sr-only">
+                Nawigacja po sklepie Dr.Coco
+              </SheetDescription>
+              <nav className="flex flex-col mt-8 flex-1">
+                {navItems ? (
+                  <MobileNavAccordion
+                    items={navItems}
+                    onLinkClick={() => setIsMobileMenuOpen(false)}
+                  />
+                ) : (
+                  <div
+                    className="flex flex-col space-y-1"
+                    onClick={(e) => {
+                      if ((e.target as HTMLElement).closest("a")) {
+                        setIsMobileMenuOpen(false);
+                      }
+                    }}
+                  >
+                    {children}
+                  </div>
+                )}
 
                 {/* Mobile Account Section */}
                 <div className="pt-4 border-t">
@@ -365,7 +463,7 @@ export function Nav({ children }: { children: React.ReactNode }) {
 
           {/* Center — Logo */}
           <div
-            className="absolute left-1/2 -translate-x-1/2 mt-2 overflow-visible z-20"
+            className="absolute left-1/2 -translate-x-1/2 mt-2 overflow-hidden z-20"
             style={{
               borderRadius: "50%",
               backgroundColor: "rgb(250 250 249)",
