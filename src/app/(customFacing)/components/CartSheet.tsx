@@ -102,7 +102,7 @@ export function CartSheet({ isOpen, onClose }: CartSheetProps) {
                 {cartItems.map((item) => (
                   <div
                     key={item.id}
-                    className="bg-stone-50 rounded-2xl p-4 border border-gray-200/60"
+                    className="bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 rounded-2xl p-4 border border-gray-200/60"
                   >
                     <div className="flex gap-4 items-center">
                       <div className="relative size-28 rounded-xl overflow-hidden  flex-shrink-0">
@@ -126,7 +126,7 @@ export function CartSheet({ isOpen, onClose }: CartSheetProps) {
                         </p>
 
                         <div className="flex items-center gap-3 mt-3">
-                          <div className="flex items-center gap-2 bg-gray-50 rounded-lg p-1">
+                          <div className="flex items-center gap-2 bg-white rounded-lg p-1">
                             <Button
                               variant="ghost"
                               size="icon"
