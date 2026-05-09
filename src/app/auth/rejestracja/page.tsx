@@ -6,14 +6,6 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
 import { signIn } from "next-auth/react";
 import Loading from "@/components/ui/loading";
 import { userRegistrationSchema } from "@/lib/auth-utils";
@@ -48,7 +40,7 @@ function RegisterForm() {
     }
 
     try {
-      // Validate with zod schema (optional fields included if provided)
+      // Validate with zod schema
       const validationResult = userRegistrationSchema.safeParse({
         email,
         password,
@@ -56,7 +48,9 @@ function RegisterForm() {
         lastName,
       });
       if (!validationResult.success) {
-        const errorMessages = validationResult.error.errors.map((err) => err.message).join(", ");
+        const errorMessages = validationResult.error.errors
+          .map((err) => err.message)
+          .join(", ");
         setError(errorMessages);
         setIsLoading(false);
         return;
@@ -74,8 +68,6 @@ function RegisterForm() {
       const data = await response.json();
 
       if (!response.ok) {
-        // Display the specific error message from the API
-        // API returns { error: "message" } for errors
         setError(data.error || data.message || "Nie udało się utworzyć konta");
         setIsLoading(false);
         return;
@@ -88,7 +80,6 @@ function RegisterForm() {
         redirect: false,
       });
 
-      // Redirect to home page
       router.push(callbackUrl);
       router.refresh();
     } catch (error: any) {
@@ -98,147 +89,160 @@ function RegisterForm() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Utwórz konto</CardTitle>
-          <CardDescription className="text-center">
-            Wprowadź swój email i hasło aby się zarejestrować
-          </CardDescription>
-        </CardHeader>
+    <div className="min-h-[calc(100vh-5rem)] flex items-center justify-center">
+      <div className="w-full max-w-md px-4 py-12">
+        {/* Heading */}
+        <h1 className="text-2xl font-bold text-gray-900 text-center">
+          Utwórz konto
+        </h1>
+        <p className="mt-2 text-gray-500 text-center text-sm">
+          Dołącz do społeczności Dr.Coco
+        </p>
 
-        <CardContent>
-          {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-              {error}
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-2">
-                <Label htmlFor="firstName">Imię</Label>
-                <Input
-                  id="firstName"
-                  type="text"
-                  required
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  placeholder="Jan"
-                  disabled={isLoading}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="lastName">Nazwisko</Label>
-                <Input
-                  id="lastName"
-                  type="text"
-                  required
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  placeholder="Kowalski"
-                  disabled={isLoading}
-                />
-              </div>
-            </div>
-
-            {/* Telefon przeniesiony do adresu przy dodawaniu adresu */}
-
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="twój@email.com"
-                disabled={isLoading}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="password">Hasło</Label>
-              <div className="relative">
-                <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  disabled={isLoading}
-                  className="pr-10"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                  disabled={isLoading}
-                >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </button>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Potwierdź hasło</Label>
-              <div className="relative">
-                <Input
-                  id="confirmPassword"
-                  type={showConfirmPassword ? "text" : "password"}
-                  required
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="••••••••"
-                  disabled={isLoading}
-                  className="pr-10"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                  disabled={isLoading}
-                >
-                  {showConfirmPassword ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
-                </button>
-              </div>
-            </div>
-
-            {/* Newsletter */}
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                id="newsletterConsent"
-                checked={newsletterConsent}
-                onChange={(e) => setNewsletterConsent(e.target.checked)}
-                className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
-                disabled={isLoading}
-              />
-              <label htmlFor="newsletterConsent" className="text-sm cursor-pointer">
-                Chcę otrzymywać newsletter z promocjami i nowościami
-              </label>
-            </div>
-
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Tworzenie konta..." : "Utwórz konto"}
-            </Button>
-          </form>
-        </CardContent>
-
-        <CardFooter className="flex flex-col space-y-2">
-          <div className="text-center text-sm">
-            Masz już konto?{" "}
-            <Link href="/auth/zaloguj" className="text-primary hover:underline">
-              Zaloguj się
-            </Link>
+        {/* Error */}
+        {error && (
+          <div className="mt-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+            {error}
           </div>
-        </CardFooter>
-      </Card>
+        )}
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+          {/* Name */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-2">
+              <Label htmlFor="firstName">Imię</Label>
+              <Input
+                id="firstName"
+                type="text"
+                required
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                placeholder="Jan"
+                disabled={isLoading}
+                className="h-11"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="lastName">Nazwisko</Label>
+              <Input
+                id="lastName"
+                type="text"
+                required
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                placeholder="Kowalski"
+                disabled={isLoading}
+                className="h-11"
+              />
+            </div>
+          </div>
+
+          {/* Email */}
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="twój@email.com"
+              disabled={isLoading}
+              className="h-11"
+            />
+          </div>
+
+          {/* Password */}
+          <div className="space-y-2">
+            <Label htmlFor="password">Hasło</Label>
+            <div className="relative">
+              <Input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                disabled={isLoading}
+                className="pr-10 h-11"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                disabled={isLoading}
+              >
+                {showPassword ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
+              </button>
+            </div>
+          </div>
+
+          {/* Confirm Password */}
+          <div className="space-y-2">
+            <Label htmlFor="confirmPassword">Potwierdź hasło</Label>
+            <div className="relative">
+              <Input
+                id="confirmPassword"
+                type={showConfirmPassword ? "text" : "password"}
+                required
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="••••••••"
+                disabled={isLoading}
+                className="pr-10 h-11"
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                disabled={isLoading}
+              >
+                {showConfirmPassword ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
+              </button>
+            </div>
+          </div>
+
+          {/* Newsletter */}
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="newsletterConsent"
+              checked={newsletterConsent}
+              onChange={(e) => setNewsletterConsent(e.target.checked)}
+              className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
+              disabled={isLoading}
+            />
+            <label htmlFor="newsletterConsent" className="text-sm cursor-pointer">
+              Chcę otrzymywać newsletter z promocjami i nowościami
+            </label>
+          </div>
+
+          {/* Submit */}
+          <Button type="submit" className="w-full h-11" disabled={isLoading}>
+            {isLoading ? "Tworzenie konta..." : "Utwórz konto"}
+          </Button>
+        </form>
+
+        {/* Login link */}
+        <p className="mt-8 text-center text-sm text-gray-500">
+          Masz już konto?{" "}
+          <Link
+            href="/auth/zaloguj"
+            className="text-primary font-medium hover:underline"
+          >
+            Zaloguj się
+          </Link>
+        </p>
+      </div>
     </div>
   );
 }

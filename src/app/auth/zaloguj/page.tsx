@@ -7,10 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import Loading from "@/components/ui/loading";
 import { Eye, EyeOff } from "lucide-react";
-import Image from "next/image";
 
 function SignInForm() {
   const [email, setEmail] = useState("");
@@ -49,7 +47,6 @@ function SignInForm() {
       }
 
       if (result?.ok) {
-        // Redirect to callback URL unless it's an admin URL
         router.push(callbackUrl.startsWith("/admin") ? "/" : callbackUrl);
         router.refresh();
       }
@@ -61,91 +58,101 @@ function SignInForm() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-8">
-        <div className="relative w-full h-32 flex items-center justify-center">
-          <Image
-            src="/logo.png"
-            alt="Logo"
-            width={200}
-            height={128}
-            className="object-contain mix-blend-multiply opacity-90"
-            priority
-          />
-        </div>
-        <Card className="w-full">
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold text-center">Zaloguj się</CardTitle>
-            <CardDescription className="text-center">
-              Wprowadź dane dostępowe do swojego konta
-            </CardDescription>
-          </CardHeader>
+    <div className="min-h-[70vh] flex items-center justify-center">
+      <div className="w-full max-w-md px-4 py-12">
+        {/* Heading */}
+        <h1 className="text-2xl font-bold text-gray-900 text-center">
+          Zaloguj się
+        </h1>
+        <p className="mt-2 text-gray-500 text-center text-sm">
+          Witaj ponownie w&nbsp;Dr.Coco
+        </p>
 
-          <CardContent>
-            {error && (
-              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                {error}
-              </div>
-            )}
+        {/* Error */}
+        {error && (
+          <div className="mt-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+            {error}
+          </div>
+        )}
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="twój@email.com"
-                  disabled={isLoading}
-                />
-              </div>
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+          {/* Email */}
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="twój@email.com"
+              disabled={isLoading}
+              className="h-11"
+            />
+          </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="password">Hasło</Label>
-                <div className="relative">
-                  <Input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                    disabled={isLoading}
-                    className="pr-10"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                    disabled={isLoading}
-                  >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </button>
-                </div>
-                <div className="text-right mt-1">
-                  <Link href="/auth/forgot" className="text-sm text-primary hover:underline">
-                    Zapomniałeś hasła?
-                  </Link>
-                </div>
-              </div>
-
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? "Logowanie..." : "Zaloguj się"}
-              </Button>
-            </form>
-
-            <div className="mt-4 text-center text-sm">
-              <p>
-                Nie masz konta?{" "}
-                <Link href={callbackUrl !== "/" ? `/auth/rejestracja?callbackUrl=${encodeURIComponent(callbackUrl)}` : "/auth/rejestracja"} className="text-primary hover:underline">
-                  Zarejestruj się
-                </Link>
-              </p>
+          {/* Password */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="password">Hasło</Label>
+              <Link
+                href="/auth/forgot"
+                className="text-xs text-primary hover:underline"
+              >
+                Zapomniałeś hasła?
+              </Link>
             </div>
-          </CardContent>
-        </Card>
+            <div className="relative">
+              <Input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                disabled={isLoading}
+                className="pr-10 h-11"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                disabled={isLoading}
+              >
+                {showPassword ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
+              </button>
+            </div>
+          </div>
+
+          {/* Submit */}
+          <Button
+            type="submit"
+            className="w-full h-11"
+            disabled={isLoading}
+          >
+            {isLoading ? "Logowanie..." : "Zaloguj się"}
+          </Button>
+        </form>
+
+        {/* Register */}
+        <p className="mt-8 text-center text-sm text-gray-500">
+          Nie masz konta?{" "}
+          <Link
+            href={
+              callbackUrl !== "/"
+                ? `/auth/rejestracja?callbackUrl=${encodeURIComponent(callbackUrl)}`
+                : "/auth/rejestracja"
+            }
+            className="text-primary font-medium hover:underline"
+          >
+            Zarejestruj się
+          </Link>
+        </p>
       </div>
     </div>
   );

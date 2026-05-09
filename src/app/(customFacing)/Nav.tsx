@@ -105,13 +105,15 @@ function MobileAccountSection({ onLinkClick }: { onLinkClick?: () => void }) {
 // User Account Menu component
 function UserAccountMenu() {
   const { data: session, status } = useSession();
+  const pathname = usePathname();
   const isAuthenticated = status === "authenticated";
+  const onAuthPage = pathname.startsWith("/auth") || pathname.startsWith("/uzytkownik");
 
   if (!isAuthenticated) {
     return (
       <Link href="/auth/zaloguj">
         <Button variant="ghost" size="icon">
-          <User className="size-7" />
+          <User className={cn("size-7", onAuthPage && "text-primary")} />
         </Button>
       </Link>
     );
@@ -121,7 +123,7 @@ function UserAccountMenu() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon">
-          <User className="size-7" />
+          <User className={cn("size-7", onAuthPage && "text-primary")} />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="border-stone-200/60">
