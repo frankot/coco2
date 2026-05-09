@@ -9,9 +9,9 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="mx-10 pt-16 pb-8">
-      <div className="container mx-auto px-4">
-        <div className="flex flex-col lg:flex-row gap-10 lg:gap-16">
+    <footer className="mx-4 lg:mx-10 pt-8 lg:pt-16 pb-8">
+      <div className="container mx-auto px-2 lg:px-4">
+        <div className="grid grid-cols-2 lg:flex lg:flex-row gap-6 lg:gap-16">
           {/* Column 1: Logo, About & Social Links */}
           <div className="flex-1 space-y-6">
             <Link href="/" className="block mb-4">
@@ -43,7 +43,40 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Column 2: Quick Links */}
+          {/* Column 2: Contact Info */}
+          <div className="flex-1">
+            <h3 className="text-lg text-primary font-semibold mb-4">Kontakt</h3>
+            <ul className="space-y-4">
+              <li className="flex items-start gap-3">
+                <MapPin className="text-primary flex-shrink-0 mt-0.5" size={18} />
+                <span className="text-gray-600">
+                  {contactInfo.address.street}
+                  <br />
+                  {contactInfo.address.city}
+                </span>
+              </li>
+              <li className="flex items-center gap-3">
+                <Phone className="text-primary flex-shrink-0" size={18} />
+                <a
+                  href={`tel:${contactInfo.phone}`}
+                  className="text-gray-600 hover:text-primary transition-colors"
+                >
+                  {contactInfo.phone}
+                </a>
+              </li>
+              <li className="flex items-center gap-3">
+                <Mail className="text-primary flex-shrink-0" size={18} />
+                <a
+                  href={`mailto:${contactInfo.email}`}
+                  className="text-gray-600 hover:text-primary transition-colors"
+                >
+                  {contactInfo.email}
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 3: Quick Links */}
           <div className="flex-1">
             <h3 className="text-lg text-primary font-semibold mb-4">Linki</h3>
             <ul className="space-y-3">
@@ -74,39 +107,6 @@ export function Footer() {
                 <Link href="/faq" className="text-gray-600 hover:text-primary transition-colors">
                   FAQ
                 </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Column 3: Contact Info */}
-          <div className="flex-1">
-            <h3 className="text-lg text-primary font-semibold mb-4">Kontakt</h3>
-            <ul className="space-y-4">
-              <li className="flex items-start gap-3">
-                <MapPin className="text-primary flex-shrink-0 mt-0.5" size={18} />
-                <span className="text-gray-600">
-                  {contactInfo.address.street}
-                  <br />
-                  {contactInfo.address.city}
-                </span>
-              </li>
-              <li className="flex items-center gap-3">
-                <Phone className="text-primary flex-shrink-0" size={18} />
-                <a
-                  href={`tel:${contactInfo.phone}`}
-                  className="text-gray-600 hover:text-primary transition-colors"
-                >
-                  {contactInfo.phone}
-                </a>
-              </li>
-              <li className="flex items-center gap-3">
-                <Mail className="text-primary flex-shrink-0" size={18} />
-                <a
-                  href={`mailto:${contactInfo.email}`}
-                  className="text-gray-600 hover:text-primary transition-colors"
-                >
-                  {contactInfo.email}
-                </a>
               </li>
             </ul>
           </div>

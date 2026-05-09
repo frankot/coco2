@@ -117,8 +117,12 @@ export function HeroClient({ products }: HeroClientProps) {
                   className={`object-cover ${index === 0 || index === 2 ? "object-right lg:object-center" : ""}`}
                   priority={index === 0}
                 />
-                {/* Overlay - lighter for minimalism */}
-                <div className={`absolute inset-0 bg-gradient-to-br from-black/40 to-black/20`} />
+                {/* Overlay — gradient aligns with content side */}
+                <div className={`absolute inset-0 ${
+                  isLeftAligned
+                    ? "bg-gradient-to-r from-black/80 md:from-black/60 via-black/30 to-black/10"
+                    : "bg-gradient-to-l from-black/80 md:from-black/60 via-black/30 to-black/10"
+                }`} />
               </div>
 
               {/* Content - Alternating positions */}
@@ -198,7 +202,7 @@ export function HeroClient({ products }: HeroClientProps) {
         {/* Minimal Navigation Arrows */}
         <button
           onClick={prevSlide}
-          className={`absolute left-6 top-1/2 transform -translate-y-1/2 z-20 w-10 h-10 border border-white/30 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/10 transition-all duration-300 ${
+          className={`absolute left-6 bottom-4 lg:top-1/2 lg:-translate-y-1/2 z-20 w-10 h-10 border border-white/30 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/10 transition-all duration-300 ${
             showArrows ? "opacity-100 scale-100" : "opacity-0 scale-75"
           }`}
           aria-label="Previous slide"
@@ -208,7 +212,7 @@ export function HeroClient({ products }: HeroClientProps) {
 
         <button
           onClick={nextSlide}
-          className={`absolute right-6 top-1/2 transform -translate-y-1/2 z-20 w-10 h-10 border border-white/30 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/10 transition-all duration-300 ${
+          className={`absolute right-6 bottom-4 lg:top-1/2 lg:-translate-y-1/2 z-20 w-10 h-10 border border-white/30 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/10 transition-all duration-300 ${
             showArrows ? "opacity-100 scale-100" : "opacity-0 scale-75"
           }`}
           aria-label="Next slide"
