@@ -54,6 +54,8 @@ export async function addProduct(prevState: FormState, formData: FormData): Prom
     const name = formData.get("name") as string;
     const slug = ((formData.get("slug") as string) || "").trim() || slugify(name || "");
     const priceInCents = parseInt(formData.get("priceInCents") as string);
+    const lastPriceRaw = formData.get("lastPriceInCents") as string;
+    const lastPriceInCents = lastPriceRaw ? parseInt(lastPriceRaw) : null;
     const description = formData.get("description") as string;
     const itemsPerPack = parseInt(formData.get("itemsPerPack") as string) || 12;
 
@@ -133,6 +135,7 @@ export async function addProduct(prevState: FormState, formData: FormData): Prom
         slug,
         price: priceInCents / 100,
         priceInCents,
+        lastPriceInCents,
         description,
         content,
         composition,
@@ -192,6 +195,8 @@ export async function updateProduct(
     const name = formData.get("name") as string;
     const slug = ((formData.get("slug") as string) || "").trim() || slugify(name || "");
     const priceInCents = parseInt(formData.get("priceInCents") as string);
+    const lastPriceRaw = formData.get("lastPriceInCents") as string;
+    const lastPriceInCents = lastPriceRaw ? parseInt(lastPriceRaw) : null;
     const description = formData.get("description") as string;
     const itemsPerPack = parseInt(formData.get("itemsPerPack") as string) || 12;
     const weightKg = parseFloat(formData.get("weightKg") as string) || 0.5;
@@ -237,6 +242,7 @@ export async function updateProduct(
       slug,
       price: priceInCents / 100,
       priceInCents,
+      lastPriceInCents,
       description,
       itemsPerPack,
       weightKg,

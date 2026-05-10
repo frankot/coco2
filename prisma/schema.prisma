@@ -60,6 +60,7 @@ model Product {
   composition    Json?       // Composition/nutritional info
   isAvailable    Boolean     @default(true)
   promo          Boolean     @default(false)
+  lastPriceInCents Int?
   visibleToDetal    Boolean  @default(true)
   visibleToDetalB2B Boolean  @default(true)
   visibleToHurt     Boolean  @default(true)

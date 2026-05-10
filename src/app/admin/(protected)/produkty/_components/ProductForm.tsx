@@ -28,6 +28,9 @@ export default function ProductForm({ product }: { product?: Product | null }) {
   const [pricePln, setPricePln] = useState<string>(
     product?.priceInCents != null ? (product.priceInCents / 100).toFixed(2) : ""
   );
+  const [lastPricePln, setLastPricePln] = useState<string>(
+    product?.lastPriceInCents != null ? (product.lastPriceInCents / 100).toFixed(2) : ""
+  );
   const [description, setDescription] = useState<string>(product?.description || "");
   const [content, setContent] = useState<string>(product?.content || "");
 
@@ -100,8 +103,13 @@ export default function ProductForm({ product }: { product?: Product | null }) {
     const rawPln = (formData.get("pricePln") as string) ?? pricePln;
     const cents = toCents(rawPln);
 
+    const rawLastPricePln = (formData.get("lastPricePln") as string) ?? lastPricePln;
+    const lastPriceCents = rawLastPricePln.trim() ? toCents(rawLastPricePln) : null;
+
     formData.set("priceInCents", String(cents));
+    formData.set("lastPriceInCents", lastPriceCents !== null ? String(lastPriceCents) : "");
     formData.delete("pricePln");
+    formData.delete("lastPricePln");
     formData.set("content", content);
     formData.set("composition", JSON.stringify(composition));
 
@@ -119,6 +127,18 @@ export default function ProductForm({ product }: { product?: Product | null }) {
   // Price preview
   const pricePreview = (() => {
     let s = (pricePln || "").replace(/[\u00A0\s]/g, "");
+    if (s.includes(",")) {
+      s = s.replace(/\./g, "");
+      s = s.replace(",", ".");
+    }
+    const num = parseFloat(s);
+    const cents = Number.isFinite(num) ? Math.round(num * 100) : 0;
+    return formatPLN(cents);
+  })();
+
+  const lastPricePreview = (() => {
+    let s = (lastPricePln || "").replace(/[\u00A0\s]/g, "");
+    if (!s.trim()) return null;
     if (s.includes(",")) {
       s = s.replace(/\./g, "");
       s = s.replace(",", ".");
@@ -292,6 +312,25 @@ export default function ProductForm({ product }: { product?: Product | null }) {
                     <div className="text-destructive text-sm">{state.error.itemsPerPack}</div>
                   )}
                 </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label htmlFor="lastPricePln">Najniższa cena z 30 dni (PLN)</Label>
+                <Input
+                  type="text"
+                  id="lastPricePln"
+                  name="lastPricePln"
+                  inputMode="decimal"
+                  placeholder={pricePreview}
+                  value={lastPricePln}
+                  onChange={(e) => setLastPricePln(e.target.value)}
+                />
+                {lastPricePreview && (
+                  <p className="text-xs text-muted-foreground">{lastPricePreview}</p>
+                )}
+                <p className="text-xs text-muted-foreground">
+                  Opcjonalne. Jeśli puste, użyta zostanie cena produktu.
+                </p>
               </div>
 
               <div className="space-y-1.5">

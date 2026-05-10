@@ -224,7 +224,7 @@ export default function ProductPageClient({ params }: { params: Promise<{ id: st
               </div>
               <div className="text-xs text-gray-400">
                 Najniższa cena w ciągu ostatnich 30 dni:{" "}
-                <span className="font-medium">{formatPLN(product.priceInCents)}</span>
+                <span className="font-medium">{formatPLN(product.lastPriceInCents ?? product.priceInCents)}</span>
               </div>
             </div>
 
