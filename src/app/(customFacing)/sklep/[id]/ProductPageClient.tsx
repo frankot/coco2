@@ -124,14 +124,21 @@ export default function ProductPageClient({ params }: { params: Promise<{ id: st
   const pricePerUnit = product.priceInCents / itemsPerPack;
 
   return (
-    <div className="min-h-screen ">
-      <div className="container mx-auto px-4  py-10 lg:py-20">
+    <div className="min-h-screen pt-16 lg:pt-18">
+      {/* Promo banner */}
+      {product.promo && (
+        <div className="bg-primary text-white text-center text-sm font-semibold uppercase tracking-wide py-2">
+          Promocja
+        </div>
+      )}
+
+      <div className="container mx-auto px-4 py-10 lg:pb-20 ">
         {/* Back button */}
         <div className="mb-6">
           <Link href="/sklep">
             <Button
               variant="ghost"
-              className="flex items-center gap-2 text-gray-600  hover:bg-secondary/50"
+              className="flex items-center gap-2 text-gray-600  hover:bg-primary"
             >
               <ArrowLeft className="w-4 h-4" />
               Wróć do sklepu

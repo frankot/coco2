@@ -59,6 +59,7 @@ model Product {
   content        String?     // Markdown content
   composition    Json?       // Composition/nutritional info
   isAvailable    Boolean     @default(true)
+  promo          Boolean     @default(false)
   visibleToDetal    Boolean  @default(true)
   visibleToDetalB2B Boolean  @default(true)
   visibleToHurt     Boolean  @default(true)

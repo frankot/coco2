@@ -55,6 +55,12 @@ export default function ProductCard({ product }: ProductCardProps) {
       {/* Image container with centered badge */}
       <div className="relative">
         <div className="w-full h-80 relative overflow-visible">
+          {/* Promo banner */}
+          {product.promo && (
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-primary text-white text-center text-xs font-semibold uppercase tracking-wide py-1 px-4 rounded-lg z-10">
+              Promocja
+            </div>
+          )}
           {/* Main image */}
           <Image
             src={mainImage}

@@ -15,6 +15,7 @@ type Product = {
   priceInCents: number;
   imagePath: string;
   description: string;
+  promo?: boolean;
 };
 
 interface FeaturedProductCardProps {
@@ -26,6 +27,13 @@ export function FeaturedProductCard({ product, onAddToCart }: FeaturedProductCar
   return (
     <Link href={`/sklep/${product.slug || product.id}`} className="block group">
       <Card className="w-full overflow-hidden shadow-md relative transition-shadow hover:shadow-lg">
+        {/* Promo banner */}
+        {product.promo && (
+          <div className="bg-primary text-primary-foreground text-center text-xs font-semibold uppercase tracking-wide py-1.5">
+            Promocja
+          </div>
+        )}
+
         {/* Featured badge */}
         <div className="absolute top-2 left-2 z-10 bg-primary text-primary-foreground rounded-full px-2 py-1 text-xs flex items-center gap-1">
           <Star className="size-3 fill-current" />

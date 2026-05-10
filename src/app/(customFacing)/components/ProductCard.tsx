@@ -45,6 +45,13 @@ export function ProductCard({ product, priority }: { product: Product; priority?
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
+      {/* Promo banner */}
+      {product.promo && (
+        <div className="bg-primary text-primary-foreground text-center text-xs font-semibold uppercase tracking-wide py-1.5">
+          Promocja
+        </div>
+      )}
+
       {/* Product Image */}
       <div className="relative aspect-square overflow-hidden">
         <Link href={`/sklep/${product.slug || product.id}`}>

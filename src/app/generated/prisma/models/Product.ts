@@ -55,6 +55,7 @@ export type ProductMinAggregateOutputType = {
   description: string | null
   content: string | null
   isAvailable: boolean | null
+  promo: boolean | null
   visibleToDetal: boolean | null
   visibleToDetalB2B: boolean | null
   visibleToHurt: boolean | null
@@ -76,6 +77,7 @@ export type ProductMaxAggregateOutputType = {
   description: string | null
   content: string | null
   isAvailable: boolean | null
+  promo: boolean | null
   visibleToDetal: boolean | null
   visibleToDetalB2B: boolean | null
   visibleToHurt: boolean | null
@@ -99,6 +101,7 @@ export type ProductCountAggregateOutputType = {
   content: number
   composition: number
   isAvailable: number
+  promo: number
   visibleToDetal: number
   visibleToDetalB2B: number
   visibleToHurt: number
@@ -143,6 +146,7 @@ export type ProductMinAggregateInputType = {
   description?: true
   content?: true
   isAvailable?: true
+  promo?: true
   visibleToDetal?: true
   visibleToDetalB2B?: true
   visibleToHurt?: true
@@ -164,6 +168,7 @@ export type ProductMaxAggregateInputType = {
   description?: true
   content?: true
   isAvailable?: true
+  promo?: true
   visibleToDetal?: true
   visibleToDetalB2B?: true
   visibleToHurt?: true
@@ -187,6 +192,7 @@ export type ProductCountAggregateInputType = {
   content?: true
   composition?: true
   isAvailable?: true
+  promo?: true
   visibleToDetal?: true
   visibleToDetalB2B?: true
   visibleToHurt?: true
@@ -298,6 +304,7 @@ export type ProductGroupByOutputType = {
   content: string | null
   composition: runtime.JsonValue | null
   isAvailable: boolean
+  promo: boolean
   visibleToDetal: boolean
   visibleToDetalB2B: boolean
   visibleToHurt: boolean
@@ -345,6 +352,7 @@ export type ProductWhereInput = {
   content?: Prisma.StringNullableFilter<"Product"> | string | null
   composition?: Prisma.JsonNullableFilter<"Product">
   isAvailable?: Prisma.BoolFilter<"Product"> | boolean
+  promo?: Prisma.BoolFilter<"Product"> | boolean
   visibleToDetal?: Prisma.BoolFilter<"Product"> | boolean
   visibleToDetalB2B?: Prisma.BoolFilter<"Product"> | boolean
   visibleToHurt?: Prisma.BoolFilter<"Product"> | boolean
@@ -371,6 +379,7 @@ export type ProductOrderByWithRelationInput = {
   content?: Prisma.SortOrderInput | Prisma.SortOrder
   composition?: Prisma.SortOrderInput | Prisma.SortOrder
   isAvailable?: Prisma.SortOrder
+  promo?: Prisma.SortOrder
   visibleToDetal?: Prisma.SortOrder
   visibleToDetalB2B?: Prisma.SortOrder
   visibleToHurt?: Prisma.SortOrder
@@ -400,6 +409,7 @@ export type ProductWhereUniqueInput = Prisma.AtLeast<{
   content?: Prisma.StringNullableFilter<"Product"> | string | null
   composition?: Prisma.JsonNullableFilter<"Product">
   isAvailable?: Prisma.BoolFilter<"Product"> | boolean
+  promo?: Prisma.BoolFilter<"Product"> | boolean
   visibleToDetal?: Prisma.BoolFilter<"Product"> | boolean
   visibleToDetalB2B?: Prisma.BoolFilter<"Product"> | boolean
   visibleToHurt?: Prisma.BoolFilter<"Product"> | boolean
@@ -426,6 +436,7 @@ export type ProductOrderByWithAggregationInput = {
   content?: Prisma.SortOrderInput | Prisma.SortOrder
   composition?: Prisma.SortOrderInput | Prisma.SortOrder
   isAvailable?: Prisma.SortOrder
+  promo?: Prisma.SortOrder
   visibleToDetal?: Prisma.SortOrder
   visibleToDetalB2B?: Prisma.SortOrder
   visibleToHurt?: Prisma.SortOrder
@@ -458,6 +469,7 @@ export type ProductScalarWhereWithAggregatesInput = {
   content?: Prisma.StringNullableWithAggregatesFilter<"Product"> | string | null
   composition?: Prisma.JsonNullableWithAggregatesFilter<"Product">
   isAvailable?: Prisma.BoolWithAggregatesFilter<"Product"> | boolean
+  promo?: Prisma.BoolWithAggregatesFilter<"Product"> | boolean
   visibleToDetal?: Prisma.BoolWithAggregatesFilter<"Product"> | boolean
   visibleToDetalB2B?: Prisma.BoolWithAggregatesFilter<"Product"> | boolean
   visibleToHurt?: Prisma.BoolWithAggregatesFilter<"Product"> | boolean
@@ -482,6 +494,7 @@ export type ProductCreateInput = {
   content?: string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: boolean
+  promo?: boolean
   visibleToDetal?: boolean
   visibleToDetalB2B?: boolean
   visibleToHurt?: boolean
@@ -508,6 +521,7 @@ export type ProductUncheckedCreateInput = {
   content?: string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: boolean
+  promo?: boolean
   visibleToDetal?: boolean
   visibleToDetalB2B?: boolean
   visibleToHurt?: boolean
@@ -534,6 +548,7 @@ export type ProductUpdateInput = {
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  promo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   visibleToDetal?: Prisma.BoolFieldUpdateOperationsInput | boolean
   visibleToDetalB2B?: Prisma.BoolFieldUpdateOperationsInput | boolean
   visibleToHurt?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -560,6 +575,7 @@ export type ProductUncheckedUpdateInput = {
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  promo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   visibleToDetal?: Prisma.BoolFieldUpdateOperationsInput | boolean
   visibleToDetalB2B?: Prisma.BoolFieldUpdateOperationsInput | boolean
   visibleToHurt?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -586,6 +602,7 @@ export type ProductCreateManyInput = {
   content?: string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: boolean
+  promo?: boolean
   visibleToDetal?: boolean
   visibleToDetalB2B?: boolean
   visibleToHurt?: boolean
@@ -610,6 +627,7 @@ export type ProductUpdateManyMutationInput = {
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  promo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   visibleToDetal?: Prisma.BoolFieldUpdateOperationsInput | boolean
   visibleToDetalB2B?: Prisma.BoolFieldUpdateOperationsInput | boolean
   visibleToHurt?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -634,6 +652,7 @@ export type ProductUncheckedUpdateManyInput = {
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  promo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   visibleToDetal?: Prisma.BoolFieldUpdateOperationsInput | boolean
   visibleToDetalB2B?: Prisma.BoolFieldUpdateOperationsInput | boolean
   visibleToHurt?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -666,6 +685,7 @@ export type ProductCountOrderByAggregateInput = {
   content?: Prisma.SortOrder
   composition?: Prisma.SortOrder
   isAvailable?: Prisma.SortOrder
+  promo?: Prisma.SortOrder
   visibleToDetal?: Prisma.SortOrder
   visibleToDetalB2B?: Prisma.SortOrder
   visibleToHurt?: Prisma.SortOrder
@@ -698,6 +718,7 @@ export type ProductMaxOrderByAggregateInput = {
   description?: Prisma.SortOrder
   content?: Prisma.SortOrder
   isAvailable?: Prisma.SortOrder
+  promo?: Prisma.SortOrder
   visibleToDetal?: Prisma.SortOrder
   visibleToDetalB2B?: Prisma.SortOrder
   visibleToHurt?: Prisma.SortOrder
@@ -719,6 +740,7 @@ export type ProductMinOrderByAggregateInput = {
   description?: Prisma.SortOrder
   content?: Prisma.SortOrder
   isAvailable?: Prisma.SortOrder
+  promo?: Prisma.SortOrder
   visibleToDetal?: Prisma.SortOrder
   visibleToDetalB2B?: Prisma.SortOrder
   visibleToHurt?: Prisma.SortOrder
@@ -835,6 +857,7 @@ export type ProductCreateWithoutOrderItemsInput = {
   content?: string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: boolean
+  promo?: boolean
   visibleToDetal?: boolean
   visibleToDetalB2B?: boolean
   visibleToHurt?: boolean
@@ -860,6 +883,7 @@ export type ProductUncheckedCreateWithoutOrderItemsInput = {
   content?: string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: boolean
+  promo?: boolean
   visibleToDetal?: boolean
   visibleToDetalB2B?: boolean
   visibleToHurt?: boolean
@@ -901,6 +925,7 @@ export type ProductUpdateWithoutOrderItemsInput = {
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  promo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   visibleToDetal?: Prisma.BoolFieldUpdateOperationsInput | boolean
   visibleToDetalB2B?: Prisma.BoolFieldUpdateOperationsInput | boolean
   visibleToHurt?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -926,6 +951,7 @@ export type ProductUncheckedUpdateWithoutOrderItemsInput = {
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  promo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   visibleToDetal?: Prisma.BoolFieldUpdateOperationsInput | boolean
   visibleToDetalB2B?: Prisma.BoolFieldUpdateOperationsInput | boolean
   visibleToHurt?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -951,6 +977,7 @@ export type ProductCreateWithoutCustomPricesInput = {
   content?: string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: boolean
+  promo?: boolean
   visibleToDetal?: boolean
   visibleToDetalB2B?: boolean
   visibleToHurt?: boolean
@@ -976,6 +1003,7 @@ export type ProductUncheckedCreateWithoutCustomPricesInput = {
   content?: string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: boolean
+  promo?: boolean
   visibleToDetal?: boolean
   visibleToDetalB2B?: boolean
   visibleToHurt?: boolean
@@ -1017,6 +1045,7 @@ export type ProductUpdateWithoutCustomPricesInput = {
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  promo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   visibleToDetal?: Prisma.BoolFieldUpdateOperationsInput | boolean
   visibleToDetalB2B?: Prisma.BoolFieldUpdateOperationsInput | boolean
   visibleToHurt?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1042,6 +1071,7 @@ export type ProductUncheckedUpdateWithoutCustomPricesInput = {
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  promo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   visibleToDetal?: Prisma.BoolFieldUpdateOperationsInput | boolean
   visibleToDetalB2B?: Prisma.BoolFieldUpdateOperationsInput | boolean
   visibleToHurt?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1107,6 +1137,7 @@ export type ProductSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   content?: boolean
   composition?: boolean
   isAvailable?: boolean
+  promo?: boolean
   visibleToDetal?: boolean
   visibleToDetalB2B?: boolean
   visibleToHurt?: boolean
@@ -1134,6 +1165,7 @@ export type ProductSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   content?: boolean
   composition?: boolean
   isAvailable?: boolean
+  promo?: boolean
   visibleToDetal?: boolean
   visibleToDetalB2B?: boolean
   visibleToHurt?: boolean
@@ -1158,6 +1190,7 @@ export type ProductSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   content?: boolean
   composition?: boolean
   isAvailable?: boolean
+  promo?: boolean
   visibleToDetal?: boolean
   visibleToDetalB2B?: boolean
   visibleToHurt?: boolean
@@ -1182,6 +1215,7 @@ export type ProductSelectScalar = {
   content?: boolean
   composition?: boolean
   isAvailable?: boolean
+  promo?: boolean
   visibleToDetal?: boolean
   visibleToDetalB2B?: boolean
   visibleToHurt?: boolean
@@ -1195,7 +1229,7 @@ export type ProductSelectScalar = {
   imagePublicIds?: boolean
 }
 
-export type ProductOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "price" | "priceInCents" | "imagePaths" | "description" | "content" | "composition" | "isAvailable" | "visibleToDetal" | "visibleToDetalB2B" | "visibleToHurt" | "itemsPerPack" | "weightKg" | "lengthCm" | "widthCm" | "heightCm" | "createdAt" | "updatedAt" | "imagePublicIds", ExtArgs["result"]["product"]>
+export type ProductOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "price" | "priceInCents" | "imagePaths" | "description" | "content" | "composition" | "isAvailable" | "promo" | "visibleToDetal" | "visibleToDetalB2B" | "visibleToHurt" | "itemsPerPack" | "weightKg" | "lengthCm" | "widthCm" | "heightCm" | "createdAt" | "updatedAt" | "imagePublicIds", ExtArgs["result"]["product"]>
 export type ProductInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   orderItems?: boolean | Prisma.Product$orderItemsArgs<ExtArgs>
   customPrices?: boolean | Prisma.Product$customPricesArgs<ExtArgs>
@@ -1221,6 +1255,7 @@ export type $ProductPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     content: string | null
     composition: runtime.JsonValue | null
     isAvailable: boolean
+    promo: boolean
     visibleToDetal: boolean
     visibleToDetalB2B: boolean
     visibleToHurt: boolean
@@ -1667,6 +1702,7 @@ export interface ProductFieldRefs {
   readonly content: Prisma.FieldRef<"Product", 'String'>
   readonly composition: Prisma.FieldRef<"Product", 'Json'>
   readonly isAvailable: Prisma.FieldRef<"Product", 'Boolean'>
+  readonly promo: Prisma.FieldRef<"Product", 'Boolean'>
   readonly visibleToDetal: Prisma.FieldRef<"Product", 'Boolean'>
   readonly visibleToDetalB2B: Prisma.FieldRef<"Product", 'Boolean'>
   readonly visibleToHurt: Prisma.FieldRef<"Product", 'Boolean'>

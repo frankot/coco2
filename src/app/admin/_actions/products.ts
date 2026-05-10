@@ -142,6 +142,7 @@ export async function addProduct(prevState: FormState, formData: FormData): Prom
         visibleToDetal: formData.get("visibleToDetal") === "on",
         visibleToDetalB2B: formData.get("visibleToDetalB2B") === "on",
         visibleToHurt: formData.get("visibleToHurt") === "on",
+        promo: formData.get("promo") === "on",
         itemsPerPack,
         weightKg,
         lengthCm,
@@ -259,6 +260,7 @@ export async function updateProduct(
     updateData.visibleToDetal = formData.get("visibleToDetal") === "on";
     updateData.visibleToDetalB2B = formData.get("visibleToDetalB2B") === "on";
     updateData.visibleToHurt = formData.get("visibleToHurt") === "on";
+    updateData.promo = formData.get("promo") === "on";
 
     // Handle images
     const finalImagePaths: string[] = [...existingImages];

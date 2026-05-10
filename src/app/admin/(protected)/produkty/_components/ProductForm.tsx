@@ -178,6 +178,17 @@ export default function ProductForm({ product }: { product?: Product | null }) {
               />
               Hurt
             </label>
+            <span className="text-muted-foreground/40">|</span>
+            <label className="flex items-center gap-1.5 cursor-pointer text-sm">
+              <input
+                type="checkbox"
+                name="promo"
+                form="product-form"
+                defaultChecked={product?.promo ?? false}
+                className="h-3.5 w-3.5 accent-primary"
+              />
+              Promocja
+            </label>
           </div>
         </Card>
       </div>

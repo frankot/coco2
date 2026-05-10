@@ -1278,6 +1278,7 @@ export const ProductScalarFieldEnum = {
   content: 'content',
   composition: 'composition',
   isAvailable: 'isAvailable',
+  promo: 'promo',
   visibleToDetal: 'visibleToDetal',
   visibleToDetalB2B: 'visibleToDetalB2B',
   visibleToHurt: 'visibleToHurt',
