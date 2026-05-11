@@ -255,3 +255,13 @@ model DiscountCode {
   updatedAt      DateTime     @updatedAt
   orders         Order[]
 }
+
+model RedirectMap {
+  id           String   @id @default(uuid())
+  oldPath      String   @unique
+  newPath      String
+  redirectType String   @default("301")
+  createdAt    DateTime @default(now())
+
+  @@index([oldPath])
+}

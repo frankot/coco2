@@ -1,66 +1,98 @@
 import { NextResponse } from "next/server";
-import { getToken } from "next-auth/jwt";
-import { withAuth, NextRequestWithAuth } from "next-auth/middleware";
+import type { NextRequest } from "next/server";
 
-export default withAuth(
-  async function proxy(request: NextRequestWithAuth) {
-    const token = await getToken({ req: request });
-    const isAuth = !!token;
-    const isAdmin = token?.role === "ADMIN";
-    const isAdminPanel = request.nextUrl.pathname.startsWith("/admin");
-    const isAdminApi = request.nextUrl.pathname.startsWith("/api/admin");
-    const isAdminLogin = request.nextUrl.pathname === "/admin/login";
+// Static redirects — edge-level, zero DB overhead
+const STATIC_REDIRECTS: Record<string, string> = {
+  "/produkty": "/sklep",
+  "/koszyk": "/sklep",
+  "/zamowienie": "/kasa",
+  "/moje-konto": "/uzytkownik",
+  "/polityka-cookies": "/cookies",
+  "/polityka-prywatnosci": "/privacy",
+  "/story": "/nasza-historia",
+  "/kup-dr-coco": "/",
+  "/sitemap.html": "/sitemap.xml",
+};
 
-    // Allow access to admin login page
-    if (isAdminLogin) {
-      // Only redirect if already authenticated as admin
-      if (isAuth && isAdmin) {
-        return NextResponse.redirect(new URL("/admin", request.url));
+// WordPress-origin paths → block entirely
+const WP_BLOCK_PREFIXES = [
+  "/wp-",
+  "/author/",
+  "/tag/",
+  "/comments/",
+];
+
+function isWpBlock(path: string): boolean {
+  return WP_BLOCK_PREFIXES.some((prefix) => path.startsWith(prefix));
+}
+
+export async function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  // Normalize: strip trailing slash except root
+  const normalizedPath =
+    pathname === "/" ? "/" : pathname.replace(/\/$/, "");
+
+  // 1. Block WP paths — 410 Gone
+  if (isWpBlock(normalizedPath)) {
+    return new NextResponse(null, { status: 410 });
+  }
+
+  // 2. Static redirects — 301
+  if (STATIC_REDIRECTS[normalizedPath]) {
+    return NextResponse.redirect(
+      new URL(STATIC_REDIRECTS[normalizedPath], request.url),
+      { status: 301 }
+    );
+  }
+
+  // 3. Dynamic redirects — /artykuly/* and /produkt/*
+  if (
+    normalizedPath.startsWith("/artykuly/") ||
+    normalizedPath.startsWith("/produkt/")
+  ) {
+    try {
+      const { default: prisma } = await import("@/db");
+      const mapping = await prisma.redirectMap.findUnique({
+        where: { oldPath: normalizedPath },
+        select: { newPath: true, redirectType: true },
+      });
+
+      if (mapping) {
+        if (mapping.redirectType === "410") {
+          return new NextResponse(null, { status: 410 });
+        }
+        return NextResponse.redirect(
+          new URL(mapping.newPath, request.url),
+          { status: 301 }
+        );
       }
+
+      // Fallback: unknown old URL → listing page
+      const fallback = normalizedPath.startsWith("/artykuly/")
+        ? "/blog"
+        : "/sklep";
+      return NextResponse.redirect(new URL(fallback, request.url), {
+        status: 301,
+      });
+    } catch {
+      // DB unavailable — let Next.js 404 handle it
       return NextResponse.next();
     }
-
-    // Block unauthenticated or non-admin access to admin API routes
-    if (isAdminApi && (!isAuth || !isAdmin)) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    // Redirect unauthenticated users trying to access admin panel to admin login
-    if (isAdminPanel && !isAuth) {
-      const url = new URL("/admin/login", request.url);
-      url.searchParams.set("callbackUrl", request.nextUrl.pathname);
-      return NextResponse.redirect(url);
-    }
-
-    // Redirect authenticated non-admin users trying to access admin panel to home
-    if (isAdminPanel && isAuth && !isAdmin) {
-      return NextResponse.redirect(new URL("/", request.url));
-    }
-
-    // Redirect user accessing login page when already authenticated
-    if (request.nextUrl.pathname === "/auth/zaloguj" && isAuth) {
-      return NextResponse.redirect(new URL("/", request.url));
-    }
-
-    return NextResponse.next();
-  },
-  {
-    callbacks: {
-      // Skip auth check for public paths
-      authorized: () => true,
-    },
   }
-);
 
-// Configure paths that require proxy processing
+  // 4. Trailing slash cleanup: /path/ → /path (except root)
+  if (pathname !== "/" && pathname.endsWith("/")) {
+    return NextResponse.redirect(new URL(normalizedPath, request.url), {
+      status: 301,
+    });
+  }
+
+  return NextResponse.next();
+}
+
 export const config = {
   matcher: [
-    // Admin routes (excluding login)
-    "/admin/:path*",
-    // Admin API routes (defense-in-depth)
-    "/api/admin/:path*",
-    // Auth routes
-    "/auth/zaloguj",
-    "/auth/rejestracja",
+    "/((?!api|_next/static|_next/image|favicon\\.ico|logo\\.png|og-image\\.webp|apple-touch-icon\\.png|.*\\..*).*)",
   ],
 };

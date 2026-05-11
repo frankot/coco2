@@ -32,15 +32,7 @@ const nextConfig: NextConfig = {
   // Empty turbopack config to silence the warning (most apps work without config)
   turbopack: {},
 
-  async redirects() {
-    return [
-      {
-        source: "/o-nas",
-        destination: "/nasza-historia",
-        permanent: true,
-      },
-    ];
-  },
+  // Redirects handled by middleware.ts (see docs/url-migration-plan.md)
 
   experimental: {
     serverActions: {

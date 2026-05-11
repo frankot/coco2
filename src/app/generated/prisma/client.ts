@@ -96,3 +96,8 @@ export type CustomPrice = Prisma.CustomPriceModel
  * 
  */
 export type DiscountCode = Prisma.DiscountCodeModel
+/**
+ * Model RedirectMap
+ * 
+ */
+export type RedirectMap = Prisma.RedirectMapModel

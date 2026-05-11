@@ -61,7 +61,8 @@ export const ModelName = {
   Payment: 'Payment',
   NewsletterEmail: 'NewsletterEmail',
   CustomPrice: 'CustomPrice',
-  DiscountCode: 'DiscountCode'
+  DiscountCode: 'DiscountCode',
+  RedirectMap: 'RedirectMap'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -269,6 +270,17 @@ export const DiscountCodeScalarFieldEnum = {
 } as const
 
 export type DiscountCodeScalarFieldEnum = (typeof DiscountCodeScalarFieldEnum)[keyof typeof DiscountCodeScalarFieldEnum]
+
+
+export const RedirectMapScalarFieldEnum = {
+  id: 'id',
+  oldPath: 'oldPath',
+  newPath: 'newPath',
+  redirectType: 'redirectType',
+  createdAt: 'createdAt'
+} as const
+
+export type RedirectMapScalarFieldEnum = (typeof RedirectMapScalarFieldEnum)[keyof typeof RedirectMapScalarFieldEnum]
 
 
 export const SortOrder = {

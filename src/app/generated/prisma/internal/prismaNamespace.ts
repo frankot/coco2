@@ -394,7 +394,8 @@ export const ModelName = {
   Payment: 'Payment',
   NewsletterEmail: 'NewsletterEmail',
   CustomPrice: 'CustomPrice',
-  DiscountCode: 'DiscountCode'
+  DiscountCode: 'DiscountCode',
+  RedirectMap: 'RedirectMap'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -410,7 +411,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "product" | "blogPost" | "user" | "passwordResetToken" | "address" | "order" | "orderItem" | "payment" | "newsletterEmail" | "customPrice" | "discountCode"
+    modelProps: "product" | "blogPost" | "user" | "passwordResetToken" | "address" | "order" | "orderItem" | "payment" | "newsletterEmail" | "customPrice" | "discountCode" | "redirectMap"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1228,6 +1229,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    RedirectMap: {
+      payload: Prisma.$RedirectMapPayload<ExtArgs>
+      fields: Prisma.RedirectMapFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.RedirectMapFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RedirectMapPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.RedirectMapFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RedirectMapPayload>
+        }
+        findFirst: {
+          args: Prisma.RedirectMapFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RedirectMapPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.RedirectMapFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RedirectMapPayload>
+        }
+        findMany: {
+          args: Prisma.RedirectMapFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RedirectMapPayload>[]
+        }
+        create: {
+          args: Prisma.RedirectMapCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RedirectMapPayload>
+        }
+        createMany: {
+          args: Prisma.RedirectMapCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.RedirectMapCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RedirectMapPayload>[]
+        }
+        delete: {
+          args: Prisma.RedirectMapDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RedirectMapPayload>
+        }
+        update: {
+          args: Prisma.RedirectMapUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RedirectMapPayload>
+        }
+        deleteMany: {
+          args: Prisma.RedirectMapDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.RedirectMapUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.RedirectMapUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RedirectMapPayload>[]
+        }
+        upsert: {
+          args: Prisma.RedirectMapUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RedirectMapPayload>
+        }
+        aggregate: {
+          args: Prisma.RedirectMapAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateRedirectMap>
+        }
+        groupBy: {
+          args: Prisma.RedirectMapGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.RedirectMapGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.RedirectMapCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.RedirectMapCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1456,6 +1531,17 @@ export const DiscountCodeScalarFieldEnum = {
 } as const
 
 export type DiscountCodeScalarFieldEnum = (typeof DiscountCodeScalarFieldEnum)[keyof typeof DiscountCodeScalarFieldEnum]
+
+
+export const RedirectMapScalarFieldEnum = {
+  id: 'id',
+  oldPath: 'oldPath',
+  newPath: 'newPath',
+  redirectType: 'redirectType',
+  createdAt: 'createdAt'
+} as const
+
+export type RedirectMapScalarFieldEnum = (typeof RedirectMapScalarFieldEnum)[keyof typeof RedirectMapScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1771,6 +1857,7 @@ export type GlobalOmitConfig = {
   newsletterEmail?: Prisma.NewsletterEmailOmit
   customPrice?: Prisma.CustomPriceOmit
   discountCode?: Prisma.DiscountCodeOmit
+  redirectMap?: Prisma.RedirectMapOmit
 }
 
 /* Types for Logging */
