@@ -72,6 +72,10 @@ export function DeleteDropdownItem({ id, disabled }: { id: string; disabled: boo
   const { triggerRefresh } = useRefresh();
 
   const handleDelete = useCallback(() => {
+    if (disabled) {
+      toast.error("Nie można usunąć — kod został użyty w zamówieniu i jest potrzebny jako referencja. Możesz go deaktywować.");
+      return;
+    }
     startTransition(async () => {
       const result = await deleteDiscountCode(id);
       router.refresh();
@@ -82,10 +86,10 @@ export function DeleteDropdownItem({ id, disabled }: { id: string; disabled: boo
         toast.error(result.message);
       }
     });
-  }, [id, router, triggerRefresh]);
+  }, [id, disabled, router, triggerRefresh]);
 
   return (
-    <DropdownMenuItem variant="destructive" disabled={isPending || disabled} onClick={handleDelete}>
+    <DropdownMenuItem variant="destructive" disabled={isPending} onClick={handleDelete}>
       Usuń
     </DropdownMenuItem>
   );

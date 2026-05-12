@@ -69,34 +69,11 @@ type SortField = "createdAt" | "paidAt" | "status" | "totalItems" | "totalAmount
 type SortDirection = "asc" | "desc";
 
 export default function AdminOrdersPage() {
-  const [isDeletingAll, setIsDeletingAll] = useState(false);
   const [isConfirming, setIsConfirming] = useState(false);
   const [turnInDialogOpen, setTurnInDialogOpen] = useState(false);
   const [turnInData, setTurnInData] = useState<string | null>(null);
   const [showB2B, setShowB2B] = useState(true);
   const [showRegular, setShowRegular] = useState(true);
-
-  const handleDeleteAllOrders = async () => {
-    if (
-      !confirm("Czy na pewno chcesz usunąć WSZYSTKIE zamówienia? Tej operacji nie można cofnąć.")
-    ) {
-      return;
-    }
-
-    setIsDeletingAll(true);
-    try {
-      const result = await deleteAllOrders();
-      if (result.success) {
-        window.location.reload();
-      } else {
-        alert(result.message);
-      }
-    } catch (error) {
-      alert(`Błąd: ${error instanceof Error ? error.message : String(error)}`);
-    } finally {
-      setIsDeletingAll(false);
-    }
-  };
 
   const downloadTurnIn = () => {
     if (!turnInData) return;
@@ -461,12 +438,6 @@ function OrdersTable({ showB2B, showRegular }: { showB2B: boolean; showRegular: 
         </TableBody>
       </Table>
       <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
-
-      <div className="mt-8 flex justify-end">
-        <Button variant="destructive">
-          <Link href="/admin/clean-db">Usuń wszystkie zamówienia</Link>
-        </Button>
-      </div>
     </>
   );
 }
