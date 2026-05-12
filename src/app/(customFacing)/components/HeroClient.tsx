@@ -250,7 +250,7 @@ export function HeroClient({ products }: HeroClientProps) {
         {/* Minimal Navigation Arrows */}
         <button
           onClick={prevSlide}
-          className={`absolute left-6 bottom-4 lg:top-1/2 lg:-translate-y-1/2 z-20 w-10 h-10 border border-white/30 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/10 transition-all duration-300 ${
+          className={`hidden lg:flex absolute left-6 bottom-4 lg:top-1/2 lg:-translate-y-1/2 z-20 w-10 h-10 border border-white/30 backdrop-blur-sm rounded-full items-center justify-center text-white hover:bg-white/10 transition-all duration-300 ${
             showArrows ? "opacity-100 scale-100" : "opacity-0 scale-75"
           }`}
           aria-label="Previous slide"
@@ -260,7 +260,7 @@ export function HeroClient({ products }: HeroClientProps) {
 
         <button
           onClick={nextSlide}
-          className={`absolute right-6 bottom-4 lg:top-1/2 lg:-translate-y-1/2 z-20 w-10 h-10 border border-white/30 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/10 transition-all duration-300 ${
+          className={`hidden lg:flex absolute right-6 bottom-4 lg:top-1/2 lg:-translate-y-1/2 z-20 w-10 h-10 border border-white/30 backdrop-blur-sm rounded-full items-center justify-center text-white hover:bg-white/10 transition-all duration-300 ${
             showArrows ? "opacity-100 scale-100" : "opacity-0 scale-75"
           }`}
           aria-label="Next slide"
