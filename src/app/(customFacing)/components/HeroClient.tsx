@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { ChevronLeft, ChevronRight, Leaf } from "lucide-react";
 
 // Carousel slide data
@@ -58,15 +58,26 @@ interface HeroClientProps {
 export function HeroClient({ products }: HeroClientProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [showArrows, setShowArrows] = useState(false);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
 
-  // Auto-play functionality
-  useEffect(() => {
-    const interval = setInterval(() => {
+  const minSwipeDistance = 50;
+
+  // Auto-play with resettable timer
+  const startAutoPlay = useCallback(() => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    intervalRef.current = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % carouselSlides.length);
     }, 5000);
-
-    return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    startAutoPlay();
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [startAutoPlay]);
 
   // Arrow visibility timer
   useEffect(() => {
@@ -83,20 +94,58 @@ export function HeroClient({ products }: HeroClientProps) {
     setShowArrows(true);
   };
 
+  // Manual navigation — resets auto-play timer
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % carouselSlides.length);
     setShowArrows(true);
+    startAutoPlay();
   };
 
   const prevSlide = () => {
     setCurrentSlide((prev) => (prev - 1 + carouselSlides.length) % carouselSlides.length);
     setShowArrows(true);
+    startAutoPlay();
+  };
+
+  const goToSlide = (index: number) => {
+    setCurrentSlide(index);
+    setShowArrows(true);
+    startAutoPlay();
+  };
+
+  // Touch swipe handlers
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    if (isLeftSwipe) {
+      nextSlide();
+    } else if (isRightSwipe) {
+      prevSlide();
+    }
   };
 
   return (
     <section className="relative h-[20rem] mt-0 lg:h-[35rem] lg:mt-[72px] w-full overflow-hidden">
       {/* Carousel Container */}
-      <div className="relative h-full w-full" onClick={handleSlideAreaClick}>
+      <div
+        className="relative h-full w-full"
+        onClick={handleSlideAreaClick}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+      >
         {/* Slides Container */}
         <div
           className="flex h-full transition-transform duration-700 ease-in-out"
@@ -186,8 +235,7 @@ export function HeroClient({ products }: HeroClientProps) {
             <button
               key={index}
               onClick={() => {
-                setCurrentSlide(index);
-                setShowArrows(true);
+                goToSlide(index);
               }}
               className={`transition-all duration-300 ${
                 index === currentSlide
