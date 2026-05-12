@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, ShoppingBag, Star, Plus, Minus } from "lucide-react";
@@ -19,6 +19,9 @@ export default function ProductPageClient({ params }: { params: Promise<{ id: st
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
   const [activeTab, setActiveTab] = useState("composition");
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const minSwipeDistance = 40;
 
   const { addToCart } = useCart();
 
@@ -251,7 +254,30 @@ export default function ProductPageClient({ params }: { params: Promise<{ id: st
           {/* Left side - Product Images */}
           <div className="space-y-4">
             {/* Main image */}
-            <div className="relative aspect-square  rounded-lg overflow-hidden">
+            <div
+              className="relative aspect-square rounded-lg overflow-hidden"
+              onTouchStart={(e) => {
+                setTouchEnd(null);
+                setTouchStart(e.targetTouches[0].clientX);
+              }}
+              onTouchMove={(e) => {
+                setTouchEnd(e.targetTouches[0].clientX);
+              }}
+              onTouchEnd={() => {
+                if (!touchStart || !touchEnd) return;
+                const distance = touchStart - touchEnd;
+                const isLeftSwipe = distance > minSwipeDistance;
+                const isRightSwipe = distance < -minSwipeDistance;
+
+                if (isLeftSwipe) {
+                  setSelectedImage((prev) => (prev + 1) % displayImages.length);
+                } else if (isRightSwipe) {
+                  setSelectedImage(
+                    (prev) => (prev - 1 + displayImages.length) % displayImages.length
+                  );
+                }
+              }}
+            >
               {displayImages[selectedImage] ? (
                 <Image
                   src={displayImages[selectedImage]}
