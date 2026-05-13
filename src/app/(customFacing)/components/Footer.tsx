@@ -11,7 +11,7 @@ export function Footer() {
   return (
     <footer className="mx-4 lg:mx-10 pt-8 lg:pt-16 pb-8">
       <div className="container mx-auto px-2 lg:px-4">
-        <div className="grid grid-cols-2 lg:flex lg:flex-row gap-6 lg:gap-16">
+        <div className="grid grid-cols-1 lg:flex lg:flex-row gap-6 lg:gap-16">
           {/* Column 1: Logo, About & Social Links */}
           <div className="flex-1 space-y-6">
             <Link href="/" className="block mb-4">
