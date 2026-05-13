@@ -216,7 +216,7 @@ export function HeroClient({ products }: HeroClientProps) {
                           variant="outline"
                           className="border-white/30 text-white hover:bg-white hover:text-primary bg-transparent backdrop-blur-sm px-8 py-2.5 text-sm font-normal"
                         >
-                          <Link href="/nasza-historia">{slide.ctaText}</Link>
+                          <Link href={slide.ctaText === "Zamów teraz" ? "/sklep" : "/nasza-historia"}>{slide.ctaText}</Link>
              
                         </Button>
                       </div>
