@@ -8,14 +8,16 @@ import VerifySessionClient from "../verifyClient";
 import crypto from "crypto";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { stripe } from "@/lib/stripe";
+import { getOrigin } from "@/lib/get-origin";
 
 export default async function OrderConfirmationPage({
   params,
   searchParams,
 }: {
   params: Promise<{ orderId: string }>;
-  searchParams: Promise<{ success?: string; session_id?: string; token?: string }>;
+  searchParams: Promise<{ success?: string; session_id?: string; token?: string; retry?: string }>;
 }) {
   const { orderId } = await params;
   const search = await searchParams;
@@ -58,6 +60,49 @@ export default async function OrderConfirmationPage({
     tokenOk = provided === order.accessTokenHash;
   }
   if (!isOwner && !tokenOk) notFound();
+
+  // Retry flow: redirect back to Stripe for the same order
+  if (search?.retry === "true" && order.paymentMethod === "STRIPE" && order.status === "PENDING") {
+    const origin = getOrigin();
+    if (origin && order.orderItems.length > 0) {
+      const lineItems = order.orderItems.map((item) => ({
+        price_data: {
+          currency: "pln",
+          product_data: {
+            name: item.product.name,
+            images: item.product.imagePaths.length > 0 ? [item.product.imagePaths[0]] : [],
+          },
+          unit_amount: item.pricePerItemInCents,
+        },
+        quantity: item.quantity,
+      }));
+
+      let discounts: { coupon: string }[] = [];
+      if (order.discountAmountInCents && order.discountAmountInCents > 0) {
+        const coupon = await stripe.coupons.create({
+          amount_off: order.discountAmountInCents,
+          currency: "pln",
+          duration: "once",
+          name: `Rabat: ${order.discountCodeValue || "kod"}`,
+        });
+        discounts = [{ coupon: coupon.id }];
+      }
+
+      const tokenParam = search?.token ? `&token=${encodeURIComponent(search.token)}` : "";
+      const checkoutSession = await stripe.checkout.sessions.create({
+        payment_method_types: ["card", "blik"],
+        mode: "payment",
+        locale: "pl",
+        line_items: lineItems,
+        ...(discounts.length > 0 ? { discounts } : {}),
+        success_url: `${origin}/kasa/zlozone-zamowienie/${order.id}?success=true&session_id={CHECKOUT_SESSION_ID}${tokenParam}`,
+        cancel_url: `${origin}/kasa?canceled=true`,
+        metadata: { orderId: order.id },
+      });
+
+      if (checkoutSession.url) redirect(checkoutSession.url);
+    }
+  }
 
   const isStripePayment = order.paymentMethod === "STRIPE";
   const payment = order.payments[0];

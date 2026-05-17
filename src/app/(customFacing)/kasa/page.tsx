@@ -75,11 +75,16 @@ export default function CheckoutPage() {
   const searchParams = useSearchParams();
   const isCanceled = searchParams.get("canceled") === "true";
   const [canceledOrderId, setCanceledOrderId] = useState<string | null>(null);
+  const [canceledAccessToken, setCanceledAccessToken] = useState<string>("");
 
   useEffect(() => {
     if (!isCanceled) return;
     const stored = sessionStorage.getItem("lastOrderId");
-    if (stored) setCanceledOrderId(stored);
+    const storedToken = sessionStorage.getItem("lastAccessToken") || "";
+    if (stored) {
+      setCanceledOrderId(stored);
+      setCanceledAccessToken(storedToken);
+    }
   }, [isCanceled]);
 
   const [formData, setFormData] = useState({
@@ -775,6 +780,7 @@ export default function CheckoutPage() {
           // Clear cart and redirect to Stripe Checkout
           localStorage.removeItem("cart");
           sessionStorage.setItem("lastOrderId", result.orderId!);
+          sessionStorage.setItem("lastAccessToken", result.accessToken || "");
           window.dispatchEvent(new Event("cartUpdated"));
           window.location.href = data.url;
           return;
@@ -918,7 +924,9 @@ export default function CheckoutPage() {
             </p>
             <div className="flex flex-wrap gap-3">
               <Button asChild>
-                <Link href={`/kasa/zlozone-zamowienie/${canceledOrderId}?retry=true`}>
+                <Link
+                  href={`/kasa/zlozone-zamowienie/${canceledOrderId}?retry=true${canceledAccessToken ? `&token=${encodeURIComponent(canceledAccessToken)}` : ""}`}
+                >
                   Wróć do płatności
                 </Link>
               </Button>
@@ -926,6 +934,7 @@ export default function CheckoutPage() {
                 variant="outline"
                 onClick={() => {
                   sessionStorage.removeItem("lastOrderId");
+                  sessionStorage.removeItem("lastAccessToken");
                   setCanceledOrderId(null);
                 }}
               >
