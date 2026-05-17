@@ -198,8 +198,17 @@ export default async function OrderConfirmationPage({
             </div>
           </div>
 
-          <div className="flex justify-center pt-4">
-            <Button asChild>
+          <div className="flex justify-center gap-4 pt-4">
+            {isStripePayment && order.status === "PENDING" && (
+              <Button asChild>
+                <Link
+                  href={`/kasa/zlozone-zamowienie/${order.id}?retry=true${verifyToken ? `&token=${encodeURIComponent(verifyToken)}` : ""}`}
+                >
+                  Zapłać teraz
+                </Link>
+              </Button>
+            )}
+            <Button asChild variant={isStripePayment && order.status === "PENDING" ? "outline" : "default"}>
               <Link href="/sklep">Kontynuuj zakupy</Link>
             </Button>
           </div>

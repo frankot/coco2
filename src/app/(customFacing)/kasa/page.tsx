@@ -796,7 +796,12 @@ export default function CheckoutPage() {
         }
       } else {
         setError(result.error || "Wystąpił błąd podczas składania zamówienia");
-        setExistingOrderId((result as any).existingOrderId || null);
+        const blockedOrderId = (result as any).existingOrderId || null;
+        setExistingOrderId(blockedOrderId);
+        // Guest users: pair stored access token with the blocked order link
+        if (blockedOrderId && sessionStorage.getItem("lastOrderId") === blockedOrderId) {
+          setCanceledAccessToken(sessionStorage.getItem("lastAccessToken") || "");
+        }
         submittingLock.current = false;
         setIsSubmitting(false);
 
@@ -1019,7 +1024,7 @@ export default function CheckoutPage() {
           <p>{error}</p>
           {existingOrderId && (
             <Button asChild variant="link" className="mt-2 p-0 h-auto text-red-700 underline">
-              <Link href={`/kasa/zlozone-zamowienie/${existingOrderId}`}>
+              <Link href={`/kasa/zlozone-zamowienie/${existingOrderId}?retry=true${canceledAccessToken ? `&token=${encodeURIComponent(canceledAccessToken)}` : ""}`}>
                 Przejdź do zamówienia #{existingOrderId}
               </Link>
             </Button>
