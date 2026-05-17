@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { Card } from "@/components/ui/card";
@@ -37,6 +37,7 @@ export default function CheckoutPage() {
   const [checkoutMode, setCheckoutMode] = useState<"guest" | "login" | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [existingOrderId, setExistingOrderId] = useState<string | null>(null);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [newsletterConsent, setNewsletterConsent] = useState(false);
   const [shippingMethods, setShippingMethods] = useState<ApaczkaService[]>([]);
@@ -69,6 +70,17 @@ export default function CheckoutPage() {
   const [sameAddress, setSameAddress] = useState(true);
   // Faktura VAT toggle
   const [wantsFaktura, setWantsFaktura] = useState(false);
+
+  // Canceled-flow: detect return from Stripe without payment
+  const searchParams = useSearchParams();
+  const isCanceled = searchParams.get("canceled") === "true";
+  const [canceledOrderId, setCanceledOrderId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!isCanceled) return;
+    const stored = sessionStorage.getItem("lastOrderId");
+    if (stored) setCanceledOrderId(stored);
+  }, [isCanceled]);
 
   const [formData, setFormData] = useState({
     firstName: session?.user?.name?.split(" ")[0] || "",
@@ -762,6 +774,7 @@ export default function CheckoutPage() {
 
           // Clear cart and redirect to Stripe Checkout
           localStorage.removeItem("cart");
+          sessionStorage.setItem("lastOrderId", result.orderId!);
           window.dispatchEvent(new Event("cartUpdated"));
           window.location.href = data.url;
           return;
@@ -777,6 +790,7 @@ export default function CheckoutPage() {
         }
       } else {
         setError(result.error || "Wystąpił błąd podczas składania zamówienia");
+        setExistingOrderId((result as any).existingOrderId || null);
         submittingLock.current = false;
         setIsSubmitting(false);
 
@@ -892,6 +906,37 @@ export default function CheckoutPage() {
 
   // Check if cart is empty
   if (isClient && cartItems.length === 0) {
+    // Show canceled banner when returning from Stripe without payment
+    if (isCanceled && canceledOrderId) {
+      return (
+        <div className="container max-w-3xl py-10 px-4 md:px-6">
+          <h1 className="text-3xl font-bold mb-6">Kasa</h1>
+          <Card className="p-6 bg-amber-50 border-amber-200">
+            <p className="font-medium text-lg mb-1">Płatność nie została dokończona</p>
+            <p className="text-sm text-muted-foreground mb-4">
+              Masz oczekujące zamówienie <span className="font-mono font-medium">#{canceledOrderId}</span>. Możesz wrócić do płatności lub złożyć nowe zamówienie.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <Button asChild>
+                <Link href={`/kasa/zlozone-zamowienie/${canceledOrderId}?retry=true`}>
+                  Wróć do płatności
+                </Link>
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  sessionStorage.removeItem("lastOrderId");
+                  setCanceledOrderId(null);
+                }}
+              >
+                Nowe zamówienie
+              </Button>
+            </div>
+          </Card>
+        </div>
+      );
+    }
+
     return (
       <div className="container max-w-3xl py-10 px-4 md:px-6">
         <h1 className="text-3xl font-bold mb-6">Kasa</h1>
@@ -962,7 +1007,14 @@ export default function CheckoutPage() {
 
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-700 p-4 mb-6 rounded-md">
-          {error}
+          <p>{error}</p>
+          {existingOrderId && (
+            <Button asChild variant="link" className="mt-2 p-0 h-auto text-red-700 underline">
+              <Link href={`/kasa/zlozone-zamowienie/${existingOrderId}`}>
+                Przejdź do zamówienia #{existingOrderId}
+              </Link>
+            </Button>
+          )}
         </div>
       )}
 

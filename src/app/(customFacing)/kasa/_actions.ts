@@ -358,6 +358,26 @@ export async function createOrder(formData: OrderFormData) {
     // Now userId is definitely not undefined - if we got here, userId exists and is valid
     const verifiedUserId = userId as string;
 
+    // Block duplicate STRIPE orders: if user has a recent PENDING order, reject
+    if (validatedData.paymentMethod === "STRIPE") {
+      const recentPending = await prisma.order.findFirst({
+        where: {
+          userId: verifiedUserId,
+          status: "PENDING",
+          createdAt: { gte: new Date(Date.now() - 10 * 60 * 1000) },
+        },
+        orderBy: { createdAt: "desc" },
+        select: { id: true },
+      });
+      if (recentPending) {
+        return {
+          success: false,
+          error: `Masz już oczekujące zamówienie #${recentPending.id}. Dokończ płatność lub wróć za 10 minut aby złożyć nowe.`,
+          existingOrderId: recentPending.id,
+        };
+      }
+    }
+
     // Resolve Apaczka D2P service outside transaction (external API call)
     let finalServiceId: string | null = isHurt ? null : (validatedData.shippingMethodId ?? null);
     if (!isHurt && validatedData.apaczkaPointId && validatedData.apaczkaPointSupplier) {
