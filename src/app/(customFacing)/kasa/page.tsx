@@ -1017,19 +1017,6 @@ export default function CheckoutPage() {
     <div className="container max-w-6xl py-10 mt-0  px-4 md:px-6 lg:px-8">
       <h1 className="text-3xl font-bold mb-6">Kasa</h1>
 
-      {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 p-4 mb-6 rounded-md">
-          <p>{error}</p>
-          {existingOrderId && (
-            <Button asChild variant="link" className="mt-2 p-0 h-auto text-red-700 underline">
-              <Link href={`/kasa/zlozone-zamowienie/${existingOrderId}?retry=true${canceledAccessToken ? `&token=${encodeURIComponent(canceledAccessToken)}` : ""}`}>
-                Przejdź do zamówienia #{existingOrderId}
-              </Link>
-            </Button>
-          )}
-        </div>
-      )}
-
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
         {/* Checkout Form */}
         <div className="lg:col-span-2 order-2 lg:order-1">
@@ -1503,6 +1490,19 @@ export default function CheckoutPage() {
                   "Złóż zamówienie"
                 )}
               </Button>
+
+              {error && (
+                <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-md">
+                  <p>{error}</p>
+                  {existingOrderId && (
+                    <Button asChild variant="link" className="mt-2 p-0 h-auto text-red-700 underline">
+                      <Link href={`/kasa/zlozone-zamowienie/${existingOrderId}?retry=true${canceledAccessToken ? `&token=${encodeURIComponent(canceledAccessToken)}` : ""}`}>
+                        Przejdź do zamówienia #{existingOrderId}
+                      </Link>
+                    </Button>
+                  )}
+                </div>
+              )}
             </div>
           </form>
         </div>
