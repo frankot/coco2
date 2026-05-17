@@ -53,6 +53,7 @@ export default function CheckoutPage() {
   const pointInputRef = useRef<HTMLInputElement | null>(null);
   const supplierInputRef = useRef<HTMLInputElement | null>(null);
   const apaczkaMapRef = useRef<any>(null);
+  const submittingLock = useRef(false);
 
   // Discount code state
   const [discountCodeInput, setDiscountCodeInput] = useState("");
@@ -641,6 +642,9 @@ export default function CheckoutPage() {
       }
     }
 
+    // Prevent double-submission race (useRef is synchronous, unlike useState)
+    if (submittingLock.current) return;
+    submittingLock.current = true;
     setIsSubmitting(true);
     setError(null);
 
@@ -664,6 +668,7 @@ export default function CheckoutPage() {
       if (formData.shippingMethodId === "APACZKA_MAP") {
         if (!selectedSupplier) {
           setError("Wybierz dostawcę punktu na mapie");
+          submittingLock.current = false;
           setIsSubmitting(false);
           return;
         }
@@ -686,6 +691,7 @@ export default function CheckoutPage() {
         }
         if (!match) {
           setError("Nie znaleziono usługi punktowej dla wybranego przewoźnika");
+          submittingLock.current = false;
           setIsSubmitting(false);
           return;
         }
@@ -696,6 +702,7 @@ export default function CheckoutPage() {
       const serviceMeta = shippingMethods.find((s) => s.service_id === resolvedServiceId);
       if (serviceMeta?.door_to_point === "1" && !selectedPointId) {
         setError("Wybierz punkt odbioru dla tej metody dostawy");
+        submittingLock.current = false;
         setIsSubmitting(false);
         return;
       }
@@ -748,6 +755,7 @@ export default function CheckoutPage() {
 
           if (!response.ok || !data.url) {
             setError(data.error || "Nie udało się utworzyć sesji płatności. Spróbuj ponownie.");
+            submittingLock.current = false;
             setIsSubmitting(false);
             return;
           }
@@ -769,6 +777,7 @@ export default function CheckoutPage() {
         }
       } else {
         setError(result.error || "Wystąpił błąd podczas składania zamówienia");
+        submittingLock.current = false;
         setIsSubmitting(false);
 
         // If it's an authentication error, suggest login
@@ -779,6 +788,7 @@ export default function CheckoutPage() {
     } catch (err) {
       console.error("Order submission error:", err);
       setError("Wystąpił błąd podczas składania zamówienia");
+      submittingLock.current = false;
       setIsSubmitting(false);
     }
   };

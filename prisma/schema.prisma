@@ -173,6 +173,8 @@ model Order {
   paidAt              DateTime?
   // B2B manual handling flag — disables Apaczka/wFirma automation
   isB2BManual         Boolean   @default(false)
+  // Deduplication: unique per (user, cart fingerprint, 5-min time window)
+  idempotencyKey     String?    @unique
   // One-time access token for guest order verification (success page + verify-session)
   accessTokenHash     String?
   accessTokenUsedAt   DateTime?

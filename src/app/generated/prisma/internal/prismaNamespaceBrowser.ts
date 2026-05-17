@@ -199,6 +199,7 @@ export const OrderScalarFieldEnum = {
   nip: 'nip',
   paidAt: 'paidAt',
   isB2BManual: 'isB2BManual',
+  idempotencyKey: 'idempotencyKey',
   accessTokenHash: 'accessTokenHash',
   accessTokenUsedAt: 'accessTokenUsedAt',
   createdAt: 'createdAt',

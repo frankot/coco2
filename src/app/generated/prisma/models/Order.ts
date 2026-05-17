@@ -72,6 +72,7 @@ export type OrderMinAggregateOutputType = {
   nip: string | null
   paidAt: Date | null
   isB2BManual: boolean | null
+  idempotencyKey: string | null
   accessTokenHash: string | null
   accessTokenUsedAt: Date | null
   createdAt: Date | null
@@ -110,6 +111,7 @@ export type OrderMaxAggregateOutputType = {
   nip: string | null
   paidAt: Date | null
   isB2BManual: boolean | null
+  idempotencyKey: string | null
   accessTokenHash: string | null
   accessTokenUsedAt: Date | null
   createdAt: Date | null
@@ -148,6 +150,7 @@ export type OrderCountAggregateOutputType = {
   nip: number
   paidAt: number
   isB2BManual: number
+  idempotencyKey: number
   accessTokenHash: number
   accessTokenUsedAt: number
   createdAt: number
@@ -202,6 +205,7 @@ export type OrderMinAggregateInputType = {
   nip?: true
   paidAt?: true
   isB2BManual?: true
+  idempotencyKey?: true
   accessTokenHash?: true
   accessTokenUsedAt?: true
   createdAt?: true
@@ -240,6 +244,7 @@ export type OrderMaxAggregateInputType = {
   nip?: true
   paidAt?: true
   isB2BManual?: true
+  idempotencyKey?: true
   accessTokenHash?: true
   accessTokenUsedAt?: true
   createdAt?: true
@@ -278,6 +283,7 @@ export type OrderCountAggregateInputType = {
   nip?: true
   paidAt?: true
   isB2BManual?: true
+  idempotencyKey?: true
   accessTokenHash?: true
   accessTokenUsedAt?: true
   createdAt?: true
@@ -403,6 +409,7 @@ export type OrderGroupByOutputType = {
   nip: string | null
   paidAt: Date | null
   isB2BManual: boolean
+  idempotencyKey: string | null
   accessTokenHash: string | null
   accessTokenUsedAt: Date | null
   createdAt: Date
@@ -464,6 +471,7 @@ export type OrderWhereInput = {
   nip?: Prisma.StringNullableFilter<"Order"> | string | null
   paidAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
   isB2BManual?: Prisma.BoolFilter<"Order"> | boolean
+  idempotencyKey?: Prisma.StringNullableFilter<"Order"> | string | null
   accessTokenHash?: Prisma.StringNullableFilter<"Order"> | string | null
   accessTokenUsedAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Order"> | Date | string
@@ -508,6 +516,7 @@ export type OrderOrderByWithRelationInput = {
   nip?: Prisma.SortOrderInput | Prisma.SortOrder
   paidAt?: Prisma.SortOrderInput | Prisma.SortOrder
   isB2BManual?: Prisma.SortOrder
+  idempotencyKey?: Prisma.SortOrderInput | Prisma.SortOrder
   accessTokenHash?: Prisma.SortOrderInput | Prisma.SortOrder
   accessTokenUsedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -522,6 +531,7 @@ export type OrderOrderByWithRelationInput = {
 
 export type OrderWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  idempotencyKey?: string
   AND?: Prisma.OrderWhereInput | Prisma.OrderWhereInput[]
   OR?: Prisma.OrderWhereInput[]
   NOT?: Prisma.OrderWhereInput | Prisma.OrderWhereInput[]
@@ -565,7 +575,7 @@ export type OrderWhereUniqueInput = Prisma.AtLeast<{
   discountCodeRef?: Prisma.XOR<Prisma.DiscountCodeNullableScalarRelationFilter, Prisma.DiscountCodeWhereInput> | null
   orderItems?: Prisma.OrderItemListRelationFilter
   payments?: Prisma.PaymentListRelationFilter
-}, "id">
+}, "id" | "idempotencyKey">
 
 export type OrderOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -599,6 +609,7 @@ export type OrderOrderByWithAggregationInput = {
   nip?: Prisma.SortOrderInput | Prisma.SortOrder
   paidAt?: Prisma.SortOrderInput | Prisma.SortOrder
   isB2BManual?: Prisma.SortOrder
+  idempotencyKey?: Prisma.SortOrderInput | Prisma.SortOrder
   accessTokenHash?: Prisma.SortOrderInput | Prisma.SortOrder
   accessTokenUsedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -645,6 +656,7 @@ export type OrderScalarWhereWithAggregatesInput = {
   nip?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
   paidAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
   isB2BManual?: Prisma.BoolWithAggregatesFilter<"Order"> | boolean
+  idempotencyKey?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
   accessTokenHash?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
   accessTokenUsedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Order"> | Date | string
@@ -679,6 +691,7 @@ export type OrderCreateInput = {
   nip?: string | null
   paidAt?: Date | string | null
   isB2BManual?: boolean
+  idempotencyKey?: string | null
   accessTokenHash?: string | null
   accessTokenUsedAt?: Date | string | null
   createdAt?: Date | string
@@ -723,6 +736,7 @@ export type OrderUncheckedCreateInput = {
   nip?: string | null
   paidAt?: Date | string | null
   isB2BManual?: boolean
+  idempotencyKey?: string | null
   accessTokenHash?: string | null
   accessTokenUsedAt?: Date | string | null
   createdAt?: Date | string
@@ -759,6 +773,7 @@ export type OrderUpdateInput = {
   nip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isB2BManual?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accessTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accessTokenUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -803,6 +818,7 @@ export type OrderUncheckedUpdateInput = {
   nip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isB2BManual?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accessTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accessTokenUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -843,6 +859,7 @@ export type OrderCreateManyInput = {
   nip?: string | null
   paidAt?: Date | string | null
   isB2BManual?: boolean
+  idempotencyKey?: string | null
   accessTokenHash?: string | null
   accessTokenUsedAt?: Date | string | null
   createdAt?: Date | string
@@ -877,6 +894,7 @@ export type OrderUpdateManyMutationInput = {
   nip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isB2BManual?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accessTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accessTokenUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -915,6 +933,7 @@ export type OrderUncheckedUpdateManyInput = {
   nip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isB2BManual?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accessTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accessTokenUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -963,6 +982,7 @@ export type OrderCountOrderByAggregateInput = {
   nip?: Prisma.SortOrder
   paidAt?: Prisma.SortOrder
   isB2BManual?: Prisma.SortOrder
+  idempotencyKey?: Prisma.SortOrder
   accessTokenHash?: Prisma.SortOrder
   accessTokenUsedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -1008,6 +1028,7 @@ export type OrderMaxOrderByAggregateInput = {
   nip?: Prisma.SortOrder
   paidAt?: Prisma.SortOrder
   isB2BManual?: Prisma.SortOrder
+  idempotencyKey?: Prisma.SortOrder
   accessTokenHash?: Prisma.SortOrder
   accessTokenUsedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -1046,6 +1067,7 @@ export type OrderMinOrderByAggregateInput = {
   nip?: Prisma.SortOrder
   paidAt?: Prisma.SortOrder
   isB2BManual?: Prisma.SortOrder
+  idempotencyKey?: Prisma.SortOrder
   accessTokenHash?: Prisma.SortOrder
   accessTokenUsedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -1296,6 +1318,7 @@ export type OrderCreateWithoutUserInput = {
   nip?: string | null
   paidAt?: Date | string | null
   isB2BManual?: boolean
+  idempotencyKey?: string | null
   accessTokenHash?: string | null
   accessTokenUsedAt?: Date | string | null
   createdAt?: Date | string
@@ -1338,6 +1361,7 @@ export type OrderUncheckedCreateWithoutUserInput = {
   nip?: string | null
   paidAt?: Date | string | null
   isB2BManual?: boolean
+  idempotencyKey?: string | null
   accessTokenHash?: string | null
   accessTokenUsedAt?: Date | string | null
   createdAt?: Date | string
@@ -1407,6 +1431,7 @@ export type OrderScalarWhereInput = {
   nip?: Prisma.StringNullableFilter<"Order"> | string | null
   paidAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
   isB2BManual?: Prisma.BoolFilter<"Order"> | boolean
+  idempotencyKey?: Prisma.StringNullableFilter<"Order"> | string | null
   accessTokenHash?: Prisma.StringNullableFilter<"Order"> | string | null
   accessTokenUsedAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Order"> | Date | string
@@ -1441,6 +1466,7 @@ export type OrderCreateWithoutBillingAddressInput = {
   nip?: string | null
   paidAt?: Date | string | null
   isB2BManual?: boolean
+  idempotencyKey?: string | null
   accessTokenHash?: string | null
   accessTokenUsedAt?: Date | string | null
   createdAt?: Date | string
@@ -1483,6 +1509,7 @@ export type OrderUncheckedCreateWithoutBillingAddressInput = {
   nip?: string | null
   paidAt?: Date | string | null
   isB2BManual?: boolean
+  idempotencyKey?: string | null
   accessTokenHash?: string | null
   accessTokenUsedAt?: Date | string | null
   createdAt?: Date | string
@@ -1529,6 +1556,7 @@ export type OrderCreateWithoutShippingAddressInput = {
   nip?: string | null
   paidAt?: Date | string | null
   isB2BManual?: boolean
+  idempotencyKey?: string | null
   accessTokenHash?: string | null
   accessTokenUsedAt?: Date | string | null
   createdAt?: Date | string
@@ -1571,6 +1599,7 @@ export type OrderUncheckedCreateWithoutShippingAddressInput = {
   nip?: string | null
   paidAt?: Date | string | null
   isB2BManual?: boolean
+  idempotencyKey?: string | null
   accessTokenHash?: string | null
   accessTokenUsedAt?: Date | string | null
   createdAt?: Date | string
@@ -1649,6 +1678,7 @@ export type OrderCreateWithoutOrderItemsInput = {
   nip?: string | null
   paidAt?: Date | string | null
   isB2BManual?: boolean
+  idempotencyKey?: string | null
   accessTokenHash?: string | null
   accessTokenUsedAt?: Date | string | null
   createdAt?: Date | string
@@ -1692,6 +1722,7 @@ export type OrderUncheckedCreateWithoutOrderItemsInput = {
   nip?: string | null
   paidAt?: Date | string | null
   isB2BManual?: boolean
+  idempotencyKey?: string | null
   accessTokenHash?: string | null
   accessTokenUsedAt?: Date | string | null
   createdAt?: Date | string
@@ -1743,6 +1774,7 @@ export type OrderUpdateWithoutOrderItemsInput = {
   nip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isB2BManual?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accessTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accessTokenUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1786,6 +1818,7 @@ export type OrderUncheckedUpdateWithoutOrderItemsInput = {
   nip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isB2BManual?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accessTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accessTokenUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1821,6 +1854,7 @@ export type OrderCreateWithoutPaymentsInput = {
   nip?: string | null
   paidAt?: Date | string | null
   isB2BManual?: boolean
+  idempotencyKey?: string | null
   accessTokenHash?: string | null
   accessTokenUsedAt?: Date | string | null
   createdAt?: Date | string
@@ -1864,6 +1898,7 @@ export type OrderUncheckedCreateWithoutPaymentsInput = {
   nip?: string | null
   paidAt?: Date | string | null
   isB2BManual?: boolean
+  idempotencyKey?: string | null
   accessTokenHash?: string | null
   accessTokenUsedAt?: Date | string | null
   createdAt?: Date | string
@@ -1915,6 +1950,7 @@ export type OrderUpdateWithoutPaymentsInput = {
   nip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isB2BManual?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accessTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accessTokenUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1958,6 +1994,7 @@ export type OrderUncheckedUpdateWithoutPaymentsInput = {
   nip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isB2BManual?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accessTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accessTokenUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1993,6 +2030,7 @@ export type OrderCreateWithoutDiscountCodeRefInput = {
   nip?: string | null
   paidAt?: Date | string | null
   isB2BManual?: boolean
+  idempotencyKey?: string | null
   accessTokenHash?: string | null
   accessTokenUsedAt?: Date | string | null
   createdAt?: Date | string
@@ -2035,6 +2073,7 @@ export type OrderUncheckedCreateWithoutDiscountCodeRefInput = {
   nip?: string | null
   paidAt?: Date | string | null
   isB2BManual?: boolean
+  idempotencyKey?: string | null
   accessTokenHash?: string | null
   accessTokenUsedAt?: Date | string | null
   createdAt?: Date | string
@@ -2100,6 +2139,7 @@ export type OrderCreateManyUserInput = {
   nip?: string | null
   paidAt?: Date | string | null
   isB2BManual?: boolean
+  idempotencyKey?: string | null
   accessTokenHash?: string | null
   accessTokenUsedAt?: Date | string | null
   createdAt?: Date | string
@@ -2134,6 +2174,7 @@ export type OrderUpdateWithoutUserInput = {
   nip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isB2BManual?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accessTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accessTokenUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2176,6 +2217,7 @@ export type OrderUncheckedUpdateWithoutUserInput = {
   nip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isB2BManual?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accessTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accessTokenUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2215,6 +2257,7 @@ export type OrderUncheckedUpdateManyWithoutUserInput = {
   nip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isB2BManual?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accessTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accessTokenUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2252,6 +2295,7 @@ export type OrderCreateManyBillingAddressInput = {
   nip?: string | null
   paidAt?: Date | string | null
   isB2BManual?: boolean
+  idempotencyKey?: string | null
   accessTokenHash?: string | null
   accessTokenUsedAt?: Date | string | null
   createdAt?: Date | string
@@ -2289,6 +2333,7 @@ export type OrderCreateManyShippingAddressInput = {
   nip?: string | null
   paidAt?: Date | string | null
   isB2BManual?: boolean
+  idempotencyKey?: string | null
   accessTokenHash?: string | null
   accessTokenUsedAt?: Date | string | null
   createdAt?: Date | string
@@ -2323,6 +2368,7 @@ export type OrderUpdateWithoutBillingAddressInput = {
   nip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isB2BManual?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accessTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accessTokenUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2365,6 +2411,7 @@ export type OrderUncheckedUpdateWithoutBillingAddressInput = {
   nip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isB2BManual?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accessTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accessTokenUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2404,6 +2451,7 @@ export type OrderUncheckedUpdateManyWithoutBillingAddressInput = {
   nip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isB2BManual?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accessTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accessTokenUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2438,6 +2486,7 @@ export type OrderUpdateWithoutShippingAddressInput = {
   nip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isB2BManual?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accessTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accessTokenUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2480,6 +2529,7 @@ export type OrderUncheckedUpdateWithoutShippingAddressInput = {
   nip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isB2BManual?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accessTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accessTokenUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2519,6 +2569,7 @@ export type OrderUncheckedUpdateManyWithoutShippingAddressInput = {
   nip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isB2BManual?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accessTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accessTokenUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2556,6 +2607,7 @@ export type OrderCreateManyDiscountCodeRefInput = {
   nip?: string | null
   paidAt?: Date | string | null
   isB2BManual?: boolean
+  idempotencyKey?: string | null
   accessTokenHash?: string | null
   accessTokenUsedAt?: Date | string | null
   createdAt?: Date | string
@@ -2590,6 +2642,7 @@ export type OrderUpdateWithoutDiscountCodeRefInput = {
   nip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isB2BManual?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accessTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accessTokenUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2632,6 +2685,7 @@ export type OrderUncheckedUpdateWithoutDiscountCodeRefInput = {
   nip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isB2BManual?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accessTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accessTokenUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2671,6 +2725,7 @@ export type OrderUncheckedUpdateManyWithoutDiscountCodeRefInput = {
   nip?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isB2BManual?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accessTokenHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accessTokenUsedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2749,6 +2804,7 @@ export type OrderSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   nip?: boolean
   paidAt?: boolean
   isB2BManual?: boolean
+  idempotencyKey?: boolean
   accessTokenHash?: boolean
   accessTokenUsedAt?: boolean
   createdAt?: boolean
@@ -2794,6 +2850,7 @@ export type OrderSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   nip?: boolean
   paidAt?: boolean
   isB2BManual?: boolean
+  idempotencyKey?: boolean
   accessTokenHash?: boolean
   accessTokenUsedAt?: boolean
   createdAt?: boolean
@@ -2836,6 +2893,7 @@ export type OrderSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   nip?: boolean
   paidAt?: boolean
   isB2BManual?: boolean
+  idempotencyKey?: boolean
   accessTokenHash?: boolean
   accessTokenUsedAt?: boolean
   createdAt?: boolean
@@ -2878,13 +2936,14 @@ export type OrderSelectScalar = {
   nip?: boolean
   paidAt?: boolean
   isB2BManual?: boolean
+  idempotencyKey?: boolean
   accessTokenHash?: boolean
   accessTokenUsedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type OrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "status" | "paymentMethod" | "pricePaidInCents" | "subtotalInCents" | "shippingCostInCents" | "billingAddressId" | "shippingAddressId" | "shippingServiceId" | "shippingServiceName" | "apaczkaOrderId" | "apaczkaWaybillNumber" | "apaczkaTrackingUrl" | "apaczkaStatus" | "apaczkaConfirmedAt" | "wfirmaInvoiceId" | "wfirmaInvoiceNumber" | "wfirmaInvoiceSentAt" | "wfirmaCorrectionInvoiceId" | "wfirmaCorrectionInvoiceNumber" | "discountCodeId" | "discountCodeValue" | "discountAmountInCents" | "apaczkaPointId" | "apaczkaPointSupplier" | "wantsFaktura" | "companyName" | "nip" | "paidAt" | "isB2BManual" | "accessTokenHash" | "accessTokenUsedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
+export type OrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "status" | "paymentMethod" | "pricePaidInCents" | "subtotalInCents" | "shippingCostInCents" | "billingAddressId" | "shippingAddressId" | "shippingServiceId" | "shippingServiceName" | "apaczkaOrderId" | "apaczkaWaybillNumber" | "apaczkaTrackingUrl" | "apaczkaStatus" | "apaczkaConfirmedAt" | "wfirmaInvoiceId" | "wfirmaInvoiceNumber" | "wfirmaInvoiceSentAt" | "wfirmaCorrectionInvoiceId" | "wfirmaCorrectionInvoiceNumber" | "discountCodeId" | "discountCodeValue" | "discountAmountInCents" | "apaczkaPointId" | "apaczkaPointSupplier" | "wantsFaktura" | "companyName" | "nip" | "paidAt" | "isB2BManual" | "idempotencyKey" | "accessTokenHash" | "accessTokenUsedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
 export type OrderInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   billingAddress?: boolean | Prisma.AddressDefaultArgs<ExtArgs>
@@ -2949,6 +3008,7 @@ export type $OrderPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     nip: string | null
     paidAt: Date | null
     isB2BManual: boolean
+    idempotencyKey: string | null
     accessTokenHash: string | null
     accessTokenUsedAt: Date | null
     createdAt: Date
@@ -3413,6 +3473,7 @@ export interface OrderFieldRefs {
   readonly nip: Prisma.FieldRef<"Order", 'String'>
   readonly paidAt: Prisma.FieldRef<"Order", 'DateTime'>
   readonly isB2BManual: Prisma.FieldRef<"Order", 'Boolean'>
+  readonly idempotencyKey: Prisma.FieldRef<"Order", 'String'>
   readonly accessTokenHash: Prisma.FieldRef<"Order", 'String'>
   readonly accessTokenUsedAt: Prisma.FieldRef<"Order", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Order", 'DateTime'>

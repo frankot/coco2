@@ -375,6 +375,17 @@ export async function createOrder(formData: OrderFormData) {
       }
     }
 
+    // Idempotency key: hash of (userId, cart fingerprint, subtotal, 5-min window)
+    // Prevents duplicate orders from double-click / cross-tab / browser-back resubmit
+    const productFingerprint = validatedData.cartItems
+      .map((item) => `${item.id}:${item.quantity}`)
+      .sort()
+      .join(",");
+    const windowMinutes = 5;
+    const timeBucket = Math.floor(Date.now() / (windowMinutes * 60 * 1000));
+    const idempotencyRaw = `${verifiedUserId}|${productFingerprint}|${subtotalInCents}|${shippingCostInCents}|${timeBucket}`;
+    const idempotencyKey = crypto.createHash("sha256").update(idempotencyRaw).digest("hex");
+
     // One-time order access token (for guest verify-session + success page)
     const accessTokenRaw = crypto.randomBytes(24).toString("hex");
     const accessTokenHash = crypto.createHash("sha256").update(accessTokenRaw).digest("hex");
@@ -470,6 +481,7 @@ export async function createOrder(formData: OrderFormData) {
               ? validatedData.apaczkaPointSupplier.trim().toUpperCase()
               : undefined,
           accessTokenHash,
+          idempotencyKey,
           orderItems: {
             create: validatedData.cartItems.map((item) => ({
               productId: item.id,
@@ -494,6 +506,19 @@ export async function createOrder(formData: OrderFormData) {
               e?.code === "P2002" &&
               (Array.isArray(target) ? target.includes("id") : target === "id" || target === "Order_pkey");
             if (isIdConflict && attempt < MAX_ORDER_ID_RETRIES - 1) continue;
+            // Idempotency collision: duplicate submission within 5-min window
+            const isIdempotencyConflict =
+              e?.code === "P2002" &&
+              (Array.isArray(target)
+                ? target.includes("idempotencyKey")
+                : target === "idempotencyKey" || target === "Order_idempotencyKey_key");
+            if (isIdempotencyConflict) {
+              const existing = await tx.order.findUnique({ where: { idempotencyKey } });
+              if (existing) {
+                order = existing;
+                break;
+              }
+            }
             throw e;
           }
         }
