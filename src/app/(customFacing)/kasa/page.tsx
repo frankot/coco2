@@ -797,11 +797,9 @@ export default function CheckoutPage() {
       } else {
         setError(result.error || "Wystąpił błąd podczas składania zamówienia");
         const blockedOrderId = (result as any).existingOrderId || null;
+        const blockedToken = (result as any).accessToken || "";
         setExistingOrderId(blockedOrderId);
-        // Guest users: pair stored access token with the blocked order link
-        if (blockedOrderId && sessionStorage.getItem("lastOrderId") === blockedOrderId) {
-          setCanceledAccessToken(sessionStorage.getItem("lastAccessToken") || "");
-        }
+        if (blockedToken) setCanceledAccessToken(blockedToken);
         submittingLock.current = false;
         setIsSubmitting(false);
 

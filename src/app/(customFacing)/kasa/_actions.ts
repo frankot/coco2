@@ -370,10 +370,18 @@ export async function createOrder(formData: OrderFormData) {
         select: { id: true },
       });
       if (recentPending) {
+        // Generate a fresh access token so the guest can reach the order page
+        const retryToken = crypto.randomBytes(24).toString("hex");
+        const retryTokenHash = crypto.createHash("sha256").update(retryToken).digest("hex");
+        await prisma.order.update({
+          where: { id: recentPending.id },
+          data: { accessTokenHash: retryTokenHash },
+        });
         return {
           success: false,
           error: `Masz już oczekujące zamówienie #${recentPending.id}. Dokończ płatność lub wróć za 10 minut aby złożyć nowe.`,
           existingOrderId: recentPending.id,
+          accessToken: retryToken,
         };
       }
     }
