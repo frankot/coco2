@@ -63,12 +63,13 @@ export const POST = createRouteHandler(async ({ req }) => {
     };
   });
 
-  // Apply discount as Stripe coupon if order has one
+  // Fetch order for shipping cost and discount
+  let shippingCostInCents = 0;
   let discounts: { coupon: string }[] = [];
   if (orderId) {
     const order = await prisma.order.findUnique({
       where: { id: orderId },
-      select: { discountAmountInCents: true, discountCodeValue: true },
+      select: { discountAmountInCents: true, discountCodeValue: true, shippingCostInCents: true },
     });
     if (order?.discountAmountInCents && order.discountAmountInCents > 0) {
       const coupon = await stripe.coupons.create({
@@ -79,6 +80,21 @@ export const POST = createRouteHandler(async ({ req }) => {
       });
       discounts = [{ coupon: coupon.id }];
     }
+    if (order?.shippingCostInCents && order.shippingCostInCents > 0) {
+      shippingCostInCents = order.shippingCostInCents;
+    }
+  }
+
+  // Delivery fee as a line item
+  if (shippingCostInCents > 0) {
+    lineItems.push({
+      price_data: {
+        currency: "pln",
+        product_data: { name: "Dostawa" },
+        unit_amount: shippingCostInCents,
+      },
+      quantity: 1,
+    });
   }
 
   const session = await stripe.checkout.sessions.create({
