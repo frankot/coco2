@@ -90,7 +90,7 @@ export const POST = createRouteHandler(async ({ req }) => {
     lineItems.push({
       price_data: {
         currency: "pln",
-        product_data: { name: "Dostawa" },
+        product_data: { name: "Dostawa", images: [] },
         unit_amount: shippingCostInCents,
       },
       quantity: 1,
