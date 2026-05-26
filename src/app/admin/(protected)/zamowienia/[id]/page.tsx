@@ -72,6 +72,8 @@ type OrderItem = {
 type Order = {
   id: string;
   pricePaidInCents: number;
+  subtotalInCents: number;
+  shippingCostInCents: number;
   discountCodeValue?: string | null;
   discountAmountInCents?: number;
   createdAt: string;
@@ -274,6 +276,22 @@ export default function OrderDetailsPage() {
   const totalAmount = (order.pricePaidInCents / 100).toFixed(2);
   const discountAmount = ((order.discountAmountInCents ?? 0) / 100).toFixed(2);
 
+  // Delivery method label
+  const getDeliveryLabel = () => {
+    if (order.isB2BManual) return "Dostawa ustalana indywidualnie";
+    if (order.shippingServiceName) {
+      let label = order.shippingServiceName;
+      if (order.apaczkaPointSupplier) label += ` — punkt ${order.apaczkaPointSupplier}`;
+      return label;
+    }
+    if (order.shippingServiceId) {
+      let label = `Dostawa (ID: ${order.shippingServiceId})`;
+      if (order.apaczkaPointSupplier) label += ` — punkt ${order.apaczkaPointSupplier}`;
+      return label;
+    }
+    return "—";
+  };
+
   const confirmOverride = async () => {
     if (!overrideTarget) return;
     const target = overrideTarget;
@@ -441,6 +459,9 @@ export default function OrderDetailsPage() {
 
               <div className="text-sm text-muted-foreground">Kwota:</div>
               <div className="text-sm font-medium">{totalAmount} PLN</div>
+
+              <div className="text-sm text-muted-foreground">Metoda dostawy:</div>
+              <div className="text-sm font-medium">{getDeliveryLabel()}</div>
 
               <div className="text-sm text-muted-foreground">Kod rabatowy:</div>
               <div className="text-sm font-medium">{order.discountCodeValue || "—"}</div>
