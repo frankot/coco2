@@ -715,7 +715,6 @@ export default function CheckoutPage() {
         resolvedServiceId = match.service_id;
       }
 
-      // If the selected (resolved) service supports door_to_point, ensure a point is selected
       const serviceMeta = shippingMethods.find((s) => s.service_id === resolvedServiceId);
       if (serviceMeta?.door_to_point === "1" && !selectedPointId) {
         setError("Wybierz punkt odbioru dla tej metody dostawy");
@@ -725,12 +724,15 @@ export default function CheckoutPage() {
       }
       }
 
+      const selectedVisible = visibleServices.find((s) => s.service_id === selectedShippingMethod);
+
       // Prepare order data
       const orderData = {
         ...formData,
         cartItems,
         userId: session?.user?.id,
         shippingMethodId: resolvedServiceId,
+        shippingServiceName: selectedVisible?.name || undefined,
         apaczkaPointId: selectedPointId || undefined,
         apaczkaPointSupplier: selectedSupplier || undefined,
         newsletterConsent,

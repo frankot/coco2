@@ -38,6 +38,7 @@ const orderFormSchema = z.object({
   country: z.string().default("Polska"),
   paymentMethod: z.enum(["COD", "STRIPE", "INVOICE_DEFERRED"]),
   shippingMethodId: z.string().optional(),
+  shippingServiceName: z.string().optional(),
   cartItems: z.array(
     z.object({
       id: z.string(),
@@ -503,6 +504,7 @@ export async function createOrder(formData: OrderFormData) {
           discountCodeValue: verifiedDiscountCodeValue || undefined,
           discountAmountInCents,
           shippingServiceId: isHurt ? null : finalServiceId,
+          shippingServiceName: isHurt ? null : (validatedData.shippingServiceName || undefined),
           apaczkaPointId: !isHurt ? validatedData.apaczkaPointId?.trim() || undefined : undefined,
           apaczkaPointSupplier:
             !isHurt && validatedData.apaczkaPointSupplier
