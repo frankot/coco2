@@ -97,10 +97,21 @@ export async function confirmOrderInApaczka(orderId: string) {
   );
 
   // Supplier-specific pickup configuration
-  const supplier = (order.apaczkaPointSupplier || "").toUpperCase();
-  const serviceName = (order.shippingServiceName || "").toLowerCase();
-  const isSelfPickup =
-    supplier === "DPD" || serviceName.includes("dpd");
+  let supplier = (order.apaczkaPointSupplier || "").toUpperCase();
+  // For D2D orders without apaczkaPointSupplier, resolve supplier from service_id
+  if (!supplier && order.shippingServiceId) {
+    try {
+      const svc = await Apaczka.serviceStructure();
+      const services = (svc as any).response?.services || [];
+      const svcMatch = services.find(
+        (s: any) => String(s.service_id) === String(order.shippingServiceId)
+      );
+      if (svcMatch) supplier = (svcMatch.supplier || "").toUpperCase();
+    } catch (e) {
+      // fall through — will default to COURIER
+    }
+  }
+  const isSelfPickup = supplier === "DPD";
 
   const getPickupDate = () => {
     const now = new Date();
