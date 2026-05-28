@@ -13,11 +13,11 @@ function normalizePhonePL(input: string | null | undefined): string | undefined 
   return input;
 }
 
-type Body = { orderIds?: string[]; generateTurnIn?: boolean; limit?: number };
+type Body = { orderIds?: string[]; limit?: number };
 
 export const POST = createRouteHandler(
   async ({ req }) => {
-    const { orderIds, generateTurnIn = true, limit = 100 } = await readJson<Body>(req);
+    const { orderIds, limit = 100 } = await readJson<Body>(req);
 
     const where = {
       id: orderIds && orderIds.length ? { in: orderIds } : undefined,
@@ -349,26 +349,7 @@ export const POST = createRouteHandler(
       }
     }
 
-    let turnIn: string | undefined;
-    if (generateTurnIn && created.length) {
-      const ids = await prisma.order.findMany({
-        where: { id: { in: created.map((c) => c.id) } },
-        select: { apaczkaOrderId: true },
-      });
-      const apIds = ids.map((x) => x.apaczkaOrderId).filter(Boolean) as string[];
-      if (apIds.length) {
-        try {
-          console.log(`[Bulk] Generating turn_in for ${apIds.length} orders:`, apIds);
-          const resp = await Apaczka.turnIn(apIds);
-          turnIn = resp.response.turn_in;
-          console.log(`[Bulk] turn_in generated successfully`);
-        } catch (e: any) {
-          console.error("[Bulk] turn_in generation failed:", e?.message || e);
-        }
-      }
-    }
-
-    return { success: true, created, failed, turnIn };
+    return { success: true, created, failed };
   },
   { auth: "admin" }
 );

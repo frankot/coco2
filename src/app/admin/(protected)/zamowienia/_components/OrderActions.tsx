@@ -296,13 +296,13 @@ export function OrderActionsMenu({
 }
 
 // Bulk confirm helper button (to be used in page toolbar)
-export async function confirmAllApaczka(generateTurnIn = true) {
+export async function confirmAllApaczka() {
   const res = await fetch(`/api/admin/shipping/apaczka/confirm-all`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ generateTurnIn }),
+    body: JSON.stringify({}),
   });
   const data = await res.json();
   if (!res.ok || !data.success) throw new Error(data.error || data.message || "Błąd API");
-  return data as { created: any[]; failed: any[]; turnIn?: string };
+  return data as { created: { id: string; apaczkaOrderId: string }[]; failed: any[] };
 }
