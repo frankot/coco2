@@ -116,34 +116,35 @@ export const POST = createRouteHandler(
           }))
         );
 
-        // Calculate pickup date: next business day (Mon-Fri) if after 14:00, otherwise today if business day
+        // Supplier-specific pickup configuration
+        const supplier = (order.apaczkaPointSupplier || "").toUpperCase();
+        const serviceName = (order.shippingServiceName || "").toLowerCase();
+        const isSelfPickup =
+          supplier === "DPD" || serviceName.includes("dpd");
+
+        // Calculate pickup date: same-day if before 14:00, otherwise next business day
         const getPickupDate = () => {
           const now = new Date();
-          const hour = now.getHours();
           let pickup = new Date(now);
-
-          // If after 14:00, schedule for next day
-          if (hour >= 14) {
-            pickup.setDate(pickup.getDate() + 1);
-          }
-
-          // Skip weekends: if Saturday (6), move to Monday; if Sunday (0), move to Monday
+          if (now.getHours() >= 14) pickup.setDate(pickup.getDate() + 1);
+          // Skip weekends
           while (pickup.getDay() === 0 || pickup.getDay() === 6) {
             pickup.setDate(pickup.getDate() + 1);
           }
-
           return pickup.toISOString().slice(0, 10);
         };
 
         const apOrder: any = {
           service_id: Number(order.shippingServiceId),
           address: { sender: SENDER, receiver },
-          pickup: {
-            type: "COURIER",
-            date: getPickupDate(),
-            hours_from: "09:00",
-            hours_to: "17:00",
-          },
+          pickup: isSelfPickup
+            ? { type: "SELF" as const }
+            : {
+                type: "COURIER" as const,
+                date: getPickupDate(),
+                hours_from: "14:00",
+                hours_to: "17:00",
+              },
           shipment,
           comment: `Zamówienie [${order.id}]`,
           content: `Szkło! Proszę nie rzucać!`,
@@ -238,13 +239,15 @@ export const POST = createRouteHandler(
           // Set point code in foreign_address_id (NOT foreign_access_point_id)
           (apOrder.address.receiver as any).foreign_address_id = order.apaczkaPointId;
 
-          // Ensure COURIER pickup for D2P
-          apOrder.pickup = {
-            type: "COURIER",
-            date: getPickupDate(),
-            hours_from: "09:00",
-            hours_to: "17:00",
-          };
+          // Set pickup for D2P (SELF for DPD, COURIER 14-17 for others)
+          apOrder.pickup = isSelfPickup
+            ? { type: "SELF" as const }
+            : {
+                type: "COURIER" as const,
+                date: getPickupDate(),
+                hours_from: "14:00",
+                hours_to: "17:00",
+              };
         }
 
         // If point delivery selected, ensure receiver phone is present
@@ -342,9 +345,13 @@ export const POST = createRouteHandler(
       const apIds = ids.map((x) => x.apaczkaOrderId).filter(Boolean) as string[];
       if (apIds.length) {
         try {
+          console.log(`[Bulk] Generating turn_in for ${apIds.length} orders:`, apIds);
           const resp = await Apaczka.turnIn(apIds);
           turnIn = resp.response.turn_in;
-        } catch {}
+          console.log(`[Bulk] turn_in generated successfully`);
+        } catch (e: any) {
+          console.error("[Bulk] turn_in generation failed:", e?.message || e);
+        }
       }
     }
 

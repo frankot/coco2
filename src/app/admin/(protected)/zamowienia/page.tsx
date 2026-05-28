@@ -70,25 +70,23 @@ type SortDirection = "asc" | "desc";
 
 export default function AdminOrdersPage() {
   const [isConfirming, setIsConfirming] = useState(false);
-  const [turnInDialogOpen, setTurnInDialogOpen] = useState(false);
-  const [turnInData, setTurnInData] = useState<string | null>(null);
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [downloadTurnIn, setDownloadTurnIn] = useState(true);
   const [showB2B, setShowB2B] = useState(true);
   const [showRegular, setShowRegular] = useState(true);
 
-  const downloadTurnIn = () => {
-    if (!turnInData) return;
+  const downloadPDF = (base64: string, filename: string) => {
     const link = document.createElement("a");
-    link.href = `data:application/pdf;base64,${turnInData}`;
-    link.download = `Zbiorcze_Potwierdzenie_Nadan_${Date.now()}.pdf`;
+    link.href = `data:application/pdf;base64,${base64}`;
+    link.download = filename;
     link.click();
-    setTurnInDialogOpen(false);
-    setTurnInData(null);
   };
 
   const handleConfirmAll = async () => {
     setIsConfirming(true);
+    const generateTurnIn = downloadTurnIn;
     try {
-      const res = await confirmAllApaczka(true);
+      const res = await confirmAllApaczka(generateTurnIn);
       const created = res.created?.length || 0;
       const failed = res.failed?.length || 0;
 
@@ -108,10 +106,9 @@ export default function AdminOrdersPage() {
         toast.info("Brak zamówień do potwierdzenia");
       }
 
-      // Show dialog for zbiorowe potwierdzenie instead of auto-download
-      if (res.turnIn) {
-        setTurnInData(res.turnIn);
-        setTurnInDialogOpen(true);
+      // Auto-download zbiorczy list przewozowy if requested and available
+      if (generateTurnIn && res.turnIn) {
+        downloadPDF(res.turnIn, `Zbiorczy_list_przewozowy_${Date.now()}.pdf`);
       }
 
       if (created > 0) {
@@ -127,20 +124,33 @@ export default function AdminOrdersPage() {
 
   return (
     <>
-      {/* Zbiorowe potwierdzenie dialog */}
-      <Dialog open={turnInDialogOpen} onOpenChange={setTurnInDialogOpen}>
+      {/* Confirmation modal */}
+      <Dialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Zbiorcze potwierdzenie nadań</DialogTitle>
+            <DialogTitle>Potwierdź wysyłkę do Apaczka</DialogTitle>
             <DialogDescription>
-              Potwierdzenie nadań zostało wygenerowane. Czy chcesz pobrać PDF?
+              Wszystkie opłacone zamówienia zostaną wysłane do Apaczka, a ich status zmieni się na „W realizacji”.
             </DialogDescription>
           </DialogHeader>
+          <div className="py-2">
+            <label className="flex items-center gap-2 text-sm cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={downloadTurnIn}
+                onChange={(e) => setDownloadTurnIn(e.target.checked)}
+                className="h-4 w-4 cursor-pointer"
+              />
+              Pobierz zbiorowy list przewozowy
+            </label>
+          </div>
           <DialogFooter>
-            <Button variant="ghost" onClick={() => { setTurnInDialogOpen(false); setTurnInData(null); }}>
-              Zamknij
+            <Button variant="ghost" onClick={() => setConfirmDialogOpen(false)}>
+              Anuluj
             </Button>
-            <Button onClick={downloadTurnIn}>Pobierz PDF</Button>
+            <Button onClick={handleConfirmAll}>
+              Wyślij
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -174,7 +184,7 @@ export default function AdminOrdersPage() {
             variant="default"
             disabled={isConfirming}
             title="Potwierdzi wszystkie opłacone zamówienia — wyśle do Apaczki i zmieni status na W realizacji."
-            onClick={handleConfirmAll}
+            onClick={() => setConfirmDialogOpen(true)}
           >
             {isConfirming && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {isConfirming ? "Potwierdzanie..." : "Apaczka - wyślij opłacone"}

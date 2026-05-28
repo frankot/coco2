@@ -96,11 +96,18 @@ export async function confirmOrderInApaczka(orderId: string) {
     }))
   );
 
+  // Supplier-specific pickup configuration
+  const supplier = (order.apaczkaPointSupplier || "").toUpperCase();
+  const serviceName = (order.shippingServiceName || "").toLowerCase();
+  const isSelfPickup =
+    supplier === "DPD" || serviceName.includes("dpd");
+
   const getPickupDate = () => {
     const now = new Date();
-    const hour = now.getHours();
     let pickup = new Date(now);
-    if (hour >= 14) pickup.setDate(pickup.getDate() + 1);
+    // Same-day pickup if before 14:00, otherwise next business day
+    if (now.getHours() >= 14) pickup.setDate(pickup.getDate() + 1);
+    // Skip weekends (InPost: no Saturday pickup)
     while (pickup.getDay() === 0 || pickup.getDay() === 6) {
       pickup.setDate(pickup.getDate() + 1);
     }
@@ -110,12 +117,14 @@ export async function confirmOrderInApaczka(orderId: string) {
   const apOrder: any = {
     service_id: Number(order.shippingServiceId),
     address: { sender: SENDER, receiver },
-    pickup: {
-      type: "COURIER",
-      date: getPickupDate(),
-      hours_from: process.env.APACZKA_PICKUP_FROM || "09:00",
-      hours_to: process.env.APACZKA_PICKUP_TO || "17:00",
-    },
+    pickup: isSelfPickup
+      ? { type: "SELF" as const }
+      : {
+          type: "COURIER" as const,
+          date: getPickupDate(),
+          hours_from: "14:00",
+          hours_to: "17:00",
+        },
     shipment,
     comment: `Zamówienie [${order.id}]`,
     content: `Szkło! Proszę nie rzucać!`,
