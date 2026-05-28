@@ -32,7 +32,7 @@ export const POST = createRouteHandler(
       include: {
         user: true,
         shippingAddress: true,
-        orderItems: { include: { product: { select: { weightKg: true, lengthCm: true, widthCm: true, heightCm: true } } } },
+        orderItems: { include: { product: { select: { name: true, weightKg: true, lengthCm: true, widthCm: true, heightCm: true } } } },
       },
       orderBy: { createdAt: "asc" },
       take: limit,
@@ -155,7 +155,13 @@ export const POST = createRouteHandler(
             hours_to: "17:00",
           },
           shipment,
-          comment: `Zamówienie [${order.id}]`,
+          comment: [
+            `Zamówienie [${order.id}]`,
+            order.orderItems
+              .map((oi) => `${oi.quantity}x ${oi.product.name}`)
+              .join(", "),
+            `${(order.pricePaidInCents / 100).toFixed(2)} PLN`,
+          ].join(" | "),
           content: `Szkło! Proszę nie rzucać!`,
           is_zebra: 0,
         };

@@ -24,7 +24,7 @@ export async function confirmOrderInApaczka(orderId: string) {
       shippingAddress: true,
       orderItems: {
         include: {
-          product: { select: { weightKg: true, lengthCm: true, widthCm: true, heightCm: true } },
+          product: { select: { name: true, weightKg: true, lengthCm: true, widthCm: true, heightCm: true } },
         },
       },
     },
@@ -135,7 +135,13 @@ export async function confirmOrderInApaczka(orderId: string) {
       hours_to: "17:00",
     },
     shipment,
-    comment: `Zamówienie [${order.id}]`,
+    comment: [
+      `Zamówienie [${order.id}]`,
+      order.orderItems
+        .map((oi) => `${oi.quantity}x ${oi.product.name}`)
+        .join(", "),
+      `${(order.pricePaidInCents / 100).toFixed(2)} PLN`,
+    ].join(" | "),
     content: `Szkło! Proszę nie rzucać!`,
     is_zebra: 0,
   };
