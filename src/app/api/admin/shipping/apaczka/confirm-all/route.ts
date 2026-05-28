@@ -148,14 +148,12 @@ export const POST = createRouteHandler(
         const apOrder: any = {
           service_id: Number(order.shippingServiceId),
           address: { sender: SENDER, receiver },
-          pickup: isSelfPickup
-            ? { type: "SELF" as const }
-            : {
-                type: "COURIER" as const,
-                date: getPickupDate(),
-                hours_from: "14:00",
-                hours_to: "17:00",
-              },
+          pickup: {
+            type: isSelfPickup ? ("SELF" as const) : ("COURIER" as const),
+            date: getPickupDate(),
+            hours_from: "14:00",
+            hours_to: "17:00",
+          },
           shipment,
           comment: `Zamówienie [${order.id}]`,
           content: `Szkło! Proszę nie rzucać!`,
@@ -251,14 +249,12 @@ export const POST = createRouteHandler(
           (apOrder.address.receiver as any).foreign_address_id = order.apaczkaPointId;
 
           // Set pickup for D2P (SELF for DPD, COURIER 14-17 for others)
-          apOrder.pickup = isSelfPickup
-            ? { type: "SELF" as const }
-            : {
-                type: "COURIER" as const,
-                date: getPickupDate(),
-                hours_from: "14:00",
-                hours_to: "17:00",
-              };
+          apOrder.pickup = {
+            type: isSelfPickup ? ("SELF" as const) : ("COURIER" as const),
+            date: getPickupDate(),
+            hours_from: "14:00",
+            hours_to: "17:00",
+          };
         }
 
         // If point delivery selected, ensure receiver phone is present

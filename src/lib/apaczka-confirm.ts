@@ -128,14 +128,12 @@ export async function confirmOrderInApaczka(orderId: string) {
   const apOrder: any = {
     service_id: Number(order.shippingServiceId),
     address: { sender: SENDER, receiver },
-    pickup: isSelfPickup
-      ? { type: "SELF" as const }
-      : {
-          type: "COURIER" as const,
-          date: getPickupDate(),
-          hours_from: "14:00",
-          hours_to: "17:00",
-        },
+    pickup: {
+      type: isSelfPickup ? ("SELF" as const) : ("COURIER" as const),
+      date: getPickupDate(),
+      hours_from: "14:00",
+      hours_to: "17:00",
+    },
     shipment,
     comment: `Zamówienie [${order.id}]`,
     content: `Szkło! Proszę nie rzucać!`,
