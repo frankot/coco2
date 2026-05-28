@@ -75,18 +75,40 @@ export default function AdminOrdersPage() {
   const [showB2B, setShowB2B] = useState(true);
   const [showRegular, setShowRegular] = useState(true);
 
-  const downloadWaybill = async (orderId: string) => {
-    const res = await fetch(`/api/admin/shipping/apaczka/waybill/${orderId}`);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const blob = await res.blob();
-    const disposition = res.headers.get("Content-Disposition");
-    const filename = disposition?.match(/filename="(.+)"/)?.[1] || `Etykieta_${orderId}.pdf`;
-    const url = URL.createObjectURL(blob);
+  const downloadWaybillsZip = async (orders: { id: string }[]) => {
+    const JSZip = (await import("jszip")).default;
+    const zip = new JSZip();
+    let downloaded = 0;
+
+    for (const item of orders) {
+      try {
+        const res = await fetch(`/api/admin/shipping/apaczka/waybill/${item.id}`);
+        if (!res.ok) {
+          toast.error(`Nie udało się pobrać etykiety dla zamówienia ${item.id}`);
+          continue;
+        }
+        const disposition = res.headers.get("Content-Disposition");
+        const filename =
+          disposition?.match(/filename="(.+)"/)?.[1] || `Etykieta_${item.id}.pdf`;
+        const buf = await res.arrayBuffer();
+        zip.file(filename, buf, { binary: true });
+        downloaded++;
+      } catch (e) {
+        toast.error(`Błąd pobierania etykiety dla zamówienia ${item.id}`);
+      }
+    }
+
+    if (downloaded === 0) return;
+
+    const zipBlob = await zip.generateAsync({ type: "blob" });
+    const url = URL.createObjectURL(zipBlob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = filename;
+    a.download = `Etykiety_Apaczka_${new Date().toISOString().slice(0, 10)}.zip`;
     a.click();
     URL.revokeObjectURL(url);
+
+    toast.success(`Pobrano ${downloaded} etykiet`);
   };
 
   const handleConfirmAll = async () => {
@@ -113,22 +135,8 @@ export default function AdminOrdersPage() {
         toast.info("Brak zamówień do potwierdzenia");
       }
 
-      // Download individual waybills for each created order
       if (shouldDownloadWaybills && res.created?.length) {
-        let downloaded = 0;
-        for (const item of res.created) {
-          try {
-            await downloadWaybill(item.id);
-            downloaded++;
-            // Small delay between downloads to avoid browser blocking
-            await new Promise((r) => setTimeout(r, 250));
-          } catch (e) {
-            toast.error(`Nie udało się pobrać etykiety dla zamówienia ${item.id}`);
-          }
-        }
-        if (downloaded > 0) {
-          toast.success(`Pobrano ${downloaded} etykiet`);
-        }
+        await downloadWaybillsZip(res.created);
       }
 
       if (created > 0) {
