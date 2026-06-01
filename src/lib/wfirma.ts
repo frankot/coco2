@@ -38,6 +38,7 @@ export type CreateInvoiceParams = {
   };
   paymentMethod: "transfer" | "cod";
   paymentState: "paid" | "unpaid";
+  totalGross: string; // total gross invoice amount, e.g. "203.22"
   lines: WfirmaInvoiceLine[];
   seriesId?: string;
 };
@@ -239,7 +240,7 @@ ${params.contractor.nip ? `<nip>${escapeXml(params.contractor.nip)}</nip>` : ""}
 </contractor>
 <type>normal</type>
 <paymentmethod>${params.paymentMethod}</paymentmethod>
-<paymentstate>${params.paymentState}</paymentstate>
+<alreadypaid_initial>${params.paymentState === "paid" ? escapeXml(params.totalGross) : "0"}</alreadypaid_initial>
 <price_type>brutto</price_type>
 ${params.seriesId ? `<series><id>${escapeXml(params.seriesId)}</id></series>` : ""}
 <invoicecontents>${linesXml}</invoicecontents>

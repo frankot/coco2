@@ -109,6 +109,7 @@ export async function generateAndSendInvoice(orderId: string): Promise<void> {
       },
       paymentMethod: order.paymentMethod === "COD" ? "cod" : "transfer",
       paymentState: order.paymentMethod === "COD" ? "unpaid" : "paid",
+      totalGross: formatPriceFromCents(order.pricePaidInCents),
       lines,
       seriesId: process.env.WFIRMA_ECOMMERCE_SERIES_ID,
     });
