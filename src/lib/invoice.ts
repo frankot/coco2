@@ -74,6 +74,19 @@ export async function generateAndSendInvoice(orderId: string): Promise<void> {
       vat: "23",
     }));
 
+    // Discount line (rabat) — negative gross amount matching the discount applied at checkout
+    if (order.discountAmountInCents > 0) {
+      const discountLabel = order.discountCodeValue
+        ? `Rabat (${order.discountCodeValue})`
+        : "Rabat";
+      lines.push({
+        name: discountLabel,
+        quantity: 1,
+        price: `-${formatPriceFromCents(order.discountAmountInCents)}`,
+        vat: "23",
+      });
+    }
+
     if (order.shippingCostInCents > 0) {
       lines.push({
         name: "Dostawa",
