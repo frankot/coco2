@@ -622,13 +622,12 @@ export async function createOrder(formData: OrderFormData) {
       logError("kasa.orderEmail", e, { orderId });
     }
 
-    // TEMP DISABLED — generating invoices manually in wFirma
-    // Invoice generation for COD (already PAID at creation). HURT orders are handled manually.
-    // if (!isHurt && validatedData.paymentMethod === "COD") {
-    //   generateAndSendInvoice(orderId).catch((e) => {
-    //     logError("kasa.codInvoice", e, { orderId });
-    //   });
-    // }
+    // Auto invoice generation for COD (already PAID at creation). HURT orders are handled manually.
+    if (!isHurt && validatedData.paymentMethod === "COD") {
+      generateAndSendInvoice(orderId).catch((e) => {
+        logError("kasa.codInvoice", e, { orderId });
+      });
+    }
 
     // Newsletter opt-in
     if (validatedData.newsletterConsent && validatedData.email) {

@@ -1,7 +1,6 @@
 import prisma from "@/db";
 import mailer from "@/lib/mailer";
-// TEMP DISABLED — generating invoices manually in wFirma
-// import { generateAndSendInvoice } from "@/lib/invoice";
+import { generateAndSendInvoice } from "@/lib/invoice";
 import { renderEmailLayout } from "@/lib/email-layout";
 import { logError } from "@/lib/logger";
 
@@ -52,12 +51,12 @@ export async function confirmStripePayment(
       : []),
   ]);
 
-  // TEMP DISABLED — generating invoices manually in wFirma
-  // if (!order?.isB2BManual) {
-  //   generateAndSendInvoice(orderId).catch((e) => {
-  //     logError("confirmStripePayment.invoice", e, { orderId });
-  //   });
-  // }
+  // Auto invoice generation after successful Stripe payment
+  if (!order?.isB2BManual) {
+    generateAndSendInvoice(orderId).catch((e) => {
+      logError("confirmStripePayment.invoice", e, { orderId });
+    });
+  }
 
   try {
     if (order?.user?.email) {

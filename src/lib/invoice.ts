@@ -97,6 +97,7 @@ export async function generateAndSendInvoice(orderId: string): Promise<void> {
       paymentMethod: order.paymentMethod === "COD" ? "cod" : "transfer",
       paymentState: order.paymentMethod === "COD" ? "unpaid" : "paid",
       lines,
+      seriesId: process.env.WFIRMA_ECOMMERCE_SERIES_ID,
     });
 
     const invoiceMeta = wFirma.extractInvoiceMeta(createResponse);

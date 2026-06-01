@@ -39,6 +39,7 @@ export type CreateInvoiceParams = {
   paymentMethod: "transfer" | "cod";
   paymentState: "paid" | "unpaid";
   lines: WfirmaInvoiceLine[];
+  seriesId?: string;
 };
 
 const COUNTRY_CODE_MAP: Record<string, string> = {
@@ -240,6 +241,7 @@ ${params.contractor.nip ? `<nip>${escapeXml(params.contractor.nip)}</nip>` : ""}
 <paymentmethod>${params.paymentMethod}</paymentmethod>
 <paymentstate>${params.paymentState}</paymentstate>
 <price_type>brutto</price_type>
+${params.seriesId ? `<series><id>${escapeXml(params.seriesId)}</id></series>` : ""}
 <invoicecontents>${linesXml}</invoicecontents>
 </invoice>
 </invoices>
