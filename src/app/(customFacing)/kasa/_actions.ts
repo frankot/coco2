@@ -39,6 +39,7 @@ const orderFormSchema = z.object({
   paymentMethod: z.enum(["COD", "STRIPE", "INVOICE_DEFERRED"]),
   shippingMethodId: z.string().optional(),
   shippingServiceName: z.string().optional(),
+  shippingCostInCents: z.number().int().min(0).max(50000).optional(),
   cartItems: z.array(
     z.object({
       id: z.string(),
@@ -189,9 +190,12 @@ export async function createOrder(formData: OrderFormData) {
       normalizedShippingPhone = parsed;
     }
 
-    // Compute shipping cost via Apaczka order_valuation
-    let shippingCostInCents = isHurt ? 0 : 1500; // HURT: delivery handled manually; else fallback
-    if (!isHurt) try {
+    // Use client-provided shipping cost if available (they already fetched from Apaczka)
+    // Only fall back to server-side valuation when not provided
+    let shippingCostInCents = isHurt ? 0 : 1500;
+    if (!isHurt && validatedData.shippingCostInCents != null && validatedData.shippingCostInCents > 0) {
+      shippingCostInCents = validatedData.shippingCostInCents;
+    } else if (!isHurt) try {
       const products = await prisma.product.findMany({
         where: { id: { in: productIds } },
         select: {

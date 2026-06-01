@@ -741,6 +741,9 @@ export default function CheckoutPage() {
           visibleServices.find((s) => s.service_id === lookupId);
       }
 
+      // Use the same shipping cost the user saw in checkout — skip server re-computation
+      const orderShippingCost = getShippingCost();
+
       // Prepare order data
       const orderData = {
         ...formData,
@@ -748,6 +751,7 @@ export default function CheckoutPage() {
         userId: session?.user?.id,
         shippingMethodId: resolvedServiceId,
         shippingServiceName: selectedVisible?.name || undefined,
+        shippingCostInCents: orderShippingCost ?? undefined,
         apaczkaPointId: selectedPointId || undefined,
         apaczkaPointSupplier: selectedSupplier || undefined,
         newsletterConsent,
@@ -768,6 +772,9 @@ export default function CheckoutPage() {
 
       if (result.success) {
         if (formData.paymentMethod === "STRIPE") {
+          // Use the same shipping cost the user saw in checkout — no re-read from DB
+          const checkoutShippingCost = getShippingCost();
+
           // Create Stripe checkout session — map cart items to expected format
           const response = await fetch("/api/payments/stripe/create-checkout-session", {
             method: "POST",
@@ -782,6 +789,7 @@ export default function CheckoutPage() {
               })),
               email: formData.email,
               token: result.accessToken,
+              shippingCostInCents: checkoutShippingCost,
             }),
           });
 

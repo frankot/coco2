@@ -8,7 +8,7 @@ import { getCustomPriceMap } from "@/lib/resolve-prices";
 
 export const POST = createRouteHandler(async ({ req }) => {
   const body = await readJson(req);
-  const { orderId, items, token } = body;
+  const { orderId, items, token, shippingCostInCents: clientShippingCost } = body;
   const customerEmail = body.email as string | undefined;
   const origin = getOrigin();
   if (!origin) throw new ApiError("No origin found", 500);
@@ -69,8 +69,33 @@ export const POST = createRouteHandler(async ({ req }) => {
   if (orderId) {
     const order = await prisma.order.findUnique({
       where: { id: orderId },
-      select: { discountAmountInCents: true, discountCodeValue: true, shippingCostInCents: true },
+      select: {
+        discountAmountInCents: true,
+        discountCodeValue: true,
+        shippingCostInCents: true,
+      },
     });
+
+    // Use client-provided shipping cost if valid (matches what user saw in checkout)
+    // Validate: must be a positive integer within reasonable shipping range (5-500 PLN)
+    if (
+      typeof clientShippingCost === "number" &&
+      Number.isInteger(clientShippingCost) &&
+      clientShippingCost >= 500 &&
+      clientShippingCost <= 50000 &&
+      clientShippingCost !== order?.shippingCostInCents
+    ) {
+      // Client price differs from DB — trust client (they fetched fresh from Apaczka)
+      // and sync DB to keep them consistent
+      shippingCostInCents = clientShippingCost;
+      await prisma.order.update({
+        where: { id: orderId },
+        data: { shippingCostInCents: clientShippingCost },
+      });
+    } else if (order?.shippingCostInCents && order.shippingCostInCents > 0) {
+      shippingCostInCents = order.shippingCostInCents;
+    }
+
     if (order?.discountAmountInCents && order.discountAmountInCents > 0) {
       const coupon = await stripe.coupons.create({
         amount_off: order.discountAmountInCents,
@@ -79,9 +104,6 @@ export const POST = createRouteHandler(async ({ req }) => {
         name: `Rabat: ${order.discountCodeValue || "kod"}`,
       });
       discounts = [{ coupon: coupon.id }];
-    }
-    if (order?.shippingCostInCents && order.shippingCostInCents > 0) {
-      shippingCostInCents = order.shippingCostInCents;
     }
   }
 

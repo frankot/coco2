@@ -32,6 +32,21 @@ const patchOrderSchema = z.object({
   paymentMethod: z.enum(["BANK_TRANSFER", "COD", "STRIPE"]).optional(),
 });
 
+// Resolve shipping service name from Apaczka service structure when missing
+async function resolveShippingServiceName(serviceId: string): Promise<string | null> {
+  try {
+    const svc = await Apaczka.serviceStructure();
+    const services = (svc as any).response?.services || [];
+    const match = services.find(
+      (s: any) => String(s.service_id) === String(serviceId)
+    );
+    return match?.name || null;
+  } catch (e) {
+    console.warn("Failed to resolve shipping service name for ID", serviceId, e);
+    return null;
+  }
+}
+
 export const GET = createRouteHandler(
   async ({ params }) => {
     const orderId = getRequiredParam(params as any, "id");
@@ -40,6 +55,20 @@ export const GET = createRouteHandler(
       include: ORDER_DETAIL_INCLUDE,
     });
     if (!order) throw new ApiError("Order not found", 404);
+
+    // If shippingServiceName is missing but we have an ID, resolve it from Apaczka
+    if (!order.shippingServiceName && order.shippingServiceId) {
+      const resolved = await resolveShippingServiceName(order.shippingServiceId);
+      if (resolved) {
+        // Persist back to DB so future loads skip the API call
+        await prisma.order.update({
+          where: { id: orderId },
+          data: { shippingServiceName: resolved },
+        });
+        order.shippingServiceName = resolved;
+      }
+    }
+
     return order;
   },
   { auth: "admin" }
@@ -130,6 +159,18 @@ export const PATCH = createRouteHandler(
       }
 
       // TODO: generate correction invoice (faktura korygująca) when wfirmaInvoiceId exists
+    }
+
+    // Resolve shipping service name if still missing
+    if (!updatedOrder.shippingServiceName && updatedOrder.shippingServiceId) {
+      const resolved = await resolveShippingServiceName(updatedOrder.shippingServiceId);
+      if (resolved) {
+        await prisma.order.update({
+          where: { id: orderId },
+          data: { shippingServiceName: resolved },
+        });
+        updatedOrder.shippingServiceName = resolved;
+      }
     }
 
     return updatedOrder;
