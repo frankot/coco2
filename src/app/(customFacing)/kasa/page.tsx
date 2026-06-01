@@ -724,7 +724,22 @@ export default function CheckoutPage() {
       }
       }
 
-      const selectedVisible = visibleServices.find((s) => s.service_id === selectedShippingMethod);
+      // Strip synthetic suffix (_COD, _PREPAID, _D2P) before looking up in visibleServices
+      const lookupId = selectedShippingMethod
+        ?.replace(/_COD$/, "")
+        .replace(/_PREPAID$/, "")
+        .replace(/_D2P$/, "");
+
+      let selectedVisible: ApaczkaService | undefined;
+      if (lookupId === "APACZKA_MAP") {
+        // For map-based point delivery, find the actual D2P service that was resolved
+        selectedVisible = shippingMethods.find((s) => s.service_id === resolvedServiceId);
+      } else {
+        // Try exact match first (synthetic ID), then stripped ID
+        selectedVisible =
+          visibleServices.find((s) => s.service_id === selectedShippingMethod) ||
+          visibleServices.find((s) => s.service_id === lookupId);
+      }
 
       // Prepare order data
       const orderData = {

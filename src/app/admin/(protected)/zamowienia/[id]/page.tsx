@@ -276,17 +276,23 @@ export default function OrderDetailsPage() {
   const totalAmount = (order.pricePaidInCents / 100).toFixed(2);
   const discountAmount = ((order.discountAmountInCents ?? 0) / 100).toFixed(2);
 
-  // Delivery method label
+  // Delivery method label — shows what customer picked at checkout, no API calls
   const getDeliveryLabel = () => {
     if (order.isB2BManual) return "Dostawa ustalana indywidualnie";
     if (order.shippingServiceName) {
       let label = order.shippingServiceName;
-      if (order.apaczkaPointSupplier) label += ` — punkt ${order.apaczkaPointSupplier}`;
+      if (order.apaczkaPointSupplier) {
+        label += ` — ${order.apaczkaPointSupplier}`;
+        if (order.apaczkaPointId) label += ` (${order.apaczkaPointId})`;
+      }
       return label;
     }
     if (order.shippingServiceId) {
-      let label = `Dostawa (ID: ${order.shippingServiceId})`;
-      if (order.apaczkaPointSupplier) label += ` — punkt ${order.apaczkaPointSupplier}`;
+      let label = `Usługa dostawy nr ${order.shippingServiceId}`;
+      if (order.apaczkaPointSupplier) {
+        label += ` — ${order.apaczkaPointSupplier}`;
+        if (order.apaczkaPointId) label += ` (${order.apaczkaPointId})`;
+      }
       return label;
     }
     return "—";
@@ -597,23 +603,15 @@ export default function OrderDetailsPage() {
 
       {/* Address + Products row */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Apaczka pickup point (if used) */}
-        {(order.apaczkaPointId || order.apaczkaPointSupplier) && (
+        {/* Apaczka delivery details — only after order is sent to Apaczka */}
+        {order.apaczkaOrderId && (
           <Card>
             <CardHeader>
-              <CardTitle>Dostawa do punktu (Apaczka)</CardTitle>
-              <CardDescription>Wybrany punkt odbioru / informacje Apaczka</CardDescription>
+              <CardTitle>Dostawa (Apaczka)</CardTitle>
+              <CardDescription>Szczegóły przesyłki wygenerowane przez Apaczkę</CardDescription>
             </CardHeader>
             <CardContent className="space-y-2">
               <div className="grid grid-cols-1 gap-1">
-                <div className="text-sm">
-                  <span className="font-medium">Dostawca punktu:</span>
-                  <div className="mt-1">{order.apaczkaPointSupplier || "—"}</div>
-                </div>
-                <div className="text-sm">
-                  <span className="font-medium">ID punktu:</span>
-                  <div className="mt-1">{order.apaczkaPointId || "—"}</div>
-                </div>
                 <div className="text-sm">
                   <span className="font-medium">Numer listu przewozowego:</span>
                   <div className="mt-1">{order.apaczkaWaybillNumber || "—"}</div>
@@ -623,7 +621,26 @@ export default function OrderDetailsPage() {
                   <div className="mt-1">{order.apaczkaStatus || "—"}</div>
                 </div>
                 <div className="text-sm">
-                  <span className="font-medium">Telefon do odbioru (użyty):</span>
+                  <span className="font-medium">ID zlecenia Apaczka:</span>
+                  <div className="mt-1">{order.apaczkaOrderId || "—"}</div>
+                </div>
+                {order.apaczkaTrackingUrl && (
+                  <div className="text-sm">
+                    <span className="font-medium">Śledzenie:</span>
+                    <div className="mt-1">
+                      <a
+                        href={order.apaczkaTrackingUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary hover:underline"
+                      >
+                        {order.apaczkaTrackingUrl}
+                      </a>
+                    </div>
+                  </div>
+                )}
+                <div className="text-sm">
+                  <span className="font-medium">Telefon do odbioru:</span>
                   <div className="mt-1">{order.shippingAddress.phoneNumber || "—"}</div>
                 </div>
               </div>
