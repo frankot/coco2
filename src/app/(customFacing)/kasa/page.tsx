@@ -178,7 +178,8 @@ export default function CheckoutPage() {
             app_id: process.env.NEXT_PUBLIC_APACZKA_MAP_APP_ID || "",
             onChange: (record: any) => {
               if (!record) return;
-              const id = record.foreign_access_point_id || "";
+              // Map widget may return foreign_access_point_id, API v1.2.0+ uses foreign_address_id
+              const id = record.foreign_access_point_id || record.foreign_address_id || "";
               const supplier = record.supplier || "";
               const ptype =
                 record.access_point_type ||
@@ -223,7 +224,8 @@ export default function CheckoutPage() {
           app_id: process.env.NEXT_PUBLIC_APACZKA_MAP_APP_ID || "",
           onChange: (record: any) => {
             if (!record) return;
-            const id = record.foreign_access_point_id || "";
+            // Map widget may return foreign_access_point_id, API v1.2.0+ uses foreign_address_id
+            const id = record.foreign_access_point_id || record.foreign_address_id || "";
             const supplier = record.supplier || "";
             const ptype =
               record.access_point_type ||

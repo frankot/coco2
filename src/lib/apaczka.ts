@@ -203,9 +203,10 @@ export const Apaczka = {
     if (subtype) payload.subtype = subtype;
     return post<{ points: Record<string, any> }>(`points/${type}/`, payload);
   },
-  // Attempt to resolve a supplier map code (foreign_access_point_id) to the
+  // Attempt to resolve a supplier map code (foreign_access_point_id / foreign_address_id) to the
   // internal Apaczka point id. It queries service_structure for points_type,
   // and then points/:type, optionally trying subtype hints for suppliers like INPOST.
+  // Note: API returns field named "foreign_address_id" (v1.2.0+); older docs used "foreign_access_point_id".
   async resolvePoint(supplier: string, code: string, country_code = "PL") {
     if (!supplier || !code) throw new Error("supplier and code required");
     const supplierUpper = String(supplier).toUpperCase();
@@ -246,7 +247,9 @@ export const Apaczka = {
             const p: any = val as any;
             const fields: Array<string | undefined> = [
               p?.foreign_access_point_id,
+              p?.foreign_address_id,
               p?.address?.foreign_access_point_id,
+              p?.address?.foreign_address_id,
               p?.code,
               p?.external_id,
             ];
