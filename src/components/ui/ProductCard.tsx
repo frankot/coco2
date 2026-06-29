@@ -1,20 +1,20 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
 import { formatPLN } from "@/lib/formatter";
-import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import { ShoppingBag, Check } from "lucide-react";
-import { toast } from "sonner";
-import { useCart } from "@/app/(customFacing)/components/Cart";
-import type { Product } from "@/app/(customFacing)/components/Cart";
+import { Check, ShoppingBag } from "lucide-react";
+import { AddToCartButton } from "@/components/ui/add-to-cart-button";
+import { DeferredHoverImage } from "@/components/ui/deferred-hover-image";
+import type { Product } from "@/app/generated/prisma/client";
 
 type ProductCardProps = {
   product: Product;
+  preload?: boolean;
+  sizes?: string;
 };
 
-// Skeleton loader component
+const defaultProductCardImageSizes =
+  "(max-width: 767px) calc(100vw - 32px), (max-width: 1023px) calc((100vw - 56px) / 2), 384px";
+
 export function ProductCardSkeleton() {
   return (
     <div className="rounded-xl overflow-hidden animate-pulse">
@@ -28,74 +28,59 @@ export function ProductCardSkeleton() {
   );
 }
 
-export default function ProductCard({ product }: ProductCardProps) {
-  const [isAddingToCart, setIsAddingToCart] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
-  const { addToCart } = useCart();
-
-  const handleAddToCart = async () => {
-    if (!product.isAvailable) return;
-    setIsAddingToCart(true);
-    await addToCart(product, 1);
-    setIsAddingToCart(false);
-  };
-
-  // Get the images to display
+export default function ProductCard({
+  product,
+  preload = false,
+  sizes = defaultProductCardImageSizes,
+}: ProductCardProps) {
   const mainImage = product.imagePaths[0] || "";
   const hoverImage = product.imagePaths[1] || mainImage;
   const hasMultipleImages = product.imagePaths.length > 1;
+  const cartProduct = {
+    id: product.id,
+    name: product.name,
+    priceInCents: product.priceInCents,
+    imagePaths: product.imagePaths,
+    itemsPerPack: product.itemsPerPack,
+  };
 
   return (
     <Link
       href={`/sklep/${product.slug || product.id}`}
       className="rounded-xl overflow-hidden hover:scale-[1.02] transition-all duration-300 group block"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Image container with centered badge */}
       <div className="relative">
         <div className="w-full h-80 relative overflow-visible">
-          {/* Promo banner */}
           {product.promo && (
             <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-primary text-white text-center text-xs font-semibold uppercase tracking-wide py-1 px-4 rounded-lg z-10">
               Promocja
             </div>
           )}
-          {/* Main image */}
           <Image
             src={mainImage}
             alt={product.name}
             fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            className={`object-contain p-4 group-hover:scale-105 transition-all duration-300 ${
-              hasMultipleImages && isHovered ? "opacity-0" : "opacity-100"
-            }`}
-            priority
+            sizes={sizes}
+            className="object-contain p-4 group-hover:scale-105 transition-all duration-300"
+            preload={preload}
           />
 
-          {/* Hover image (only rendered if multiple images exist) */}
           {hasMultipleImages && (
-            <Image
+            <DeferredHoverImage
               src={hoverImage}
               alt={`${product.name} - alternate view`}
-              fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              className={`object-contain p-4 group-hover:scale-105 transition-all duration-300 ${
-                isHovered ? "opacity-100" : "opacity-0"
-              }`}
+              sizes={sizes}
+              className="object-contain p-4 group-hover:scale-105 transition-all duration-300"
             />
           )}
         </div>
 
-        {/* Centered badge */}
         <div className="absolute top-4 right-12 transform -translate-x-1/2 bg-primary text-white px-3 py-2 rounded-lg text-base font-semibold shadow-lg">
           {product.itemsPerPack}x
         </div>
       </div>
 
-      {/* Product info */}
       <div className="p-6 space-y-4">
-        {/* Product name */}
         <div>
           <h3 className="text-lg font-bold text-primary group-hover:text-primary/80 transition-colors line-clamp-2 text-center">
             {product.name}
@@ -105,7 +90,6 @@ export default function ProductCard({ product }: ProductCardProps) {
           </p>
         </div>
 
-        {/* Centered price */}
         <div className="text-center space-y-2">
           <div className="text-xl font-bold text-black">
             {formatPLN(Math.round(product.priceInCents / product.itemsPerPack))}
@@ -115,26 +99,26 @@ export default function ProductCard({ product }: ProductCardProps) {
           </div>
         </div>
 
-        {/* Centered add to cart button */}
         <div className="flex justify-center">
-          <Button
+          <AddToCartButton
+            product={cartProduct}
+            disabled={!product.isAvailable}
             size="lg"
             className="w-fit text-white hover:bg-primary hover:text-white/70 font-medium"
-            disabled={!product.isAvailable || isAddingToCart}
-            onClick={(e) => { e.preventDefault(); handleAddToCart(); }}
-          >
-            {isAddingToCart ? (
-              <>
-                <Check className="mr-2 h-4 w-4 " />
-                Dodano
-              </>
-            ) : (
+            stopLinkNavigation
+            idleContent={
               <>
                 <ShoppingBag className="mr-2 h-4 w-4" />
                 Do koszyka
               </>
-            )}
-          </Button>
+            }
+            loadingContent={
+              <>
+                <Check className="mr-2 h-4 w-4" />
+                Dodano
+              </>
+            }
+          />
         </div>
       </div>
     </Link>

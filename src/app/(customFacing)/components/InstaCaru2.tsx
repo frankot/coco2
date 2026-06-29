@@ -126,7 +126,8 @@ export function InstaCaru({ posts }: InstaCaruProps) {
             href="https://www.instagram.com/dr.coco/"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-primary hover:underline flex items-center justify-center gap-2 text-2xl"
+            className="text-primary hover:underline flex items-center justify-center gap-2 text-2xl min-h-12"
+            aria-label="Zobacz więcej zdjęć Dr.Coco na Instagramie"
           >
             Zobacz więcej na Instagramie
             <ExternalLink className="size-6" />

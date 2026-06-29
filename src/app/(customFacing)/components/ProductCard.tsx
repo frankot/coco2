@@ -1,58 +1,34 @@
-"use client";
-
-import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Heart, Star, ShoppingBag } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Check, ShoppingBag, Star } from "lucide-react";
 import { formatPLN } from "@/lib/formatter";
-import { useCart } from "@/app/(customFacing)/components/Cart";
-import { toast } from "sonner";
-import type { Product } from "@/app/(customFacing)/components/Cart";
+import { AddToCartButton } from "@/components/ui/add-to-cart-button";
+import { DeferredHoverImage } from "@/components/ui/deferred-hover-image";
+import type { Product } from "@/app/generated/prisma/client";
 
-export function ProductCard({ product, priority }: { product: Product; priority?: boolean }) {
-  const [isFavorite, setIsFavorite] = useState(false);
-  const [isAddingToCart, setIsAddingToCart] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
-  const { addToCart } = useCart();
+const productCardImageSizes =
+  "(max-width: 639px) calc(100vw - 32px), (max-width: 1023px) calc((100vw - 56px) / 2), (max-width: 1279px) calc((100vw - 80px) / 3), 288px";
 
-  const handleAddToCart = async () => {
-    if (!product.isAvailable) return;
-
-    setIsAddingToCart(true);
-    try {
-      await addToCart(product, 1);
-    } catch (error) {
-      console.error("Error adding product to cart:", error);
-    } finally {
-      setIsAddingToCart(false);
-    }
-  };
-
-  const toggleFavorite = () => {
-    setIsFavorite(!isFavorite);
-    toast.success(isFavorite ? "Usunięto z ulubionych" : "Dodano do ulubionych");
-  };
-
-  // Images
+export function ProductCard({ product, preload }: { product: Product; preload?: boolean }) {
   const mainImage = product.imagePaths[0] || "";
   const hoverImage = product.imagePaths[1] || mainImage;
   const hasMultipleImages = product.imagePaths.length > 1;
+  const cartProduct = {
+    id: product.id,
+    name: product.name,
+    priceInCents: product.priceInCents,
+    imagePaths: product.imagePaths,
+    itemsPerPack: product.itemsPerPack,
+  };
 
   return (
-    <div
-      className="group bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden border border-gray-100"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      {/* Promo banner */}
+    <div className="group bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden border border-gray-100">
       {product.promo && (
         <div className="bg-primary text-primary-foreground text-center text-xs font-semibold uppercase tracking-wide py-1.5">
           Promocja
         </div>
       )}
 
-      {/* Product Image */}
       <div className="relative aspect-square overflow-hidden">
         <Link href={`/sklep/${product.slug || product.id}`}>
           {mainImage && (
@@ -61,38 +37,22 @@ export function ProductCard({ product, priority }: { product: Product; priority?
                 src={mainImage}
                 alt={product.name}
                 fill
-                priority={priority}
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
-                className={`object-contain group-hover:scale-105 transition-all duration-300 ${
-                  hasMultipleImages && isHovered ? "opacity-0" : "opacity-100"
-                }`}
+                preload={preload}
+                sizes={productCardImageSizes}
+                className="object-contain group-hover:scale-105 transition-all duration-300"
               />
               {hasMultipleImages && hoverImage && (
-                <Image
+                <DeferredHoverImage
                   src={hoverImage}
                   alt={`${product.name} - second view`}
-                  fill
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
-                  className={`object-contain group-hover:scale-105 transition-all duration-300 absolute inset-0 ${
-                    isHovered ? "opacity-100" : "opacity-0"
-                  }`}
+                  sizes={productCardImageSizes}
+                  className="object-contain group-hover:scale-105 transition-all duration-300 absolute inset-0"
                 />
               )}
             </div>
           )}
         </Link>
 
-        {/* Favorite Button */}
-        <button
-          onClick={toggleFavorite}
-          className="absolute top-3 right-3 p-2 bg-white/80 hover:bg-white rounded-full shadow-sm transition-colors"
-        >
-          <Heart
-            className={`w-5 h-5 ${isFavorite ? "fill-red-500 text-red-500" : "text-gray-600"}`}
-          />
-        </button>
-
-        {/* Availability Badge */}
         {!product.isAvailable && (
           <div className="absolute top-3 left-3 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-medium">
             Niedostępny
@@ -100,7 +60,6 @@ export function ProductCard({ product, priority }: { product: Product; priority?
         )}
       </div>
 
-      {/* Product Info */}
       <div className="p-4">
         <Link href={`/sklep/${product.slug || product.id}`}>
           <h3 className="text-lg font-semibold text-gray-900 hover:text-primary transition-colors line-clamp-2 mb-2">
@@ -108,7 +67,6 @@ export function ProductCard({ product, priority }: { product: Product; priority?
           </h3>
         </Link>
 
-        {/* Rating */}
         <div className="flex items-center space-x-1 mb-2">
           {[1, 2, 3, 4, 5].map((star) => (
             <Star key={star} className="w-4 h-4 text-yellow-400 fill-current" />
@@ -116,10 +74,8 @@ export function ProductCard({ product, priority }: { product: Product; priority?
           <span className="text-sm text-gray-500 ml-1">(4.8)</span>
         </div>
 
-        {/* Description */}
         <p className="text-gray-600 text-sm line-clamp-2 mb-4">{product.description}</p>
 
-        {/* Price and Actions */}
         <div className="flex items-center justify-between">
           <div>
             <div className="text-xl font-bold text-primary">{formatPLN(product.priceInCents)}</div>
@@ -131,14 +87,23 @@ export function ProductCard({ product, priority }: { product: Product; priority?
             )}
           </div>
 
-          <Button
-            onClick={handleAddToCart}
-            disabled={!product.isAvailable || isAddingToCart}
+          <AddToCartButton
+            product={cartProduct}
+            disabled={!product.isAvailable}
             className="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-full text-sm font-medium transition-colors"
-          >
-            <ShoppingBag className="w-4 h-4 mr-1" />
-            {isAddingToCart ? "Dodawanie..." : "Dodaj"}
-          </Button>
+            idleContent={
+              <>
+                <ShoppingBag className="w-4 h-4 mr-1" />
+                Dodaj
+              </>
+            }
+            loadingContent={
+              <>
+                <Check className="w-4 h-4 mr-1" />
+                Dodawanie...
+              </>
+            }
+          />
         </div>
       </div>
     </div>

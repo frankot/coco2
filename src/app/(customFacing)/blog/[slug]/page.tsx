@@ -111,13 +111,13 @@ export default async function BlogDetail({ params }: Props) {
                 rehypePlugins={[rehypeRaw, [rehypeSanitize, defaultSchema]]}
                 components={{
                   h1: ({ children }) => (
-                    <h1 className="text-4xl font-bold leading-tight mt-6 mb-3">{children}</h1>
+                    <h2 className="text-4xl font-bold leading-tight mt-6 mb-3">{children}</h2>
                   ),
                   h2: ({ children }) => (
-                    <h2 className="text-3xl font-semibold mt-6 mb-3">{children}</h2>
+                    <h3 className="text-3xl font-semibold mt-6 mb-3">{children}</h3>
                   ),
                   h3: ({ children }) => (
-                    <h3 className="text-2xl font-semibold mt-5 mb-2">{children}</h3>
+                    <h4 className="text-2xl font-semibold mt-5 mb-2">{children}</h4>
                   ),
                   p: ({ children }) => <p className="my-4">{children}</p>,
                   ul: ({ children }) => <ul className="list-disc pl-6 my-4">{children}</ul>,

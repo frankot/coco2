@@ -4,7 +4,6 @@ import { useState } from "react";
 import { CalendarCheck, ShieldCheck, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { motion } from "framer-motion";
 
 export function Newsletter() {
   const [email, setEmail] = useState("");
@@ -43,12 +42,7 @@ export function Newsletter() {
     <div className="relative isolate overflow-hidden bg-primary py-16 sm:py-24 lg:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-2">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="max-w-xl lg:max-w-lg"
-          >
+          <div className="max-w-xl lg:max-w-lg transition-all duration-500 ease-out">
             <span className="text-yellow-300 text-sm font-medium tracking-wider uppercase">
               NEWSLETTER DR.COCO®
             </span>
@@ -76,22 +70,18 @@ export function Newsletter() {
                   className="bg-yellow-300 text-primary hover:bg-yellow-400 font-medium px-6"
                   disabled={status === "loading"}
                 >
-                  {status === "loading" ? <Loader2 className="size-4 animate-spin" /> : "Zapisz się"}
+                  {status === "loading" ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : (
+                    "Zapisz się"
+                  )}
                 </Button>
               </form>
             )}
-            {status === "error" && (
-              <p className="mt-2 text-red-300 text-sm">{message}</p>
-            )}
-          </motion.div>
+            {status === "error" && <p className="mt-2 text-red-300 text-sm">{message}</p>}
+          </div>
 
-          <motion.dl
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-2 lg:pt-2"
-          >
+          <dl className="grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-2 lg:pt-2 transition-all duration-500 ease-out">
             <div className="flex flex-col items-start">
               <div className="rounded-xl bg-white/5 p-3 ring-1 ring-white/10 group">
                 <CalendarCheck className="size-6 text-yellow-300 group-hover:scale-110 transition-transform duration-300" />
@@ -112,7 +102,7 @@ export function Newsletter() {
                 czyli kody zniżkowe i newsy, które faktycznie mają znaczenie.
               </dd>
             </div>
-          </motion.dl>
+          </dl>
         </div>
       </div>
 

@@ -1,23 +1,26 @@
 "use client";
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import Image from "next/image";
 import { ComponentProps } from "react";
 import { Menu, User, Instagram, Facebook, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription } from "@/components/ui/sheet";
-import { useSession, signOut } from "next-auth/react";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetTitle,
+  SheetDescription,
+} from "@/components/ui/sheet";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { CartSheet } from "./components/CartSheet";
 import { CartButton } from "./components/CartButton";
 
 type CartItem = {
@@ -25,120 +28,41 @@ type CartItem = {
   quantity: number;
 };
 
+const CartSheet = dynamic(() => import("./components/CartSheet").then((mod) => mod.CartSheet), {
+  ssr: false,
+});
+
+const CartPriceRefresher = dynamic(
+  () => import("./NavAuthArea").then((mod) => mod.CartPriceRefresher),
+  { ssr: false }
+);
+
+const DesktopAuthGreeting = dynamic(
+  () => import("./NavAuthArea").then((mod) => mod.DesktopAuthGreeting),
+  { ssr: false }
+);
+
+const DesktopAuthMenu = dynamic(() => import("./NavAuthArea").then((mod) => mod.DesktopAuthMenu), {
+  ssr: false,
+  loading: () => (
+    <Link href="/auth/zaloguj">
+      <Button variant="ghost" size="icon" aria-label="Zaloguj się lub otwórz konto użytkownika">
+        <User className="size-7" />
+      </Button>
+    </Link>
+  ),
+});
+
+const MobileAccountSection = dynamic(
+  () => import("./NavAuthArea").then((mod) => mod.MobileAccountSection),
+  { ssr: false }
+);
+
 // Custom event type for cart updates
 declare global {
   interface WindowEventMap {
     cartUpdated: CustomEvent;
   }
-}
-
-// Mobile Account Section component
-function MobileAccountSection({ onLinkClick }: { onLinkClick?: () => void }) {
-  const { data: session, status } = useSession();
-  const isAuthenticated = status === "authenticated";
-
-  if (!isAuthenticated) {
-    return (
-      <div className="space-y-2">
-        <p className="text-sm text-muted-foreground px-4">Konto</p>
-        <Link
-          href="/auth/zaloguj"
-          className="flex items-center gap-3 px-4 py-2 hover:bg-accent rounded-md transition-colors"
-          onClick={onLinkClick}
-        >
-          <User className="size-5" />
-          <span>Zaloguj się</span>
-        </Link>
-      </div>
-    );
-  }
-
-  return (
-    <div className="space-y-2">
-      <p className="text-sm text-muted-foreground px-4">
-        Witaj, {session?.user?.name?.split(" ")[0] || "Użytkowniku"}
-      </p>
-      <Link
-        href="/uzytkownik"
-        className="flex items-center gap-3 px-4 py-2 hover:bg-accent rounded-md transition-colors"
-        onClick={onLinkClick}
-      >
-        <User className="size-5" />
-        <span>Mój profil</span>
-      </Link>
-      <Link
-        href={{ pathname: "/uzytkownik", query: { tab: "orders" } }}
-        className="flex items-center gap-3 px-4 py-2 hover:bg-accent rounded-md transition-colors"
-        onClick={onLinkClick}
-      >
-        <svg className="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-          />
-        </svg>
-        <span>Moje zamówienia</span>
-      </Link>
-      <button
-        onClick={() => {
-          signOut({ callbackUrl: "/" });
-          onLinkClick?.();
-        }}
-        className="flex items-center gap-3 px-4 py-2 hover:bg-accent rounded-md transition-colors w-full text-left"
-      >
-        <svg className="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-          />
-        </svg>
-        <span>Wyloguj się</span>
-      </button>
-    </div>
-  );
-}
-
-// User Account Menu component
-function UserAccountMenu() {
-  const { data: session, status } = useSession();
-  const pathname = usePathname();
-  const isAuthenticated = status === "authenticated";
-  const onAuthPage = pathname.startsWith("/auth") || pathname.startsWith("/uzytkownik");
-
-  if (!isAuthenticated) {
-    return (
-      <Link href="/auth/zaloguj">
-        <Button variant="ghost" size="icon">
-          <User className={cn("size-7", onAuthPage && "text-primary")} />
-        </Button>
-      </Link>
-    );
-  }
-
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon">
-          <User className={cn("size-7", onAuthPage && "text-primary")} />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="border-stone-200/60">
-        <DropdownMenuLabel>Moje konto</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <Link href="/uzytkownik">Profil</Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link href={{ pathname: "/uzytkownik", query: { tab: "orders" } }}>Zamówienia</Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => signOut({ callbackUrl: "/" })}>Wyloguj</DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
 }
 
 type NavItemData =
@@ -184,6 +108,8 @@ function MobileNavAccordion({
           <div key={item.label}>
             <button
               onClick={() => setOpenDropdown(isOpen ? null : item.label)}
+              aria-expanded={isOpen}
+              aria-label={`${isOpen ? "Zwiń" : "Rozwiń"} sekcję ${item.label}`}
               className={cn(
                 "flex items-center justify-between w-full px-4 py-2.5 rounded-md transition-colors text-base",
                 isActive ? "text-primary font-medium" : "text-gray-700 hover:bg-accent"
@@ -191,10 +117,7 @@ function MobileNavAccordion({
             >
               <span>{item.label}</span>
               <ChevronDown
-                className={cn(
-                  "size-4 transition-transform duration-200",
-                  isOpen && "rotate-180"
-                )}
+                className={cn("size-4 transition-transform duration-200", isOpen && "rotate-180")}
               />
             </button>
             {isOpen && (
@@ -223,60 +146,21 @@ function MobileNavAccordion({
   );
 }
 
-export function Nav({ children, navItems }: { children: React.ReactNode; navItems?: NavItemData[] }) {
+export function Nav({
+  children,
+  navItems,
+}: {
+  children: React.ReactNode;
+  navItems?: NavItemData[];
+}) {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [scrollY, setScrollY] = useState(0);
   const pathname = usePathname();
-  const { data: session, status } = useSession();
-  const prevUserIdRef = useRef<string | null | undefined>(undefined);
 
   // Check if we're on the main page
   const isMainPage = pathname === "/";
-
-  // Refresh cart prices from /api/products (returns auth-aware prices)
-  const refreshCartPrices = useCallback(() => {
-    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-    if (cart.length === 0) return;
-
-    fetch("/api/products")
-      .then((r) => r.json())
-      .then((products: { id: string; priceInCents: number }[]) => {
-        const priceMap = new Map(products.map((p) => [p.id, p.priceInCents]));
-        const currentCart = JSON.parse(localStorage.getItem("cart") || "[]");
-        let changed = false;
-        const updated = currentCart.map((item: any) => {
-          const freshPrice = priceMap.get(item.id);
-          if (freshPrice !== undefined && freshPrice !== item.priceInCents) {
-            changed = true;
-            return { ...item, priceInCents: freshPrice };
-          }
-          return item;
-        });
-        if (changed) {
-          localStorage.setItem("cart", JSON.stringify(updated));
-          window.dispatchEvent(new Event("cartUpdated"));
-        }
-      })
-      .catch(() => {});
-  }, []);
-
-  // Refresh cart prices when auth state changes (login/logout/page load)
-  useEffect(() => {
-    if (status === "loading") return;
-    const currentUserId = session?.user?.id ?? null;
-    if (prevUserIdRef.current === undefined) {
-      // First load — refresh to sync prices with current auth state
-      prevUserIdRef.current = currentUserId;
-      refreshCartPrices();
-      return;
-    }
-    if (prevUserIdRef.current !== currentUserId) {
-      prevUserIdRef.current = currentUserId;
-      refreshCartPrices();
-    }
-  }, [session?.user?.id, status, refreshCartPrices]);
 
   // Load cart items
   useEffect(() => {
@@ -381,13 +265,9 @@ export function Nav({ children, navItems }: { children: React.ReactNode; navItem
 
             {/* Right side - Cart & Account */}
             <div className="flex-1 flex items-center justify-end space-x-4">
-              {status === "authenticated" && (
-                <span className="text-sm text-muted-foreground whitespace-nowrap">
-                  Witaj, {session?.user?.name?.split(" ")[0] || "Uzytkowniku"}
-                </span>
-              )}
+              <DesktopAuthGreeting />
               <CartButton onClick={() => setIsCartOpen(true)} itemCount={cartItemCount} />
-              <UserAccountMenu />
+              <DesktopAuthMenu />
             </div>
           </div>
         </div>
@@ -399,15 +279,13 @@ export function Nav({ children, navItems }: { children: React.ReactNode; navItem
           {/* Left — Menu */}
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" aria-label="Otwórz menu">
                 <Menu className="size-6" />
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="w-[300px] sm:w-[400px] flex flex-col">
               <SheetTitle className="sr-only">Menu nawigacyjne</SheetTitle>
-              <SheetDescription className="sr-only">
-                Nawigacja po sklepie Dr.Coco
-              </SheetDescription>
+              <SheetDescription className="sr-only">Nawigacja po sklepie Dr.Coco</SheetDescription>
               <nav className="flex flex-col mt-8 flex-1">
                 {navItems ? (
                   <MobileNavAccordion
@@ -447,14 +325,16 @@ export function Nav({ children, navItems }: { children: React.ReactNode; navItem
                   <Link
                     href="https://instagram.com/drcoco"
                     target="_blank"
-                    className="text-primary hover:text-primary/80 transition-colors"
+                    className="text-primary hover:text-primary/80 transition-colors min-h-12 min-w-12 flex items-center justify-center"
+                    aria-label="Otwórz profil Dr.Coco na Instagramie"
                   >
                     <Instagram className="h-7 w-7" />
                   </Link>
                   <Link
                     href="https://facebook.com/drcoco"
                     target="_blank"
-                    className="text-primary hover:text-primary/80 transition-colors"
+                    className="text-primary hover:text-primary/80 transition-colors min-h-12 min-w-12 flex items-center justify-center"
+                    aria-label="Otwórz profil Dr.Coco na Facebooku"
                   >
                     <Facebook className="h-7 w-7" />
                   </Link>
@@ -492,8 +372,8 @@ export function Nav({ children, navItems }: { children: React.ReactNode; navItem
         </div>
       </nav>
 
-      {/* Cart Sheet */}
-      <CartSheet isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+      <CartPriceRefresher />
+      {isCartOpen && <CartSheet isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />}
     </>
   );
 }

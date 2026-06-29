@@ -130,8 +130,9 @@ export function CartSheet({ isOpen, onClose }: CartSheetProps) {
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="h-8 w-8 hover:bg-white"
+                              className="min-h-12 min-w-12 hover:bg-white"
                               onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                              aria-label={`Zmniejsz ilość produktu ${item.name}`}
                             >
                               <Minus className="h-4 w-4" />
                             </Button>
@@ -141,8 +142,9 @@ export function CartSheet({ isOpen, onClose }: CartSheetProps) {
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="h-8 w-8 hover:bg-white"
+                              className="min-h-12 min-w-12 hover:bg-white"
                               onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                              aria-label={`Zwiększ ilość produktu ${item.name}`}
                             >
                               <Plus className="h-4 w-4" />
                             </Button>
@@ -151,8 +153,9 @@ export function CartSheet({ isOpen, onClose }: CartSheetProps) {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50"
+                            className="min-h-12 min-w-12 text-red-500 hover:text-red-600 hover:bg-red-50"
                             onClick={() => removeItem(item.id)}
+                            aria-label={`Usuń ${item.name} z koszyka`}
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>

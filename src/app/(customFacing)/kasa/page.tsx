@@ -10,7 +10,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { CreditCard, BanknoteIcon, ShoppingBag, LogIn, User, Trash2, Loader2, X } from "lucide-react";
+import {
+  CreditCard,
+  BanknoteIcon,
+  ShoppingBag,
+  LogIn,
+  User,
+  Trash2,
+  Loader2,
+  X,
+} from "lucide-react";
 import { toast } from "sonner";
 import { formatPLN } from "@/lib/formatter";
 import { createOrder } from "./_actions";
@@ -389,8 +398,10 @@ export default function CheckoutPage() {
   }, [isHurt]);
 
   // Fetch shipping valuation from Apaczka when cart/address change
-  const valuationPostalCode = sameAddress ? formData.postalCode : (formData.shippingPostalCode || formData.postalCode);
-  const valuationCity = sameAddress ? formData.city : (formData.shippingCity || formData.city);
+  const valuationPostalCode = sameAddress
+    ? formData.postalCode
+    : formData.shippingPostalCode || formData.postalCode;
+  const valuationCity = sameAddress ? formData.city : formData.shippingCity || formData.city;
 
   useEffect(() => {
     if (isHurt) return;
@@ -674,56 +685,56 @@ export default function CheckoutPage() {
       if (isHurt) {
         resolvedServiceId = "";
       } else {
-      // If synthetic (ends with _COD, _PREPAID, _D2P) strip suffix and find underlying id
-      if (resolvedServiceId && resolvedServiceId.endsWith("_COD")) {
-        resolvedServiceId = resolvedServiceId.replace(/_COD$/, "");
-      } else if (resolvedServiceId && resolvedServiceId.endsWith("_PREPAID")) {
-        resolvedServiceId = resolvedServiceId.replace(/_PREPAID$/, "");
-      } else if (resolvedServiceId && resolvedServiceId.endsWith("_D2P")) {
-        resolvedServiceId = resolvedServiceId.replace(/_D2P$/, "");
-      }
-
-      // If user picked the generic APACZKA_MAP option, resolve by selectedSupplier
-      if (formData.shippingMethodId === "APACZKA_MAP") {
-        if (!selectedSupplier) {
-          setError("Wybierz dostawcę punktu na mapie");
-          submittingLock.current = false;
-          setIsSubmitting(false);
-          return;
+        // If synthetic (ends with _COD, _PREPAID, _D2P) strip suffix and find underlying id
+        if (resolvedServiceId && resolvedServiceId.endsWith("_COD")) {
+          resolvedServiceId = resolvedServiceId.replace(/_COD$/, "");
+        } else if (resolvedServiceId && resolvedServiceId.endsWith("_PREPAID")) {
+          resolvedServiceId = resolvedServiceId.replace(/_PREPAID$/, "");
+        } else if (resolvedServiceId && resolvedServiceId.endsWith("_D2P")) {
+          resolvedServiceId = resolvedServiceId.replace(/_D2P$/, "");
         }
-        // find a door_to_point service for that supplier with basic type heuristics
-        const candidates = shippingMethods.filter(
-          (s) => s.supplier === selectedSupplier && s.door_to_point === "1"
-        );
-        let match = candidates[0];
-        if (selectedSupplier.toUpperCase() === "INPOST" && candidates.length > 1) {
-          if (selectedPointId?.startsWith("POP-")) {
-            match =
-              candidates.find((s) => /punkt/i.test(s.name)) ||
-              candidates.find((s) => /parcelshop|pickup/i.test(s.name)) ||
-              match;
-          } else {
-            match =
-              candidates.find((s) => /paczkomat/i.test(s.name) || /paczkomaty/i.test(s.name)) ||
-              match;
+
+        // If user picked the generic APACZKA_MAP option, resolve by selectedSupplier
+        if (formData.shippingMethodId === "APACZKA_MAP") {
+          if (!selectedSupplier) {
+            setError("Wybierz dostawcę punktu na mapie");
+            submittingLock.current = false;
+            setIsSubmitting(false);
+            return;
           }
+          // find a door_to_point service for that supplier with basic type heuristics
+          const candidates = shippingMethods.filter(
+            (s) => s.supplier === selectedSupplier && s.door_to_point === "1"
+          );
+          let match = candidates[0];
+          if (selectedSupplier.toUpperCase() === "INPOST" && candidates.length > 1) {
+            if (selectedPointId?.startsWith("POP-")) {
+              match =
+                candidates.find((s) => /punkt/i.test(s.name)) ||
+                candidates.find((s) => /parcelshop|pickup/i.test(s.name)) ||
+                match;
+            } else {
+              match =
+                candidates.find((s) => /paczkomat/i.test(s.name) || /paczkomaty/i.test(s.name)) ||
+                match;
+            }
+          }
+          if (!match) {
+            setError("Nie znaleziono usługi punktowej dla wybranego przewoźnika");
+            submittingLock.current = false;
+            setIsSubmitting(false);
+            return;
+          }
+          resolvedServiceId = match.service_id;
         }
-        if (!match) {
-          setError("Nie znaleziono usługi punktowej dla wybranego przewoźnika");
+
+        const serviceMeta = shippingMethods.find((s) => s.service_id === resolvedServiceId);
+        if (serviceMeta?.door_to_point === "1" && !selectedPointId) {
+          setError("Wybierz punkt odbioru dla tej metody dostawy");
           submittingLock.current = false;
           setIsSubmitting(false);
           return;
         }
-        resolvedServiceId = match.service_id;
-      }
-
-      const serviceMeta = shippingMethods.find((s) => s.service_id === resolvedServiceId);
-      if (serviceMeta?.door_to_point === "1" && !selectedPointId) {
-        setError("Wybierz punkt odbioru dla tej metody dostawy");
-        submittingLock.current = false;
-        setIsSubmitting(false);
-        return;
-      }
       }
 
       // Strip synthetic suffix (_COD, _PREPAID, _D2P) before looking up in visibleServices
@@ -950,7 +961,9 @@ export default function CheckoutPage() {
           <Card className="p-6 bg-amber-50 border-amber-200">
             <p className="font-medium text-lg mb-1">Płatność nie została dokończona</p>
             <p className="text-sm text-muted-foreground mb-4">
-              Masz oczekujące zamówienie <span className="font-mono font-medium">#{canceledOrderId}</span>. Możesz wrócić do płatności lub złożyć nowe zamówienie.
+              Masz oczekujące zamówienie{" "}
+              <span className="font-mono font-medium">#{canceledOrderId}</span>. Możesz wrócić do
+              płatności lub złożyć nowe zamówienie.
             </p>
             <div className="flex flex-wrap gap-3">
               <Button asChild>
@@ -1006,11 +1019,7 @@ export default function CheckoutPage() {
             <h2 className="text-xl font-semibold">Wybierz sposób zakupu</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
-              <Button
-                asChild
-                size="lg"
-                className="flex items-center gap-2 h-20"
-              >
+              <Button asChild size="lg" className="flex items-center gap-2 h-20">
                 <Link href="/auth/zaloguj?callbackUrl=/kasa">
                   <LogIn className="w-5 h-5" />
                   <div>
@@ -1313,157 +1322,163 @@ export default function CheckoutPage() {
                 <div className="space-y-2 bg-white shadow p-4 rounded-lg">
                   <h3 className="text-lg font-semibold">Dostawa</h3>
                   <p className="text-sm text-muted-foreground">
-                    Dostawa dla klientów hurtowych ustalania jest ustalana indydwualnie po złożeniu zamówienia.
+                    Dostawa dla klientów hurtowych ustalania jest ustalana indydwualnie po złożeniu
+                    zamówienia.
                   </p>
                 </div>
               ) : (
-              <div className="space-y-4 bg-white  shadow p-4 rounded-lg">
-                <h3 className="text-lg font-semibold">Metoda dostawy</h3>
-                {isLoadingShipping ? (
-                  <div className="flex items-center justify-center py-4">
-                    <Loader2 className="w-6 h-6 animate-spin" />
-                  </div>
-                ) : shippingError ? (
-                  <div className="text-red-500">{shippingError}</div>
-                ) : (
-                  <RadioGroup
-                    value={selectedShippingMethod || ""}
-                    onValueChange={(value) => {
-                      if (value === "APACZKA_MAP" && paczkomatDisabled) return;
-                      setSelectedShippingMethod(value);
-                      setFormData((prev) => ({
-                        ...prev,
-                        shippingMethodId: value,
-                      }));
-                      // Reset point selection when method changes
-                      setSelectedPointId("");
-                      setSelectedSupplier("");
+                <div className="space-y-4 bg-white  shadow p-4 rounded-lg">
+                  <h3 className="text-lg font-semibold">Metoda dostawy</h3>
+                  {isLoadingShipping ? (
+                    <div className="flex items-center justify-center py-4">
+                      <Loader2 className="w-6 h-6 animate-spin" />
+                    </div>
+                  ) : shippingError ? (
+                    <div className="text-red-500">{shippingError}</div>
+                  ) : (
+                    <RadioGroup
+                      value={selectedShippingMethod || ""}
+                      onValueChange={(value) => {
+                        if (value === "APACZKA_MAP" && paczkomatDisabled) return;
+                        setSelectedShippingMethod(value);
+                        setFormData((prev) => ({
+                          ...prev,
+                          shippingMethodId: value,
+                        }));
+                        // Reset point selection when method changes
+                        setSelectedPointId("");
+                        setSelectedSupplier("");
 
-                      // If user selected the generic 'Dostawa do punktu', open the Apaczka map immediately
-                      if (value === "APACZKA_MAP") {
-                        try {
-                          apaczkaMapRef.current?.setFilterSupplierAllowed?.(["DPD", "INPOST"]);
-                          apaczkaMapRef.current?.show?.({
-                            address: { street: formData.street, city: formData.city },
-                          });
-                        } catch (e) {
-                          console.warn("Could not open Apaczka map on selection", e);
+                        // If user selected the generic 'Dostawa do punktu', open the Apaczka map immediately
+                        if (value === "APACZKA_MAP") {
+                          try {
+                            apaczkaMapRef.current?.setFilterSupplierAllowed?.(["DPD", "INPOST"]);
+                            apaczkaMapRef.current?.show?.({
+                              address: { street: formData.street, city: formData.city },
+                            });
+                          } catch (e) {
+                            console.warn("Could not open Apaczka map on selection", e);
+                          }
                         }
-                      }
-                    }}
-                  >
-                    {visibleServices.length === 0 ? (
-                      <div className="text-sm text-muted-foreground">
-                        Brak dostępnych metod dostawy dla wybranej metody płatności
-                      </div>
-                    ) : (
-                      visibleServices.map((method) => {
-                        const isDoorToPoint =
-                          method.door_to_point === "1" || method.service_id === "APACZKA_MAP";
-                        const isActive = selectedShippingMethod === method.service_id;
-                        const isMapOption = method.service_id === "APACZKA_MAP";
-                        const isMethodDisabled = isMapOption && paczkomatDisabled;
-                        const label =
-                          method.service_id === "APACZKA_MAP" ? method.name : method.name;
-                        return (
-                          <div
-                            key={method.service_id}
-                            className={`flex flex-col gap-2 border rounded-md p-3 ${
-                              isMethodDisabled ? "opacity-60" : ""
-                            }`}
-                          >
-                            <div className="flex items-center space-x-2">
-                              <RadioGroupItem
-                                value={method.service_id}
-                                id={`shipping-${method.service_id}`}
-                                disabled={isMethodDisabled}
-                              />
-                              <Label htmlFor={`shipping-${method.service_id}`}>
-                                {label} {method.delivery_time ? ` - ${method.delivery_time}` : ""}
-                              </Label>
-                            </div>
-                            {isMethodDisabled && (
-                              <div className="pl-7 text-xs text-amber-700">
-                                Dostawa do paczkomatu/punktu dostępna tylko dla maks. 2 produktów w koszyku.
+                      }}
+                    >
+                      {visibleServices.length === 0 ? (
+                        <div className="text-sm text-muted-foreground">
+                          Brak dostępnych metod dostawy dla wybranej metody płatności
+                        </div>
+                      ) : (
+                        visibleServices.map((method) => {
+                          const isDoorToPoint =
+                            method.door_to_point === "1" || method.service_id === "APACZKA_MAP";
+                          const isActive = selectedShippingMethod === method.service_id;
+                          const isMapOption = method.service_id === "APACZKA_MAP";
+                          const isMethodDisabled = isMapOption && paczkomatDisabled;
+                          const label =
+                            method.service_id === "APACZKA_MAP" ? method.name : method.name;
+                          return (
+                            <div
+                              key={method.service_id}
+                              className={`flex flex-col gap-2 border rounded-md p-3 ${
+                                isMethodDisabled ? "opacity-60" : ""
+                              }`}
+                            >
+                              <div className="flex items-center space-x-2">
+                                <RadioGroupItem
+                                  value={method.service_id}
+                                  id={`shipping-${method.service_id}`}
+                                  disabled={isMethodDisabled}
+                                />
+                                <Label htmlFor={`shipping-${method.service_id}`}>
+                                  {label} {method.delivery_time ? ` - ${method.delivery_time}` : ""}
+                                </Label>
                               </div>
-                            )}
-                            {isDoorToPoint && isActive && !isMethodDisabled && (
-                              <div className="pl-7 mt-2 space-y-2">
-                                <div className="text-sm text-muted-foreground">
-                                  Wybierz punkt dostawy na mapie poniżej.
+                              {isMethodDisabled && (
+                                <div className="pl-7 text-xs text-amber-700">
+                                  Dostawa do paczkomatu/punktu dostępna tylko dla maks. 2 produktów
+                                  w koszyku.
                                 </div>
-
-                                {/* Show a simple button that opens the Apaczka map modal. The widget will update
-                                    the hidden inputs `apaczka_point_id` and `apaczka_supplier` when a point is selected. */}
-                                <div>
-                                  <div className="flex items-center gap-2">
-                                    <Button
-                                      type="button"
-                                      variant="outline"
-                                      onClick={() => {
-                                        try {
-                                          setSelectedShippingMethod("APACZKA_MAP");
-                                          setFormData((prev) => ({
-                                            ...prev,
-                                            shippingMethodId: "APACZKA_MAP",
-                                          }));
-                                          apaczkaMapRef.current?.setFilterSupplierAllowed?.([
-                                            "DHL_PARCEL",
-                                            "DPD",
-                                            "INPOST",
-                                          ]);
-                                          // open the map modal centered on address
-                                          apaczkaMapRef.current?.show?.({
-                                            address: {
-                                              street: formData.street,
-                                              city: formData.city,
-                                            },
-                                          });
-                                        } catch (e) {
-                                          console.warn("Could not open Apaczka map", e);
-                                        }
-                                      }}
-                                    >
-                                      Wybierz punkt na mapie
-                                    </Button>
+                              )}
+                              {isDoorToPoint && isActive && !isMethodDisabled && (
+                                <div className="pl-7 mt-2 space-y-2">
+                                  <div className="text-sm text-muted-foreground">
+                                    Wybierz punkt dostawy na mapie poniżej.
                                   </div>
 
-                                  {/* Hidden inputs for widget to write selection into */}
-                                  <input id="apaczka_point_id" ref={pointInputRef} type="hidden" />
-                                  <input
-                                    id="apaczka_supplier"
-                                    ref={supplierInputRef}
-                                    type="hidden"
-                                  />
-                                  <input
-                                    id="apaczka_point_type"
-                                    type="hidden"
-                                    value={selectedPointType}
-                                    readOnly
-                                  />
-                                </div>
+                                  {/* Show a simple button that opens the Apaczka map modal. The widget will update
+                                    the hidden inputs `apaczka_point_id` and `apaczka_supplier` when a point is selected. */}
+                                  <div>
+                                    <div className="flex items-center gap-2">
+                                      <Button
+                                        type="button"
+                                        variant="outline"
+                                        onClick={() => {
+                                          try {
+                                            setSelectedShippingMethod("APACZKA_MAP");
+                                            setFormData((prev) => ({
+                                              ...prev,
+                                              shippingMethodId: "APACZKA_MAP",
+                                            }));
+                                            apaczkaMapRef.current?.setFilterSupplierAllowed?.([
+                                              "DHL_PARCEL",
+                                              "DPD",
+                                              "INPOST",
+                                            ]);
+                                            // open the map modal centered on address
+                                            apaczkaMapRef.current?.show?.({
+                                              address: {
+                                                street: formData.street,
+                                                city: formData.city,
+                                              },
+                                            });
+                                          } catch (e) {
+                                            console.warn("Could not open Apaczka map", e);
+                                          }
+                                        }}
+                                      >
+                                        Wybierz punkt na mapie
+                                      </Button>
+                                    </div>
 
-                                <div className="text-xs text-muted-foreground">
-                                  {selectedPointId ? (
-                                    <>
-                                      Wybrany punkt: {selectedPointId}{" "}
-                                      {selectedSupplier && `( ${selectedSupplier} )`}
-                                    </>
-                                  ) : (
-                                    <span className="text-red-500">
-                                      Wybór punktu jest wymagany dla tej metody
-                                    </span>
-                                  )}
+                                    {/* Hidden inputs for widget to write selection into */}
+                                    <input
+                                      id="apaczka_point_id"
+                                      ref={pointInputRef}
+                                      type="hidden"
+                                    />
+                                    <input
+                                      id="apaczka_supplier"
+                                      ref={supplierInputRef}
+                                      type="hidden"
+                                    />
+                                    <input
+                                      id="apaczka_point_type"
+                                      type="hidden"
+                                      value={selectedPointType}
+                                      readOnly
+                                    />
+                                  </div>
+
+                                  <div className="text-xs text-muted-foreground">
+                                    {selectedPointId ? (
+                                      <>
+                                        Wybrany punkt: {selectedPointId}{" "}
+                                        {selectedSupplier && `( ${selectedSupplier} )`}
+                                      </>
+                                    ) : (
+                                      <span className="text-red-500">
+                                        Wybór punktu jest wymagany dla tej metody
+                                      </span>
+                                    )}
+                                  </div>
                                 </div>
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })
-                    )}
-                  </RadioGroup>
-                )}
-              </div>
+                              )}
+                            </div>
+                          );
+                        })
+                      )}
+                    </RadioGroup>
+                  )}
+                </div>
               )}
 
               {/* Terms and Conditions Acceptance */}
@@ -1498,7 +1513,10 @@ export default function CheckoutPage() {
                   onChange={(e) => setNewsletterConsent(e.target.checked)}
                   className="mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
                 />
-                <label htmlFor="newsletterConsent" className="text-sm leading-relaxed cursor-pointer">
+                <label
+                  htmlFor="newsletterConsent"
+                  className="text-sm leading-relaxed cursor-pointer"
+                >
                   Chcę otrzymywać newsletter z promocjami i nowościami
                 </label>
               </div>
@@ -1522,8 +1540,14 @@ export default function CheckoutPage() {
                 <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-md">
                   <p>{error}</p>
                   {existingOrderId && (
-                    <Button asChild variant="link" className="mt-2 p-0 h-auto text-red-700 underline">
-                      <Link href={`/kasa/zlozone-zamowienie/${existingOrderId}?retry=true${canceledAccessToken ? `&token=${encodeURIComponent(canceledAccessToken)}` : ""}`}>
+                    <Button
+                      asChild
+                      variant="link"
+                      className="mt-2 p-0 h-auto text-red-700 underline"
+                    >
+                      <Link
+                        href={`/kasa/zlozone-zamowienie/${existingOrderId}?retry=true${canceledAccessToken ? `&token=${encodeURIComponent(canceledAccessToken)}` : ""}`}
+                      >
                         Przejdź do zamówienia #{existingOrderId}
                       </Link>
                     </Button>
@@ -1564,7 +1588,8 @@ export default function CheckoutPage() {
                         <button
                           type="button"
                           onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                          className="h-6 w-6 rounded-full border flex items-center justify-center hover:bg-accent"
+                          className="min-h-12 min-w-12 rounded-full border flex items-center justify-center hover:bg-accent"
+                          aria-label={`Zmniejsz ilość produktu ${item.name}`}
                         >
                           -
                         </button>
@@ -1572,7 +1597,8 @@ export default function CheckoutPage() {
                         <button
                           type="button"
                           onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                          className="h-6 w-6 rounded-full border flex items-center justify-center hover:bg-accent"
+                          className="min-h-12 min-w-12 rounded-full border flex items-center justify-center hover:bg-accent"
+                          aria-label={`Zwiększ ilość produktu ${item.name}`}
                         >
                           +
                         </button>
@@ -1580,7 +1606,8 @@ export default function CheckoutPage() {
                       <button
                         type="button"
                         onClick={() => removeItem(item.id)}
-                        className="text-red-500 hover:text-red-700"
+                        className="text-red-500 hover:text-red-700 min-h-12 min-w-12 flex items-center justify-center"
+                        aria-label={`Usuń ${item.name} z koszyka`}
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
@@ -1598,7 +1625,12 @@ export default function CheckoutPage() {
                     <span className="font-mono font-medium">{appliedDiscount.code}</span>
                     <span className="ml-1">(-{appliedDiscount.label})</span>
                   </div>
-                  <button type="button" onClick={handleRemoveDiscount} className="text-green-700 hover:text-green-900">
+                  <button
+                    type="button"
+                    onClick={handleRemoveDiscount}
+                    className="text-green-700 hover:text-green-900 min-h-12 min-w-12 flex items-center justify-center"
+                    aria-label="Usuń kod rabatowy"
+                  >
                     <X className="h-4 w-4" />
                   </button>
                 </div>
@@ -1610,7 +1642,12 @@ export default function CheckoutPage() {
                       onChange={(e) => setDiscountCodeInput(e.target.value)}
                       placeholder="Kod rabatowy"
                       className="uppercase text-sm"
-                      onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); handleApplyDiscount(); } }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          handleApplyDiscount();
+                        }
+                      }}
                     />
                     <Button
                       type="button"

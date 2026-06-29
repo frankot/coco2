@@ -35,7 +35,11 @@ export default async function FeaturedArticles() {
             variant="outline"
             className=" text-primary shadow-none border-none hover:text-primary/80 px-8 py-3 rounded-xl text-lg font-semibold"
           >
-            <Link href="/blog" className="flex items-center gap-2">
+            <Link
+              href="/blog"
+              className="flex items-center gap-2"
+              aria-label="Zobacz wszystkie artykuły na blogu Dr.Coco"
+            >
               Zobacz wszystkie artykuły
               <ArrowRight className="w-5 h-5" />
             </Link>

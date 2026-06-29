@@ -43,7 +43,11 @@ export function BlogCard({ title, slug, imagePath, createdAt, content }: BlogCar
             {stripHtml(content).length > 160 ? "..." : ""}
           </p>
         )}
-        <Link href={`/blog/${slug}`} className="text-primary font-medium text-sm hover:underline">
+        <Link
+          href={`/blog/${slug}`}
+          className="text-primary font-medium text-sm hover:underline"
+          aria-label={`Czytaj artykuł: ${title}`}
+        >
           Czytaj dalej
         </Link>
       </div>

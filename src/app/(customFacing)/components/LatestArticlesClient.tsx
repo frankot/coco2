@@ -1,5 +1,3 @@
-"use client";
-import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
@@ -20,15 +18,8 @@ export default function LatestArticlesClient({ posts }: { posts: Post[] }) {
 
   return (
     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-      {posts.map((post, index) => (
-        <motion.article
-          key={post.id}
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: index * 0.1, duration: 0.6 }}
-          className="group"
-        >
+      {posts.map((post) => (
+        <article key={post.id} className="group transition-all duration-500 ease-out">
           <div className="h-[450px]">
             <div className="relative h-4/5 overflow-hidden rounded-lg mb-4">
               {post.imagePath ? (
@@ -57,14 +48,18 @@ export default function LatestArticlesClient({ posts }: { posts: Post[] }) {
                 size="sm"
                 className="text-primary hover:text-primary/80 hover:bg-primary/5 p-0 h-auto font-medium group/btn"
               >
-                <Link href={`/blog/${post.slug}`} className="flex items-center gap-1 text-sm">
+                <Link
+                  href={`/blog/${post.slug}`}
+                  className="flex items-center gap-1 text-sm"
+                  aria-label={`Czytaj artykuł: ${post.title}`}
+                >
                   Czytaj więcej
                   <ArrowRight className="w-3 h-3 group-hover/btn:translate-x-1 transition-transform" />
                 </Link>
               </Button>
             </div>
           </div>
-        </motion.article>
+        </article>
       ))}
     </div>
   );

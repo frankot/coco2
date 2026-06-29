@@ -86,7 +86,6 @@
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
   --font-serif: var(--font-serif);
-  --font-galindo: var(--font-galindo);
   --font-outfit: var(--font-outfit);
 
   --radius-sm: calc(var(--radius) - 4px);
@@ -172,15 +171,6 @@ body {
   background: white;
   box-shadow: var(--shadow-sm);
   color: var(--primary-foreground);
-}
-
-/* Galindo Font Test - Remove after testing */
-.test-galindo {
-  font-family: var(--font-galindo);
-}
-
-.test-outfit {
-  font-family: var(--font-outfit);
 }
 
 .featured-product-item {

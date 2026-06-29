@@ -4,6 +4,9 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { resolveProductPrices } from "@/lib/resolve-prices";
 
+const featuredProductImageSizes =
+  "(max-width: 767px) calc(100vw - 32px), (max-width: 1023px) calc((100vw - 56px) / 2), 384px";
+
 async function getFeaturedProducts() {
   const session = await getServerSession(authOptions);
   const accountType = session?.user?.accountType;
@@ -43,7 +46,11 @@ export default async function FeaturedProducts() {
               className="featured-product-item"
               style={{ "--stagger-delay": `${index * 120}ms` } as React.CSSProperties}
             >
-              <ProductCard product={product} />
+              <ProductCard
+                product={product}
+                preload={index === 0}
+                sizes={featuredProductImageSizes}
+              />
             </div>
           ))}
         </div>

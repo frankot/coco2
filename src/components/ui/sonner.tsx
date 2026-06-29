@@ -1,15 +1,12 @@
 "use client";
 
-import { useTheme } from "next-themes";
 import { Toaster as Sonner, ToasterProps } from "sonner";
 import { cn } from "@/lib/utils";
 
 const Toaster = ({ className, ...props }: ToasterProps) => {
-  const { theme = "system" } = useTheme();
-
   return (
     <Sonner
-      theme={theme as ToasterProps["theme"]}
+      theme="light"
       position="bottom-right"
       offset={7}
       className={cn(

@@ -6,15 +6,6 @@ import { Plus, Minus, Trash2, X, ShoppingBag, Check } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { formatPLN } from "@/lib/formatter";
-import { motion, AnimatePresence } from "framer-motion";
-import { toast } from "sonner";
-
-// Import Product type from Prisma
-import type { Product as PrismaProduct } from "@/app/generated/prisma/client";
-
-// Define types for cart
-export type Product = PrismaProduct;
-
 export type CartItem = {
   id: string;
   name: string;
@@ -63,23 +54,17 @@ const CartOverlay = memo(function CartOverlay({
   navbarHeight: number;
   onClose: () => void;
 }) {
+  if (!isOpen) return null;
+
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
-          className="fixed left-0 right-0 z-20 bg-primary/30 backdrop-blur-sm"
-          style={{
-            top: `${navbarHeight}px`,
-            height: `calc(100vh - ${navbarHeight}px)`,
-          }}
-          onClick={onClose}
-        />
-      )}
-    </AnimatePresence>
+    <div
+      className="fixed left-0 right-0 z-20 bg-primary/30 backdrop-blur-sm transition-opacity duration-300"
+      style={{
+        top: `${navbarHeight}px`,
+        height: `calc(100vh - ${navbarHeight}px)`,
+      }}
+      onClick={onClose}
+    />
   );
 });
 
@@ -94,25 +79,15 @@ const CartFloatingButton = memo(function CartFloatingButton({
   if (!isVisible) return null;
 
   return (
-    <div className="fixed bottom-8 right-8 z-50">
-      <motion.div
-        initial={{ x: 100 }}
-        animate={{ x: 0 }}
-        exit={{ x: 100 }}
-        transition={{
-          type: "spring",
-          stiffness: 300,
-          damping: 25,
-        }}
+    <div className="fixed bottom-8 right-8 z-50 animate-in slide-in-from-right duration-300">
+      <Button
+        size="lg"
+        className="p-6 shadow-none flex text-background items-center bg-primary"
+        onClick={onClick}
+        aria-label="Otwórz koszyk"
       >
-        <Button
-          size="lg"
-          className="p-6 shadow-none flex text-background items-center bg-primary"
-          onClick={onClick}
-        >
-          <ShoppingBag className="size-7" />
-        </Button>
-      </motion.div>
+        <ShoppingBag className="size-7" />
+      </Button>
     </div>
   );
 });
@@ -136,7 +111,11 @@ const CartHeader = memo(function CartHeader({ onClose }: { onClose: () => void }
   return (
     <div className="p-6 border-b flex items-center justify-between pl-10">
       <h2 className="text-3xl font-galindo flex items-center text-primary">Koszyk</h2>
-      <button onClick={onClose} className="text-primary hover:text-secondary transition-colors">
+      <button
+        onClick={onClose}
+        className="text-primary hover:text-secondary transition-colors min-h-12 min-w-12 flex items-center justify-center"
+        aria-label="Zamknij koszyk"
+      >
         <X size={32} />
       </button>
     </div>
@@ -186,7 +165,8 @@ const CartItemComponent = memo(function CartItemComponent({
           </Link>
           <button
             onClick={handleRemove}
-            className="text-gray-400 hover:text-red-500 transition-colors"
+            className="text-gray-400 hover:text-red-500 transition-colors min-h-12 min-w-12 flex items-center justify-center"
+            aria-label={`Usuń ${item.name} z koszyka`}
           >
             <Trash2 size={18} />
           </button>
@@ -199,7 +179,8 @@ const CartItemComponent = memo(function CartItemComponent({
         <div className="flex items-center mt-3">
           <button
             onClick={handleDecrement}
-            className="p-1.5 border rounded-md text-primary hover:bg-gray-100 transition-colors"
+            className="min-h-12 min-w-12 p-1.5 border rounded-md text-primary hover:bg-gray-100 transition-colors"
+            aria-label={`Zmniejsz ilość produktu ${item.name}`}
           >
             <Minus size={16} />
           </button>
@@ -208,7 +189,8 @@ const CartItemComponent = memo(function CartItemComponent({
           </span>
           <button
             onClick={handleIncrement}
-            className="p-1.5 border rounded-md text-primary hover:bg-gray-100 transition-colors"
+            className="min-h-12 min-w-12 p-1.5 border rounded-md text-primary hover:bg-gray-100 transition-colors"
+            aria-label={`Zwiększ ilość produktu ${item.name}`}
           >
             <Plus size={16} />
           </button>
@@ -287,23 +269,17 @@ const CartSidePanel = memo(function CartSidePanel({
   children: React.ReactNode;
 }) {
   return (
-    <motion.div
-      initial={{ x: "-100%" }}
-      animate={{ x: isOpen ? 0 : "-100%" }}
-      transition={{
-        type: "spring",
-        stiffness: 300,
-        damping: 30,
-        duration: 0.3,
-      }}
-      className="fixed left-0 z-20  w-80 bg-background shadow-none rounded-none flex flex-col"
+    <div
+      className={`fixed left-0 z-20 w-80 bg-background shadow-none rounded-none flex flex-col transition-transform duration-300 ease-out ${
+        isOpen ? "translate-x-0" : "-translate-x-full"
+      }`}
       style={{
         top: `${navbarHeight}px`,
         height: `calc(100vh - ${navbarHeight}px)`,
       }}
     >
       {children}
-    </motion.div>
+    </div>
   );
 });
 
@@ -418,119 +394,3 @@ export default function Cart({ isOpen, onClose, navbarHeight, onOpenCart }: Cart
     </>
   );
 }
-
-// Add toast styles
-const toastStyles = {
-  style: {
-    background: "hsl(var(--primary))",
-    border: "none",
-    color: "white",
-  },
-  position: "bottom-right" as const,
-};
-
-export const useCart = () => {
-  const addToCart = useCallback((product: Product, quantity: number = 1) => {
-    try {
-      const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
-      const existingItemIndex = existingCart.findIndex((item: CartItem) => item.id === product.id);
-
-      // Check if cart was empty before adding
-      const wasCartEmpty = existingCart.length === 0;
-
-      if (existingItemIndex >= 0) {
-        existingCart[existingItemIndex].quantity += quantity;
-      } else {
-        existingCart.push({
-          id: product.id,
-          name: product.name,
-          priceInCents: product.priceInCents,
-          quantity: quantity,
-          imagePath: product.imagePaths[0] || "",
-          itemsPerPack: product.itemsPerPack || 1,
-        });
-      }
-
-      localStorage.setItem("cart", JSON.stringify(existingCart));
-      window.dispatchEvent(new Event("cartUpdated"));
-
-      // If cart was empty and we just added the first item, open cart sheet (no toast)
-      if (wasCartEmpty) {
-        window.dispatchEvent(new Event("openCartSheet"));
-        return true;
-      }
-
-      const totalBottles = quantity * (product.itemsPerPack || 1);
-      toast.success(`Dodano ${totalBottles} szt. ${product.name} do koszyka`, {
-        ...toastStyles,
-        duration: 3000,
-      });
-
-      return true;
-    } catch (error) {
-      console.error("Failed to add item to cart:", error);
-      toast.error("Nie udało się dodać produktu do koszyka", {
-        style: {
-          background: "hsl(var(--destructive))",
-          border: "none",
-          color: "white",
-        },
-        position: "bottom-right" as const,
-        duration: 3000,
-      });
-      return false;
-    }
-  }, []);
-
-  const removeFromCart = useCallback((productId: string) => {
-    try {
-      const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
-      const updatedCart = existingCart.filter((item: CartItem) => item.id !== productId);
-      localStorage.setItem("cart", JSON.stringify(updatedCart));
-      window.dispatchEvent(new Event("cartUpdated"));
-      return true;
-    } catch (error) {
-      console.error("Failed to remove item from cart:", error);
-      return false;
-    }
-  }, []);
-
-  const updateCartItemQuantity = useCallback(
-    (productId: string, quantity: number) => {
-      if (quantity < 1) {
-        return removeFromCart(productId);
-      }
-
-      try {
-        const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
-        const updatedCart = existingCart.map((item: CartItem) =>
-          item.id === productId ? { ...item, quantity } : item
-        );
-        localStorage.setItem("cart", JSON.stringify(updatedCart));
-        window.dispatchEvent(new Event("cartUpdated"));
-        return true;
-      } catch (error) {
-        console.error("Failed to update cart item quantity:", error);
-        return false;
-      }
-    },
-    [removeFromCart]
-  );
-
-  const getCart = useCallback((): CartItem[] => {
-    try {
-      const savedCart = localStorage.getItem("cart");
-      return savedCart ? JSON.parse(savedCart) : [];
-    } catch (error) {
-      console.error("Failed to get cart:", error);
-      return [];
-    }
-  }, []);
-
-  return {
-    addToCart,
-    removeFromCart,
-    updateCartItemQuantity,
-    getCart,
-  };
-};

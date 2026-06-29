@@ -3,6 +3,9 @@ import ProductCard from "@/components/ui/ProductCard";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
+const latestProductImageSizes =
+  "(max-width: 767px) calc(100vw - 32px), (max-width: 1023px) calc((100vw - 56px) / 2), 384px";
+
 async function getLatestProducts() {
   const session = await getServerSession(authOptions);
   const accountType = session?.user?.accountType;
@@ -35,7 +38,7 @@ export default async function LatestProductsSection() {
       <div className="container px-4 mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
+            <ProductCard key={product.id} product={product} sizes={latestProductImageSizes} />
           ))}
         </div>
       </div>

@@ -7,9 +7,8 @@ import { ArrowLeft, ShoppingBag, Star, Plus, Minus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { notFound } from "next/navigation";
 import { formatPLN } from "@/lib/formatter";
-import { useCart } from "@/app/(customFacing)/components/Cart";
+import { addProductToCart } from "@/lib/cart-client";
 import ReactMarkdown from "react-markdown";
-// Toasts are handled inside useCart().addToCart
 
 export default function ProductPageClient({ params }: { params: Promise<{ id: string }> }) {
   const [product, setProduct] = useState<any>(null);
@@ -22,8 +21,6 @@ export default function ProductPageClient({ params }: { params: Promise<{ id: st
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
   const minSwipeDistance = 40;
-
-  const { addToCart } = useCart();
 
   useEffect(() => {
     async function initializeParams() {
@@ -210,10 +207,7 @@ export default function ProductPageClient({ params }: { params: Promise<{ id: st
 
     setIsAddingToCart(true);
     try {
-      // Notifications are shown by addToCart itself
-      await addToCart(product, quantity);
-    } catch (error) {
-      // Error notification is handled by addToCart
+      addProductToCart(product, quantity);
     } finally {
       setIsAddingToCart(false);
     }
@@ -284,8 +278,8 @@ export default function ProductPageClient({ params }: { params: Promise<{ id: st
                   alt={product.name}
                   fill
                   className="object-contain p-8"
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  priority
+                  sizes="(max-width: 768px) calc(100vw - 32px), 50vw"
+                  preload={selectedImage === 0}
                 />
               ) : (
                 <div className="flex items-center justify-center h-full text-gray-400">
@@ -309,6 +303,8 @@ export default function ProductPageClient({ params }: { params: Promise<{ id: st
                     className={`flex-shrink-0 w-20 h-20 relative bg-gray-50 rounded-lg overflow-hidden border-2 transition-colors ${
                       selectedImage === index ? "border-primary" : "border-gray-200"
                     }`}
+                    aria-label={`Pokaż zdjęcie ${index + 1} produktu ${product.name}`}
+                    aria-current={selectedImage === index ? "true" : undefined}
                   >
                     {image ? (
                       <Image
@@ -350,7 +346,9 @@ export default function ProductPageClient({ params }: { params: Promise<{ id: st
               </div>
               <div className="text-xs text-gray-400">
                 Najniższa cena w ciągu ostatnich 30 dni:{" "}
-                <span className="font-medium">{formatPLN(product.lastPriceInCents ?? product.priceInCents)}</span>
+                <span className="font-medium">
+                  {formatPLN(product.lastPriceInCents ?? product.priceInCents)}
+                </span>
               </div>
             </div>
 
@@ -360,7 +358,8 @@ export default function ProductPageClient({ params }: { params: Promise<{ id: st
                 <div className="flex items-center border border-gray-300 rounded-lg">
                   <button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="p-2 hover:bg-gray-100 transition-colors"
+                    className="min-h-12 min-w-12 p-2 hover:bg-gray-100 transition-colors"
+                    aria-label={`Zmniejsz ilość produktu ${product.name}`}
                   >
                     <Minus className="w-4 h-4" />
                   </button>
@@ -369,7 +368,8 @@ export default function ProductPageClient({ params }: { params: Promise<{ id: st
                   </span>
                   <button
                     onClick={() => setQuantity(quantity + 1)}
-                    className="p-2 hover:bg-gray-100 transition-colors"
+                    className="min-h-12 min-w-12 p-2 hover:bg-gray-100 transition-colors"
+                    aria-label={`Zwiększ ilość produktu ${product.name}`}
                   >
                     <Plus className="w-4 h-4" />
                   </button>
@@ -397,13 +397,13 @@ export default function ProductPageClient({ params }: { params: Promise<{ id: st
                   <ReactMarkdown
                     components={{
                       h1: ({ node, ...props }) => (
-                        <h1 className="text-2xl font-bold mt-4 mb-2" {...props} />
+                        <h2 className="text-2xl font-bold mt-4 mb-2" {...props} />
                       ),
                       h2: ({ node, ...props }) => (
-                        <h2 className="text-xl font-bold mt-3 mb-2" {...props} />
+                        <h3 className="text-xl font-bold mt-3 mb-2" {...props} />
                       ),
                       h3: ({ node, ...props }) => (
-                        <h3 className="text-lg font-semibold mt-2 mb-1" {...props} />
+                        <h4 className="text-lg font-semibold mt-2 mb-1" {...props} />
                       ),
                       p: ({ node, ...props }) => (
                         <p className="text-gray-700 mb-2 leading-relaxed" {...props} />
@@ -429,7 +429,8 @@ export default function ProductPageClient({ params }: { params: Promise<{ id: st
           <div className="flex gap-8 border-b border-gray-200 mb-6">
             <button
               onClick={() => setActiveTab("composition")}
-              className={`pb-2 font-medium ${
+              aria-pressed={activeTab === "composition"}
+              className={`pb-2 font-medium min-h-12 ${
                 activeTab === "composition"
                   ? "border-b-2 border-primary text-primary"
                   : "text-gray-600 hover:text-gray-900"
@@ -439,7 +440,8 @@ export default function ProductPageClient({ params }: { params: Promise<{ id: st
             </button>
             <button
               onClick={() => setActiveTab("related")}
-              className={`pb-2 font-medium ${
+              aria-pressed={activeTab === "related"}
+              className={`pb-2 font-medium min-h-12 ${
                 activeTab === "related"
                   ? "border-b-2 border-primary text-primary"
                   : "text-gray-600 hover:text-gray-900"

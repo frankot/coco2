@@ -1,15 +1,8 @@
 import type { Metadata } from "next";
-import { Geist, Outfit } from "next/font/google";
+import { Outfit } from "next/font/google";
 import "./globals.css";
 import { SessionProvider } from "@/components/SessionProvider";
-import { Toaster } from "@/components/ui/sonner";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-  display: "swap",
-  fallback: ["system-ui", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
-});
+import { LazyToaster } from "@/components/LazyToaster";
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -106,23 +99,10 @@ export default function RootLayout({
         <link rel="preload" href="/logo.png" as="image" />
       </head>
       <body
-        className={`${geistSans.variable}  ${outfit.variable} font-outfit min-h-screen antialiased bg-white scroll-smooth`}
+        className={`${outfit.variable} font-outfit min-h-screen antialiased bg-white scroll-smooth`}
       >
         <SessionProvider>{children}</SessionProvider>
-        <Toaster
-          position="bottom-right"
-          expand={false}
-          richColors
-          closeButton
-          theme="light"
-          style={
-            {
-              "--normal-bg": "hsl(var(--background))",
-              "--normal-border": "1px solid hsl(var(--primary))",
-              "--normal-text": "hsl(var(--foreground))",
-            } as React.CSSProperties
-          }
-        />
+        <LazyToaster />
       </body>
     </html>
   );

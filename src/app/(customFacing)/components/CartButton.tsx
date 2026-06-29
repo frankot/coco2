@@ -3,7 +3,6 @@
 import { ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 
 interface CartButtonProps {
@@ -39,6 +38,7 @@ export function CartButton({ onClick, itemCount, className, variant = "ghost" }:
         variant="ghost"
         size="icon"
         onClick={onClick}
+        aria-label={`Otwórz koszyk${itemCount > 0 ? `, liczba produktów: ${itemCount}` : ""}`}
         className={cn(
           className,
           variant === "floating" &&
@@ -47,6 +47,7 @@ export function CartButton({ onClick, itemCount, className, variant = "ghost" }:
       >
         <ShoppingCart className={cn("size-7")} />
         <span
+          aria-hidden="true"
           className={cn(
             "absolute -top-2 -right-2 bg-primary text-primary-foreground rounded-full h-5 w-5 text-xs flex items-center justify-center",
             variant === "floating" && "bg-primary text-white"
@@ -60,19 +61,14 @@ export function CartButton({ onClick, itemCount, className, variant = "ghost" }:
 
   if (variant === "floating") {
     return (
-      <AnimatePresence>
-        {isVisible && (
-          <motion.div
-            initial={{ y: 100, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 100, opacity: 0 }}
-            transition={{ type: "spring", stiffness: 260, damping: 20 }}
-            className="fixed bottom-8 right-8 z-50"
-          >
-            {baseButton}
-          </motion.div>
+      <div
+        className={cn(
+          "fixed bottom-8 right-8 z-50 transition-all duration-300 ease-out",
+          isVisible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
         )}
-      </AnimatePresence>
+      >
+        {baseButton}
+      </div>
     );
   }
 
