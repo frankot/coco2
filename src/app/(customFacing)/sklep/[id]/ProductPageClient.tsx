@@ -66,8 +66,8 @@ export default function ProductPageClient({ params }: { params: Promise<{ id: st
 
   if (loading) {
     return (
-      <div className="min-h-screen pt-16 lg:pt-18">
-        <div className="container mx-auto px-4 py-10 lg:pb-20">
+      <div className="min-h-screen lg:pt-18">
+        <div className="container mx-auto px-4 pt-4 pb-10 lg:pt-10 lg:pb-20">
           {/* Back button - real, always works */}
           <div className="mb-6">
             <Link href="/sklep">
@@ -221,7 +221,7 @@ export default function ProductPageClient({ params }: { params: Promise<{ id: st
   const pricePerUnit = product.priceInCents / itemsPerPack;
 
   return (
-    <div className="min-h-screen pt-16 lg:pt-18">
+    <div className="min-h-screen lg:pt-18">
       {/* Promo banner */}
       {product.promo && (
         <div className="bg-primary text-white text-center text-sm font-semibold uppercase tracking-wide py-2">
@@ -229,7 +229,7 @@ export default function ProductPageClient({ params }: { params: Promise<{ id: st
         </div>
       )}
 
-      <div className="container mx-auto px-4 py-10 lg:pb-20 ">
+      <div className="container mx-auto px-4 pt-4 pb-10 lg:pt-10 lg:pb-20 ">
         {/* Back button */}
         <div className="mb-6">
           <Link href="/sklep">
