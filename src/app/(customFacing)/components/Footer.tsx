@@ -28,19 +28,6 @@ export function Footer() {
               <p>NIP: {contactInfo.company.nip}</p>
               <p>REGON: {contactInfo.company.regon}</p>
             </div>
-
-            <div className="flex gap-4">
-              <a
-                href={contactInfo.social.instagram}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2 rounded-full shadow-sm hover:bg-primary hover:text-white transition-colors"
-                aria-label="Instagram"
-              >
-                <Instagram size={20} />
-              </a>
-             
-            </div>
           </div>
 
           {/* Column 2: Contact Info */}
@@ -73,6 +60,17 @@ export function Footer() {
                   {contactInfo.email}
                 </a>
               </li>
+              <li>
+                <a
+                  href={contactInfo.social.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex text-primary hover:text-primary/80 transition-colors"
+                  aria-label="Instagram Dr.Coco"
+                >
+                  <Instagram size={22} />
+                </a>
+              </li>
             </ul>
           </div>
 
@@ -91,7 +89,10 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/nasza-historia" className="text-gray-600 hover:text-primary transition-colors">
+                <Link
+                  href="/nasza-historia"
+                  className="text-gray-600 hover:text-primary transition-colors"
+                >
                   Nasza historia
                 </Link>
               </li>
@@ -124,7 +125,10 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/regulamin" className="text-gray-600 hover:text-primary transition-colors">
+                <Link
+                  href="/regulamin"
+                  className="text-gray-600 hover:text-primary transition-colors"
+                >
                   Regulamin
                 </Link>
               </li>
@@ -136,7 +140,6 @@ export function Footer() {
                   Polityka cookies
                 </Link>
               </li>
-
             </ul>
           </div>
         </div>
