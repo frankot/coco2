@@ -161,7 +161,7 @@ export function DesktopAuthMenu() {
   }
 
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" aria-label="Otwórz menu konta użytkownika">
           <User className={cn("size-7", onAuthPage && "text-primary")} />

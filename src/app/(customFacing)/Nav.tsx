@@ -409,7 +409,7 @@ export function NavDropdown({ label, items }: NavDropdownProps) {
   const isActive = items.some((item) => pathname === item.href);
 
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <button
           className={cn(
