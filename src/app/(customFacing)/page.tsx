@@ -1,7 +1,9 @@
+import { Suspense } from "react";
 import { About } from "./components/About";
 import { Hero } from "./components/Hero";
 import { LazyNewsletter } from "./components/LazyNewsletter";
 import FeaturedProducts from "./components/FeaturedProducts";
+import { FeaturedProductsSkeleton } from "./components/FeaturedProductsSkeleton";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -50,7 +52,9 @@ export default function Home() {
       <main>
         <Hero />
 
-        <FeaturedProducts />
+        <Suspense fallback={<FeaturedProductsSkeleton />}>
+          <FeaturedProducts />
+        </Suspense>
         <About />
 
         <LazyNewsletter />
