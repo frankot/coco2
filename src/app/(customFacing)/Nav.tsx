@@ -283,7 +283,10 @@ export function Nav({
                 <Menu className="size-6" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-[300px] sm:w-[400px] flex flex-col">
+            <SheetContent
+              side="left"
+              className="w-[300px] sm:w-[400px] flex flex-col rounded-r-xl overflow-hidden"
+            >
               <SheetTitle className="sr-only">Menu nawigacyjne</SheetTitle>
               <SheetDescription className="sr-only">Nawigacja po sklepie Dr.Coco</SheetDescription>
               <nav className="flex flex-col mt-8 flex-1">
