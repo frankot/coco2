@@ -18,6 +18,75 @@ function buildContractorName(order: {
   return fullName || order.user.email;
 }
 
+function parseAmountInCents(value: unknown) {
+  if (value === null || value === undefined || value === "") return null;
+  const amount = Number(String(value).replace(",", "."));
+  if (!Number.isFinite(amount)) return null;
+  return Math.round(amount * 100);
+}
+
+function getNumericRecordValues(value: unknown) {
+  if (!value || typeof value !== "object") return [];
+  return Object.values(value as Record<string, unknown>);
+}
+
+function extractWfirmaInvoice(data: unknown) {
+  const any = data as any;
+  const invoices = any?.response?.invoices ?? any?.invoices;
+  const first = invoices?.["0"] ?? invoices?.[0] ?? invoices?.invoice ?? getNumericRecordValues(invoices)[0];
+  const invoice = first?.invoice ?? first;
+  const invoicecontents = invoice?.invoicecontents;
+  const contents = getNumericRecordValues(invoicecontents)
+    .map((val: any) => val?.invoicecontent ?? val)
+    .filter(Boolean)
+    .map((item: any) => ({
+      name: item?.name != null ? String(item.name) : null,
+      count: item?.count != null ? Number(String(item.count).replace(",", ".")) : null,
+    }));
+
+  return {
+    totalInCents: parseAmountInCents(invoice?.total ?? invoice?.total_composed ?? invoice?.brutto),
+    contents,
+  };
+}
+
+function verifyCreatedInvoice(params: {
+  orderId: string;
+  invoiceId: string;
+  totalInCents: number;
+  lines: Array<{ name: string; quantity: number }>;
+  invoiceData: unknown;
+}) {
+  const invoice = extractWfirmaInvoice(params.invoiceData);
+  const errors: string[] = [];
+
+  if (invoice.totalInCents !== null && invoice.totalInCents !== params.totalInCents) {
+    errors.push(`total ${invoice.totalInCents} != ${params.totalInCents}`);
+  }
+
+  params.lines.forEach((line, index) => {
+    const remote = invoice.contents[index];
+    if (!remote) {
+      errors.push(`missing line ${index + 1}: ${line.name}`);
+      return;
+    }
+    if (remote.count === null || Math.abs(remote.count - line.quantity) > 0.0001) {
+      errors.push(`count ${remote.name ?? line.name}: ${remote.count} != ${line.quantity}`);
+    }
+  });
+
+  if (errors.length > 0) {
+    console.error("[WFIRMA] Invoice verification failed", {
+      orderId: params.orderId,
+      invoiceId: params.invoiceId,
+      errors,
+    });
+    return false;
+  }
+
+  return true;
+}
+
 export async function generateAndSendInvoice(orderId: string): Promise<void> {
   const order = await prisma.order.findUnique({
     where: { id: orderId },
@@ -96,6 +165,22 @@ export async function generateAndSendInvoice(orderId: string): Promise<void> {
       });
     }
 
+    const productTotalInCents = order.orderItems.reduce(
+      (sum, item) => sum + item.quantity * item.pricePerItemInCents,
+      0
+    );
+    const expectedTotalInCents =
+      productTotalInCents - order.discountAmountInCents + order.shippingCostInCents;
+
+    if (expectedTotalInCents !== order.pricePaidInCents) {
+      console.error("[WFIRMA] Invoice total preflight failed", {
+        orderId,
+        expectedTotalInCents,
+        pricePaidInCents: order.pricePaidInCents,
+      });
+      throw new Error(`Invoice total mismatch for order ${orderId}`);
+    }
+
     const createResponse = await wFirma.createInvoice({
       contractor: {
         name: buildContractorName(order),
@@ -137,6 +222,25 @@ export async function generateAndSendInvoice(orderId: string): Promise<void> {
     } catch (error) {
       console.error("[WFIRMA] Failed to persist invoice metadata", { orderId, invoiceId, error });
       throw error;
+    }
+
+    let invoiceVerified = false;
+    try {
+      const invoiceData = await wFirma.getInvoice(invoiceId);
+      invoiceVerified = verifyCreatedInvoice({
+        orderId,
+        invoiceId,
+        totalInCents: order.pricePaidInCents,
+        lines,
+        invoiceData,
+      });
+    } catch (error) {
+      console.error("[WFIRMA] Invoice verification request failed", { orderId, invoiceId, error });
+      return;
+    }
+
+    if (!invoiceVerified) {
+      return;
     }
 
     try {

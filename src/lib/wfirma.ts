@@ -116,9 +116,16 @@ async function requestJson<T>(
     throw new Error(`Invalid JSON from wFirma: ${text.slice(0, 300)}`);
   }
 
-  const statusCode = Number(data?.status?.code ?? response.status);
-  if (!response.ok || (Number.isFinite(statusCode) && statusCode >= 400)) {
-    throw new Error(data?.status?.message || `wFirma request failed with status ${statusCode}`);
+  const rawStatusCode = data?.status?.code;
+  const statusCode = Number(rawStatusCode ?? response.status);
+  const statusText = typeof rawStatusCode === "string" ? rawStatusCode.toUpperCase() : "";
+  const namedError = statusText && statusText !== "OK" && !Number.isFinite(Number(statusText));
+  if (
+    !response.ok ||
+    namedError ||
+    (Number.isFinite(statusCode) && statusCode >= 400)
+  ) {
+    throw new Error(data?.status?.message || `wFirma request failed with status ${rawStatusCode ?? statusCode}`);
   }
 
   return data;
@@ -217,9 +224,9 @@ export const wFirma = {
         (line) => `<invoicecontent>
 <name>${escapeXml(line.name)}</name>
 <count>${line.quantity.toFixed(4)}</count>
-<unit_count>1.0000</unit_count>
 <unit>${escapeXml(line.unit ?? "szt.")}</unit>
 <price>${escapeXml(line.price)}</price>
+<price_modified>0</price_modified>
 <vat>${escapeXml(line.vat)}</vat>
 </invoicecontent>`
       )
