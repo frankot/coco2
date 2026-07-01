@@ -155,14 +155,8 @@ export const POST = createRouteHandler(
             hours_to: "17:00",
           },
           shipment,
-          comment: [
-            `Zamówienie [${order.id}]`,
-            order.orderItems
-              .map((oi) => `${oi.quantity}x ${oi.product.name}`)
-              .join(", "),
-            `${(order.pricePaidInCents / 100).toFixed(2)} PLN`,
-          ].join(" | "),
-          content: `Szkło! Proszę nie rzucać!`,
+          comment: order.orderItems.map((oi) => `${oi.quantity}x ${oi.product.name}`).join(", "),
+          content: order.orderItems.map((oi) => `${oi.quantity}x ${oi.product.name}`).join(", "),
           is_zebra: 0,
         };
 
