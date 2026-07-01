@@ -135,8 +135,8 @@ export async function confirmOrderInApaczka(orderId: string) {
       hours_to: "17:00",
     },
     shipment,
-    comment: order.orderItems.map((oi) => `${oi.quantity}x ${oi.product.name}`).join(", "),
-    content: "",
+    comment: "",
+    content: order.orderItems.map((oi) => `${oi.quantity}x ${oi.product.name}`).join(", "),
     is_zebra: 0,
   };
 
