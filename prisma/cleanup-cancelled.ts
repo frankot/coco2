@@ -21,6 +21,7 @@ async function main() {
     orderBy: { createdAt: "desc" },
   });
 
+  
   console.log(`Found ${cancelled.length} cancelled orders:`);
   for (const o of cancelled) {
     console.log(`  ${o.id} — ${o.createdAt.toISOString()}`);
