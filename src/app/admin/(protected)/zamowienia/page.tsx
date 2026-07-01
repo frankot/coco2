@@ -412,8 +412,8 @@ function OrdersTable({ showB2B, showRegular }: { showB2B: boolean; showRegular: 
         </TableHeader>
         <TableBody>
           {orders.map((order) => {
-            // Format to PLN (złoty)
             const formattedTotal = (order.pricePaidInCents / 100).toFixed(2);
+            const totalProducts = order.orderItems.reduce((sum, item) => sum + item.quantity, 0);
 
             return (
               <TableRow key={order.id}>
@@ -453,7 +453,7 @@ function OrdersTable({ showB2B, showRegular }: { showB2B: boolean; showRegular: 
                 </TableCell>
                 <TableCell>
                   <TableCellLink href={`/admin/zamowienia/${order.id}`}>
-                    {order._count.orderItems}
+                    {totalProducts}
                   </TableCellLink>
                 </TableCell>
                 <TableCell>

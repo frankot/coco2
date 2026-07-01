@@ -156,6 +156,7 @@ export const POST = createRouteHandler(
           },
           shipment,
           comment: order.orderItems.map((oi) => `${oi.quantity}x ${oi.product.name}`).join(", "),
+          content: "",
           is_zebra: 0,
         };
 
