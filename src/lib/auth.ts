@@ -5,6 +5,7 @@ import { verifyUserCredentials } from "@/lib/auth-utils";
 import { findUserByEmail } from "@/lib/auth-server";
 import { compare } from "bcrypt";
 import { loginLimiter } from "@/lib/rate-limit";
+import prisma from "@/db";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -117,6 +118,21 @@ export const authOptions: NextAuthOptions = {
         session.user.role = token.role;
         session.user.id = token.id;
         session.user.accountType = token.accountType;
+
+        if (typeof token.id === "string") {
+          try {
+            const user = await prisma.user.findUnique({
+              where: { id: token.id },
+              select: { accountType: true },
+            });
+            if (user?.accountType) {
+              token.accountType = user.accountType;
+              session.user.accountType = user.accountType;
+            }
+          } catch (error) {
+            console.error("Failed to refresh session account type", error);
+          }
+        }
       }
       return session;
     },

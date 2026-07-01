@@ -96,8 +96,15 @@ export async function createOrder(formData: OrderFormData) {
     }
 
     // HURT-only payment gating
-    const gateSession = await getServerSession(authOptions);
-    const isHurt = gateSession?.user?.accountType === "HURT";
+    const earlySession = await getServerSession(authOptions);
+    const earlyUserId = earlySession?.user?.id;
+    const freshUser = earlyUserId
+      ? await prisma.user.findUnique({
+          where: { id: earlyUserId },
+          select: { accountType: true },
+        })
+      : null;
+    const isHurt = freshUser?.accountType === "HURT";
     if (validatedData.paymentMethod === "COD") {
       if (!isHurt) {
         return {
@@ -150,8 +157,6 @@ export async function createOrder(formData: OrderFormData) {
     }
 
     // Resolve custom prices for authenticated user (B2B/HURT)
-    const earlySession = await getServerSession(authOptions);
-    const earlyUserId = earlySession?.user?.id;
     if (earlyUserId) {
       const { getCustomPriceMap } = await import("@/lib/resolve-prices");
       const customPriceMap = await getCustomPriceMap(earlyUserId);

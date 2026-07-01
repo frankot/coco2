@@ -113,7 +113,11 @@ export const PATCH = createRouteHandler(
 
     const movedToProcessing = previousStatus !== "PROCESSING" && body.status === "PROCESSING";
 
-    if (movedToProcessing && !updatedOrder.apaczkaOrderId && !updatedOrder.isB2BManual) {
+    if (movedToProcessing && updatedOrder.isB2BManual) {
+      return { ...updatedOrder, apaczkaSkippedReason: "B2B_MANUAL" };
+    }
+
+    if (movedToProcessing && !updatedOrder.apaczkaOrderId) {
       try {
         await confirmOrderInApaczka(orderId);
         // Re-fetch to include Apaczka data in response
@@ -122,8 +126,21 @@ export const PATCH = createRouteHandler(
           include: ORDER_DETAIL_INCLUDE,
         });
         if (refreshed) return refreshed;
-      } catch (error) {
+      } catch (error: any) {
         console.error("[APACZKA] Order confirmation failed", { orderId, error });
+        if (previousStatus) {
+          await prisma.order.update({
+            where: { id: orderId },
+            data: {
+              status: previousStatus,
+              ...(previousStatus === "PENDING" ? { paidAt: null } : {}),
+            },
+          });
+        }
+        throw new ApiError(
+          `Nie udało się utworzyć przesyłki Apaczka: ${error?.message || "nieznany błąd"}`,
+          502
+        );
       }
     }
 

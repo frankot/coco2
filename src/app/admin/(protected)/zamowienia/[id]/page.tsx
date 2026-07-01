@@ -154,17 +154,21 @@ export default function OrderDetailsPage() {
         body: JSON.stringify({ status }),
       });
 
+      const data = await response.json().catch(() => null);
       if (response.ok) {
-        const updatedOrder = await response.json();
         if (status === "CANCELLED") {
           toast.success(`Zamówienie zostało anulowane`);
           router.push("/admin/zamowienia");
           return;
         }
-        setOrder(updatedOrder);
-        toast.success(`Status zamówienia został zmieniony na ${getStatusDisplayName(status)}`);
+        setOrder(data);
+        if (data?.apaczkaSkippedReason === "B2B_MANUAL") {
+          toast.warning("Zamówienie B2B/ręczne — Apaczka nie została utworzona");
+        } else {
+          toast.success(`Status zamówienia został zmieniony na ${getStatusDisplayName(status)}`);
+        }
       } else {
-        toast.error("Nie udało się zaktualizować statusu zamówienia");
+        toast.error(data?.error || "Nie udało się zaktualizować statusu zamówienia");
       }
     } catch (error) {
       console.error("Error updating order status:", error);

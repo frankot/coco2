@@ -86,11 +86,16 @@ export function OrderActionsMenu({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: newStatus }),
       });
+      const data = await response.json().catch(() => null);
       if (response.ok) {
-        toast.success(`Status zamówienia został zmieniony na ${newStatus}`);
+        if (data?.apaczkaSkippedReason === "B2B_MANUAL") {
+          toast.warning("Zamówienie B2B/ręczne — Apaczka nie została utworzona");
+        } else {
+          toast.success(`Status zamówienia został zmieniony na ${newStatus}`);
+        }
         window.location.reload();
       } else {
-        toast.error("Nie udało się zaktualizować statusu zamówienia");
+        toast.error(data?.error || "Nie udało się zaktualizować statusu zamówienia");
       }
     } catch (error) {
       toast.error("Wystąpił błąd podczas aktualizacji statusu");
