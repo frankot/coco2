@@ -3,6 +3,7 @@ import mailer from "@/lib/mailer";
 import { generateAndSendInvoice } from "@/lib/invoice";
 import { renderEmailLayout } from "@/lib/email-layout";
 import { logError } from "@/lib/logger";
+import { confirmOrderInApaczka } from "@/lib/apaczka-confirm";
 
 // Atomically transition a Stripe order PENDING -> PAID.
 // Safe to call concurrently from the Stripe webhook and /verify-session — only
@@ -32,7 +33,10 @@ export async function confirmStripePayment(
       id: true,
       discountCodeId: true,
       isB2BManual: true,
-      user: { select: { email: true, firstName: true } },
+      paymentMethod: true,
+      shippingServiceId: true,
+      apaczkaOrderId: true,
+      user: { select: { email: true, firstName: true, accountType: true } },
     },
   });
 
@@ -56,6 +60,21 @@ export async function confirmStripePayment(
     generateAndSendInvoice(orderId).catch((e) => {
       logError("confirmStripePayment.invoice", e, { orderId });
     });
+  }
+
+  // Apaczka Automation
+  if (
+    order?.user?.accountType === "DETAL" &&
+    !order.isB2BManual &&
+    order.paymentMethod === "STRIPE" &&
+    order.shippingServiceId &&
+    !order.apaczkaOrderId
+  ) {
+    try {
+      await confirmOrderInApaczka(orderId);
+    } catch (e) {
+      logError("confirmStripePayment.apaczka", e, { orderId });
+    }
   }
 
   try {

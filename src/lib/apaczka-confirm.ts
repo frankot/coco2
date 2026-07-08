@@ -221,6 +221,7 @@ export async function confirmOrderInApaczka(orderId: string) {
       apaczkaStatus: ap.status,
       shippingServiceName: ap.service_name,
       apaczkaConfirmedAt: new Date(),
+      status: "PROCESSING",
     },
     include: {
       user: { select: { email: true, firstName: true, lastName: true } },
