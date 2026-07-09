@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { notFound } from "next/navigation";
 import { formatPLN } from "@/lib/formatter";
 import { addProductToCart } from "@/lib/cart-client";
+import { COOKIE_CONSENT_EVENT, trackMetaPixelEvent } from "@/lib/meta-pixel";
 import ReactMarkdown from "react-markdown";
 
 export default function ProductPageClient({ params }: { params: Promise<{ id: string }> }) {
@@ -20,6 +21,7 @@ export default function ProductPageClient({ params }: { params: Promise<{ id: st
   const [activeTab, setActiveTab] = useState("composition");
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
+  const viewedProductRef = useRef<string | null>(null);
   const minSwipeDistance = 40;
 
   useEffect(() => {
@@ -52,6 +54,24 @@ export default function ProductPageClient({ params }: { params: Promise<{ id: st
 
     fetchProduct();
   }, [productId]);
+
+  useEffect(() => {
+    if (!product || viewedProductRef.current === product.id) return;
+    const sendViewContent = () => {
+      if (viewedProductRef.current === product.id) return;
+      const tracked = trackMetaPixelEvent("ViewContent", {
+        content_ids: [product.id],
+        content_name: product.name,
+        content_type: "product",
+        value: product.priceInCents / 100,
+        currency: "PLN",
+      });
+      if (tracked) viewedProductRef.current = product.id;
+    };
+    sendViewContent();
+    window.addEventListener(COOKIE_CONSENT_EVENT, sendViewContent);
+    return () => window.removeEventListener(COOKIE_CONSENT_EVENT, sendViewContent);
+  }, [product]);
 
   // Reset selected image if it's out of bounds when product changes
   useEffect(() => {

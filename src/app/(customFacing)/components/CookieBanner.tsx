@@ -4,24 +4,25 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
-
-const COOKIE_KEY = "cookie-consent";
+import { COOKIE_CONSENT_EVENT, COOKIE_CONSENT_KEY } from "@/lib/meta-pixel";
 
 export function CookieBanner() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const consent = localStorage.getItem(COOKIE_KEY);
+    const consent = localStorage.getItem(COOKIE_CONSENT_KEY);
     if (!consent) setVisible(true);
   }, []);
 
   const accept = () => {
-    localStorage.setItem(COOKIE_KEY, "accepted");
+    localStorage.setItem(COOKIE_CONSENT_KEY, "accepted");
+    window.dispatchEvent(new Event(COOKIE_CONSENT_EVENT));
     setVisible(false);
   };
 
   const reject = () => {
-    localStorage.setItem(COOKIE_KEY, "rejected");
+    localStorage.setItem(COOKIE_CONSENT_KEY, "rejected");
+    window.dispatchEvent(new Event(COOKIE_CONSENT_EVENT));
     setVisible(false);
   };
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { toast } from "sonner";
+import { trackMetaPixelEvent } from "@/lib/meta-pixel";
 
 export type CartProductInput = {
   id: string;
@@ -49,6 +50,13 @@ export function addProductToCart(product: CartProductInput, quantity: number = 1
 
     localStorage.setItem("cart", JSON.stringify(existingCart));
     window.dispatchEvent(new Event("cartUpdated"));
+    trackMetaPixelEvent("AddToCart", {
+      content_ids: [product.id],
+      content_name: product.name,
+      content_type: "product",
+      value: (product.priceInCents * quantity) / 100,
+      currency: "PLN",
+    });
 
     if (wasCartEmpty) {
       window.dispatchEvent(new Event("openCartSheet"));

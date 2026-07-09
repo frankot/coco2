@@ -11,6 +11,7 @@ import { authOptions } from "@/lib/auth";
 import { notFound, redirect } from "next/navigation";
 import { stripe } from "@/lib/stripe";
 import { getOrigin } from "@/lib/get-origin";
+import { PurchaseTracker } from "./PurchaseTracker";
 
 export default async function OrderConfirmationPage({
   params,
@@ -122,6 +123,16 @@ export default async function OrderConfirmationPage({
 
   return (
     <div className="container max-w-3xl py-10 mt-10">
+      {isPaymentCompleted ? (
+        <PurchaseTracker
+          orderId={order.id}
+          value={order.pricePaidInCents / 100}
+          items={order.orderItems.map((item) => ({
+            productId: item.productId,
+            quantity: item.quantity,
+          }))}
+        />
+      ) : null}
       <Card className="p-6">
         <div className="text-center mb-6">
           <div className="flex justify-center mb-4">

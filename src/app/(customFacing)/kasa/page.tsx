@@ -24,6 +24,7 @@ import { toast } from "sonner";
 import { formatPLN } from "@/lib/formatter";
 import { createOrder } from "./_actions";
 import { ApaczkaService } from "@/types/apaczka";
+import { COOKIE_CONSENT_EVENT, trackMetaPixelEvent } from "@/lib/meta-pixel";
 
 // Import cart item type from Cart component
 type CartItem = {
@@ -64,6 +65,7 @@ export default function CheckoutPage() {
   const supplierInputRef = useRef<HTMLInputElement | null>(null);
   const apaczkaMapRef = useRef<any>(null);
   const submittingLock = useRef(false);
+  const checkoutTrackedRef = useRef(false);
 
   // Discount code state
   const [discountCodeInput, setDiscountCodeInput] = useState("");
@@ -135,6 +137,24 @@ export default function CheckoutPage() {
     window.addEventListener("cartUpdated", loadCart);
     return () => window.removeEventListener("cartUpdated", loadCart);
   }, []);
+
+  useEffect(() => {
+    if (checkoutTrackedRef.current || cartItems.length === 0) return;
+    const sendInitiateCheckout = () => {
+      if (checkoutTrackedRef.current) return;
+      const tracked = trackMetaPixelEvent("InitiateCheckout", {
+        value: cartItems.reduce((sum, item) => sum + item.priceInCents * item.quantity, 0) / 100,
+        currency: "PLN",
+        content_ids: cartItems.map((item) => item.id),
+        content_type: "product",
+        num_items: cartItems.reduce((sum, item) => sum + item.quantity, 0),
+      });
+      if (tracked) checkoutTrackedRef.current = true;
+    };
+    sendInitiateCheckout();
+    window.addEventListener(COOKIE_CONSENT_EVENT, sendInitiateCheckout);
+    return () => window.removeEventListener(COOKIE_CONSENT_EVENT, sendInitiateCheckout);
+  }, [cartItems]);
 
   // Re-check product availability on checkout entry
   useEffect(() => {
