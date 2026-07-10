@@ -238,6 +238,13 @@ export default function OrderDetailsPage() {
     }
   };
 
+  const getStatusBadgeClassName = (status: OrderStatus) => {
+    if (status === "DELIVERED") {
+      return "border-emerald-200 bg-emerald-100 text-emerald-800 hover:bg-emerald-100";
+    }
+    return undefined;
+  };
+
   // Get badge variant based on order status
   const getStatusBadgeVariant = (status: OrderStatus) => {
     switch (status) {
@@ -250,7 +257,7 @@ export default function OrderDetailsPage() {
       case "SHIPPED":
         return "outline";
       case "DELIVERED":
-        return "default";
+        return "outline";
       case "CANCELLED":
         return "destructive";
       default:
@@ -447,7 +454,10 @@ export default function OrderDetailsPage() {
 
               <div className="text-sm text-muted-foreground">Status:</div>
               <div className="flex flex-wrap items-center gap-1">
-                <Badge variant={getStatusBadgeVariant(order.status)}>
+                <Badge
+                  variant={getStatusBadgeVariant(order.status)}
+                  className={getStatusBadgeClassName(order.status)}
+                >
                   {getStatusDisplayName(order.status, order.paymentMethod)}
                 </Badge>
                 {order.isB2BManual && (

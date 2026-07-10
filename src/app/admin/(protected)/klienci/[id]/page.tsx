@@ -281,12 +281,16 @@ async function ClientDetailContent({ id }: { id: string }) {
                         <Badge
                           variant={
                             order.status === "DELIVERED"
-                              ? "default"
+                              ? "outline"
                               : order.status === "CANCELLED"
                                 ? "destructive"
                                 : "secondary"
                           }
-                          className="text-xs"
+                          className={
+                            order.status === "DELIVERED"
+                              ? "border-emerald-200 bg-emerald-100 text-xs text-emerald-800 hover:bg-emerald-100"
+                              : "text-xs"
+                          }
                         >
                           {order.status}
                         </Badge>

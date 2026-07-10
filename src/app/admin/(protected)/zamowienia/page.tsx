@@ -330,12 +330,19 @@ function OrdersTable({ showB2B, showRegular }: { showB2B: boolean; showRegular: 
       case "SHIPPED":
         return "outline"; // Outline as info
       case "DELIVERED":
-        return "default"; // Use default; custom colors could be added later
+        return "outline";
       case "CANCELLED":
         return "destructive"; // Red
       default:
         return "secondary";
     }
+  };
+
+  const getStatusBadgeClassName = (status: OrderStatus) => {
+    if (status === "DELIVERED") {
+      return "border-emerald-200 bg-emerald-100 text-emerald-800 hover:bg-emerald-100";
+    }
+    return undefined;
   };
 
   // Get status display name in Polish
@@ -430,7 +437,10 @@ function OrdersTable({ showB2B, showRegular }: { showB2B: boolean; showRegular: 
                 <TableCell>
                   <TableCellLink href={`/admin/zamowienia/${order.id}`}>
                     <div className="flex items-center gap-2">
-                      <Badge variant={getStatusBadgeVariant(order.status)}>
+                      <Badge
+                        variant={getStatusBadgeVariant(order.status)}
+                        className={getStatusBadgeClassName(order.status)}
+                      >
                         {getStatusDisplayName(order.status, order.paymentMethod)}
                       </Badge>
                       {order.isB2BManual && (

@@ -95,8 +95,8 @@ function getStatusBadgeVariant(
 ): "default" | "secondary" | "outline" | "destructive" {
   switch (status) {
     case "PAID":
-    case "DELIVERED":
       return "default";
+    case "DELIVERED":
     case "PROCESSING":
     case "SHIPPED":
       return "outline";
@@ -105,6 +105,13 @@ function getStatusBadgeVariant(
     default:
       return "secondary";
   }
+}
+
+function getStatusBadgeClassName(status: string) {
+  if (status === "DELIVERED") {
+    return "border-emerald-200 bg-emerald-100 text-emerald-800 hover:bg-emerald-100";
+  }
+  return undefined;
 }
 
 export default function AdminDashboard() {
@@ -178,7 +185,10 @@ export default function AdminDashboard() {
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         <span className="font-mono text-xs ">#{order.id.slice(0, 7)}</span>
-                        <Badge variant={getStatusBadgeVariant(order.status)}>
+                        <Badge
+                          variant={getStatusBadgeVariant(order.status)}
+                          className={getStatusBadgeClassName(order.status)}
+                        >
                           {getStatusLabel(order.status)}
                         </Badge>
                       </div>
