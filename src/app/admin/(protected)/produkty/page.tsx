@@ -33,10 +33,12 @@ type Product = {
   name: string;
   price: number;
   isAvailable: boolean;
+  isVisible: boolean;
+  isPreorder: boolean;
   visibleToDetal: boolean;
   visibleToDetalB2B: boolean;
   visibleToHurt: boolean;
-  _count: { orders: number };
+  _count: { orderItems: number };
 };
 
 // Sorting type
@@ -114,7 +116,7 @@ function ProductsTable() {
         return multiplier * (a.price - b.price);
 
       case "orders":
-        return multiplier * (a._count.orders - b._count.orders);
+        return multiplier * (a._count.orderItems - b._count.orderItems);
 
       default:
         return 0;
@@ -159,8 +161,9 @@ function ProductsTable() {
                 {renderSortIcon("orders")}
               </div>
             </TableHead>
-            <TableHead>Widoczność</TableHead>
-            <TableHead>Status</TableHead>
+            <TableHead>Sklep</TableHead>
+            <TableHead>Widoczność grup</TableHead>
+            <TableHead>Dostępność</TableHead>
             <TableHead className="w-0">
               <span className="sr-only">Akcje</span>
             </TableHead>
@@ -179,8 +182,26 @@ function ProductsTable() {
               </TableCell>
               <TableCell>
                 <TableCellLink href={`/admin/produkty/${product.id}`}>
-                  {product._count.orders}
+                  {product._count.orderItems}
                 </TableCellLink>
+              </TableCell>
+              <TableCell>
+                <div className="flex gap-1 flex-wrap">
+                  <span
+                    className={`text-xs px-2 py-1 rounded-full font-medium ${
+                      product.isVisible
+                        ? "bg-green-100 text-green-800"
+                        : "bg-gray-100 text-gray-600"
+                    }`}
+                  >
+                    {product.isVisible ? "Widoczny" : "Ukryty"}
+                  </span>
+                  {product.isPreorder && (
+                    <span className="text-xs px-2 py-1 rounded-full font-medium bg-amber-100 text-amber-800">
+                      PREORDER
+                    </span>
+                  )}
+                </div>
               </TableCell>
               <TableCell>
                 <div className="flex gap-1">
@@ -215,7 +236,7 @@ function ProductsTable() {
                       <Link href={`/admin/produkty/edytuj/${product.id}`}>Edytuj</Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DeleteDropdownItem id={product.id} disabled={product._count.orders > 0} />
+                    <DeleteDropdownItem id={product.id} disabled={product._count.orderItems > 0} />
                   </DropdownMenuContent>
                 </DropdownMenu>
               </TableCell>

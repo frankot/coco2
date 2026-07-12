@@ -9,6 +9,7 @@
  * 🟢 You can import this file directly.
  */
 export type * from './models/Product'
+export type * from './models/ProductAvailabilityNotification'
 export type * from './models/BlogPost'
 export type * from './models/User'
 export type * from './models/PasswordResetToken'

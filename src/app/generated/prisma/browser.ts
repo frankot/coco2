@@ -23,6 +23,11 @@ export * from './enums';
  */
 export type Product = Prisma.ProductModel
 /**
+ * Model ProductAvailabilityNotification
+ * 
+ */
+export type ProductAvailabilityNotification = Prisma.ProductAvailabilityNotificationModel
+/**
  * Model BlogPost
  * 
  */

@@ -18,7 +18,7 @@ export function ActiveToggleButton({ id, isAvailable }: { id: string; isAvailabl
       await toggleProductAvailability(id, !isAvailable);
       router.refresh();
       triggerRefresh();
-      toast.success(`Produkt został ${!isAvailable ? "aktywowany" : "deaktywowany"}`);
+      toast.success(`Produkt został oznaczony jako ${!isAvailable ? "dostępny" : "niedostępny"}`);
     });
   }, [id, isAvailable, router, triggerRefresh]);
 

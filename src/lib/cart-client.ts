@@ -9,6 +9,8 @@ export type CartProductInput = {
   priceInCents: number;
   imagePaths: string[];
   itemsPerPack?: number | null;
+  isPreorder?: boolean;
+  preorderAvailableAt?: string | null;
 };
 
 type CartItem = {
@@ -18,6 +20,8 @@ type CartItem = {
   quantity: number;
   imagePath: string;
   itemsPerPack: number;
+  isPreorder?: boolean;
+  preorderAvailableAt?: string | null;
 };
 
 const toastStyles = {
@@ -45,6 +49,8 @@ export function addProductToCart(product: CartProductInput, quantity: number = 1
         quantity,
         imagePath: product.imagePaths[0] || "",
         itemsPerPack: product.itemsPerPack || 1,
+        isPreorder: product.isPreorder || false,
+        preorderAvailableAt: product.preorderAvailableAt || null,
       });
     }
 

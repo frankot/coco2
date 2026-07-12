@@ -29,6 +29,7 @@ export type AggregateProduct = {
 export type ProductAvgAggregateOutputType = {
   price: number | null
   priceInCents: number | null
+  preorderOriginalPriceInCents: number | null
   lastPriceInCents: number | null
   itemsPerPack: number | null
   weightKg: number | null
@@ -40,6 +41,7 @@ export type ProductAvgAggregateOutputType = {
 export type ProductSumAggregateOutputType = {
   price: number | null
   priceInCents: number | null
+  preorderOriginalPriceInCents: number | null
   lastPriceInCents: number | null
   itemsPerPack: number | null
   weightKg: number | null
@@ -57,6 +59,10 @@ export type ProductMinAggregateOutputType = {
   description: string | null
   content: string | null
   isAvailable: boolean | null
+  isVisible: boolean | null
+  isPreorder: boolean | null
+  preorderAvailableAt: Date | null
+  preorderOriginalPriceInCents: number | null
   promo: boolean | null
   lastPriceInCents: number | null
   visibleToDetal: boolean | null
@@ -80,6 +86,10 @@ export type ProductMaxAggregateOutputType = {
   description: string | null
   content: string | null
   isAvailable: boolean | null
+  isVisible: boolean | null
+  isPreorder: boolean | null
+  preorderAvailableAt: Date | null
+  preorderOriginalPriceInCents: number | null
   promo: boolean | null
   lastPriceInCents: number | null
   visibleToDetal: boolean | null
@@ -105,6 +115,10 @@ export type ProductCountAggregateOutputType = {
   content: number
   composition: number
   isAvailable: number
+  isVisible: number
+  isPreorder: number
+  preorderAvailableAt: number
+  preorderOriginalPriceInCents: number
   promo: number
   lastPriceInCents: number
   visibleToDetal: number
@@ -125,6 +139,7 @@ export type ProductCountAggregateOutputType = {
 export type ProductAvgAggregateInputType = {
   price?: true
   priceInCents?: true
+  preorderOriginalPriceInCents?: true
   lastPriceInCents?: true
   itemsPerPack?: true
   weightKg?: true
@@ -136,6 +151,7 @@ export type ProductAvgAggregateInputType = {
 export type ProductSumAggregateInputType = {
   price?: true
   priceInCents?: true
+  preorderOriginalPriceInCents?: true
   lastPriceInCents?: true
   itemsPerPack?: true
   weightKg?: true
@@ -153,6 +169,10 @@ export type ProductMinAggregateInputType = {
   description?: true
   content?: true
   isAvailable?: true
+  isVisible?: true
+  isPreorder?: true
+  preorderAvailableAt?: true
+  preorderOriginalPriceInCents?: true
   promo?: true
   lastPriceInCents?: true
   visibleToDetal?: true
@@ -176,6 +196,10 @@ export type ProductMaxAggregateInputType = {
   description?: true
   content?: true
   isAvailable?: true
+  isVisible?: true
+  isPreorder?: true
+  preorderAvailableAt?: true
+  preorderOriginalPriceInCents?: true
   promo?: true
   lastPriceInCents?: true
   visibleToDetal?: true
@@ -201,6 +225,10 @@ export type ProductCountAggregateInputType = {
   content?: true
   composition?: true
   isAvailable?: true
+  isVisible?: true
+  isPreorder?: true
+  preorderAvailableAt?: true
+  preorderOriginalPriceInCents?: true
   promo?: true
   lastPriceInCents?: true
   visibleToDetal?: true
@@ -314,6 +342,10 @@ export type ProductGroupByOutputType = {
   content: string | null
   composition: runtime.JsonValue | null
   isAvailable: boolean
+  isVisible: boolean
+  isPreorder: boolean
+  preorderAvailableAt: Date | null
+  preorderOriginalPriceInCents: number | null
   promo: boolean
   lastPriceInCents: number | null
   visibleToDetal: boolean
@@ -363,6 +395,10 @@ export type ProductWhereInput = {
   content?: Prisma.StringNullableFilter<"Product"> | string | null
   composition?: Prisma.JsonNullableFilter<"Product">
   isAvailable?: Prisma.BoolFilter<"Product"> | boolean
+  isVisible?: Prisma.BoolFilter<"Product"> | boolean
+  isPreorder?: Prisma.BoolFilter<"Product"> | boolean
+  preorderAvailableAt?: Prisma.DateTimeNullableFilter<"Product"> | Date | string | null
+  preorderOriginalPriceInCents?: Prisma.IntNullableFilter<"Product"> | number | null
   promo?: Prisma.BoolFilter<"Product"> | boolean
   lastPriceInCents?: Prisma.IntNullableFilter<"Product"> | number | null
   visibleToDetal?: Prisma.BoolFilter<"Product"> | boolean
@@ -378,6 +414,7 @@ export type ProductWhereInput = {
   imagePublicIds?: Prisma.StringNullableListFilter<"Product">
   orderItems?: Prisma.OrderItemListRelationFilter
   customPrices?: Prisma.CustomPriceListRelationFilter
+  availabilityNotifications?: Prisma.ProductAvailabilityNotificationListRelationFilter
 }
 
 export type ProductOrderByWithRelationInput = {
@@ -391,6 +428,10 @@ export type ProductOrderByWithRelationInput = {
   content?: Prisma.SortOrderInput | Prisma.SortOrder
   composition?: Prisma.SortOrderInput | Prisma.SortOrder
   isAvailable?: Prisma.SortOrder
+  isVisible?: Prisma.SortOrder
+  isPreorder?: Prisma.SortOrder
+  preorderAvailableAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  preorderOriginalPriceInCents?: Prisma.SortOrderInput | Prisma.SortOrder
   promo?: Prisma.SortOrder
   lastPriceInCents?: Prisma.SortOrderInput | Prisma.SortOrder
   visibleToDetal?: Prisma.SortOrder
@@ -406,6 +447,7 @@ export type ProductOrderByWithRelationInput = {
   imagePublicIds?: Prisma.SortOrder
   orderItems?: Prisma.OrderItemOrderByRelationAggregateInput
   customPrices?: Prisma.CustomPriceOrderByRelationAggregateInput
+  availabilityNotifications?: Prisma.ProductAvailabilityNotificationOrderByRelationAggregateInput
 }
 
 export type ProductWhereUniqueInput = Prisma.AtLeast<{
@@ -422,6 +464,10 @@ export type ProductWhereUniqueInput = Prisma.AtLeast<{
   content?: Prisma.StringNullableFilter<"Product"> | string | null
   composition?: Prisma.JsonNullableFilter<"Product">
   isAvailable?: Prisma.BoolFilter<"Product"> | boolean
+  isVisible?: Prisma.BoolFilter<"Product"> | boolean
+  isPreorder?: Prisma.BoolFilter<"Product"> | boolean
+  preorderAvailableAt?: Prisma.DateTimeNullableFilter<"Product"> | Date | string | null
+  preorderOriginalPriceInCents?: Prisma.IntNullableFilter<"Product"> | number | null
   promo?: Prisma.BoolFilter<"Product"> | boolean
   lastPriceInCents?: Prisma.IntNullableFilter<"Product"> | number | null
   visibleToDetal?: Prisma.BoolFilter<"Product"> | boolean
@@ -437,6 +483,7 @@ export type ProductWhereUniqueInput = Prisma.AtLeast<{
   imagePublicIds?: Prisma.StringNullableListFilter<"Product">
   orderItems?: Prisma.OrderItemListRelationFilter
   customPrices?: Prisma.CustomPriceListRelationFilter
+  availabilityNotifications?: Prisma.ProductAvailabilityNotificationListRelationFilter
 }, "id" | "slug">
 
 export type ProductOrderByWithAggregationInput = {
@@ -450,6 +497,10 @@ export type ProductOrderByWithAggregationInput = {
   content?: Prisma.SortOrderInput | Prisma.SortOrder
   composition?: Prisma.SortOrderInput | Prisma.SortOrder
   isAvailable?: Prisma.SortOrder
+  isVisible?: Prisma.SortOrder
+  isPreorder?: Prisma.SortOrder
+  preorderAvailableAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  preorderOriginalPriceInCents?: Prisma.SortOrderInput | Prisma.SortOrder
   promo?: Prisma.SortOrder
   lastPriceInCents?: Prisma.SortOrderInput | Prisma.SortOrder
   visibleToDetal?: Prisma.SortOrder
@@ -484,6 +535,10 @@ export type ProductScalarWhereWithAggregatesInput = {
   content?: Prisma.StringNullableWithAggregatesFilter<"Product"> | string | null
   composition?: Prisma.JsonNullableWithAggregatesFilter<"Product">
   isAvailable?: Prisma.BoolWithAggregatesFilter<"Product"> | boolean
+  isVisible?: Prisma.BoolWithAggregatesFilter<"Product"> | boolean
+  isPreorder?: Prisma.BoolWithAggregatesFilter<"Product"> | boolean
+  preorderAvailableAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Product"> | Date | string | null
+  preorderOriginalPriceInCents?: Prisma.IntNullableWithAggregatesFilter<"Product"> | number | null
   promo?: Prisma.BoolWithAggregatesFilter<"Product"> | boolean
   lastPriceInCents?: Prisma.IntNullableWithAggregatesFilter<"Product"> | number | null
   visibleToDetal?: Prisma.BoolWithAggregatesFilter<"Product"> | boolean
@@ -510,6 +565,10 @@ export type ProductCreateInput = {
   content?: string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: boolean
+  isVisible?: boolean
+  isPreorder?: boolean
+  preorderAvailableAt?: Date | string | null
+  preorderOriginalPriceInCents?: number | null
   promo?: boolean
   lastPriceInCents?: number | null
   visibleToDetal?: boolean
@@ -525,6 +584,7 @@ export type ProductCreateInput = {
   imagePublicIds?: Prisma.ProductCreateimagePublicIdsInput | string[]
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutProductInput
   customPrices?: Prisma.CustomPriceCreateNestedManyWithoutProductInput
+  availabilityNotifications?: Prisma.ProductAvailabilityNotificationCreateNestedManyWithoutProductInput
 }
 
 export type ProductUncheckedCreateInput = {
@@ -538,6 +598,10 @@ export type ProductUncheckedCreateInput = {
   content?: string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: boolean
+  isVisible?: boolean
+  isPreorder?: boolean
+  preorderAvailableAt?: Date | string | null
+  preorderOriginalPriceInCents?: number | null
   promo?: boolean
   lastPriceInCents?: number | null
   visibleToDetal?: boolean
@@ -553,6 +617,7 @@ export type ProductUncheckedCreateInput = {
   imagePublicIds?: Prisma.ProductCreateimagePublicIdsInput | string[]
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutProductInput
   customPrices?: Prisma.CustomPriceUncheckedCreateNestedManyWithoutProductInput
+  availabilityNotifications?: Prisma.ProductAvailabilityNotificationUncheckedCreateNestedManyWithoutProductInput
 }
 
 export type ProductUpdateInput = {
@@ -566,6 +631,10 @@ export type ProductUpdateInput = {
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isPreorder?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preorderAvailableAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  preorderOriginalPriceInCents?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   promo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastPriceInCents?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   visibleToDetal?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -581,6 +650,7 @@ export type ProductUpdateInput = {
   imagePublicIds?: Prisma.ProductUpdateimagePublicIdsInput | string[]
   orderItems?: Prisma.OrderItemUpdateManyWithoutProductNestedInput
   customPrices?: Prisma.CustomPriceUpdateManyWithoutProductNestedInput
+  availabilityNotifications?: Prisma.ProductAvailabilityNotificationUpdateManyWithoutProductNestedInput
 }
 
 export type ProductUncheckedUpdateInput = {
@@ -594,6 +664,10 @@ export type ProductUncheckedUpdateInput = {
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isPreorder?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preorderAvailableAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  preorderOriginalPriceInCents?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   promo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastPriceInCents?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   visibleToDetal?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -609,6 +683,7 @@ export type ProductUncheckedUpdateInput = {
   imagePublicIds?: Prisma.ProductUpdateimagePublicIdsInput | string[]
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutProductNestedInput
   customPrices?: Prisma.CustomPriceUncheckedUpdateManyWithoutProductNestedInput
+  availabilityNotifications?: Prisma.ProductAvailabilityNotificationUncheckedUpdateManyWithoutProductNestedInput
 }
 
 export type ProductCreateManyInput = {
@@ -622,6 +697,10 @@ export type ProductCreateManyInput = {
   content?: string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: boolean
+  isVisible?: boolean
+  isPreorder?: boolean
+  preorderAvailableAt?: Date | string | null
+  preorderOriginalPriceInCents?: number | null
   promo?: boolean
   lastPriceInCents?: number | null
   visibleToDetal?: boolean
@@ -648,6 +727,10 @@ export type ProductUpdateManyMutationInput = {
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isPreorder?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preorderAvailableAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  preorderOriginalPriceInCents?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   promo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastPriceInCents?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   visibleToDetal?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -674,6 +757,10 @@ export type ProductUncheckedUpdateManyInput = {
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isPreorder?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preorderAvailableAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  preorderOriginalPriceInCents?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   promo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastPriceInCents?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   visibleToDetal?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -708,6 +795,10 @@ export type ProductCountOrderByAggregateInput = {
   content?: Prisma.SortOrder
   composition?: Prisma.SortOrder
   isAvailable?: Prisma.SortOrder
+  isVisible?: Prisma.SortOrder
+  isPreorder?: Prisma.SortOrder
+  preorderAvailableAt?: Prisma.SortOrder
+  preorderOriginalPriceInCents?: Prisma.SortOrder
   promo?: Prisma.SortOrder
   lastPriceInCents?: Prisma.SortOrder
   visibleToDetal?: Prisma.SortOrder
@@ -726,6 +817,7 @@ export type ProductCountOrderByAggregateInput = {
 export type ProductAvgOrderByAggregateInput = {
   price?: Prisma.SortOrder
   priceInCents?: Prisma.SortOrder
+  preorderOriginalPriceInCents?: Prisma.SortOrder
   lastPriceInCents?: Prisma.SortOrder
   itemsPerPack?: Prisma.SortOrder
   weightKg?: Prisma.SortOrder
@@ -743,6 +835,10 @@ export type ProductMaxOrderByAggregateInput = {
   description?: Prisma.SortOrder
   content?: Prisma.SortOrder
   isAvailable?: Prisma.SortOrder
+  isVisible?: Prisma.SortOrder
+  isPreorder?: Prisma.SortOrder
+  preorderAvailableAt?: Prisma.SortOrder
+  preorderOriginalPriceInCents?: Prisma.SortOrder
   promo?: Prisma.SortOrder
   lastPriceInCents?: Prisma.SortOrder
   visibleToDetal?: Prisma.SortOrder
@@ -766,6 +862,10 @@ export type ProductMinOrderByAggregateInput = {
   description?: Prisma.SortOrder
   content?: Prisma.SortOrder
   isAvailable?: Prisma.SortOrder
+  isVisible?: Prisma.SortOrder
+  isPreorder?: Prisma.SortOrder
+  preorderAvailableAt?: Prisma.SortOrder
+  preorderOriginalPriceInCents?: Prisma.SortOrder
   promo?: Prisma.SortOrder
   lastPriceInCents?: Prisma.SortOrder
   visibleToDetal?: Prisma.SortOrder
@@ -783,6 +883,7 @@ export type ProductMinOrderByAggregateInput = {
 export type ProductSumOrderByAggregateInput = {
   price?: Prisma.SortOrder
   priceInCents?: Prisma.SortOrder
+  preorderOriginalPriceInCents?: Prisma.SortOrder
   lastPriceInCents?: Prisma.SortOrder
   itemsPerPack?: Prisma.SortOrder
   weightKg?: Prisma.SortOrder
@@ -829,6 +930,10 @@ export type BoolFieldUpdateOperationsInput = {
   set?: boolean
 }
 
+export type NullableDateTimeFieldUpdateOperationsInput = {
+  set?: Date | string | null
+}
+
 export type NullableIntFieldUpdateOperationsInput = {
   set?: number | null
   increment?: number
@@ -852,6 +957,20 @@ export type DateTimeFieldUpdateOperationsInput = {
 export type ProductUpdateimagePublicIdsInput = {
   set?: string[]
   push?: string | string[]
+}
+
+export type ProductCreateNestedOneWithoutAvailabilityNotificationsInput = {
+  create?: Prisma.XOR<Prisma.ProductCreateWithoutAvailabilityNotificationsInput, Prisma.ProductUncheckedCreateWithoutAvailabilityNotificationsInput>
+  connectOrCreate?: Prisma.ProductCreateOrConnectWithoutAvailabilityNotificationsInput
+  connect?: Prisma.ProductWhereUniqueInput
+}
+
+export type ProductUpdateOneRequiredWithoutAvailabilityNotificationsNestedInput = {
+  create?: Prisma.XOR<Prisma.ProductCreateWithoutAvailabilityNotificationsInput, Prisma.ProductUncheckedCreateWithoutAvailabilityNotificationsInput>
+  connectOrCreate?: Prisma.ProductCreateOrConnectWithoutAvailabilityNotificationsInput
+  upsert?: Prisma.ProductUpsertWithoutAvailabilityNotificationsInput
+  connect?: Prisma.ProductWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProductUpdateToOneWithWhereWithoutAvailabilityNotificationsInput, Prisma.ProductUpdateWithoutAvailabilityNotificationsInput>, Prisma.ProductUncheckedUpdateWithoutAvailabilityNotificationsInput>
 }
 
 export type ProductCreateNestedOneWithoutOrderItemsInput = {
@@ -882,6 +1001,150 @@ export type ProductUpdateOneRequiredWithoutCustomPricesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ProductUpdateToOneWithWhereWithoutCustomPricesInput, Prisma.ProductUpdateWithoutCustomPricesInput>, Prisma.ProductUncheckedUpdateWithoutCustomPricesInput>
 }
 
+export type ProductCreateWithoutAvailabilityNotificationsInput = {
+  id?: string
+  name: string
+  slug?: string
+  price: number
+  priceInCents: number
+  imagePaths?: Prisma.ProductCreateimagePathsInput | string[]
+  description: string
+  content?: string | null
+  composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isAvailable?: boolean
+  isVisible?: boolean
+  isPreorder?: boolean
+  preorderAvailableAt?: Date | string | null
+  preorderOriginalPriceInCents?: number | null
+  promo?: boolean
+  lastPriceInCents?: number | null
+  visibleToDetal?: boolean
+  visibleToDetalB2B?: boolean
+  visibleToHurt?: boolean
+  itemsPerPack?: number
+  weightKg?: number
+  lengthCm?: number
+  widthCm?: number
+  heightCm?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  imagePublicIds?: Prisma.ProductCreateimagePublicIdsInput | string[]
+  orderItems?: Prisma.OrderItemCreateNestedManyWithoutProductInput
+  customPrices?: Prisma.CustomPriceCreateNestedManyWithoutProductInput
+}
+
+export type ProductUncheckedCreateWithoutAvailabilityNotificationsInput = {
+  id?: string
+  name: string
+  slug?: string
+  price: number
+  priceInCents: number
+  imagePaths?: Prisma.ProductCreateimagePathsInput | string[]
+  description: string
+  content?: string | null
+  composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isAvailable?: boolean
+  isVisible?: boolean
+  isPreorder?: boolean
+  preorderAvailableAt?: Date | string | null
+  preorderOriginalPriceInCents?: number | null
+  promo?: boolean
+  lastPriceInCents?: number | null
+  visibleToDetal?: boolean
+  visibleToDetalB2B?: boolean
+  visibleToHurt?: boolean
+  itemsPerPack?: number
+  weightKg?: number
+  lengthCm?: number
+  widthCm?: number
+  heightCm?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  imagePublicIds?: Prisma.ProductCreateimagePublicIdsInput | string[]
+  orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutProductInput
+  customPrices?: Prisma.CustomPriceUncheckedCreateNestedManyWithoutProductInput
+}
+
+export type ProductCreateOrConnectWithoutAvailabilityNotificationsInput = {
+  where: Prisma.ProductWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProductCreateWithoutAvailabilityNotificationsInput, Prisma.ProductUncheckedCreateWithoutAvailabilityNotificationsInput>
+}
+
+export type ProductUpsertWithoutAvailabilityNotificationsInput = {
+  update: Prisma.XOR<Prisma.ProductUpdateWithoutAvailabilityNotificationsInput, Prisma.ProductUncheckedUpdateWithoutAvailabilityNotificationsInput>
+  create: Prisma.XOR<Prisma.ProductCreateWithoutAvailabilityNotificationsInput, Prisma.ProductUncheckedCreateWithoutAvailabilityNotificationsInput>
+  where?: Prisma.ProductWhereInput
+}
+
+export type ProductUpdateToOneWithWhereWithoutAvailabilityNotificationsInput = {
+  where?: Prisma.ProductWhereInput
+  data: Prisma.XOR<Prisma.ProductUpdateWithoutAvailabilityNotificationsInput, Prisma.ProductUncheckedUpdateWithoutAvailabilityNotificationsInput>
+}
+
+export type ProductUpdateWithoutAvailabilityNotificationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  price?: Prisma.IntFieldUpdateOperationsInput | number
+  priceInCents?: Prisma.IntFieldUpdateOperationsInput | number
+  imagePaths?: Prisma.ProductUpdateimagePathsInput | string[]
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isPreorder?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preorderAvailableAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  preorderOriginalPriceInCents?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  promo?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastPriceInCents?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  visibleToDetal?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  visibleToDetalB2B?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  visibleToHurt?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  itemsPerPack?: Prisma.IntFieldUpdateOperationsInput | number
+  weightKg?: Prisma.FloatFieldUpdateOperationsInput | number
+  lengthCm?: Prisma.IntFieldUpdateOperationsInput | number
+  widthCm?: Prisma.IntFieldUpdateOperationsInput | number
+  heightCm?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  imagePublicIds?: Prisma.ProductUpdateimagePublicIdsInput | string[]
+  orderItems?: Prisma.OrderItemUpdateManyWithoutProductNestedInput
+  customPrices?: Prisma.CustomPriceUpdateManyWithoutProductNestedInput
+}
+
+export type ProductUncheckedUpdateWithoutAvailabilityNotificationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  price?: Prisma.IntFieldUpdateOperationsInput | number
+  priceInCents?: Prisma.IntFieldUpdateOperationsInput | number
+  imagePaths?: Prisma.ProductUpdateimagePathsInput | string[]
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isPreorder?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preorderAvailableAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  preorderOriginalPriceInCents?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  promo?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastPriceInCents?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  visibleToDetal?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  visibleToDetalB2B?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  visibleToHurt?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  itemsPerPack?: Prisma.IntFieldUpdateOperationsInput | number
+  weightKg?: Prisma.FloatFieldUpdateOperationsInput | number
+  lengthCm?: Prisma.IntFieldUpdateOperationsInput | number
+  widthCm?: Prisma.IntFieldUpdateOperationsInput | number
+  heightCm?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  imagePublicIds?: Prisma.ProductUpdateimagePublicIdsInput | string[]
+  orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutProductNestedInput
+  customPrices?: Prisma.CustomPriceUncheckedUpdateManyWithoutProductNestedInput
+}
+
 export type ProductCreateWithoutOrderItemsInput = {
   id?: string
   name: string
@@ -893,6 +1156,10 @@ export type ProductCreateWithoutOrderItemsInput = {
   content?: string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: boolean
+  isVisible?: boolean
+  isPreorder?: boolean
+  preorderAvailableAt?: Date | string | null
+  preorderOriginalPriceInCents?: number | null
   promo?: boolean
   lastPriceInCents?: number | null
   visibleToDetal?: boolean
@@ -907,6 +1174,7 @@ export type ProductCreateWithoutOrderItemsInput = {
   updatedAt?: Date | string
   imagePublicIds?: Prisma.ProductCreateimagePublicIdsInput | string[]
   customPrices?: Prisma.CustomPriceCreateNestedManyWithoutProductInput
+  availabilityNotifications?: Prisma.ProductAvailabilityNotificationCreateNestedManyWithoutProductInput
 }
 
 export type ProductUncheckedCreateWithoutOrderItemsInput = {
@@ -920,6 +1188,10 @@ export type ProductUncheckedCreateWithoutOrderItemsInput = {
   content?: string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: boolean
+  isVisible?: boolean
+  isPreorder?: boolean
+  preorderAvailableAt?: Date | string | null
+  preorderOriginalPriceInCents?: number | null
   promo?: boolean
   lastPriceInCents?: number | null
   visibleToDetal?: boolean
@@ -934,6 +1206,7 @@ export type ProductUncheckedCreateWithoutOrderItemsInput = {
   updatedAt?: Date | string
   imagePublicIds?: Prisma.ProductCreateimagePublicIdsInput | string[]
   customPrices?: Prisma.CustomPriceUncheckedCreateNestedManyWithoutProductInput
+  availabilityNotifications?: Prisma.ProductAvailabilityNotificationUncheckedCreateNestedManyWithoutProductInput
 }
 
 export type ProductCreateOrConnectWithoutOrderItemsInput = {
@@ -963,6 +1236,10 @@ export type ProductUpdateWithoutOrderItemsInput = {
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isPreorder?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preorderAvailableAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  preorderOriginalPriceInCents?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   promo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastPriceInCents?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   visibleToDetal?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -977,6 +1254,7 @@ export type ProductUpdateWithoutOrderItemsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   imagePublicIds?: Prisma.ProductUpdateimagePublicIdsInput | string[]
   customPrices?: Prisma.CustomPriceUpdateManyWithoutProductNestedInput
+  availabilityNotifications?: Prisma.ProductAvailabilityNotificationUpdateManyWithoutProductNestedInput
 }
 
 export type ProductUncheckedUpdateWithoutOrderItemsInput = {
@@ -990,6 +1268,10 @@ export type ProductUncheckedUpdateWithoutOrderItemsInput = {
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isPreorder?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preorderAvailableAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  preorderOriginalPriceInCents?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   promo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastPriceInCents?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   visibleToDetal?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1004,6 +1286,7 @@ export type ProductUncheckedUpdateWithoutOrderItemsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   imagePublicIds?: Prisma.ProductUpdateimagePublicIdsInput | string[]
   customPrices?: Prisma.CustomPriceUncheckedUpdateManyWithoutProductNestedInput
+  availabilityNotifications?: Prisma.ProductAvailabilityNotificationUncheckedUpdateManyWithoutProductNestedInput
 }
 
 export type ProductCreateWithoutCustomPricesInput = {
@@ -1017,6 +1300,10 @@ export type ProductCreateWithoutCustomPricesInput = {
   content?: string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: boolean
+  isVisible?: boolean
+  isPreorder?: boolean
+  preorderAvailableAt?: Date | string | null
+  preorderOriginalPriceInCents?: number | null
   promo?: boolean
   lastPriceInCents?: number | null
   visibleToDetal?: boolean
@@ -1031,6 +1318,7 @@ export type ProductCreateWithoutCustomPricesInput = {
   updatedAt?: Date | string
   imagePublicIds?: Prisma.ProductCreateimagePublicIdsInput | string[]
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutProductInput
+  availabilityNotifications?: Prisma.ProductAvailabilityNotificationCreateNestedManyWithoutProductInput
 }
 
 export type ProductUncheckedCreateWithoutCustomPricesInput = {
@@ -1044,6 +1332,10 @@ export type ProductUncheckedCreateWithoutCustomPricesInput = {
   content?: string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: boolean
+  isVisible?: boolean
+  isPreorder?: boolean
+  preorderAvailableAt?: Date | string | null
+  preorderOriginalPriceInCents?: number | null
   promo?: boolean
   lastPriceInCents?: number | null
   visibleToDetal?: boolean
@@ -1058,6 +1350,7 @@ export type ProductUncheckedCreateWithoutCustomPricesInput = {
   updatedAt?: Date | string
   imagePublicIds?: Prisma.ProductCreateimagePublicIdsInput | string[]
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutProductInput
+  availabilityNotifications?: Prisma.ProductAvailabilityNotificationUncheckedCreateNestedManyWithoutProductInput
 }
 
 export type ProductCreateOrConnectWithoutCustomPricesInput = {
@@ -1087,6 +1380,10 @@ export type ProductUpdateWithoutCustomPricesInput = {
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isPreorder?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preorderAvailableAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  preorderOriginalPriceInCents?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   promo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastPriceInCents?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   visibleToDetal?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1101,6 +1398,7 @@ export type ProductUpdateWithoutCustomPricesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   imagePublicIds?: Prisma.ProductUpdateimagePublicIdsInput | string[]
   orderItems?: Prisma.OrderItemUpdateManyWithoutProductNestedInput
+  availabilityNotifications?: Prisma.ProductAvailabilityNotificationUpdateManyWithoutProductNestedInput
 }
 
 export type ProductUncheckedUpdateWithoutCustomPricesInput = {
@@ -1114,6 +1412,10 @@ export type ProductUncheckedUpdateWithoutCustomPricesInput = {
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isPreorder?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  preorderAvailableAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  preorderOriginalPriceInCents?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   promo?: Prisma.BoolFieldUpdateOperationsInput | boolean
   lastPriceInCents?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   visibleToDetal?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1128,6 +1430,7 @@ export type ProductUncheckedUpdateWithoutCustomPricesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   imagePublicIds?: Prisma.ProductUpdateimagePublicIdsInput | string[]
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutProductNestedInput
+  availabilityNotifications?: Prisma.ProductAvailabilityNotificationUncheckedUpdateManyWithoutProductNestedInput
 }
 
 
@@ -1138,11 +1441,13 @@ export type ProductUncheckedUpdateWithoutCustomPricesInput = {
 export type ProductCountOutputType = {
   orderItems: number
   customPrices: number
+  availabilityNotifications: number
 }
 
 export type ProductCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   orderItems?: boolean | ProductCountOutputTypeCountOrderItemsArgs
   customPrices?: boolean | ProductCountOutputTypeCountCustomPricesArgs
+  availabilityNotifications?: boolean | ProductCountOutputTypeCountAvailabilityNotificationsArgs
 }
 
 /**
@@ -1169,6 +1474,13 @@ export type ProductCountOutputTypeCountCustomPricesArgs<ExtArgs extends runtime.
   where?: Prisma.CustomPriceWhereInput
 }
 
+/**
+ * ProductCountOutputType without action
+ */
+export type ProductCountOutputTypeCountAvailabilityNotificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ProductAvailabilityNotificationWhereInput
+}
+
 
 export type ProductSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1181,6 +1493,10 @@ export type ProductSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   content?: boolean
   composition?: boolean
   isAvailable?: boolean
+  isVisible?: boolean
+  isPreorder?: boolean
+  preorderAvailableAt?: boolean
+  preorderOriginalPriceInCents?: boolean
   promo?: boolean
   lastPriceInCents?: boolean
   visibleToDetal?: boolean
@@ -1196,6 +1512,7 @@ export type ProductSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   imagePublicIds?: boolean
   orderItems?: boolean | Prisma.Product$orderItemsArgs<ExtArgs>
   customPrices?: boolean | Prisma.Product$customPricesArgs<ExtArgs>
+  availabilityNotifications?: boolean | Prisma.Product$availabilityNotificationsArgs<ExtArgs>
   _count?: boolean | Prisma.ProductCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["product"]>
 
@@ -1210,6 +1527,10 @@ export type ProductSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   content?: boolean
   composition?: boolean
   isAvailable?: boolean
+  isVisible?: boolean
+  isPreorder?: boolean
+  preorderAvailableAt?: boolean
+  preorderOriginalPriceInCents?: boolean
   promo?: boolean
   lastPriceInCents?: boolean
   visibleToDetal?: boolean
@@ -1236,6 +1557,10 @@ export type ProductSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   content?: boolean
   composition?: boolean
   isAvailable?: boolean
+  isVisible?: boolean
+  isPreorder?: boolean
+  preorderAvailableAt?: boolean
+  preorderOriginalPriceInCents?: boolean
   promo?: boolean
   lastPriceInCents?: boolean
   visibleToDetal?: boolean
@@ -1262,6 +1587,10 @@ export type ProductSelectScalar = {
   content?: boolean
   composition?: boolean
   isAvailable?: boolean
+  isVisible?: boolean
+  isPreorder?: boolean
+  preorderAvailableAt?: boolean
+  preorderOriginalPriceInCents?: boolean
   promo?: boolean
   lastPriceInCents?: boolean
   visibleToDetal?: boolean
@@ -1277,10 +1606,11 @@ export type ProductSelectScalar = {
   imagePublicIds?: boolean
 }
 
-export type ProductOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "price" | "priceInCents" | "imagePaths" | "description" | "content" | "composition" | "isAvailable" | "promo" | "lastPriceInCents" | "visibleToDetal" | "visibleToDetalB2B" | "visibleToHurt" | "itemsPerPack" | "weightKg" | "lengthCm" | "widthCm" | "heightCm" | "createdAt" | "updatedAt" | "imagePublicIds", ExtArgs["result"]["product"]>
+export type ProductOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "price" | "priceInCents" | "imagePaths" | "description" | "content" | "composition" | "isAvailable" | "isVisible" | "isPreorder" | "preorderAvailableAt" | "preorderOriginalPriceInCents" | "promo" | "lastPriceInCents" | "visibleToDetal" | "visibleToDetalB2B" | "visibleToHurt" | "itemsPerPack" | "weightKg" | "lengthCm" | "widthCm" | "heightCm" | "createdAt" | "updatedAt" | "imagePublicIds", ExtArgs["result"]["product"]>
 export type ProductInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   orderItems?: boolean | Prisma.Product$orderItemsArgs<ExtArgs>
   customPrices?: boolean | Prisma.Product$customPricesArgs<ExtArgs>
+  availabilityNotifications?: boolean | Prisma.Product$availabilityNotificationsArgs<ExtArgs>
   _count?: boolean | Prisma.ProductCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ProductIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1291,6 +1621,7 @@ export type $ProductPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   objects: {
     orderItems: Prisma.$OrderItemPayload<ExtArgs>[]
     customPrices: Prisma.$CustomPricePayload<ExtArgs>[]
+    availabilityNotifications: Prisma.$ProductAvailabilityNotificationPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1303,6 +1634,10 @@ export type $ProductPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     content: string | null
     composition: runtime.JsonValue | null
     isAvailable: boolean
+    isVisible: boolean
+    isPreorder: boolean
+    preorderAvailableAt: Date | null
+    preorderOriginalPriceInCents: number | null
     promo: boolean
     lastPriceInCents: number | null
     visibleToDetal: boolean
@@ -1712,6 +2047,7 @@ export interface Prisma__ProductClient<T, Null = never, ExtArgs extends runtime.
   readonly [Symbol.toStringTag]: "PrismaPromise"
   orderItems<T extends Prisma.Product$orderItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Product$orderItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   customPrices<T extends Prisma.Product$customPricesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Product$customPricesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CustomPricePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  availabilityNotifications<T extends Prisma.Product$availabilityNotificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Product$availabilityNotificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductAvailabilityNotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1751,6 +2087,10 @@ export interface ProductFieldRefs {
   readonly content: Prisma.FieldRef<"Product", 'String'>
   readonly composition: Prisma.FieldRef<"Product", 'Json'>
   readonly isAvailable: Prisma.FieldRef<"Product", 'Boolean'>
+  readonly isVisible: Prisma.FieldRef<"Product", 'Boolean'>
+  readonly isPreorder: Prisma.FieldRef<"Product", 'Boolean'>
+  readonly preorderAvailableAt: Prisma.FieldRef<"Product", 'DateTime'>
+  readonly preorderOriginalPriceInCents: Prisma.FieldRef<"Product", 'Int'>
   readonly promo: Prisma.FieldRef<"Product", 'Boolean'>
   readonly lastPriceInCents: Prisma.FieldRef<"Product", 'Int'>
   readonly visibleToDetal: Prisma.FieldRef<"Product", 'Boolean'>
@@ -2202,6 +2542,30 @@ export type Product$customPricesArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   distinct?: Prisma.CustomPriceScalarFieldEnum | Prisma.CustomPriceScalarFieldEnum[]
+}
+
+/**
+ * Product.availabilityNotifications
+ */
+export type Product$availabilityNotificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ProductAvailabilityNotification
+   */
+  select?: Prisma.ProductAvailabilityNotificationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ProductAvailabilityNotification
+   */
+  omit?: Prisma.ProductAvailabilityNotificationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ProductAvailabilityNotificationInclude<ExtArgs> | null
+  where?: Prisma.ProductAvailabilityNotificationWhereInput
+  orderBy?: Prisma.ProductAvailabilityNotificationOrderByWithRelationInput | Prisma.ProductAvailabilityNotificationOrderByWithRelationInput[]
+  cursor?: Prisma.ProductAvailabilityNotificationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ProductAvailabilityNotificationScalarFieldEnum | Prisma.ProductAvailabilityNotificationScalarFieldEnum[]
 }
 
 /**

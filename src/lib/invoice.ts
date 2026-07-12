@@ -117,7 +117,7 @@ export async function generateAndSendInvoice(orderId: string): Promise<void> {
   }
 
   // Never invoice an order that hasn't been confirmed paid.
-  const paidStatuses: typeof order.status[] = ["PAID", "PROCESSING", "SHIPPED", "DELIVERED"];
+  const paidStatuses: typeof order.status[] = ["PREORDER", "PAID", "PROCESSING", "SHIPPED", "DELIVERED"];
   if (!paidStatuses.includes(order.status)) {
     return;
   }

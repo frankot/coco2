@@ -24,14 +24,45 @@ export const POST = createRouteHandler(async ({ req }) => {
     throw new ApiError("Each item must include a valid productId", 400);
   }
 
+  const now = new Date();
   const products = await prisma.product.findMany({
-    where: { id: { in: productIds }, isAvailable: true },
-    select: { id: true, name: true, priceInCents: true, imagePaths: true },
+    where: {
+      id: { in: productIds },
+      isVisible: true,
+      OR: [
+        { isAvailable: true },
+        { isPreorder: true, preorderAvailableAt: { gt: now } },
+      ],
+    },
+    select: {
+      id: true,
+      name: true,
+      priceInCents: true,
+      imagePaths: true,
+      isPreorder: true,
+      preorderAvailableAt: true,
+    },
   });
+
+  const preorderProducts = products.filter((product) => product.isPreorder);
+  const isPreorderCheckout = preorderProducts.length > 0;
+
+  if (isPreorderCheckout) {
+    if (products.some((product) => !product.isPreorder)) {
+      throw new ApiError("Produkty preorder i standardowe muszą zostać opłacone osobno.", 400);
+    }
+    if (new Set(preorderProducts.map((product) => product.id)).size > 1) {
+      throw new ApiError("Możesz zamówić tylko jeden typ produktu preorder w jednym zamówieniu.", 400);
+    }
+  }
 
   // Resolve custom prices for authenticated user
   const authSession = await getServerSession(authOptions);
-  if (authSession?.user?.id) {
+  if (isPreorderCheckout && authSession?.user?.accountType && authSession.user.accountType !== "DETAL") {
+    throw new ApiError("Preorder jest dostępny tylko dla klientów detalicznych.", 400);
+  }
+
+  if (authSession?.user?.id && !isPreorderCheckout) {
     const customPrices = await getCustomPriceMap(authSession.user.id);
     for (const product of products) {
       const customPrice = customPrices.get(product.id);

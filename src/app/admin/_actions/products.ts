@@ -6,6 +6,8 @@ import { redirect } from "next/navigation";
 import { uploadImage, deleteImage } from "@/lib/cloudinary";
 import { requireAdmin } from "@/lib/require-admin";
 import { slugify } from "@/lib/formatter";
+import { sendMail } from "@/lib/mailer";
+import { getOrigin } from "@/lib/get-origin";
 
 const fileSchema = z
   .instanceof(File, {
@@ -58,6 +60,19 @@ export async function addProduct(prevState: FormState, formData: FormData): Prom
     const lastPriceInCents = lastPriceRaw ? parseInt(lastPriceRaw) : null;
     const description = formData.get("description") as string;
     const itemsPerPack = parseInt(formData.get("itemsPerPack") as string) || 12;
+    const isVisible = formData.get("isVisible") === "on";
+    const isPreorder = formData.get("isPreorder") === "on";
+    let isAvailable = formData.get("isAvailable") === "on";
+    const preorderAvailableAtRaw = (formData.get("preorderAvailableAt") as string) || "";
+    const preorderAvailableAt = preorderAvailableAtRaw ? new Date(preorderAvailableAtRaw) : null;
+    const preorderOriginalPriceRaw = formData.get("preorderOriginalPriceInCents") as string;
+    const preorderOriginalPriceInCents = preorderOriginalPriceRaw
+      ? parseInt(preorderOriginalPriceRaw)
+      : null;
+
+    if (isPreorder) {
+      isAvailable = false;
+    }
 
     // Package dimensions
     const weightKg = parseFloat(formData.get("weightKg") as string) || 0.5;
@@ -75,6 +90,18 @@ export async function addProduct(prevState: FormState, formData: FormData): Prom
 
     if (!slug) {
       return { error: { slug: ["Slug jest wymagany"] } };
+    }
+
+    if (isPreorder) {
+      if (!preorderAvailableAt || Number.isNaN(preorderAvailableAt.getTime())) {
+        return { error: { _form: ["Data i godzina preorderu są wymagane"] } };
+      }
+      if (preorderAvailableAt <= new Date()) {
+        return { error: { _form: ["Data preorderu musi być w przyszłości"] } };
+      }
+      if (!preorderOriginalPriceInCents || preorderOriginalPriceInCents <= priceInCents) {
+        return { error: { _form: ["Cena regularna preorderu musi być większa od ceny sprzedaży"] } };
+      }
     }
 
     // Check slug uniqueness
@@ -141,7 +168,11 @@ export async function addProduct(prevState: FormState, formData: FormData): Prom
         composition,
         imagePaths,
         imagePublicIds,
-        isAvailable: true,
+        isAvailable,
+        isVisible,
+        isPreorder,
+        preorderAvailableAt: isPreorder ? preorderAvailableAt : null,
+        preorderOriginalPriceInCents: isPreorder ? preorderOriginalPriceInCents : null,
         visibleToDetal: formData.get("visibleToDetal") === "on",
         visibleToDetalB2B: formData.get("visibleToDetalB2B") === "on",
         visibleToHurt: formData.get("visibleToHurt") === "on",
@@ -199,6 +230,20 @@ export async function updateProduct(
     const lastPriceInCents = lastPriceRaw ? parseInt(lastPriceRaw) : null;
     const description = formData.get("description") as string;
     const itemsPerPack = parseInt(formData.get("itemsPerPack") as string) || 12;
+    const isVisible = formData.get("isVisible") === "on";
+    const isPreorder = formData.get("isPreorder") === "on";
+    let isAvailable = formData.get("isAvailable") === "on";
+    const preorderAvailableAtRaw = (formData.get("preorderAvailableAt") as string) || "";
+    const preorderAvailableAt = preorderAvailableAtRaw ? new Date(preorderAvailableAtRaw) : null;
+    const preorderOriginalPriceRaw = formData.get("preorderOriginalPriceInCents") as string;
+    const preorderOriginalPriceInCents = preorderOriginalPriceRaw
+      ? parseInt(preorderOriginalPriceRaw)
+      : null;
+
+    if (isPreorder) {
+      isAvailable = false;
+    }
+
     const weightKg = parseFloat(formData.get("weightKg") as string) || 0.5;
     const lengthCm = parseInt(formData.get("lengthCm") as string) || 20;
     const widthCm = parseInt(formData.get("widthCm") as string) || 15;
@@ -236,6 +281,18 @@ export async function updateProduct(
       return { error: { _form: ["Produkt nie został znaleziony"] } };
     }
 
+    if (isPreorder) {
+      if (!preorderAvailableAt || Number.isNaN(preorderAvailableAt.getTime())) {
+        return { error: { _form: ["Data i godzina preorderu są wymagane"] } };
+      }
+      if (!product.isPreorder && preorderAvailableAt <= new Date()) {
+        return { error: { _form: ["Data preorderu musi być w przyszłości"] } };
+      }
+      if (!preorderOriginalPriceInCents || preorderOriginalPriceInCents <= priceInCents) {
+        return { error: { _form: ["Cena regularna preorderu musi być większa od ceny sprzedaży"] } };
+      }
+    }
+
     // Prepare update data
     const updateData: any = {
       name,
@@ -263,6 +320,11 @@ export async function updateProduct(
 
     updateData.content = content;
     updateData.composition = composition;
+    updateData.isVisible = isVisible;
+    updateData.isAvailable = isAvailable;
+    updateData.isPreorder = isPreorder;
+    updateData.preorderAvailableAt = isPreorder ? preorderAvailableAt : null;
+    updateData.preorderOriginalPriceInCents = isPreorder ? preorderOriginalPriceInCents : null;
     updateData.visibleToDetal = formData.get("visibleToDetal") === "on";
     updateData.visibleToDetalB2B = formData.get("visibleToDetalB2B") === "on";
     updateData.visibleToHurt = formData.get("visibleToHurt") === "on";
@@ -334,6 +396,10 @@ export async function updateProduct(
       data: updateData,
     });
 
+    if (!product.isAvailable && isAvailable) {
+      await sendProductAvailabilityNotifications(productId, name, slug);
+    }
+
     // Redirect outside try/catch with correct path
     redirect("/admin/produkty");
   } catch (error) {
@@ -397,8 +463,55 @@ export async function deleteProduct(
 
 export async function toggleProductAvailability(productId: string, isAvailable: boolean) {
   await requireAdmin();
+  const product = await prisma.product.findUnique({
+    where: { id: productId },
+    select: { id: true, name: true, slug: true, isAvailable: true },
+  });
+
+  if (!product) return;
+
   await prisma.product.update({
     where: { id: productId },
     data: { isAvailable },
   });
+
+  if (!product.isAvailable && isAvailable) {
+    await sendProductAvailabilityNotifications(product.id, product.name, product.slug);
+  }
+}
+
+async function sendProductAvailabilityNotifications(productId: string, productName: string, slug: string) {
+  const notifications = await prisma.productAvailabilityNotification.findMany({
+    where: { productId, status: "ACTIVE" },
+    select: { id: true, email: true },
+  });
+
+  if (notifications.length === 0) return;
+
+  const origin = getOrigin().replace(/\/$/, "");
+  const productUrl = `${origin}/sklep/${slug || productId}`;
+  const sentIds: string[] = [];
+
+  for (const notification of notifications) {
+    const sent = await sendMail({
+      to: notification.email,
+      subject: `Produkt dostępny: ${productName}`,
+      html: `
+        <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;line-height:1.5;color:#111827;">
+          <h1 style="font-size:22px;margin:0 0 16px;">Produkt jest już dostępny</h1>
+          <p style="margin:0 0 16px;">Produkt <strong>${productName}</strong> wrócił do sprzedaży.</p>
+          <a href="${productUrl}" style="display:inline-block;background:#16a34a;color:#ffffff;text-decoration:none;padding:12px 18px;border-radius:8px;font-weight:600;">Zobacz produkt</a>
+        </div>
+      `,
+    });
+
+    if (sent) sentIds.push(notification.id);
+  }
+
+  if (sentIds.length > 0) {
+    await prisma.productAvailabilityNotification.updateMany({
+      where: { id: { in: sentIds } },
+      data: { status: "SENT", sentAt: new Date() },
+    });
+  }
 }

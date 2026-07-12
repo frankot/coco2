@@ -36,14 +36,21 @@ export async function confirmStripePayment(
       paymentMethod: true,
       shippingServiceId: true,
       apaczkaOrderId: true,
+      orderItems: {
+        select: {
+          product: { select: { isPreorder: true } },
+        },
+      },
       user: { select: { email: true, firstName: true, accountType: true } },
     },
   });
 
+  const isPreorderOrder = order?.orderItems.some((item) => item.product.isPreorder) ?? false;
+
   await prisma.$transaction([
     prisma.order.update({
       where: { id: orderId },
-      data: { status: "PAID", paidAt: new Date() },
+      data: { status: isPreorderOrder ? "PREORDER" : "PAID", paidAt: new Date() },
     }),
     ...(order?.discountCodeId
       ? [
@@ -64,6 +71,7 @@ export async function confirmStripePayment(
 
   // Apaczka Automation
   if (
+    !isPreorderOrder &&
     order?.user?.accountType === "DETAL" &&
     !order.isB2BManual &&
     order.paymentMethod === "STRIPE" &&
@@ -82,6 +90,7 @@ export async function confirmStripePayment(
       const emailBody = `
         <p style="margin:0 0 14px;font-size:14px;color:#0d160f;">Cześć ${order.user.firstName ?? ""},</p>
         <p style="margin:0;font-size:14px;color:#0d160f;">Dziękujemy za zamówienie <strong style="font-family:ui-monospace,Menlo,Monaco,monospace;">${order.id}</strong>. Płatność została zaksięgowana.</p>
+        ${isPreorderOrder ? '<p style="margin:14px 0 0;font-size:14px;color:#0d160f;">To zamówienie preorder. Wyślemy je po rozpoczęciu realizacji przez obsługę sklepu.</p>' : ''}
       `;
       const html = renderEmailLayout({
         title: "Płatność potwierdzona",

@@ -16,6 +16,7 @@ enum AccountType {
 
 enum OrderStatus {
   PENDING
+  PREORDER
   PAID
   PROCESSING
   SHIPPED
@@ -35,6 +36,12 @@ enum PaymentStatus {
   COMPLETED
   FAILED
   REFUNDED
+}
+
+enum NotificationStatus {
+  ACTIVE
+  SENT
+  UNSUBSCRIBED
 }
 
 enum AddressType {
@@ -59,6 +66,10 @@ model Product {
   content        String?     // Markdown content
   composition    Json?       // Composition/nutritional info
   isAvailable    Boolean     @default(true)
+  isVisible      Boolean     @default(true)
+  isPreorder     Boolean     @default(false)
+  preorderAvailableAt DateTime?
+  preorderOriginalPriceInCents Int?
   promo          Boolean     @default(false)
   lastPriceInCents Int?
   visibleToDetal    Boolean  @default(true)
@@ -68,12 +79,30 @@ model Product {
   weightKg       Float       @default(0.5)   // Weight per unit in kg
   lengthCm       Int         @default(20)    // Package length in cm
   widthCm        Int         @default(15)    // Package width in cm
-  heightCm       Int         @default(10)    // Package height in cm
+  heightCm       Int         @default(10)    // Package height in cm 
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
   imagePublicIds String[]
   orderItems     OrderItem[]
   customPrices   CustomPrice[]
+  availabilityNotifications ProductAvailabilityNotification[]
+}
+
+model ProductAvailabilityNotification {
+  id                   String             @id @default(uuid())
+  productId            String
+  email                String
+  userId               String?
+  status               NotificationStatus @default(ACTIVE)
+  unsubscribeTokenHash String
+  sentAt               DateTime?
+  createdAt            DateTime           @default(now())
+  product              Product            @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user                 User?              @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@unique([productId, email, status])
+  @@index([productId, status])
+  @@index([email])
 }
 
 model BlogPost {
@@ -101,6 +130,7 @@ model User {
   payments     Payment[]
   customPrices CustomPrice[]
   passwordResetTokens PasswordResetToken[]
+  availabilityNotifications ProductAvailabilityNotification[]
 }
 
 model PasswordResetToken {

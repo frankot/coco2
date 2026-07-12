@@ -16,6 +16,7 @@ type Product = {
   imagePath: string;
   description: string;
   promo?: boolean;
+  isAvailable?: boolean;
 };
 
 interface FeaturedProductCardProps {
@@ -40,6 +41,7 @@ export function FeaturedProductCard({ product, onAddToCart }: FeaturedProductCar
           <span>Polecane</span>
         </div>
 
+
         {/* Product image */}
         <div className="w-full h-44 relative overflow-hidden">
           <Image
@@ -62,6 +64,7 @@ export function FeaturedProductCard({ product, onAddToCart }: FeaturedProductCar
 
             <Button
               size="sm"
+              disabled={product.isAvailable === false}
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -70,7 +73,7 @@ export function FeaturedProductCard({ product, onAddToCart }: FeaturedProductCar
               className="flex items-center gap-1 relative z-10"
             >
               <ShoppingBag className="size-4" />
-              <span>Dodaj</span>
+              <span>{product.isAvailable === false ? "Niedostępny" : "Dodaj"}</span>
             </Button>
           </div>
         </div>

@@ -27,12 +27,16 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
-type OrderStatus = "PENDING" | "PAID" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED";
+type OrderStatus = "PENDING" | "PREORDER" | "PAID" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED";
 
 export function getOverrideCopy(
   target: "PAID" | "PROCESSING" | "SHIPPED" | null,
-  isB2BManual = false
+  isB2BManual = false,
+  isPreorder = false
 ) {
+  if (isPreorder && target === "PROCESSING") {
+    return "Zamówienie preorder zostanie przekazane do realizacji. Po potwierdzeniu utworzymy przesyłkę w Apaczce i wyślemy klientowi informację o rozpoczęciu realizacji.";
+  }
   if (isB2BManual) {
     switch (target) {
       case "PAID":
@@ -195,6 +199,16 @@ export function OrderActionsMenu({
             </DropdownMenuItem>
           </>
         );
+      case "PREORDER":
+        return (
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onSelect={() => setOverrideTarget("PROCESSING")}
+          >
+            <Package className="mr-2 h-4 w-4" />
+            <span>Rozpocznij realizację preorderu</span>
+          </DropdownMenuItem>
+        );
       case "PAID":
         return (
           <DropdownMenuItem className="cursor-pointer" onClick={() => updateStatus("PROCESSING")}>
@@ -268,8 +282,14 @@ export function OrderActionsMenu({
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Potwierdź zmianę statusu bez płatności</DialogTitle>
-            <DialogDescription>{getOverrideCopy(overrideTarget, isB2BManual)}</DialogDescription>
+            <DialogTitle>
+              {currentStatus === "PREORDER"
+                ? "Potwierdź rozpoczęcie realizacji preorderu"
+                : "Potwierdź zmianę statusu bez płatności"}
+            </DialogTitle>
+            <DialogDescription>
+              {getOverrideCopy(overrideTarget, isB2BManual, currentStatus === "PREORDER")}
+            </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="ghost" onClick={() => setOverrideTarget(null)}>
@@ -284,7 +304,11 @@ export function OrderActionsMenu({
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Anulować zamówienie?</DialogTitle>
-            <DialogDescription>Czy na pewno chcesz anulować to zamówienie?</DialogDescription>
+            <DialogDescription>
+              {currentStatus === "PREORDER"
+                ? "To opłacone zamówienie preorder. Anulowanie może wymagać ręcznego zwrotu płatności. Czy kontynuować?"
+                : "Czy na pewno chcesz anulować to zamówienie?"}
+            </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="ghost" onClick={() => setCancelOpen(false)}>

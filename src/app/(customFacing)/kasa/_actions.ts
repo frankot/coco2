@@ -126,13 +126,18 @@ export async function createOrder(formData: OrderFormData) {
     // Get product IDs from cart
     const productIds = validatedData.cartItems.map((item) => item.id);
 
-    // Check if products exist in the database
+    // Check if products exist in the database and can be purchased now
+    const now = new Date();
     const existingProducts = await prisma.product.findMany({
       where: {
         id: {
           in: productIds,
         },
-        isAvailable: true,
+        isVisible: true,
+        OR: [
+          { isAvailable: true },
+          { isPreorder: true, preorderAvailableAt: { gt: now } },
+        ],
       },
     });
 
@@ -154,6 +159,39 @@ export async function createOrder(formData: OrderFormData) {
         success: false,
         error: "Nie znaleziono żadnych produktów w bazie danych",
       };
+    }
+
+    const preorderProducts = existingProducts.filter((product) => product.isPreorder);
+    const isPreorderOrder = preorderProducts.length > 0;
+
+    if (isPreorderOrder) {
+      if (existingProducts.some((product) => !product.isPreorder)) {
+        return {
+          success: false,
+          error: "Produkty preorder i standardowe muszą zostać opłacone osobno.",
+        };
+      }
+
+      if (new Set(preorderProducts.map((product) => product.id)).size > 1) {
+        return {
+          success: false,
+          error: "Możesz zamówić tylko jeden typ produktu preorder w jednym zamówieniu.",
+        };
+      }
+
+      if (freshUser?.accountType && freshUser.accountType !== "DETAL") {
+        return {
+          success: false,
+          error: "Preorder jest dostępny tylko dla klientów detalicznych.",
+        };
+      }
+
+      if (validatedData.paymentMethod !== "STRIPE") {
+        return {
+          success: false,
+          error: "Preorder wymaga płatności online.",
+        };
+      }
     }
 
     // Resolve custom prices for authenticated user (B2B/HURT)
@@ -202,7 +240,14 @@ export async function createOrder(formData: OrderFormData) {
       shippingCostInCents = validatedData.shippingCostInCents;
     } else if (!isHurt) try {
       const products = await prisma.product.findMany({
-        where: { id: { in: productIds } },
+        where: {
+          id: { in: productIds },
+          isVisible: true,
+          OR: [
+            { isAvailable: true },
+            { isPreorder: true, preorderAvailableAt: { gt: now } },
+          ],
+        },
         select: {
           id: true,
           weightKg: true,

@@ -48,7 +48,7 @@ export default async function ProductPreviewPage({ params }: { params: Promise<{
         </Link>
 
         <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground">Aktywny:</span>
+          <span className="text-sm text-muted-foreground">Dostępny do kupienia:</span>
           <ActiveToggleButton id={product.id} isAvailable={product.isAvailable} />
         </div>
 
@@ -102,14 +102,27 @@ export default async function ProductPreviewPage({ params }: { params: Promise<{
           <div>
             <p className="text-3xl font-bold">{formatPLN(product.priceInCents)}</p>
             <p className="text-sm text-muted-foreground mt-1">
-              {product.isAvailable ? "Produkt aktywny" : "Produkt nieaktywny"}
+              {product.isPreorder
+                ? "Produkt preorder"
+                : product.isAvailable
+                  ? "Produkt dostępny do kupienia"
+                  : "Produkt niedostępny do kupienia"}
             </p>
+            {product.isPreorder && product.preorderAvailableAt && (
+              <p className="text-sm text-amber-700 mt-1">
+                Preorder do: {new Intl.DateTimeFormat("pl-PL", {
+                  dateStyle: "short",
+                  timeStyle: "short",
+                }).format(product.preorderAvailableAt)}
+              </p>
+            )}
           </div>
 
           {/* Visibility */}
           <div>
             <h3 className="text-sm font-medium text-muted-foreground mb-2">Widoczność</h3>
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-wrap">
+              <VisibilityBadge label="Sklep" active={product.isVisible} />
               <VisibilityBadge label="Detal" active={product.visibleToDetal} />
               <VisibilityBadge label="B2B" active={product.visibleToDetalB2B} />
               <VisibilityBadge label="Hurt" active={product.visibleToHurt} />

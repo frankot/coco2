@@ -31,7 +31,7 @@ import {
 } from "@/components/ui/dialog";
 
 // Type definitions
-type OrderStatus = "PENDING" | "PAID" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED";
+type OrderStatus = "PENDING" | "PREORDER" | "PAID" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED";
 
 type OrderItem = {
   quantity: number;
@@ -323,6 +323,8 @@ function OrdersTable({ showB2B, showRegular }: { showB2B: boolean; showRegular: 
     switch (status) {
       case "PENDING":
         return "secondary"; // Gray
+      case "PREORDER":
+        return "outline";
       case "PAID":
         return "default"; // Use default style for paid
       case "PROCESSING":
@@ -339,6 +341,9 @@ function OrdersTable({ showB2B, showRegular }: { showB2B: boolean; showRegular: 
   };
 
   const getStatusBadgeClassName = (status: OrderStatus) => {
+    if (status === "PREORDER") {
+      return "border-amber-200 bg-amber-100 text-amber-800 hover:bg-amber-100";
+    }
     if (status === "DELIVERED") {
       return "border-emerald-200 bg-emerald-100 text-emerald-800 hover:bg-emerald-100";
     }
@@ -350,6 +355,8 @@ function OrdersTable({ showB2B, showRegular }: { showB2B: boolean; showRegular: 
     switch (status) {
       case "PENDING":
         return "Oczekujące";
+      case "PREORDER":
+        return "Preorder";
       case "PAID":
         return paymentMethod === "COD" ? "Opłacone (Pobranie)" : "Opłacone";
       case "PROCESSING":
@@ -423,7 +430,7 @@ function OrdersTable({ showB2B, showRegular }: { showB2B: boolean; showRegular: 
             const totalProducts = order.orderItems.reduce((sum, item) => sum + item.quantity, 0);
 
             return (
-              <TableRow key={order.id}>
+              <TableRow key={order.id} className={order.status === "PREORDER" ? "bg-amber-50/60" : undefined}>
                 <TableCell>
                   <TableCellLink href={`/admin/zamowienia/${order.id}`}>
                     <ShoppingBag className="size-8 text-gray-500" />

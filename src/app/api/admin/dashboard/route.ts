@@ -1,7 +1,7 @@
 import { createRouteHandler } from "@/lib/api";
 import prisma from "@/db";
 
-const REVENUE_STATUSES = ["PAID", "PROCESSING", "SHIPPED", "DELIVERED"] as const;
+const REVENUE_STATUSES = ["PREORDER", "PAID", "PROCESSING", "SHIPPED", "DELIVERED"] as const;
 
 function toDayKey(date: Date) {
   return date.toISOString().slice(0, 10);

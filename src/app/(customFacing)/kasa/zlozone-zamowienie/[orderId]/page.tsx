@@ -114,6 +114,7 @@ export default async function OrderConfirmationPage({
   // Status Labels PL
   const statusLabels: Record<typeof order.status, string> = {
     PENDING: "Oczekujące",
+    PREORDER: "Preorder",
     PAID: "Opłacone",
     PROCESSING: "W realizacji",
     SHIPPED: "Wysłane",

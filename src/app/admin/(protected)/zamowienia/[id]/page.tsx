@@ -46,7 +46,7 @@ import {
 import { ChevronDown } from "lucide-react";
 
 // Type definitions
-type OrderStatus = "PENDING" | "PAID" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED";
+type OrderStatus = "PENDING" | "PREORDER" | "PAID" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED";
 
 type Address = {
   id: string;
@@ -223,6 +223,8 @@ export default function OrderDetailsPage() {
     switch (status) {
       case "PENDING":
         return "Oczekujące";
+      case "PREORDER":
+        return "Preorder";
       case "PAID":
         return paymentMethod === "COD" ? "Opłacone (Pobranie)" : "Opłacone";
       case "PROCESSING":
@@ -239,6 +241,9 @@ export default function OrderDetailsPage() {
   };
 
   const getStatusBadgeClassName = (status: OrderStatus) => {
+    if (status === "PREORDER") {
+      return "border-amber-200 bg-amber-100 text-amber-800 hover:bg-amber-100";
+    }
     if (status === "DELIVERED") {
       return "border-emerald-200 bg-emerald-100 text-emerald-800 hover:bg-emerald-100";
     }
@@ -250,6 +255,8 @@ export default function OrderDetailsPage() {
     switch (status) {
       case "PENDING":
         return "secondary";
+      case "PREORDER":
+        return "outline";
       case "PAID":
         return "default";
       case "PROCESSING":
@@ -324,8 +331,14 @@ export default function OrderDetailsPage() {
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Potwierdź zmianę statusu bez płatności</DialogTitle>
-            <DialogDescription>{getOverrideCopy(overrideTarget, !!order?.isB2BManual)}</DialogDescription>
+            <DialogTitle>
+              {order?.status === "PREORDER"
+                ? "Potwierdź rozpoczęcie realizacji preorderu"
+                : "Potwierdź zmianę statusu bez płatności"}
+            </DialogTitle>
+            <DialogDescription>
+              {getOverrideCopy(overrideTarget, !!order?.isB2BManual, order?.status === "PREORDER")}
+            </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="ghost" onClick={() => setOverrideTarget(null)}>
@@ -381,6 +394,17 @@ export default function OrderDetailsPage() {
               </DropdownMenuContent>
             </DropdownMenu>
           )}
+          {order.status === "PREORDER" && (
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={statusUpdating}
+              onClick={() => setOverrideTarget("PROCESSING")}
+            >
+              <Package className="mr-2 h-4 w-4" />
+              Rozpocznij realizację preorderu
+            </Button>
+          )}
           {order.status === "PAID" && (
             <Button
               variant="outline"
@@ -423,6 +447,7 @@ export default function OrderDetailsPage() {
             </Button>
           )}
           {(order.status === "PENDING" ||
+            order.status === "PREORDER" ||
             order.status === "PAID" ||
             order.status === "PROCESSING" ||
             order.status === "SHIPPED") && (

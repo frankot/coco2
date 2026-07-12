@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Check, ShoppingBag, Star } from "lucide-react";
+import { Bell, Check, ShoppingBag, Star } from "lucide-react";
 import { formatPLN } from "@/lib/formatter";
 import { AddToCartButton } from "@/components/ui/add-to-cart-button";
 import { DeferredHoverImage } from "@/components/ui/deferred-hover-image";
@@ -13,13 +13,24 @@ export function ProductCard({ product, preload }: { product: Product; preload?: 
   const mainImage = product.imagePaths[0] || "";
   const hoverImage = product.imagePaths[1] || mainImage;
   const hasMultipleImages = product.imagePaths.length > 1;
+  const preorderAvailableAt = product.preorderAvailableAt
+    ? new Date(product.preorderAvailableAt)
+    : null;
   const cartProduct = {
     id: product.id,
     name: product.name,
     priceInCents: product.priceInCents,
     imagePaths: product.imagePaths,
     itemsPerPack: product.itemsPerPack,
+    isPreorder: product.isPreorder,
+    preorderAvailableAt: preorderAvailableAt?.toISOString(),
   };
+  const isPreorderActive =
+    product.isPreorder && preorderAvailableAt && preorderAvailableAt.getTime() > Date.now();
+  const preorderDiscount =
+    product.isPreorder && product.preorderOriginalPriceInCents
+      ? Math.max(0, Math.round((1 - product.priceInCents / product.preorderOriginalPriceInCents) * 100))
+      : 0;
 
   return (
     <div className="group bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden border border-gray-100">
@@ -53,11 +64,15 @@ export function ProductCard({ product, preload }: { product: Product; preload?: 
           )}
         </Link>
 
-        {!product.isAvailable && (
+        {product.isPreorder ? (
+          <div className="absolute top-3 left-3 bg-amber-500 text-white px-2 py-1 rounded-full text-xs font-medium">
+            PREORDER
+          </div>
+        ) : !product.isAvailable ? (
           <div className="absolute top-3 left-3 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-medium">
             Niedostępny
           </div>
-        )}
+        ) : null}
       </div>
 
       <div className="p-4">
@@ -78,6 +93,11 @@ export function ProductCard({ product, preload }: { product: Product; preload?: 
 
         <div className="flex items-center justify-between">
           <div>
+            {product.isPreorder && product.preorderOriginalPriceInCents && (
+              <div className="text-sm text-gray-400 line-through">
+                {formatPLN(product.preorderOriginalPriceInCents)}
+              </div>
+            )}
             <div className="text-xl font-bold text-primary">{formatPLN(product.priceInCents)}</div>
             {product.itemsPerPack > 1 && (
               <div className="text-xs text-gray-500 mt-0.5">
@@ -85,25 +105,45 @@ export function ProductCard({ product, preload }: { product: Product; preload?: 
                 {formatPLN(Math.round(product.priceInCents / product.itemsPerPack))}/szt.
               </div>
             )}
+            {preorderDiscount > 0 && (
+              <div className="text-xs font-semibold text-amber-700 mt-0.5">-{preorderDiscount}% preorder</div>
+            )}
           </div>
 
-          <AddToCartButton
-            product={cartProduct}
-            disabled={!product.isAvailable}
-            className="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-full text-sm font-medium transition-colors"
-            idleContent={
-              <>
-                <ShoppingBag className="w-4 h-4 mr-1" />
-                Dodaj
-              </>
-            }
-            loadingContent={
-              <>
-                <Check className="w-4 h-4 mr-1" />
-                Dodawanie...
-              </>
-            }
-          />
+          {product.isPreorder ? (
+            <Link
+              href={`/sklep/${product.slug || product.id}`}
+              className="inline-flex items-center rounded-full border border-amber-500 px-4 py-2 text-sm font-medium text-amber-700 transition-colors hover:bg-amber-500 hover:text-white"
+            >
+              <ShoppingBag className="w-4 h-4 mr-1" />
+              {isPreorderActive ? "Preorder" : "Zakończony"}
+            </Link>
+          ) : product.isAvailable ? (
+            <AddToCartButton
+              product={cartProduct}
+              className="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-full text-sm font-medium transition-colors"
+              idleContent={
+                <>
+                  <ShoppingBag className="w-4 h-4 mr-1" />
+                  Dodaj
+                </>
+              }
+              loadingContent={
+                <>
+                  <Check className="w-4 h-4 mr-1" />
+                  Dodawanie...
+                </>
+              }
+            />
+          ) : (
+            <Link
+              href={`/sklep/${product.slug || product.id}`}
+              className="inline-flex items-center rounded-full border border-primary px-4 py-2 text-sm font-medium text-primary transition-colors hover:bg-transparent hover:text-primary"
+            >
+              <Bell className="w-4 h-4 mr-1" />
+              Powiadom
+            </Link>
+          )}
         </div>
       </div>
     </div>

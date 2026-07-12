@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { formatPLN } from "@/lib/formatter";
-import { Check, ShoppingBag } from "lucide-react";
+import { Bell, Check, ShoppingBag } from "lucide-react";
 import { AddToCartButton } from "@/components/ui/add-to-cart-button";
 import { DeferredHoverImage } from "@/components/ui/deferred-hover-image";
 import type { Product } from "@/app/generated/prisma/client";
@@ -36,13 +36,24 @@ export default function ProductCard({
   const mainImage = product.imagePaths[0] || "";
   const hoverImage = product.imagePaths[1] || mainImage;
   const hasMultipleImages = product.imagePaths.length > 1;
+  const preorderAvailableAt = product.preorderAvailableAt
+    ? new Date(product.preorderAvailableAt)
+    : null;
   const cartProduct = {
     id: product.id,
     name: product.name,
     priceInCents: product.priceInCents,
     imagePaths: product.imagePaths,
     itemsPerPack: product.itemsPerPack,
+    isPreorder: product.isPreorder,
+    preorderAvailableAt: preorderAvailableAt?.toISOString(),
   };
+  const isPreorderActive =
+    product.isPreorder && preorderAvailableAt && preorderAvailableAt.getTime() > Date.now();
+  const preorderDiscount =
+    product.isPreorder && product.preorderOriginalPriceInCents
+      ? Math.max(0, Math.round((1 - product.priceInCents / product.preorderOriginalPriceInCents) * 100))
+      : 0;
 
   return (
     <Link
@@ -54,6 +65,11 @@ export default function ProductCard({
           {product.promo && (
             <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-primary text-white text-center text-xs font-semibold uppercase tracking-wide py-1 px-4 rounded-lg z-10">
               Promocja
+            </div>
+          )}
+          {product.isPreorder && (
+            <div className="absolute top-4 left-4 bg-amber-500 text-white text-center text-xs font-semibold uppercase tracking-wide py-1 px-3 rounded-lg z-10">
+              PREORDER
             </div>
           )}
           <Image
@@ -91,34 +107,53 @@ export default function ProductCard({
         </div>
 
         <div className="text-center space-y-2">
+          {product.isPreorder && product.preorderOriginalPriceInCents && (
+            <div className="text-sm text-gray-400 line-through">
+              {formatPLN(product.preorderOriginalPriceInCents)} / zestaw
+            </div>
+          )}
           <div className="text-xl font-bold text-black">
             {formatPLN(Math.round(product.priceInCents / product.itemsPerPack))}
           </div>
           <div className="inline-block bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium">
             {formatPLN(product.priceInCents)} / zestaw
           </div>
+          {preorderDiscount > 0 && (
+            <div className="text-xs font-semibold text-amber-700">Rabat preorder: -{preorderDiscount}%</div>
+          )}
         </div>
 
         <div className="flex justify-center">
-          <AddToCartButton
-            product={cartProduct}
-            disabled={!product.isAvailable}
-            size="lg"
-            className="w-fit text-white hover:bg-primary hover:text-white/70 font-medium"
-            stopLinkNavigation
-            idleContent={
-              <>
-                <ShoppingBag className="mr-2 h-4 w-4" />
-                Do koszyka
-              </>
-            }
-            loadingContent={
-              <>
-                <Check className="mr-2 h-4 w-4" />
-                Dodano
-              </>
-            }
-          />
+          {product.isPreorder ? (
+            <span className="inline-flex items-center rounded-md border border-amber-500 px-4 py-2 text-sm font-medium text-amber-700 transition-colors group-hover:bg-amber-500 group-hover:text-white">
+              <ShoppingBag className="mr-2 h-4 w-4" />
+              {isPreorderActive ? "Zamów w preorderze" : "Preorder zakończony"}
+            </span>
+          ) : product.isAvailable ? (
+            <AddToCartButton
+              product={cartProduct}
+              size="lg"
+              className="w-fit text-white hover:bg-primary hover:text-white/70 font-medium"
+              stopLinkNavigation
+              idleContent={
+                <>
+                  <ShoppingBag className="mr-2 h-4 w-4" />
+                  Do koszyka
+                </>
+              }
+              loadingContent={
+                <>
+                  <Check className="mr-2 h-4 w-4" />
+                  Dodano
+                </>
+              }
+            />
+          ) : (
+            <span className="inline-flex items-center rounded-md border border-primary px-4 py-2 text-sm font-medium text-primary transition-colors group-hover:bg-transparent group-hover:text-primary">
+              <Bell className="mr-2 h-4 w-4" />
+              Powiadom mnie
+            </span>
+          )}
         </div>
       </div>
     </Link>

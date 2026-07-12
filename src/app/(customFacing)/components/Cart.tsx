@@ -13,6 +13,8 @@ export type CartItem = {
   quantity: number;
   imagePath: string;
   itemsPerPack: number;
+  isPreorder?: boolean;
+  preorderAvailableAt?: string | null;
 };
 
 type CartProps = {
@@ -127,10 +129,12 @@ const CartItemComponent = memo(function CartItemComponent({
   item,
   onUpdateQuantity,
   onRemove,
+  inactive,
 }: {
   item: CartItem;
   onUpdateQuantity: (id: string, quantity: number) => void;
   onRemove: (id: string) => void;
+  inactive?: boolean;
 }) {
   const handleIncrement = useCallback(() => {
     onUpdateQuantity(item.id, item.quantity + 1);
@@ -145,7 +149,7 @@ const CartItemComponent = memo(function CartItemComponent({
   }, [item.id, onRemove]);
 
   return (
-    <li className="flex gap-4 pb-6 border-b">
+    <li className={`flex gap-4 pb-6 border-b ${inactive ? "opacity-45" : ""}`}>
       {/* Product image */}
       <div className="size-28 rounded-md flex-shrink-0 relative overflow-hidden">
         <Image
@@ -171,7 +175,19 @@ const CartItemComponent = memo(function CartItemComponent({
             <Trash2 size={18} />
           </button>
         </div>
-        <p className="text-primary text-md font-medium my-2">{formatPLN(item.priceInCents)}</p>
+        <div className="flex items-center gap-2 my-2">
+          <p className="text-primary text-md font-medium">{formatPLN(item.priceInCents)}</p>
+          {item.isPreorder && (
+            <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-800">
+              PREORDER
+            </span>
+          )}
+        </div>
+        {inactive && (
+          <p className="text-xs text-amber-700 mb-2">
+            Produkt standardowy zostanie pominięty przy zamówieniu preorder.
+          </p>
+        )}
         <p className="text-xs text-gray-500">
           {(item.itemsPerPack || 1) * item.quantity} szt. ({item.quantity} ×{" "}
           {item.itemsPerPack || 1})
@@ -212,14 +228,21 @@ const CartContent = memo(function CartContent({
   onRemove: (id: string) => void;
   onClose: () => void;
 }) {
+  const hasPreorder = items.some((item) => item.isPreorder);
   return (
     <div className="p-6 flex-grow cart-content" style={scrollbarStyles}>
       {items.length > 0 ? (
         <ul className="space-y-6">
+          {hasPreorder && items.some((item) => !item.isPreorder) && (
+            <li className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
+              Produkty preorder i standardowe muszą zostać opłacone osobno.
+            </li>
+          )}
           {items.map((item) => (
             <CartItemComponent
               key={item.id}
               item={item}
+              inactive={hasPreorder && !item.isPreorder}
               onUpdateQuantity={onUpdateQuantity}
               onRemove={onRemove}
             />
@@ -232,7 +255,9 @@ const CartContent = memo(function CartContent({
 
 // CartFooter component - memoized
 const CartFooter = memo(function CartFooter({ items }: { items: CartItem[] }) {
-  const subtotal = items.reduce((sum, item) => sum + item.priceInCents * item.quantity, 0);
+  const hasPreorder = items.some((item) => item.isPreorder);
+  const activeItems = hasPreorder ? items.filter((item) => item.isPreorder) : items;
+  const subtotal = activeItems.reduce((sum, item) => sum + item.priceInCents * item.quantity, 0);
 
   if (items.length === 0) return null;
 

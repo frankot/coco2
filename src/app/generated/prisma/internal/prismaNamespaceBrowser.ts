@@ -52,6 +52,7 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   Product: 'Product',
+  ProductAvailabilityNotification: 'ProductAvailabilityNotification',
   BlogPost: 'BlogPost',
   User: 'User',
   PasswordResetToken: 'PasswordResetToken',
@@ -92,6 +93,10 @@ export const ProductScalarFieldEnum = {
   content: 'content',
   composition: 'composition',
   isAvailable: 'isAvailable',
+  isVisible: 'isVisible',
+  isPreorder: 'isPreorder',
+  preorderAvailableAt: 'preorderAvailableAt',
+  preorderOriginalPriceInCents: 'preorderOriginalPriceInCents',
   promo: 'promo',
   lastPriceInCents: 'lastPriceInCents',
   visibleToDetal: 'visibleToDetal',
@@ -108,6 +113,20 @@ export const ProductScalarFieldEnum = {
 } as const
 
 export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeof ProductScalarFieldEnum]
+
+
+export const ProductAvailabilityNotificationScalarFieldEnum = {
+  id: 'id',
+  productId: 'productId',
+  email: 'email',
+  userId: 'userId',
+  status: 'status',
+  unsubscribeTokenHash: 'unsubscribeTokenHash',
+  sentAt: 'sentAt',
+  createdAt: 'createdAt'
+} as const
+
+export type ProductAvailabilityNotificationScalarFieldEnum = (typeof ProductAvailabilityNotificationScalarFieldEnum)[keyof typeof ProductAvailabilityNotificationScalarFieldEnum]
 
 
 export const BlogPostScalarFieldEnum = {

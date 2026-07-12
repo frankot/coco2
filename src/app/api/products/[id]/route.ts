@@ -11,7 +11,7 @@ export const GET = createRouteHandler(async ({ params }) => {
   const product = isUuid
     ? await prisma.product.findUnique({ where: { id } })
     : await prisma.product.findUnique({ where: { slug: id } });
-  if (!product) throw new ApiError("Product not found", 404);
+  if (!product || !product.isVisible) throw new ApiError("Product not found", 404);
 
   const session = await getServerSession(authOptions);
   const accountType = session?.user?.accountType;
@@ -19,8 +19,8 @@ export const GET = createRouteHandler(async ({ params }) => {
   // Visibility check (guests treated as DETAL)
   if (
     ((!accountType || accountType === "DETAL") && !product.visibleToDetal) ||
-    (accountType === "DETAL_B2B" && !product.visibleToDetalB2B) ||
-    (accountType === "HURT" && !product.visibleToHurt)
+    (accountType === "DETAL_B2B" && (!product.visibleToDetalB2B || product.isPreorder)) ||
+    (accountType === "HURT" && (!product.visibleToHurt || product.isPreorder))
   ) {
     throw new ApiError("Product not found", 404);
   }

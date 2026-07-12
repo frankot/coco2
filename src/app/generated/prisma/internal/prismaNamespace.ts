@@ -385,6 +385,7 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 export const ModelName = {
   Product: 'Product',
+  ProductAvailabilityNotification: 'ProductAvailabilityNotification',
   BlogPost: 'BlogPost',
   User: 'User',
   PasswordResetToken: 'PasswordResetToken',
@@ -411,7 +412,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "product" | "blogPost" | "user" | "passwordResetToken" | "address" | "order" | "orderItem" | "payment" | "newsletterEmail" | "customPrice" | "discountCode" | "redirectMap"
+    modelProps: "product" | "productAvailabilityNotification" | "blogPost" | "user" | "passwordResetToken" | "address" | "order" | "orderItem" | "payment" | "newsletterEmail" | "customPrice" | "discountCode" | "redirectMap"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -486,6 +487,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.ProductCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.ProductCountAggregateOutputType> | number
+        }
+      }
+    }
+    ProductAvailabilityNotification: {
+      payload: Prisma.$ProductAvailabilityNotificationPayload<ExtArgs>
+      fields: Prisma.ProductAvailabilityNotificationFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ProductAvailabilityNotificationFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductAvailabilityNotificationPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ProductAvailabilityNotificationFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductAvailabilityNotificationPayload>
+        }
+        findFirst: {
+          args: Prisma.ProductAvailabilityNotificationFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductAvailabilityNotificationPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ProductAvailabilityNotificationFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductAvailabilityNotificationPayload>
+        }
+        findMany: {
+          args: Prisma.ProductAvailabilityNotificationFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductAvailabilityNotificationPayload>[]
+        }
+        create: {
+          args: Prisma.ProductAvailabilityNotificationCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductAvailabilityNotificationPayload>
+        }
+        createMany: {
+          args: Prisma.ProductAvailabilityNotificationCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ProductAvailabilityNotificationCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductAvailabilityNotificationPayload>[]
+        }
+        delete: {
+          args: Prisma.ProductAvailabilityNotificationDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductAvailabilityNotificationPayload>
+        }
+        update: {
+          args: Prisma.ProductAvailabilityNotificationUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductAvailabilityNotificationPayload>
+        }
+        deleteMany: {
+          args: Prisma.ProductAvailabilityNotificationDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ProductAvailabilityNotificationUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ProductAvailabilityNotificationUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductAvailabilityNotificationPayload>[]
+        }
+        upsert: {
+          args: Prisma.ProductAvailabilityNotificationUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductAvailabilityNotificationPayload>
+        }
+        aggregate: {
+          args: Prisma.ProductAvailabilityNotificationAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateProductAvailabilityNotification>
+        }
+        groupBy: {
+          args: Prisma.ProductAvailabilityNotificationGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProductAvailabilityNotificationGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ProductAvailabilityNotificationCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProductAvailabilityNotificationCountAggregateOutputType> | number
         }
       }
     }
@@ -1353,6 +1428,10 @@ export const ProductScalarFieldEnum = {
   content: 'content',
   composition: 'composition',
   isAvailable: 'isAvailable',
+  isVisible: 'isVisible',
+  isPreorder: 'isPreorder',
+  preorderAvailableAt: 'preorderAvailableAt',
+  preorderOriginalPriceInCents: 'preorderOriginalPriceInCents',
   promo: 'promo',
   lastPriceInCents: 'lastPriceInCents',
   visibleToDetal: 'visibleToDetal',
@@ -1369,6 +1448,20 @@ export const ProductScalarFieldEnum = {
 } as const
 
 export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeof ProductScalarFieldEnum]
+
+
+export const ProductAvailabilityNotificationScalarFieldEnum = {
+  id: 'id',
+  productId: 'productId',
+  email: 'email',
+  userId: 'userId',
+  status: 'status',
+  unsubscribeTokenHash: 'unsubscribeTokenHash',
+  sentAt: 'sentAt',
+  createdAt: 'createdAt'
+} as const
+
+export type ProductAvailabilityNotificationScalarFieldEnum = (typeof ProductAvailabilityNotificationScalarFieldEnum)[keyof typeof ProductAvailabilityNotificationScalarFieldEnum]
 
 
 export const BlogPostScalarFieldEnum = {
@@ -1642,6 +1735,20 @@ export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
 
 
 /**
+ * Reference to a field of type 'DateTime'
+ */
+export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
+    
+
+
+/**
+ * Reference to a field of type 'DateTime[]'
+ */
+export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+/**
  * Reference to a field of type 'Float'
  */
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -1656,16 +1763,16 @@ export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaMode
 
 
 /**
- * Reference to a field of type 'DateTime'
+ * Reference to a field of type 'NotificationStatus'
  */
-export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
+export type EnumNotificationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'NotificationStatus'>
     
 
 
 /**
- * Reference to a field of type 'DateTime[]'
+ * Reference to a field of type 'NotificationStatus[]'
  */
-export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+export type ListEnumNotificationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'NotificationStatus[]'>
     
 
 
@@ -1848,6 +1955,7 @@ export type PrismaClientOptions = ({
 }
 export type GlobalOmitConfig = {
   product?: Prisma.ProductOmit
+  productAvailabilityNotification?: Prisma.ProductAvailabilityNotificationOmit
   blogPost?: Prisma.BlogPostOmit
   user?: Prisma.UserOmit
   passwordResetToken?: Prisma.PasswordResetTokenOmit

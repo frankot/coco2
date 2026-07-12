@@ -27,6 +27,9 @@ export const forgotEmailLimiter = makeLimiter("rl:forgot:email", 3, 60 * 60);
 export const resetLimiter = makeLimiter("rl:reset", 10, 15 * 60);
 export const registerLimiter = makeLimiter("rl:register", 5, 60 * 60);
 export const apaczkaLimiter = makeLimiter("rl:apaczka", 20, 60);
+export const availabilityNotificationIpLimiter = makeLimiter("rl:availability:ip", 5, 10 * 60);
+export const availabilityNotificationEmailLimiter = makeLimiter("rl:availability:email", 5, 10 * 60);
+export const availabilityNotificationProductLimiter = makeLimiter("rl:availability:product", 20, 10 * 60);
 
 export function getClientIp(req: Request): string {
   const xff = req.headers.get("x-forwarded-for");

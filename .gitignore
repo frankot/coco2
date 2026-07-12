@@ -44,3 +44,5 @@ next-env.d.ts
 .claude
 .firecrawl
 docs/optymalizacje-wydajnosci-accessibility.md
+docs/preorder-availability-plan.md
+docs/preorder-availability-spec.md

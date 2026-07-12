@@ -31,6 +31,15 @@ export default function ProductForm({ product }: { product?: Product | null }) {
   const [lastPricePln, setLastPricePln] = useState<string>(
     product?.lastPriceInCents != null ? (product.lastPriceInCents / 100).toFixed(2) : ""
   );
+  const [preorderOriginalPricePln, setPreorderOriginalPricePln] = useState<string>(
+    product?.preorderOriginalPriceInCents != null
+      ? (product.preorderOriginalPriceInCents / 100).toFixed(2)
+      : ""
+  );
+  const [isPreorder, setIsPreorder] = useState(product?.isPreorder ?? false);
+  const [isAvailable, setIsAvailable] = useState(
+    product?.isPreorder ? false : product?.isAvailable ?? true
+  );
   const [description, setDescription] = useState<string>(product?.description || "");
   const [content, setContent] = useState<string>(product?.content || "");
 
@@ -106,10 +115,24 @@ export default function ProductForm({ product }: { product?: Product | null }) {
     const rawLastPricePln = (formData.get("lastPricePln") as string) ?? lastPricePln;
     const lastPriceCents = rawLastPricePln.trim() ? toCents(rawLastPricePln) : null;
 
+    const rawPreorderOriginalPricePln =
+      (formData.get("preorderOriginalPricePln") as string) ?? preorderOriginalPricePln;
+    const preorderOriginalPriceCents = rawPreorderOriginalPricePln.trim()
+      ? toCents(rawPreorderOriginalPricePln)
+      : null;
+
     formData.set("priceInCents", String(cents));
     formData.set("lastPriceInCents", lastPriceCents !== null ? String(lastPriceCents) : "");
+    formData.set(
+      "preorderOriginalPriceInCents",
+      preorderOriginalPriceCents !== null ? String(preorderOriginalPriceCents) : ""
+    );
+    if (formData.get("isPreorder") === "on") {
+      formData.set("isAvailable", "off");
+    }
     formData.delete("pricePln");
     formData.delete("lastPricePln");
+    formData.delete("preorderOriginalPricePln");
     formData.set("content", content);
     formData.set("composition", JSON.stringify(composition));
 
@@ -148,6 +171,22 @@ export default function ProductForm({ product }: { product?: Product | null }) {
     return formatPLN(cents);
   })();
 
+  const preorderOriginalPricePreview = (() => {
+    let s = (preorderOriginalPricePln || "").replace(/[\u00A0\s]/g, "");
+    if (!s.trim()) return null;
+    if (s.includes(",")) {
+      s = s.replace(/\./g, "");
+      s = s.replace(",", ".");
+    }
+    const num = parseFloat(s);
+    const cents = Number.isFinite(num) ? Math.round(num * 100) : 0;
+    return formatPLN(cents);
+  })();
+
+  const preorderAvailableAtValue = product?.preorderAvailableAt
+    ? new Date(product.preorderAvailableAt).toISOString().slice(0, 16)
+    : "";
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -164,10 +203,48 @@ export default function ProductForm({ product }: { product?: Product | null }) {
           </h1>
         </div>
 
-        {/* Visibility */}
+        {/* Product Status */}
         <Card className="py-2 px-4">
-          <div className="flex items-center gap-4">
-            <span className="text-sm font-medium text-muted-foreground">Widoczność:</span>
+          <div className="flex flex-wrap items-center gap-4">
+            <span className="text-sm font-medium text-muted-foreground">Status:</span>
+            <label className="flex items-center gap-1.5 cursor-pointer text-sm">
+              <input
+                type="checkbox"
+                name="isVisible"
+                form="product-form"
+                defaultChecked={product?.isVisible ?? true}
+                className="h-3.5 w-3.5 accent-primary"
+              />
+              Widoczny w sklepie
+            </label>
+            <label className={`flex items-center gap-1.5 text-sm ${isPreorder ? "cursor-not-allowed text-muted-foreground" : "cursor-pointer"}`}>
+              <input
+                type="checkbox"
+                name="isAvailable"
+                form="product-form"
+                checked={!isPreorder && isAvailable}
+                disabled={isPreorder}
+                onChange={(event) => setIsAvailable(event.target.checked)}
+                className="h-3.5 w-3.5 accent-primary disabled:opacity-50"
+              />
+              Dostępny do kupienia
+            </label>
+            <label className="flex items-center gap-1.5 cursor-pointer text-sm">
+              <input
+                type="checkbox"
+                name="isPreorder"
+                form="product-form"
+                checked={isPreorder}
+                onChange={(event) => {
+                  setIsPreorder(event.target.checked);
+                  if (event.target.checked) setIsAvailable(false);
+                }}
+                className="h-3.5 w-3.5 accent-primary"
+              />
+              Preorder
+            </label>
+            <span className="text-muted-foreground/40">|</span>
+            <span className="text-sm font-medium text-muted-foreground">Grupy:</span>
             <label className="flex items-center gap-1.5 cursor-pointer text-sm">
               <input
                 type="checkbox"
@@ -282,7 +359,7 @@ export default function ProductForm({ product }: { product?: Product | null }) {
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <Label htmlFor="pricePln">Cena (PLN)</Label>
+                  <Label htmlFor="pricePln">{isPreorder ? "Cena sprzedaży / preorder (PLN)" : "Cena (PLN)"}</Label>
                   <Input
                     type="text"
                     id="pricePln"
@@ -332,6 +409,42 @@ export default function ProductForm({ product }: { product?: Product | null }) {
                   Opcjonalne. Jeśli puste, użyta zostanie cena produktu.
                 </p>
               </div>
+
+              {isPreorder && (
+                <div className="rounded-lg border border-primary/20 bg-primary/5 p-4 space-y-4">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="preorderAvailableAt">Data i godzina zakończenia preorderu</Label>
+                    <Input
+                      type="datetime-local"
+                      id="preorderAvailableAt"
+                      name="preorderAvailableAt"
+                      required={isPreorder}
+                      defaultValue={preorderAvailableAtValue}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Po tej dacie klient nie będzie mógł kupić produktu w preorderze.
+                    </p>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label htmlFor="preorderOriginalPricePln">Cena regularna do pokazania rabatu (PLN)</Label>
+                    <Input
+                      type="text"
+                      id="preorderOriginalPricePln"
+                      name="preorderOriginalPricePln"
+                      inputMode="decimal"
+                      required={isPreorder}
+                      value={preorderOriginalPricePln}
+                      onChange={(e) => setPreorderOriginalPricePln(e.target.value)}
+                    />
+                    {preorderOriginalPricePreview && (
+                      <p className="text-xs text-muted-foreground">
+                        {preorderOriginalPricePreview}. Cena sprzedaży/preorder to {pricePreview}.
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
 
               <div className="space-y-1.5">
                 <Label htmlFor="description">Opis (krótki)</Label>

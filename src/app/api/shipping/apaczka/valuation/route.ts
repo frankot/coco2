@@ -42,7 +42,7 @@ export const POST = createRouteHandler(async ({ req }) => {
 
   const productIds = data.cartItems.map((item) => item.id);
   const products = await prisma.product.findMany({
-    where: { id: { in: productIds }, isAvailable: true },
+    where: { id: { in: productIds }, isAvailable: true, isVisible: true },
     select: {
       id: true,
       weightKg: true,

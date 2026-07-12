@@ -75,6 +75,8 @@ function getStatusLabel(status: string) {
   switch (status) {
     case "PENDING":
       return "Oczekujące";
+    case "PREORDER":
+      return "Preorder";
     case "PAID":
       return "Opłacone";
     case "PROCESSING":
@@ -94,6 +96,8 @@ function getStatusBadgeVariant(
   status: string
 ): "default" | "secondary" | "outline" | "destructive" {
   switch (status) {
+    case "PREORDER":
+      return "outline";
     case "PAID":
       return "default";
     case "DELIVERED":
@@ -108,6 +112,9 @@ function getStatusBadgeVariant(
 }
 
 function getStatusBadgeClassName(status: string) {
+  if (status === "PREORDER") {
+    return "border-amber-200 bg-amber-100 text-amber-800 hover:bg-amber-100";
+  }
   if (status === "DELIVERED") {
     return "border-emerald-200 bg-emerald-100 text-emerald-800 hover:bg-emerald-100";
   }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -33,6 +33,8 @@ type CartItem = {
   priceInCents: number;
   quantity: number;
   imagePath: string;
+  isPreorder?: boolean;
+  preorderAvailableAt?: string | null;
 };
 
 // Payment method type to match schema
@@ -66,6 +68,17 @@ export default function CheckoutPage() {
   const apaczkaMapRef = useRef<any>(null);
   const submittingLock = useRef(false);
   const checkoutTrackedRef = useRef(false);
+  const preorderItems = useMemo(() => cartItems.filter((item) => item.isPreorder), [cartItems]);
+  const hasPreorder = preorderItems.length > 0;
+  const preorderProductIds = useMemo(() => new Set(preorderItems.map((item) => item.id)), [preorderItems]);
+  const hasMultiplePreorderTypes = preorderProductIds.size > 1;
+  const isPreorderAccountBlocked =
+    hasPreorder && Boolean(session?.user?.accountType && session.user.accountType !== "DETAL");
+  const activeCartItems = useMemo(
+    () => (hasPreorder ? preorderItems : cartItems),
+    [cartItems, hasPreorder, preorderItems]
+  );
+  const hasInactiveStandardItems = hasPreorder && cartItems.some((item) => !item.isPreorder);
 
   // Discount code state
   const [discountCodeInput, setDiscountCodeInput] = useState("");
@@ -143,18 +156,18 @@ export default function CheckoutPage() {
     const sendInitiateCheckout = () => {
       if (checkoutTrackedRef.current) return;
       const tracked = trackMetaPixelEvent("InitiateCheckout", {
-        value: cartItems.reduce((sum, item) => sum + item.priceInCents * item.quantity, 0) / 100,
+        value: activeCartItems.reduce((sum, item) => sum + item.priceInCents * item.quantity, 0) / 100,
         currency: "PLN",
-        content_ids: cartItems.map((item) => item.id),
+        content_ids: activeCartItems.map((item) => item.id),
         content_type: "product",
-        num_items: cartItems.reduce((sum, item) => sum + item.quantity, 0),
+        num_items: activeCartItems.reduce((sum, item) => sum + item.quantity, 0),
       });
       if (tracked) checkoutTrackedRef.current = true;
     };
     sendInitiateCheckout();
     window.addEventListener(COOKIE_CONSENT_EVENT, sendInitiateCheckout);
     return () => window.removeEventListener(COOKIE_CONSENT_EVENT, sendInitiateCheckout);
-  }, [cartItems]);
+  }, [activeCartItems]);
 
   // Re-check product availability on checkout entry
   useEffect(() => {
@@ -167,19 +180,41 @@ export default function CheckoutPage() {
 
         const res = await fetch("/api/products");
         if (!res.ok) return;
-        const available: { id: string }[] = await res.json();
-        const availableIds = new Set(available.map((p) => p.id));
+        const products: {
+          id: string;
+          isAvailable?: boolean;
+          isPreorder?: boolean;
+          preorderAvailableAt?: string | null;
+        }[] = await res.json();
+        const productMap = new Map(products.map((product) => [product.id, product]));
+        const cartHasPreorder = parsed.some((item) => item.isPreorder);
+        const now = Date.now();
 
-        const removed = parsed.filter((item) => !availableIds.has(item.id));
+        const canStayInCart = (item: CartItem) => {
+          const product = productMap.get(item.id);
+          if (!product) return false;
+
+          if (item.isPreorder) {
+            const preorderEndsAt = product.preorderAvailableAt
+              ? new Date(product.preorderAvailableAt).getTime()
+              : 0;
+            return product.isPreorder === true && preorderEndsAt > now;
+          }
+
+          if (cartHasPreorder) return true;
+          return product.isAvailable === true;
+        };
+
+        const removed = parsed.filter((item) => !canStayInCart(item));
         if (removed.length === 0) return;
 
-        const kept = parsed.filter((item) => availableIds.has(item.id));
+        const kept = parsed.filter(canStayInCart);
         localStorage.setItem("cart", JSON.stringify(kept));
         window.dispatchEvent(new Event("cartUpdated"));
         setCartItems(kept);
 
         toast.error(
-          `Usunięto z koszyka niedostępne produkty: ${removed.map((p) => p.name).join(", ")}`,
+          `Usunięto z koszyka produkty, których nie można już kupić: ${removed.map((p) => p.name).join(", ")}`,
           { duration: 6000 }
         );
       } catch (e) {
@@ -425,7 +460,7 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     if (isHurt) return;
-    if (cartItems.length === 0 || !valuationPostalCode || !valuationCity) return;
+    if (activeCartItems.length === 0 || !valuationPostalCode || !valuationCity) return;
     if (!/^\d{2}-\d{3}$/.test(valuationPostalCode)) return;
 
     const controller = new AbortController();
@@ -436,7 +471,7 @@ export default function CheckoutPage() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            cartItems: cartItems.map((item) => ({ id: item.id, quantity: item.quantity })),
+            cartItems: activeCartItems.map((item) => ({ id: item.id, quantity: item.quantity })),
             postalCode: valuationPostalCode,
             city: valuationCity,
           }),
@@ -466,7 +501,7 @@ export default function CheckoutPage() {
       clearTimeout(debounce);
       controller.abort();
     };
-  }, [cartItems, valuationPostalCode, valuationCity]);
+  }, [activeCartItems, valuationPostalCode, valuationCity]);
 
   // Compute visible services depending on selected payment method
   const visibleServices = (() => {
@@ -638,7 +673,7 @@ export default function CheckoutPage() {
   }, [visibleServices, selectedShippingMethod, setFormData]);
 
   // Paczkomat/pickup-point: max 2 items total (side-by-side packing limit)
-  const totalCartQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const totalCartQuantity = activeCartItems.reduce((sum, item) => sum + item.quantity, 0);
   const paczkomatDisabled = totalCartQuantity > 2;
 
   // If paczkomat becomes unavailable while selected, fall back to first non-map method
@@ -662,7 +697,13 @@ export default function CheckoutPage() {
     });
   };
 
+  useEffect(() => {
+    if (!hasPreorder || formData.paymentMethod === "STRIPE") return;
+    setFormData((prev) => ({ ...prev, paymentMethod: "STRIPE" }));
+  }, [hasPreorder, formData.paymentMethod]);
+
   const handlePaymentMethodChange = (value: string) => {
+    if (hasPreorder && value !== "STRIPE") return;
     setFormData({
       ...formData,
       paymentMethod: value as PaymentMethod,
@@ -679,6 +720,16 @@ export default function CheckoutPage() {
 
     if (!termsAccepted) {
       setError("Musisz zaakceptować regulamin przed złożeniem zamówienia");
+      return;
+    }
+
+    if (hasMultiplePreorderTypes) {
+      setError("Możesz zamówić tylko jeden typ produktu preorder w jednym zamówieniu.");
+      return;
+    }
+
+    if (isPreorderAccountBlocked) {
+      setError("Preorder jest dostępny tylko dla klientów detalicznych.");
       return;
     }
 
@@ -780,7 +831,7 @@ export default function CheckoutPage() {
       // Prepare order data
       const orderData = {
         ...formData,
-        cartItems,
+        cartItems: activeCartItems,
         userId: session?.user?.id,
         shippingMethodId: resolvedServiceId,
         shippingServiceName: selectedVisible?.name || undefined,
@@ -816,7 +867,7 @@ export default function CheckoutPage() {
             },
             body: JSON.stringify({
               orderId: result.orderId,
-              items: cartItems.map((item) => ({
+              items: activeCartItems.map((item) => ({
                 productId: item.id,
                 quantity: item.quantity,
               })),
@@ -921,7 +972,7 @@ export default function CheckoutPage() {
   };
 
   // Calculate totals
-  const subtotal = cartItems.reduce((sum, item) => sum + item.priceInCents * item.quantity, 0);
+  const subtotal = activeCartItems.reduce((sum, item) => sum + item.priceInCents * item.quantity, 0);
   const shippingCostDisplay = getShippingCost();
   const shipping = shippingCostDisplay ?? 1500; // default 15 PLN internally, shown only when real valuation exists
   const discountAmount = appliedDiscount?.discountAmountInCents ?? 0;
@@ -1315,7 +1366,7 @@ export default function CheckoutPage() {
                       </div>
                     </Label>
                   </div>
-                  {isHurt && (
+                  {isHurt && !hasPreorder && (
                     <div className="flex items-center space-x-3 rounded-md border p-3">
                       <RadioGroupItem id="invoice-deferred" value="INVOICE_DEFERRED" />
                       <Label
@@ -1545,7 +1596,7 @@ export default function CheckoutPage() {
                 type="submit"
                 size="lg"
                 className="w-full"
-                disabled={isSubmitting || !termsAccepted}
+                disabled={isSubmitting || !termsAccepted || hasMultiplePreorderTypes || isPreorderAccountBlocked}
               >
                 {isSubmitting ? (
                   <>
@@ -1580,14 +1631,33 @@ export default function CheckoutPage() {
 
         {/* Order Summary */}
         <div className="order-1 lg:order-2">
-          <Card className="p-4 md:p-6 space-y-4 lg:sticky lg:top-20">
+          <Card className="p-4 md:p-6 space-y-4 lg:sticky lg:top-28">
             <h2 className="text-lg md:text-xl font-semibold mb-2">Podsumowanie zamówienia</h2>
 
+            {hasInactiveStandardItems && (
+              <div className="rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
+                Produkty preorder i standardowe muszą zostać opłacone osobno. Produkty standardowe są pominięte w tym zamówieniu.
+              </div>
+            )}
+            {hasMultiplePreorderTypes && (
+              <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                Możesz zamówić tylko jeden typ produktu preorder w jednym zamówieniu.
+              </div>
+            )}
+            {isPreorderAccountBlocked && (
+              <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                Preorder jest dostępny tylko dla klientów detalicznych.
+              </div>
+            )}
+
             <div className="space-y-0">
-              {cartItems.map((item, index) => (
+              {cartItems.map((item, index) => {
+                const inactive = hasPreorder && !item.isPreorder;
+
+                return (
                 <div
                   key={item.id}
-                  className={`py-4 flex gap-4 ${index !== cartItems.length - 1 ? "border-b" : ""}`}
+                  className={`py-4 flex gap-4 ${inactive ? "opacity-45" : ""} ${index !== cartItems.length - 1 ? "border-b" : ""}`}
                 >
                   <div className="relative h-16 w-16 overflow-hidden rounded-md border">
                     <Image
@@ -1600,8 +1670,22 @@ export default function CheckoutPage() {
                   </div>
                   <div className="flex-1 space-y-1">
                     <div className="flex justify-between">
-                      <h3 className="font-medium">{item.name}</h3>
-                      <p className="font-medium">{formatPLN(item.priceInCents * item.quantity)}</p>
+                      <div>
+                        <h3 className="font-medium">{item.name}</h3>
+                        {item.isPreorder && (
+                          <span className="mt-1 inline-flex rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-800">
+                            PREORDER
+                          </span>
+                        )}
+                        {inactive && (
+                          <p className="mt-1 text-xs text-amber-700">
+                            Pominięty w zamówieniu preorder.
+                          </p>
+                        )}
+                      </div>
+                      <p className="font-medium">
+                        {inactive ? "—" : formatPLN(item.priceInCents * item.quantity)}
+                      </p>
                     </div>
                     <div className="flex items-center justify-between text-sm text-muted-foreground">
                       <div className="flex items-center gap-2">
@@ -1634,7 +1718,8 @@ export default function CheckoutPage() {
                     </div>
                   </div>
                 </div>
-              ))}
+              );
+              })}
             </div>
 
             {/* Discount Code */}

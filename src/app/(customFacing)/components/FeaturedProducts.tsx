@@ -13,10 +13,15 @@ async function getFeaturedProducts() {
   const featuredSlugs = ["dr-coco-1l", "dr-coco-280ml", "dr-coco-330ml"];
 
   // Visibility filter (guests treated as DETAL)
-  const where: any = { isAvailable: true, slug: { in: featuredSlugs } };
+  const where: any = { isVisible: true, slug: { in: featuredSlugs } };
   if (!accountType || accountType === "DETAL") where.visibleToDetal = true;
-  else if (accountType === "DETAL_B2B") where.visibleToDetalB2B = true;
-  else if (accountType === "HURT") where.visibleToHurt = true;
+  else if (accountType === "DETAL_B2B") {
+    where.visibleToDetalB2B = true;
+    where.isPreorder = false;
+  } else if (accountType === "HURT") {
+    where.visibleToHurt = true;
+    where.isPreorder = false;
+  }
 
   const products = await prisma.product.findMany({
     where,

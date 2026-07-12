@@ -21,6 +21,7 @@ export type AccountType = (typeof AccountType)[keyof typeof AccountType]
 
 export const OrderStatus = {
   PENDING: 'PENDING',
+  PREORDER: 'PREORDER',
   PAID: 'PAID',
   PROCESSING: 'PROCESSING',
   SHIPPED: 'SHIPPED',
@@ -49,6 +50,15 @@ export const PaymentStatus = {
 } as const
 
 export type PaymentStatus = (typeof PaymentStatus)[keyof typeof PaymentStatus]
+
+
+export const NotificationStatus = {
+  ACTIVE: 'ACTIVE',
+  SENT: 'SENT',
+  UNSUBSCRIBED: 'UNSUBSCRIBED'
+} as const
+
+export type NotificationStatus = (typeof NotificationStatus)[keyof typeof NotificationStatus]
 
 
 export const AddressType = {

@@ -10,6 +10,7 @@ import { formatPLN } from "@/lib/formatter";
 import { addProductToCart } from "@/lib/cart-client";
 import { COOKIE_CONSENT_EVENT, trackMetaPixelEvent } from "@/lib/meta-pixel";
 import ReactMarkdown from "react-markdown";
+import AvailabilityNotificationForm from "./AvailabilityNotificationForm";
 
 export default function ProductPageClient({ params }: { params: Promise<{ id: string }> }) {
   const [product, setProduct] = useState<any>(null);
@@ -19,6 +20,7 @@ export default function ProductPageClient({ params }: { params: Promise<{ id: st
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
   const [activeTab, setActiveTab] = useState("composition");
+  const [now, setNow] = useState(Date.now());
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
   const viewedProductRef = useRef<string | null>(null);
@@ -72,6 +74,12 @@ export default function ProductPageClient({ params }: { params: Promise<{ id: st
     window.addEventListener(COOKIE_CONSENT_EVENT, sendViewContent);
     return () => window.removeEventListener(COOKIE_CONSENT_EVENT, sendViewContent);
   }, [product]);
+
+  useEffect(() => {
+    if (!product?.isPreorder) return;
+    const interval = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(interval);
+  }, [product?.isPreorder]);
 
   // Reset selected image if it's out of bounds when product changes
   useEffect(() => {
@@ -222,8 +230,22 @@ export default function ProductPageClient({ params }: { params: Promise<{ id: st
     notFound();
   }
 
+  const preorderEndsAtMs = product.preorderAvailableAt
+    ? new Date(product.preorderAvailableAt).getTime()
+    : 0;
+  const isPreorderActive = product.isPreorder && preorderEndsAtMs > now;
+  const preorderDiscount =
+    product.isPreorder && product.preorderOriginalPriceInCents
+      ? Math.max(0, Math.round((1 - product.priceInCents / product.preorderOriginalPriceInCents) * 100))
+      : 0;
+  const countdownMs = Math.max(0, preorderEndsAtMs - now);
+  const countdownDays = Math.floor(countdownMs / 86_400_000);
+  const countdownHours = Math.floor((countdownMs % 86_400_000) / 3_600_000);
+  const countdownMinutes = Math.floor((countdownMs % 3_600_000) / 60_000);
+  const countdownSeconds = Math.floor((countdownMs % 60_000) / 1000);
+
   const handleAddToCart = async () => {
-    if (!product.isAvailable) return;
+    if (!product.isAvailable && !isPreorderActive) return;
 
     setIsAddingToCart(true);
     try {
@@ -358,12 +380,27 @@ export default function ProductPageClient({ params }: { params: Promise<{ id: st
 
             {/* Price */}
             <div className="space-y-2">
+              {product.isPreorder && (
+                <div className="inline-flex rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-bold text-primary">
+                  PREORDER
+                </div>
+              )}
+              {product.isPreorder && product.preorderOriginalPriceInCents && (
+                <div className="text-lg text-gray-400 line-through">
+                  {formatPLN(product.preorderOriginalPriceInCents)}
+                </div>
+              )}
               <div className="text-3xl font-bold text-gray-900">
                 {formatPLN(product.priceInCents)}
               </div>
               <div className="text-sm text-gray-600">
                 {formatPLN(pricePerUnit)} / za szt. • Zestaw {itemsPerPack} sztuk
               </div>
+              {preorderDiscount > 0 && (
+                <div className="text-sm font-semibold text-primary">
+                  Rabat preorder: -{preorderDiscount}%
+                </div>
+              )}
               <div className="text-xs text-gray-400">
                 Najniższa cena w ciągu ostatnich 30 dni:{" "}
                 <span className="font-medium">
@@ -372,43 +409,88 @@ export default function ProductPageClient({ params }: { params: Promise<{ id: st
               </div>
             </div>
 
-            {/* Quantity and Add to Cart */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-4">
-                <div className="flex items-center border border-gray-300 rounded-lg">
-                  <button
-                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="min-h-12 min-w-12 p-2 hover:bg-gray-100 transition-colors"
-                    aria-label={`Zmniejsz ilość produktu ${product.name}`}
-                  >
-                    <Minus className="w-4 h-4" />
-                  </button>
-                  <span className="px-4 py-2 font-medium min-w-[60px] text-center">
-                    {quantity * itemsPerPack}
-                  </span>
-                  <button
-                    onClick={() => setQuantity(quantity + 1)}
-                    className="min-h-12 min-w-12 p-2 hover:bg-gray-100 transition-colors"
-                    aria-label={`Zwiększ ilość produktu ${product.name}`}
-                  >
-                    <Plus className="w-4 h-4" />
-                  </button>
+            {/* Purchase State */}
+            {product.isPreorder ? (
+              <div className="rounded-2xl border border-primary/15 bg-primary/[0.03] p-5 space-y-4">
+                <div>
+                  <p className="font-semibold text-primary">Planowana dostępność</p>
+                  <p className="text-sm text-gray-700">
+                    {product.preorderAvailableAt
+                      ? new Intl.DateTimeFormat("pl-PL", {
+                          dateStyle: "long",
+                          timeStyle: "short",
+                        }).format(new Date(product.preorderAvailableAt))
+                      : "—"}
+                  </p>
                 </div>
-                <span className="text-sm text-gray-600">
-                  szt. ({quantity} × {itemsPerPack})
-                </span>
+                <div className="grid grid-cols-4 gap-2 text-center">
+                  <CountdownBox label="dni" value={countdownDays} />
+                  <CountdownBox label="godz." value={countdownHours} />
+                  <CountdownBox label="min" value={countdownMinutes} />
+                  <CountdownBox label="sek" value={countdownSeconds} />
+                </div>
+                <Button
+                  onClick={handleAddToCart}
+                  disabled={!isPreorderActive || isAddingToCart}
+                  className="w-full bg-primary hover:bg-primary/90 text-white py-3 text-lg font-medium disabled:cursor-not-allowed disabled:opacity-70"
+                  size="lg"
+                >
+                  <ShoppingBag className="w-5 h-5 mr-2" />
+                  {!isPreorderActive
+                    ? "Preorder zakończony"
+                    : isAddingToCart
+                      ? "Dodawanie..."
+                      : "Zamów w preorderze"}
+                </Button>
               </div>
+            ) : product.isAvailable ? (
+              <div className="space-y-4">
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center border border-gray-300 rounded-lg">
+                    <button
+                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                      className="min-h-12 min-w-12 p-2 hover:bg-gray-100 transition-colors"
+                      aria-label={`Zmniejsz ilość produktu ${product.name}`}
+                    >
+                      <Minus className="w-4 h-4" />
+                    </button>
+                    <span className="px-4 py-2 font-medium min-w-[60px] text-center">
+                      {quantity * itemsPerPack}
+                    </span>
+                    <button
+                      onClick={() => setQuantity(quantity + 1)}
+                      className="min-h-12 min-w-12 p-2 hover:bg-gray-100 transition-colors"
+                      aria-label={`Zwiększ ilość produktu ${product.name}`}
+                    >
+                      <Plus className="w-4 h-4" />
+                    </button>
+                  </div>
+                  <span className="text-sm text-gray-600">
+                    szt. ({quantity} × {itemsPerPack})
+                  </span>
+                </div>
 
-              <Button
-                onClick={handleAddToCart}
-                disabled={!product.isAvailable || isAddingToCart}
-                className="w-full bg-primary hover:bg-primary/90 text-white py-3 text-lg font-medium"
-                size="lg"
-              >
-                <ShoppingBag className="w-5 h-5 mr-2" />
-                {isAddingToCart ? "Dodawanie..." : "Do koszyka"}
-              </Button>
-            </div>
+                <Button
+                  onClick={handleAddToCart}
+                  disabled={isAddingToCart}
+                  className="w-full bg-primary hover:bg-primary/90 text-white py-3 text-lg font-medium"
+                  size="lg"
+                >
+                  <ShoppingBag className="w-5 h-5 mr-2" />
+                  {isAddingToCart ? "Dodawanie..." : "Do koszyka"}
+                </Button>
+              </div>
+            ) : (
+              <div className="rounded-2xl border border-primary/20 bg-primary/5 p-5 space-y-3">
+                <div>
+                  <p className="font-semibold text-primary">Produkt jest chwilowo niedostępny</p>
+                  <p className="text-sm text-gray-600">
+                    Zostaw adres e-mail, a poinformujemy Cię, gdy produkt wróci do sprzedaży.
+                  </p>
+                </div>
+                <AvailabilityNotificationForm productId={product.id} />
+              </div>
+            )}
 
             {/* Full description with markdown content */}
             <div className="space-y-2">
@@ -545,6 +627,15 @@ export default function ProductPageClient({ params }: { params: Promise<{ id: st
           )}
         </div>
       </div>
+    </div>
+  );
+}
+
+function CountdownBox({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="rounded-lg border border-primary/10 bg-white/80 p-3 shadow-sm">
+      <div className="text-xl font-bold text-primary">{String(value).padStart(2, "0")}</div>
+      <div className="text-xs text-muted-foreground">{label}</div>
     </div>
   );
 }

@@ -211,6 +211,7 @@ export type UserWhereInput = {
   payments?: Prisma.PaymentListRelationFilter
   customPrices?: Prisma.CustomPriceListRelationFilter
   passwordResetTokens?: Prisma.PasswordResetTokenListRelationFilter
+  availabilityNotifications?: Prisma.ProductAvailabilityNotificationListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -227,6 +228,7 @@ export type UserOrderByWithRelationInput = {
   payments?: Prisma.PaymentOrderByRelationAggregateInput
   customPrices?: Prisma.CustomPriceOrderByRelationAggregateInput
   passwordResetTokens?: Prisma.PasswordResetTokenOrderByRelationAggregateInput
+  availabilityNotifications?: Prisma.ProductAvailabilityNotificationOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -246,6 +248,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   payments?: Prisma.PaymentListRelationFilter
   customPrices?: Prisma.CustomPriceListRelationFilter
   passwordResetTokens?: Prisma.PasswordResetTokenListRelationFilter
+  availabilityNotifications?: Prisma.ProductAvailabilityNotificationListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -290,6 +293,7 @@ export type UserCreateInput = {
   payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
   customPrices?: Prisma.CustomPriceCreateNestedManyWithoutUserInput
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
+  availabilityNotifications?: Prisma.ProductAvailabilityNotificationCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -306,6 +310,7 @@ export type UserUncheckedCreateInput = {
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
   customPrices?: Prisma.CustomPriceUncheckedCreateNestedManyWithoutUserInput
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+  availabilityNotifications?: Prisma.ProductAvailabilityNotificationUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -322,6 +327,7 @@ export type UserUpdateInput = {
   payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
   customPrices?: Prisma.CustomPriceUpdateManyWithoutUserNestedInput
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
+  availabilityNotifications?: Prisma.ProductAvailabilityNotificationUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -338,6 +344,7 @@ export type UserUncheckedUpdateInput = {
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
   customPrices?: Prisma.CustomPriceUncheckedUpdateManyWithoutUserNestedInput
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+  availabilityNotifications?: Prisma.ProductAvailabilityNotificationUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -371,6 +378,11 @@ export type UserUncheckedUpdateManyInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   accountType?: Prisma.EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
+}
+
+export type UserNullableScalarRelationFilter = {
+  is?: Prisma.UserWhereInput | null
+  isNot?: Prisma.UserWhereInput | null
 }
 
 export type UserCountOrderByAggregateInput = {
@@ -409,6 +421,22 @@ export type UserMinOrderByAggregateInput = {
 export type UserScalarRelationFilter = {
   is?: Prisma.UserWhereInput
   isNot?: Prisma.UserWhereInput
+}
+
+export type UserCreateNestedOneWithoutAvailabilityNotificationsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAvailabilityNotificationsInput, Prisma.UserUncheckedCreateWithoutAvailabilityNotificationsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAvailabilityNotificationsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutAvailabilityNotificationsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAvailabilityNotificationsInput, Prisma.UserUncheckedCreateWithoutAvailabilityNotificationsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAvailabilityNotificationsInput
+  upsert?: Prisma.UserUpsertWithoutAvailabilityNotificationsInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutAvailabilityNotificationsInput, Prisma.UserUpdateWithoutAvailabilityNotificationsInput>, Prisma.UserUncheckedUpdateWithoutAvailabilityNotificationsInput>
 }
 
 export type EnumAccountTypeFieldUpdateOperationsInput = {
@@ -485,6 +513,86 @@ export type UserUpdateOneRequiredWithoutCustomPricesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCustomPricesInput, Prisma.UserUpdateWithoutCustomPricesInput>, Prisma.UserUncheckedUpdateWithoutCustomPricesInput>
 }
 
+export type UserCreateWithoutAvailabilityNotificationsInput = {
+  id?: string
+  email: string
+  password: string
+  firstName?: string | null
+  lastName?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  accountType?: $Enums.AccountType
+  orders?: Prisma.OrderCreateNestedManyWithoutUserInput
+  addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
+  customPrices?: Prisma.CustomPriceCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutAvailabilityNotificationsInput = {
+  id?: string
+  email: string
+  password: string
+  firstName?: string | null
+  lastName?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  accountType?: $Enums.AccountType
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
+  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
+  customPrices?: Prisma.CustomPriceUncheckedCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutAvailabilityNotificationsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutAvailabilityNotificationsInput, Prisma.UserUncheckedCreateWithoutAvailabilityNotificationsInput>
+}
+
+export type UserUpsertWithoutAvailabilityNotificationsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutAvailabilityNotificationsInput, Prisma.UserUncheckedUpdateWithoutAvailabilityNotificationsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutAvailabilityNotificationsInput, Prisma.UserUncheckedCreateWithoutAvailabilityNotificationsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutAvailabilityNotificationsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutAvailabilityNotificationsInput, Prisma.UserUncheckedUpdateWithoutAvailabilityNotificationsInput>
+}
+
+export type UserUpdateWithoutAvailabilityNotificationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accountType?: Prisma.EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
+  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
+  addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
+  customPrices?: Prisma.CustomPriceUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutAvailabilityNotificationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  accountType?: Prisma.EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
+  addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
+  customPrices?: Prisma.CustomPriceUncheckedUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+}
+
 export type UserCreateWithoutPasswordResetTokensInput = {
   id?: string
   email: string
@@ -498,6 +606,7 @@ export type UserCreateWithoutPasswordResetTokensInput = {
   addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
   customPrices?: Prisma.CustomPriceCreateNestedManyWithoutUserInput
+  availabilityNotifications?: Prisma.ProductAvailabilityNotificationCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPasswordResetTokensInput = {
@@ -513,6 +622,7 @@ export type UserUncheckedCreateWithoutPasswordResetTokensInput = {
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
   customPrices?: Prisma.CustomPriceUncheckedCreateNestedManyWithoutUserInput
+  availabilityNotifications?: Prisma.ProductAvailabilityNotificationUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPasswordResetTokensInput = {
@@ -544,6 +654,7 @@ export type UserUpdateWithoutPasswordResetTokensInput = {
   addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
   customPrices?: Prisma.CustomPriceUpdateManyWithoutUserNestedInput
+  availabilityNotifications?: Prisma.ProductAvailabilityNotificationUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPasswordResetTokensInput = {
@@ -559,6 +670,7 @@ export type UserUncheckedUpdateWithoutPasswordResetTokensInput = {
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
   customPrices?: Prisma.CustomPriceUncheckedUpdateManyWithoutUserNestedInput
+  availabilityNotifications?: Prisma.ProductAvailabilityNotificationUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAddressesInput = {
@@ -574,6 +686,7 @@ export type UserCreateWithoutAddressesInput = {
   payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
   customPrices?: Prisma.CustomPriceCreateNestedManyWithoutUserInput
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
+  availabilityNotifications?: Prisma.ProductAvailabilityNotificationCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAddressesInput = {
@@ -589,6 +702,7 @@ export type UserUncheckedCreateWithoutAddressesInput = {
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
   customPrices?: Prisma.CustomPriceUncheckedCreateNestedManyWithoutUserInput
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+  availabilityNotifications?: Prisma.ProductAvailabilityNotificationUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAddressesInput = {
@@ -620,6 +734,7 @@ export type UserUpdateWithoutAddressesInput = {
   payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
   customPrices?: Prisma.CustomPriceUpdateManyWithoutUserNestedInput
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
+  availabilityNotifications?: Prisma.ProductAvailabilityNotificationUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAddressesInput = {
@@ -635,6 +750,7 @@ export type UserUncheckedUpdateWithoutAddressesInput = {
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
   customPrices?: Prisma.CustomPriceUncheckedUpdateManyWithoutUserNestedInput
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+  availabilityNotifications?: Prisma.ProductAvailabilityNotificationUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutOrdersInput = {
@@ -650,6 +766,7 @@ export type UserCreateWithoutOrdersInput = {
   payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
   customPrices?: Prisma.CustomPriceCreateNestedManyWithoutUserInput
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
+  availabilityNotifications?: Prisma.ProductAvailabilityNotificationCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutOrdersInput = {
@@ -665,6 +782,7 @@ export type UserUncheckedCreateWithoutOrdersInput = {
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
   customPrices?: Prisma.CustomPriceUncheckedCreateNestedManyWithoutUserInput
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+  availabilityNotifications?: Prisma.ProductAvailabilityNotificationUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutOrdersInput = {
@@ -696,6 +814,7 @@ export type UserUpdateWithoutOrdersInput = {
   payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
   customPrices?: Prisma.CustomPriceUpdateManyWithoutUserNestedInput
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
+  availabilityNotifications?: Prisma.ProductAvailabilityNotificationUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOrdersInput = {
@@ -711,6 +830,7 @@ export type UserUncheckedUpdateWithoutOrdersInput = {
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
   customPrices?: Prisma.CustomPriceUncheckedUpdateManyWithoutUserNestedInput
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+  availabilityNotifications?: Prisma.ProductAvailabilityNotificationUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPaymentsInput = {
@@ -726,6 +846,7 @@ export type UserCreateWithoutPaymentsInput = {
   addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
   customPrices?: Prisma.CustomPriceCreateNestedManyWithoutUserInput
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
+  availabilityNotifications?: Prisma.ProductAvailabilityNotificationCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPaymentsInput = {
@@ -741,6 +862,7 @@ export type UserUncheckedCreateWithoutPaymentsInput = {
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
   customPrices?: Prisma.CustomPriceUncheckedCreateNestedManyWithoutUserInput
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+  availabilityNotifications?: Prisma.ProductAvailabilityNotificationUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPaymentsInput = {
@@ -772,6 +894,7 @@ export type UserUpdateWithoutPaymentsInput = {
   addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
   customPrices?: Prisma.CustomPriceUpdateManyWithoutUserNestedInput
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
+  availabilityNotifications?: Prisma.ProductAvailabilityNotificationUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPaymentsInput = {
@@ -787,6 +910,7 @@ export type UserUncheckedUpdateWithoutPaymentsInput = {
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
   customPrices?: Prisma.CustomPriceUncheckedUpdateManyWithoutUserNestedInput
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+  availabilityNotifications?: Prisma.ProductAvailabilityNotificationUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutCustomPricesInput = {
@@ -802,6 +926,7 @@ export type UserCreateWithoutCustomPricesInput = {
   addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentCreateNestedManyWithoutUserInput
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
+  availabilityNotifications?: Prisma.ProductAvailabilityNotificationCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutCustomPricesInput = {
@@ -817,6 +942,7 @@ export type UserUncheckedCreateWithoutCustomPricesInput = {
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutUserInput
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+  availabilityNotifications?: Prisma.ProductAvailabilityNotificationUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutCustomPricesInput = {
@@ -848,6 +974,7 @@ export type UserUpdateWithoutCustomPricesInput = {
   addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUpdateManyWithoutUserNestedInput
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
+  availabilityNotifications?: Prisma.ProductAvailabilityNotificationUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCustomPricesInput = {
@@ -863,6 +990,7 @@ export type UserUncheckedUpdateWithoutCustomPricesInput = {
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutUserNestedInput
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+  availabilityNotifications?: Prisma.ProductAvailabilityNotificationUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -876,6 +1004,7 @@ export type UserCountOutputType = {
   payments: number
   customPrices: number
   passwordResetTokens: number
+  availabilityNotifications: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -884,6 +1013,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   payments?: boolean | UserCountOutputTypeCountPaymentsArgs
   customPrices?: boolean | UserCountOutputTypeCountCustomPricesArgs
   passwordResetTokens?: boolean | UserCountOutputTypeCountPasswordResetTokensArgs
+  availabilityNotifications?: boolean | UserCountOutputTypeCountAvailabilityNotificationsArgs
 }
 
 /**
@@ -931,6 +1061,13 @@ export type UserCountOutputTypeCountPasswordResetTokensArgs<ExtArgs extends runt
   where?: Prisma.PasswordResetTokenWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountAvailabilityNotificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ProductAvailabilityNotificationWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -946,6 +1083,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   payments?: boolean | Prisma.User$paymentsArgs<ExtArgs>
   customPrices?: boolean | Prisma.User$customPricesArgs<ExtArgs>
   passwordResetTokens?: boolean | Prisma.User$passwordResetTokensArgs<ExtArgs>
+  availabilityNotifications?: boolean | Prisma.User$availabilityNotificationsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -989,6 +1127,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   payments?: boolean | Prisma.User$paymentsArgs<ExtArgs>
   customPrices?: boolean | Prisma.User$customPricesArgs<ExtArgs>
   passwordResetTokens?: boolean | Prisma.User$passwordResetTokensArgs<ExtArgs>
+  availabilityNotifications?: boolean | Prisma.User$availabilityNotificationsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1002,6 +1141,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     payments: Prisma.$PaymentPayload<ExtArgs>[]
     customPrices: Prisma.$CustomPricePayload<ExtArgs>[]
     passwordResetTokens: Prisma.$PasswordResetTokenPayload<ExtArgs>[]
+    availabilityNotifications: Prisma.$ProductAvailabilityNotificationPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1411,6 +1551,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   payments<T extends Prisma.User$paymentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$paymentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   customPrices<T extends Prisma.User$customPricesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$customPricesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CustomPricePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   passwordResetTokens<T extends Prisma.User$passwordResetTokensArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$passwordResetTokensArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PasswordResetTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  availabilityNotifications<T extends Prisma.User$availabilityNotificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$availabilityNotificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductAvailabilityNotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1958,6 +2099,30 @@ export type User$passwordResetTokensArgs<ExtArgs extends runtime.Types.Extension
   take?: number
   skip?: number
   distinct?: Prisma.PasswordResetTokenScalarFieldEnum | Prisma.PasswordResetTokenScalarFieldEnum[]
+}
+
+/**
+ * User.availabilityNotifications
+ */
+export type User$availabilityNotificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ProductAvailabilityNotification
+   */
+  select?: Prisma.ProductAvailabilityNotificationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ProductAvailabilityNotification
+   */
+  omit?: Prisma.ProductAvailabilityNotificationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ProductAvailabilityNotificationInclude<ExtArgs> | null
+  where?: Prisma.ProductAvailabilityNotificationWhereInput
+  orderBy?: Prisma.ProductAvailabilityNotificationOrderByWithRelationInput | Prisma.ProductAvailabilityNotificationOrderByWithRelationInput[]
+  cursor?: Prisma.ProductAvailabilityNotificationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ProductAvailabilityNotificationScalarFieldEnum | Prisma.ProductAvailabilityNotificationScalarFieldEnum[]
 }
 
 /**

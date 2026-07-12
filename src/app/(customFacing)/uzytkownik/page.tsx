@@ -25,7 +25,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 
-type OrderStatus = "PENDING" | "PAID" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED";
+type OrderStatus = "PENDING" | "PREORDER" | "PAID" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED";
 
 type Order = {
   id: string;
@@ -259,6 +259,8 @@ export default function UserProfilePage() {
     switch (status) {
       case "PENDING":
         return "Oczekujące";
+      case "PREORDER":
+        return "Preorder";
       case "PAID":
         return "Opłacone";
       case "PROCESSING":
@@ -279,6 +281,8 @@ export default function UserProfilePage() {
     switch (status) {
       case "PENDING":
         return "secondary";
+      case "PREORDER":
+        return "outline";
       case "PAID":
         return "default";
       case "PROCESSING":

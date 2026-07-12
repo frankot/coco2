@@ -71,7 +71,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Dynamic product pages
   const products = await prisma.product.findMany({
-    where: { isAvailable: true },
+    where: { isVisible: true },
     select: { id: true, slug: true, updatedAt: true },
   });
 

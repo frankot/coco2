@@ -9,6 +9,7 @@ import { z } from "zod";
 
 const ORDER_STATUSES = [
   "PENDING",
+  "PREORDER",
   "PAID",
   "PROCESSING",
   "SHIPPED",
@@ -20,6 +21,7 @@ type OrderStatus = (typeof ORDER_STATUSES)[number];
 // Valid status transitions: from -> allowed destinations
 const VALID_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
   PENDING: ["PAID", "PROCESSING", "SHIPPED", "CANCELLED"],
+  PREORDER: ["PROCESSING", "CANCELLED"],
   PAID: ["PROCESSING", "CANCELLED"],
   PROCESSING: ["SHIPPED", "CANCELLED"],
   SHIPPED: ["DELIVERED", "CANCELLED"],
@@ -29,7 +31,7 @@ const VALID_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
 
 const patchOrderSchema = z.object({
   status: z.enum(ORDER_STATUSES).optional(),
-  paymentMethod: z.enum(["BANK_TRANSFER", "COD", "STRIPE"]).optional(),
+  paymentMethod: z.enum(["BANK_TRANSFER", "COD", "STRIPE", "INVOICE_DEFERRED"]).optional(),
 });
 
 // Resolve shipping service name from Apaczka service structure when missing
