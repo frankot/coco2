@@ -341,15 +341,18 @@ export default function AdminDashboard() {
                           ...stats.ordersLast14Days.map((item) => item.orders),
                           1
                         );
-                        const height = `${Math.max(8, (day.orders / maxOrders) * 100)}%`;
+                        const height = day.orders === 0 ? "0%" : `${Math.max(8, (day.orders / maxOrders) * 100)}%`;
 
                         return (
-                          <div key={day.date} className="flex-1">
+                          <div key={day.date} className="group relative flex h-full flex-1 items-end">
                             <div
                               className="w-full rounded-sm bg-primary/80 transition-all hover:bg-primary"
                               style={{ height }}
                               title={`${day.orders} zamówień`}
                             ></div>
+                            <div className="pointer-events-none absolute -top-7 left-1/2 z-10 -translate-x-1/2 rounded-md bg-gray-900 px-2 py-1 text-xs font-medium text-white opacity-0 shadow-sm transition-opacity group-hover:opacity-100">
+                              {day.orders}
+                            </div>
                           </div>
                         );
                       })}
