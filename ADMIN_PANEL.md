@@ -70,7 +70,7 @@ W górnej części dashboardu znajdują się karty z kluczowymi wskaźnikami:
 Dashboard zawiera dwie sekcje analityczne:
 
 - **Zamówienia z ostatnich 14 dni** — wykres słupkowy pokazujący liczbę zamówień dziennie z ostatnich dwóch tygodni.
-- **Struktura statusów zamówień** — paski postępu pokazujące rozkład zamówień według statusów (Oczekujące, Opłacone, W realizacji, Wysłane, Dostarczone, Anulowane).
+- **Struktura statusów zamówień** — paski postępu pokazujące rozkład zamówień według statusów (Oczekujące, Preorder, Opłacone, W realizacji, Wysłane, Dostarczone, Anulowane).
 
 ### 3.3. Ostatnie zamówienia
 
@@ -86,27 +86,43 @@ Sekcja **Produkty** (`/admin/produkty`) pozwala zarządzać całym katalogiem pr
 
 Na liście produktów widzisz tabelę zawierającą:
 
-| Kolumna     | Opis                                                                 |
-| ----------- | -------------------------------------------------------------------- |
-| Nazwa       | Nazwa produktu                                                       |
-| Cena        | Cena produktu w PLN                                                  |
-| Zamówienia  | Ile razy produkt został zamówiony                                    |
-| Widoczność  | Dla jakich typów kont produkt jest widoczny (D = Detal, B2B, H = Hurt)|
-| Status      | Przełącznik aktywny/nieaktywny (zielony = aktywny, szary = nieaktywny)|
-| Akcje       | Menu z opcjami (ikona trzech kropek ⋮)                                |
+| Kolumna          | Opis                                                                 |
+| ---------------- | -------------------------------------------------------------------- |
+| Nazwa            | Nazwa produktu                                                       |
+| Cena             | Cena produktu w PLN                                                  |
+| Zamówienia       | Ile razy produkt został zamówiony                                    |
+| Sklep            | Czy produkt jest widoczny publicznie w sklepie oraz czy jest preorder|
+| Widoczność grup  | Dla jakich typów kont produkt jest widoczny (D = Detal, B2B, H = Hurt)|
+| Dostępność       | Przełącznik dostępny/niedostępny do kupienia                         |
+| Akcje            | Menu z opcjami (ikona trzech kropek ⋮)                                |
 
 Możesz **sortować** listę klikając na nagłówki kolumn **Cena** lub **Zamówienia** — kliknięcie zmienia kierunek sortowania (rosnąco / malejąco).
 
-### 4.2. Widoczność produktu
+### 4.2. Widoczność i dostępność produktu
 
-Każdy produkt można skonfigurować tak, aby był widoczny tylko dla wybranych typów klientów. W kolumnie **Widoczność** na liście produktów widoczne są kolorowe skróty: **D** (Detal), **B2B** (Detal B2B), **H** (Hurt). Ustawienia konfiguruje się w formularzu edycji produktu (patrz 4.4). Na stronie szczegółów produktu widoczność jest pokazana z ikonami oka (widoczny / ukryty).
+Produkt ma teraz dwa niezależne ustawienia:
+
+- **Widoczny w sklepie** — decyduje, czy klient w ogóle widzi produkt na stronie sklepu. Jeśli produkt jest ukryty, nie pojawia się na liście produktów, stronie głównej, w szczegółach produktu ani w mapie strony.
+- **Dostępny do kupienia** — decyduje, czy widoczny produkt można dodać do koszyka i kupić.
+
+Dzięki temu produkt może być **widoczny, ale niedostępny do kupienia**. W takim przypadku klient widzi produkt w sklepie, ale zamiast przycisku dodania do koszyka pojawia się opcja **„Powiadom mnie o dostępności"**.
+
+Dodatkowo produkt może być widoczny tylko dla wybranych typów klientów. W kolumnie **Widoczność grup** widoczne są skróty:
+
+- **D** — Detal
+- **B2B** — Detal B2B
+- **H** — Hurt
+
+Na stronie szczegółów produktu widoczność jest pokazana z ikonami oka (widoczny / ukryty).
 
 ### 4.3. Dodawanie nowego produktu
 
 1. Kliknij przycisk **„Dodaj produkt"** w prawym górnym rogu.
 2. Wypełnij formularz:
    - **Nazwa** — nazwa produktu (wymagane).
-   - **Cena (PLN)** — cena produktu w złotych (np. 12,99). Pod polem widoczny jest podgląd sformatowanej ceny.
+   - **Slug (URL)** — adres produktu w sklepie. Może zostać wygenerowany automatycznie z nazwy przyciskiem **„Generuj"**.
+   - **Cena (PLN)** — cena produktu w złotych (np. 12,99). Pod polem widoczny jest podgląd sformatowanej ceny. Dla preorderu jest to **cena, którą klient faktycznie płaci**.
+   - **Najniższa cena z 30 dni (PLN)** — opcjonalna cena informacyjna używana przy promocjach.
    - **Opis (krótki)** — krótki opis widoczny na liście produktów w sklepie (wymagane).
    - **Pełna zawartość (Markdown)** — szczegółowy opis produktu z formatowaniem. Możesz używać nagłówków, list, pogrubień itp. Edytor wyświetla podgląd w czasie rzeczywistym.
    - **Skład i Wartość Odżywcza** — opcjonalne sekcje:
@@ -119,10 +135,16 @@ Każdy produkt można skonfigurować tak, aby był widoczny tylko dla wybranych 
      - _Długość (cm)_ — długość opakowania w centymetrach.
      - _Szerokość (cm)_ — szerokość opakowania w centymetrach.
      - _Wysokość (cm)_ — wysokość opakowania w centymetrach.
-   - **Widoczność** — trzy przełączniki określające, które typy kont widzą produkt:
-     - Widoczny dla Detal
-     - Widoczny dla Detal B2B
-     - Widoczny dla Hurt
+   - **Status** — ustawienia widoczności i sprzedaży:
+     - **Widoczny w sklepie** — produkt jest publicznie widoczny dla klientów.
+     - **Dostępny do kupienia** — produkt można normalnie kupić. Jeśli to pole jest odznaczone, ale produkt jest widoczny, klient może zapisać się na powiadomienie o dostępności.
+     - **Preorder** — włącza tryb preorderu. Produkt nie jest wtedy normalnie dostępny, ale można go kupić w preorderze do wybranej daty.
+   - **Grupy** — określa, które typy klientów widzą produkt:
+     - **Detal** — zwykli klienci detaliczni i goście.
+     - **B2B** — klienci Detal B2B.
+     - **Hurt** — klienci hurtowi.
+     - Przy preorderze pola **B2B** i **Hurt** są blokowane, ponieważ preorder jest dostępny tylko dla klientów Detal.
+   - **Promocja** — oznaczenie produktu jako promocyjnego.
    - **Zdjęcia produktu** — kliknij pole „Dodaj zdjęcia", aby przesłać zdjęcia. Można dodać wiele zdjęć. Pierwsze zdjęcie będzie oznaczone jako **Główne** (jest wyświetlane jako miniatura). Maksymalny rozmiar jednego zdjęcia to **2 MB**. Użyj np. https://squoosh.app/ aby zmniejszyć rozmiar zdjęcia (format najlepiej WebP).
 3. Kliknij **„Dodaj produkt"**, aby zapisać.
 
@@ -130,20 +152,22 @@ Każdy produkt można skonfigurować tak, aby był widoczny tylko dla wybranych 
 
 1. Na liście produktów kliknij ikonę menu ⋮ przy wybranym produkcie.
 2. Wybierz **„Edytuj"**.
-3. Formularz edycji zawiera wszystkie pola jak przy dodawaniu — w tym ustawienia widoczności, wymiarów i wagi. Zmień potrzebne pola.
+3. Formularz edycji zawiera wszystkie pola jak przy dodawaniu — w tym status widoczności, dostępności, preorder, widoczność grup, wymiary i wagę.
 4. W sekcji zdjęć możesz:
    - **Usunąć istniejące zdjęcie** — najedź na zdjęcie i kliknij przycisk ❌.
    - **Dodać nowe zdjęcia** — kliknij „Dodaj zdjęcia" i wybierz pliki.
    - Produkt musi mieć **co najmniej jedno zdjęcie**.
-5. Kliknij **„Aktualizuj produkt"**, aby zapisać zmiany.
+5. Kliknij **„Zapisz zmiany"**, aby zapisać.
+
+> Jeśli produkt ma ustawiony preorder, system automatycznie wymusza: dostępność normalna = wyłączona, widoczność dla Detal = włączona, widoczność dla B2B i Hurt = wyłączona.
 
 ### 4.5. Podgląd produktu
 
 Kliknięcie w nazwę produktu na liście przenosi do strony podglądu (`/admin/produkty/[id]`), gdzie możesz zobaczyć wszystkie informacje o produkcie:
 
 - Zdjęcia (główne + dodatkowe)
-- Cena, status (aktywny/nieaktywny)
-- Widoczność dla typów kont
+- Cena, dostępność i informacja, czy produkt jest preorderem
+- Widoczność w sklepie oraz widoczność dla typów kont
 - Slug, ilość w opakowaniu, waga, wymiary
 - Liczba zamówień zawierających ten produkt
 - Opis, skład, wartości odżywcze
@@ -151,14 +175,55 @@ Kliknięcie w nazwę produktu na liście przenosi do strony podglądu (`/admin/p
 
 Stąd możesz też szybko przejść do edycji lub usunąć produkt.
 
-### 4.6. Aktywacja / Deaktywacja produktu
+### 4.6. Dostępność produktu
 
-Produkt może być **aktywny** (widoczny w sklepie) lub **nieaktywny** (ukryty).
+Przełącznik w kolumnie **Dostępność** decyduje, czy produkt można kupić normalnie.
 
-1. Na liście produktów kliknij przełącznik w kolumnie **Status**.
-2. Zmiana następuje natychmiast — zielony przełącznik = aktywny, szary = nieaktywny.
+1. Na liście produktów kliknij przełącznik w kolumnie **Dostępność**.
+2. Zmiana następuje natychmiast:
+   - zielony przełącznik = produkt dostępny do kupienia,
+   - szary przełącznik = produkt niedostępny do kupienia.
 
-### 4.7. Usuwanie produktu
+> Ważne: wyłączenie dostępności **nie ukrywa produktu**. Jeśli produkt ma włączone **„Widoczny w sklepie"**, klient nadal zobaczy go w sklepie, ale nie będzie mógł go kupić. Zobaczy opcję **„Powiadom mnie o dostępności"**.
+
+Aby całkowicie ukryć produkt ze sklepu, wejdź w edycję produktu i odznacz **„Widoczny w sklepie"**.
+
+### 4.7. Preorder
+
+Preorder to specjalny tryb produktu, w którym klient może zapłacić za produkt przed standardową dostępnością.
+
+Aby włączyć preorder:
+
+1. Wejdź w dodawanie lub edycję produktu.
+2. Zaznacz checkbox **Preorder**.
+3. Po zaznaczeniu pojawią się dodatkowe pola:
+   - **Data i godzina zakończenia preorderu** — moment, do którego klient może złożyć zamówienie preorder. Na stronie produktu klient widzi licznik odliczający czas do tej daty. Po upływie czasu produkt nadal jest widoczny, ale nie można go kupić w preorderze.
+   - **Cena regularna do pokazania rabatu (PLN)** — cena referencyjna używana tylko do pokazania rabatu. Musi być wyższa od ceny sprzedaży.
+   - **Cena sprzedaży / preorder (PLN)** — zwykłe pole ceny produktu. Dla preorderu jest to realna cena, którą klient płaci.
+4. System automatycznie:
+   - wyłącza normalną dostępność produktu,
+   - blokuje i odznacza widoczność dla B2B i Hurt,
+   - zostawia produkt widoczny dla Detal.
+
+Preorder jest dostępny tylko dla klientów Detal i gości. Klienci B2B i Hurt nie widzą produktów preorderowych.
+
+Zamówienia preorder:
+
+- klient płaci od razu za produkt i dostawę,
+- dostawa jest wybrana normalnie przy zamówieniu,
+- zamówienie po opłaceniu otrzymuje status **Preorder**,
+- przesyłka Apaczka nie tworzy się automatycznie po płatności,
+- administrator ręcznie zmienia status **Preorder → W realizacji**, wtedy system tworzy przesyłkę w Apaczce.
+
+### 4.8. Powiadomienia o dostępności
+
+Jeśli produkt jest widoczny w sklepie, ale nie jest dostępny do kupienia, klient może kliknąć **„Powiadom mnie o dostępności"** i podać email.
+
+Gdy administrator zmieni produkt z niedostępnego na dostępny do kupienia, system wysyła powiadomienie email do zapisanych klientów. Powiadomienia są jednorazowe — po wysłaniu dana subskrypcja nie jest wysyłana ponownie.
+
+Powiadomienia dotyczą normalnej dostępności produktu. Nie są wysyłane po samym włączeniu preorderu.
+
+### 4.9. Usuwanie produktu
 
 1. Kliknij menu ⋮ przy produkcie.
 2. Wybierz **„Usuń"**.
@@ -204,6 +269,7 @@ Każde zamówienie przechodzi przez następujące statusy:
 | Status           | Znaczenie                                 |
 | ---------------- | ----------------------------------------- |
 | **Oczekujące**   | Zamówienie złożone, oczekuje na opłatę    |
+| **Preorder**     | Zamówienie preorder opłacone, czeka na ręczne rozpoczęcie realizacji |
 | **Opłacone**     | Płatność otrzymana                        |
 | **W realizacji** | Zamówienie jest pakowane / przygotowywane |
 | **Wysłane**      | Paczka została wysłana do klienta         |
@@ -217,6 +283,7 @@ Każde zamówienie przechodzi przez następujące statusy:
 1. Kliknij menu ⋮ przy zamówieniu.
 2. W zależności od aktualnego statusu, dostępne są różne opcje:
    - **Oczekujące** → „Oznacz jako opłacone", „Rozpocznij realizację" lub „Oznacz jako wysłane"
+   - **Preorder** → „Rozpocznij realizację preorderu"
    - **Opłacone** → „Rozpocznij realizację"
    - **W realizacji** → „Oznacz jako wysłane"
    - **Wysłane** → „Oznacz jako dostarczone"
@@ -263,6 +330,8 @@ Apaczka to system zarządzania wysyłkami. Panel oferuje kilka sposobów interak
 
 Gdy zamówienie przechodzi ze statusu **Opłacone** → **W realizacji**, system automatycznie tworzy przesyłkę w Apaczka i przypisuje numer listu przewozowego.
 
+Dla zamówień preorder przesyłka nie jest tworzona po płatności. Tworzy się dopiero wtedy, gdy administrator ręcznie zmieni status **Preorder** → **W realizacji**.
+
 #### Potwierdzenie wszystkich zamówień naraz
 
 1. Na stronie zamówień kliknij przycisk **„Apaczka - wyślij opłacone"** (u góry strony).
@@ -293,7 +362,7 @@ Po synchronizacji zobaczysz komunikat z liczbą zaktualizowanych i błędnych za
 
 ### 5.8. Faktury wFirma
 
-System automatycznie wysyła faktury do wFirma, gdy zamówienie otrzymuje status **Opłacone** (PAID).
+System automatycznie wysyła faktury do wFirma, gdy zamówienie otrzymuje status **Opłacone** (PAID) lub **Preorder** (PREORDER).
 
 - **Dla zamówień regularnych**: faktura jest tworzona automatycznie w momencie przejścia w status Opłacone lub W realizacji.
 - **Dla zamówień B2B ręcznych**: faktury NIE są wysyłane automatycznie — obsługa ręczna.
@@ -327,9 +396,9 @@ W systemie istnieją cztery typy kont. Każdy różni się zakresem funkcji i sp
 
 | Typ konta      | Ceny                     | Fakturowanie | Apaczka / wFirma                   | Widoczność produktów | Opis |
 | -------------- | ------------------------ | ------------ | ---------------------------------- | ------------------------------ | ---- |
-| **Detal**      | Domyślne ceny sklepowe  | Opcjonalne (jeśli klient zaznaczy ,,Chcę fakturę") | Automatyczna integracja | Widzi produkty z `visibleToDetal` | Zwykły klient detaliczny. Zamówienia obsługiwane standardowo — płatność online lub za pobraniem, automatyczne etykiety Apaczka, automatyczne faktury wFirma. |
-| **Detal B2B**  | **Ceny indywidualne** (konfigurowalne w panelu) | Wymagane (dane firmy + NIP) | Ręczna obsługa (B2B ręczne) | Widzi produkty z `visibleToDetalB2B` | Klient detaliczny na fakturę firmową. Może mieć przypisane indywidualne ceny na produkty. Zamówienia nie integrują się automatycznie z Apaczką ani wFirmą — wymagają ręcznej obsługi wysyłki i fakturowania poza systemem. |
-| **Hurt**       | **Ceny indywidualne** (konfigurowalne w panelu) | Wymagane (dane firmy + NIP) | Ręczna obsługa (B2B ręczne) | Widzi produkty z `visibleToHurt` | Klient hurtowy. Może mieć przypisane indywidualne ceny na produkty. Zamówienia nie integrują się automatycznie z Apaczką ani wFirmą — wymagają ręcznej obsługi wysyłki i fakturowania poza systemem. |
+| **Detal**      | Domyślne ceny sklepowe  | Opcjonalne (jeśli klient zaznaczy ,,Chcę fakturę") | Automatyczna integracja | Widzi produkty z `visibleToDetal`, w tym preorder | Zwykły klient detaliczny. Zamówienia obsługiwane standardowo — płatność online, automatyczne etykiety Apaczka dla zwykłych zamówień, automatyczne faktury wFirma. Może składać zamówienia preorder. |
+| **Detal B2B**  | **Ceny indywidualne** (konfigurowalne w panelu) | Wymagane (dane firmy + NIP) | Ręczna obsługa (B2B ręczne) | Widzi produkty z `visibleToDetalB2B`, bez preorderów | Klient detaliczny na fakturę firmową. Może mieć przypisane indywidualne ceny na produkty. Zamówienia nie integrują się automatycznie z Apaczką ani wFirmą — wymagają ręcznej obsługi wysyłki i fakturowania poza systemem. Nie składa zamówień preorder. |
+| **Hurt**       | **Ceny indywidualne** (konfigurowalne w panelu) | Wymagane (dane firmy + NIP) | Ręczna obsługa (B2B ręczne) | Widzi produkty z `visibleToHurt`, bez preorderów | Klient hurtowy. Może mieć przypisane indywidualne ceny na produkty. Zamówienia nie integrują się automatycznie z Apaczką ani wFirmą — wymagają ręcznej obsługi wysyłki i fakturowania poza systemem. Nie składa zamówień preorder. |
 | **Admin**      | Domyślne ceny sklepowe  | Nie dotyczy  | Nie dotyczy                        | Wszystkie produkty             | Administrator z pełnym dostępem do panelu administracyjnego. Nie składa zamówień przez sklep. |
 
 ### 6.3. Newsletter
