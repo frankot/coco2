@@ -61,7 +61,7 @@ export function VisibilityToggleButton({ id, isVisible }: { id: string; isVisibl
       type="button"
       disabled={isPending}
       onClick={handleToggle}
-      className={`text-xs px-2 py-1 rounded-full font-medium transition-colors disabled:opacity-50 ${
+      className={`cursor-pointer text-xs px-2 py-1 rounded-full font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
         isVisible ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-600"
       }`}
     >

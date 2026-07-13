@@ -126,11 +126,7 @@ export default function ProductPageClient({ params }: { params: Promise<{ id: st
               {/* Title skeleton */}
               <div>
                 <div className="h-8 w-3/4 bg-gray-100 rounded animate-pulse mb-2" />
-                {/* Shipping - static */}
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <span>Wysyłka w:</span>
-                  <span className="font-medium">1 dzień roboczy + czas dostawy</span>
-                </div>
+
               </div>
 
               {/* Price skeleton */}
@@ -372,10 +368,7 @@ export default function ProductPageClient({ params }: { params: Promise<{ id: st
             {/* Product title */}
             <div>
               <h1 className="text-2xl lg:text-3xl font-bold text-primary mb-2">{product.name}</h1>
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <span>Wysyłka w:</span>
-                <span className="font-medium">1 dzień roboczy + czas dostawy</span>
-              </div>
+
             </div>
 
             {/* Price */}

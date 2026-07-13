@@ -66,7 +66,7 @@ export function ProductCard({ product, preload }: { product: Product; preload?: 
 
         {product.isPreorder ? (
           <div className="absolute top-3 left-3 bg-amber-500 text-white px-2 py-1 rounded-full text-xs font-medium">
-            PREORDER
+            PREORDER{preorderDiscount > 0 ? ` -${preorderDiscount}%` : ""}
           </div>
         ) : !product.isAvailable ? (
           <div className="absolute top-3 left-3 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-medium">
@@ -91,22 +91,21 @@ export function ProductCard({ product, preload }: { product: Product; preload?: 
 
         <p className="text-gray-600 text-sm line-clamp-2 mb-4">{product.description}</p>
 
-        <div className="flex items-center justify-between">
+        <div className="flex items-end justify-between">
           <div>
-            {product.isPreorder && product.preorderOriginalPriceInCents && (
-              <div className="text-sm text-gray-400 line-through">
-                {formatPLN(product.preorderOriginalPriceInCents)}
-              </div>
-            )}
-            <div className="text-xl font-bold text-primary">{formatPLN(product.priceInCents)}</div>
+            <div className="flex items-center gap-2">
+              <div className="text-xl font-bold text-primary">{formatPLN(product.priceInCents)}</div>
+              {product.isPreorder && product.preorderOriginalPriceInCents && (
+                <div className="text-sm text-gray-400 line-through">
+                  {formatPLN(product.preorderOriginalPriceInCents)}
+                </div>
+              )}
+            </div>
             {product.itemsPerPack > 1 && (
               <div className="text-xs text-gray-500 mt-0.5">
                 {product.itemsPerPack} szt. &middot;{" "}
                 {formatPLN(Math.round(product.priceInCents / product.itemsPerPack))}/szt.
               </div>
-            )}
-            {preorderDiscount > 0 && (
-              <div className="text-xs font-semibold text-amber-700 mt-0.5">-{preorderDiscount}% preorder</div>
             )}
           </div>
 

@@ -70,7 +70,8 @@ export default function ShopPage() {
       }
     });
 
-  const totalVisible = featuredProducts.length + otherProducts.length;
+  const visibleProducts = [...featuredProducts, ...otherProducts];
+  const totalVisible = visibleProducts.length;
   const showNoResults = searchTerm.length > 0 && totalVisible === 0;
 
   return (
@@ -144,20 +145,11 @@ export default function ShopPage() {
             {/* No results — only shown when actively searching with no match */}
             {showNoResults && <p className="text-gray-600">Znaleziono 0 produktów</p>}
 
-            {/* Featured products (below search/sort) */}
-            {featuredProducts.length > 0 && (
+            {/* Products */}
+            {visibleProducts.length > 0 && (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {featuredProducts.map((product, i) => (
+                {visibleProducts.map((product, i) => (
                   <ProductCard key={product.id} product={product} preload={i === 0} />
-                ))}
-              </div>
-            )}
-
-            {/* Other products */}
-            {otherProducts.length > 0 && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {otherProducts.map((product) => (
-                  <ProductCard key={product.id} product={product} />
                 ))}
               </div>
             )}
