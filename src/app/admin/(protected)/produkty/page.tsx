@@ -23,6 +23,7 @@ import {
 import {
   ActiveToggleButton,
   DeleteDropdownItem,
+  GroupVisibilityToggleButton,
   VisibilityToggleButton,
 } from "./_components/ProductActions";
 import { useState, useEffect, useCallback } from "react";
@@ -46,7 +47,7 @@ type Product = {
 };
 
 // Sorting type
-type SortField = "price" | "orders";
+type SortField = "price" | "orders" | "shop" | "groups" | "availability";
 type SortDirection = "asc" | "desc";
 
 export default function AdminProductsPage() {
@@ -66,8 +67,8 @@ export default function AdminProductsPage() {
 function ProductsTable() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [sortField, setSortField] = useState<SortField | null>(null);
-  const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
+  const [sortField, setSortField] = useState<SortField | null>("shop");
+  const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const router = useRouter();
@@ -122,6 +123,23 @@ function ProductsTable() {
       case "orders":
         return multiplier * (a._count.orderItems - b._count.orderItems);
 
+      case "shop":
+        return multiplier * (Number(a.isVisible) - Number(b.isVisible));
+
+      case "groups": {
+        const groupScore = (product: Product) =>
+          Number(product.visibleToDetal) * 4 +
+          Number(product.visibleToDetalB2B) * 2 +
+          Number(product.visibleToHurt);
+        return multiplier * (groupScore(a) - groupScore(b));
+      }
+
+      case "availability": {
+        const availabilityScore = (product: Product) =>
+          product.isPreorder ? 2 : product.isAvailable ? 1 : 0;
+        return multiplier * (availabilityScore(a) - availabilityScore(b));
+      }
+
       default:
         return 0;
     }
@@ -165,9 +183,24 @@ function ProductsTable() {
                 {renderSortIcon("orders")}
               </div>
             </TableHead>
-            <TableHead>Sklep</TableHead>
-            <TableHead>Widoczność grup</TableHead>
-            <TableHead>Dostępność</TableHead>
+            <TableHead className="cursor-pointer" onClick={() => handleSort("shop")}>
+              <div className="flex items-center">
+                Sklep
+                {renderSortIcon("shop")}
+              </div>
+            </TableHead>
+            <TableHead className="cursor-pointer" onClick={() => handleSort("groups")}>
+              <div className="flex items-center">
+                Widoczność grup
+                {renderSortIcon("groups")}
+              </div>
+            </TableHead>
+            <TableHead className="cursor-pointer" onClick={() => handleSort("availability")}>
+              <div className="flex items-center">
+                Dostępność
+                {renderSortIcon("availability")}
+              </div>
+            </TableHead>
             <TableHead className="w-0">
               <span className="sr-only">Akcje</span>
             </TableHead>
@@ -201,25 +234,38 @@ function ProductsTable() {
               </TableCell>
               <TableCell>
                 <div className="flex gap-1">
-                  {product.visibleToDetal && (
-                    <span className="text-xs bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded">
-                      D
-                    </span>
-                  )}
-                  {product.visibleToDetalB2B && (
-                    <span className="text-xs bg-purple-100 text-purple-800 px-1.5 py-0.5 rounded">
-                      B2B
-                    </span>
-                  )}
-                  {product.visibleToHurt && (
-                    <span className="text-xs bg-orange-100 text-orange-800 px-1.5 py-0.5 rounded">
-                      H
-                    </span>
-                  )}
+                  <GroupVisibilityToggleButton
+                    id={product.id}
+                    field="visibleToDetal"
+                    label="D"
+                    active={product.isPreorder ? true : product.visibleToDetal}
+                    disabled={product.isPreorder}
+                    className="bg-blue-100 text-blue-800"
+                  />
+                  <GroupVisibilityToggleButton
+                    id={product.id}
+                    field="visibleToDetalB2B"
+                    label="B2B"
+                    active={product.isPreorder ? false : product.visibleToDetalB2B}
+                    disabled={product.isPreorder}
+                    className="bg-purple-100 text-purple-800"
+                  />
+                  <GroupVisibilityToggleButton
+                    id={product.id}
+                    field="visibleToHurt"
+                    label="H"
+                    active={product.isPreorder ? false : product.visibleToHurt}
+                    disabled={product.isPreorder}
+                    className="bg-orange-100 text-orange-800"
+                  />
                 </div>
               </TableCell>
               <TableCell>
-                <ActiveToggleButton id={product.id} isAvailable={product.isAvailable} />
+                <ActiveToggleButton
+                  id={product.id}
+                  isAvailable={product.isPreorder ? true : product.isAvailable}
+                  disabled={product.isPreorder}
+                />
               </TableCell>
               <TableCell>
                 <DropdownMenu>

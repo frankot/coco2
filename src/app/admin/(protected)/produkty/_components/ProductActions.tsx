@@ -5,6 +5,7 @@ import { useTransition, useCallback } from "react";
 import {
   toggleProductAvailability,
   toggleProductVisibility,
+  toggleProductGroupVisibility,
   deleteProduct,
 } from "../../../_actions/products";
 import { useRouter } from "next/navigation";
@@ -12,26 +13,35 @@ import { toast } from "sonner";
 import { useRefresh } from "@/providers/RefreshProvider";
 import { Trash2 } from "lucide-react";
 
-export function ActiveToggleButton({ id, isAvailable }: { id: string; isAvailable: boolean }) {
+export function ActiveToggleButton({
+  id,
+  isAvailable,
+  disabled = false,
+}: {
+  id: string;
+  isAvailable: boolean;
+  disabled?: boolean;
+}) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const { triggerRefresh } = useRefresh();
 
   const handleToggle = useCallback(() => {
+    if (disabled) return;
     startTransition(async () => {
       await toggleProductAvailability(id, !isAvailable);
       router.refresh();
       triggerRefresh();
       toast.success(`Produkt został oznaczony jako ${!isAvailable ? "dostępny" : "niedostępny"}`);
     });
-  }, [id, isAvailable, router, triggerRefresh]);
+  }, [disabled, id, isAvailable, router, triggerRefresh]);
 
   return (
     <button
       type="button"
       role="switch"
       aria-checked={isAvailable}
-      disabled={isPending}
+      disabled={isPending || disabled}
       onClick={handleToggle}
       className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 ${isAvailable ? "bg-primary" : "bg-input"}`}
     >
@@ -66,6 +76,49 @@ export function VisibilityToggleButton({ id, isVisible }: { id: string; isVisibl
       }`}
     >
       {isVisible ? "Widoczny" : "Ukryty"}
+    </button>
+  );
+}
+
+export function GroupVisibilityToggleButton({
+  id,
+  field,
+  label,
+  active,
+  disabled = false,
+  className,
+}: {
+  id: string;
+  field: "visibleToDetal" | "visibleToDetalB2B" | "visibleToHurt";
+  label: string;
+  active: boolean;
+  disabled?: boolean;
+  className: string;
+}) {
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+  const { triggerRefresh } = useRefresh();
+
+  const handleToggle = useCallback(() => {
+    if (disabled) return;
+    startTransition(async () => {
+      await toggleProductGroupVisibility(id, field, !active);
+      router.refresh();
+      triggerRefresh();
+      toast.success(`Widoczność ${label} została ${!active ? "włączona" : "wyłączona"}`);
+    });
+  }, [active, disabled, field, id, label, router, triggerRefresh]);
+
+  return (
+    <button
+      type="button"
+      disabled={isPending || disabled}
+      onClick={handleToggle}
+      className={`cursor-pointer text-xs px-1.5 py-0.5 rounded font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
+        active ? className : "bg-gray-100 text-gray-500"
+      }`}
+    >
+      {label}
     </button>
   );
 }

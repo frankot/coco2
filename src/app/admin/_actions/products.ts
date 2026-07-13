@@ -469,14 +469,54 @@ export async function toggleProductVisibility(productId: string, isVisible: bool
   });
 }
 
+export async function toggleProductGroupVisibility(
+  productId: string,
+  field: "visibleToDetal" | "visibleToDetalB2B" | "visibleToHurt",
+  value: boolean
+) {
+  await requireAdmin();
+
+  const product = await prisma.product.findUnique({
+    where: { id: productId },
+    select: { isPreorder: true },
+  });
+
+  if (!product) return;
+
+  if (product.isPreorder) {
+    await prisma.product.update({
+      where: { id: productId },
+      data: {
+        visibleToDetal: true,
+        visibleToDetalB2B: false,
+        visibleToHurt: false,
+      },
+    });
+    return;
+  }
+
+  await prisma.product.update({
+    where: { id: productId },
+    data: { [field]: value },
+  });
+}
+
 export async function toggleProductAvailability(productId: string, isAvailable: boolean) {
   await requireAdmin();
   const product = await prisma.product.findUnique({
     where: { id: productId },
-    select: { id: true, name: true, slug: true, isAvailable: true },
+    select: { id: true, name: true, slug: true, isAvailable: true, isPreorder: true },
   });
 
   if (!product) return;
+
+  if (product.isPreorder) {
+    await prisma.product.update({
+      where: { id: productId },
+      data: { isAvailable: false },
+    });
+    return;
+  }
 
   await prisma.product.update({
     where: { id: productId },

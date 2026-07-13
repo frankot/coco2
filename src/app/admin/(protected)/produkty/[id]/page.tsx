@@ -49,7 +49,11 @@ export default async function ProductPreviewPage({ params }: { params: Promise<{
 
         <div className="flex items-center gap-2">
           <span className="text-sm text-muted-foreground">Dostępny do kupienia:</span>
-          <ActiveToggleButton id={product.id} isAvailable={product.isAvailable} />
+          <ActiveToggleButton
+            id={product.id}
+            isAvailable={product.isPreorder ? true : product.isAvailable}
+            disabled={product.isPreorder}
+          />
         </div>
 
         <div className="ml-auto">
