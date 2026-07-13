@@ -20,7 +20,11 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { ActiveToggleButton, DeleteDropdownItem } from "./_components/ProductActions";
+import {
+  ActiveToggleButton,
+  DeleteDropdownItem,
+  VisibilityToggleButton,
+} from "./_components/ProductActions";
 import { useState, useEffect, useCallback } from "react";
 import AdminLoading from "../loading";
 import { useRouter } from "next/navigation";
@@ -187,15 +191,7 @@ function ProductsTable() {
               </TableCell>
               <TableCell>
                 <div className="flex gap-1 flex-wrap">
-                  <span
-                    className={`text-xs px-2 py-1 rounded-full font-medium ${
-                      product.isVisible
-                        ? "bg-green-100 text-green-800"
-                        : "bg-gray-100 text-gray-600"
-                    }`}
-                  >
-                    {product.isVisible ? "Widoczny" : "Ukryty"}
-                  </span>
+                  <VisibilityToggleButton id={product.id} isVisible={product.isVisible} />
                   {product.isPreorder && (
                     <span className="text-xs px-2 py-1 rounded-full font-medium bg-amber-100 text-amber-800">
                       PREORDER

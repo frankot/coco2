@@ -461,6 +461,14 @@ export async function deleteProduct(
   }
 }
 
+export async function toggleProductVisibility(productId: string, isVisible: boolean) {
+  await requireAdmin();
+  await prisma.product.update({
+    where: { id: productId },
+    data: { isVisible },
+  });
+}
+
 export async function toggleProductAvailability(productId: string, isAvailable: boolean) {
   await requireAdmin();
   const product = await prisma.product.findUnique({

@@ -2,7 +2,11 @@
 
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { useTransition, useCallback } from "react";
-import { toggleProductAvailability, deleteProduct } from "../../../_actions/products";
+import {
+  toggleProductAvailability,
+  toggleProductVisibility,
+  deleteProduct,
+} from "../../../_actions/products";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useRefresh } from "@/providers/RefreshProvider";
@@ -34,6 +38,34 @@ export function ActiveToggleButton({ id, isAvailable }: { id: string; isAvailabl
       <span
         className={`pointer-events-none block h-4 w-4 rounded-full bg-background shadow-lg ring-0 transition-transform duration-200 ${isAvailable ? "translate-x-4" : "translate-x-0"}`}
       />
+    </button>
+  );
+}
+
+export function VisibilityToggleButton({ id, isVisible }: { id: string; isVisible: boolean }) {
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+  const { triggerRefresh } = useRefresh();
+
+  const handleToggle = useCallback(() => {
+    startTransition(async () => {
+      await toggleProductVisibility(id, !isVisible);
+      router.refresh();
+      triggerRefresh();
+      toast.success(`Produkt został ${!isVisible ? "pokazany" : "ukryty"} w sklepie`);
+    });
+  }, [id, isVisible, router, triggerRefresh]);
+
+  return (
+    <button
+      type="button"
+      disabled={isPending}
+      onClick={handleToggle}
+      className={`text-xs px-2 py-1 rounded-full font-medium transition-colors disabled:opacity-50 ${
+        isVisible ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-600"
+      }`}
+    >
+      {isVisible ? "Widoczny" : "Ukryty"}
     </button>
   );
 }

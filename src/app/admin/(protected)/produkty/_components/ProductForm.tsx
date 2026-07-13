@@ -191,14 +191,24 @@ export default function ProductForm({ product }: { product?: Product | null }) {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <Button variant="outline" size="sm" asChild>
-            <Link href={product ? `/admin/produkty/${product.id}` : "/admin/produkty"}>
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Wróć
-            </Link>
-          </Button>
-          <h1 className="text-2xl font-bold">
+        <div className="flex items-start gap-3">
+          <div className="flex flex-col gap-2">
+            <Button variant="outline" size="sm" asChild>
+              <Link href={product ? `/admin/produkty/${product.id}` : "/admin/produkty"}>
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Wróć
+              </Link>
+            </Button>
+            <Button type="submit" form="product-form" size="sm" disabled={isPending}>
+              {isPending ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Save className="mr-2 h-4 w-4" />
+              )}
+              Zapisz
+            </Button>
+          </div>
+          <h1 className="text-2xl font-bold pt-1">
             {product ? "Edytuj produkt" : "Nowy produkt"}
           </h1>
         </div>
