@@ -14,7 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ShoppingBag, ArrowUpDown, ArrowUp, ArrowDown, Loader2 } from "lucide-react";
+import { ArrowUpDown, ArrowUp, ArrowDown, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { useState, useEffect } from "react";
@@ -56,6 +56,8 @@ type Order = {
   user: {
     id: string;
     email: string;
+    firstName: string | null;
+    lastName: string | null;
     accountType: string;
   };
   orderItems: OrderItem[];
@@ -385,10 +387,8 @@ function OrdersTable({ showB2B, showRegular }: { showB2B: boolean; showRegular: 
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-0">
-              <span className="sr-only">Ikona</span>
-            </TableHead>
-            <TableHead>Klient</TableHead>
+            <TableHead>Imię i Nazwisko</TableHead>
+            <TableHead>Nr. zamówienia</TableHead>
             <TableHead className="cursor-pointer" onClick={() => handleSort("status")}>
               <div className="flex items-center">
                 Status
@@ -433,12 +433,14 @@ function OrdersTable({ showB2B, showRegular }: { showB2B: boolean; showRegular: 
               <TableRow key={order.id} className={order.status === "PREORDER" ? "bg-amber-50/60" : undefined}>
                 <TableCell>
                   <TableCellLink href={`/admin/zamowienia/${order.id}`}>
-                    <ShoppingBag className="size-8 text-gray-500" />
+                    {order.user.firstName && order.user.lastName
+                      ? `${order.user.firstName} ${order.user.lastName}`
+                      : order.user.email}
                   </TableCellLink>
                 </TableCell>
                 <TableCell>
                   <TableCellLink href={`/admin/zamowienia/${order.id}`}>
-                    {order.user.email}
+                    #{order.id.slice(0, 8)}
                   </TableCellLink>
                 </TableCell>
                 <TableCell>

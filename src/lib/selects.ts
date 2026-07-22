@@ -41,7 +41,7 @@ export const ORDER_LIST_SELECT = {
   wfirmaInvoiceId: true,
   wfirmaInvoiceNumber: true,
   isB2BManual: true,
-  user: { select: { id: true, email: true, accountType: true } },
+  user: { select: { id: true, email: true, firstName: true, lastName: true, accountType: true } },
   orderItems: {
     select: {
       quantity: true,
