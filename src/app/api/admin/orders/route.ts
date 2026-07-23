@@ -52,15 +52,30 @@ export const GET = createRouteHandler(
 
     const showB2B = url.searchParams.get("showB2B") !== "false";
     const showRegular = url.searchParams.get("showRegular") !== "false";
+    const search = url.searchParams.get("search")?.trim() || undefined;
 
-    let where: Prisma.OrderWhereInput | undefined;
+    const conditions: Prisma.OrderWhereInput[] = [];
     if (!showB2B && !showRegular) {
       return { data: [], total: 0, page, totalPages: 0 };
     } else if (showB2B && !showRegular) {
-      where = { isB2BManual: true };
+      conditions.push({ isB2BManual: true });
     } else if (!showB2B && showRegular) {
-      where = { isB2BManual: false };
+      conditions.push({ isB2BManual: false });
     }
+
+    if (search) {
+      conditions.push({
+        OR: [
+          { user: { email: { contains: search, mode: "insensitive" } } },
+          { user: { firstName: { contains: search, mode: "insensitive" } } },
+          { user: { lastName: { contains: search, mode: "insensitive" } } },
+          { id: { startsWith: search } },
+        ],
+      });
+    }
+
+    const where: Prisma.OrderWhereInput | undefined =
+      conditions.length > 0 ? { AND: conditions } : undefined;
 
     const [data, total] = await Promise.all([
       prisma.order.findMany({

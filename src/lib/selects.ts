@@ -16,6 +16,8 @@ export const PRODUCT_LIST_SELECT = {
 export const CLIENT_LIST_SELECT = {
   id: true,
   email: true,
+  firstName: true,
+  lastName: true,
   accountType: true,
   createdAt: true,
   orders: {

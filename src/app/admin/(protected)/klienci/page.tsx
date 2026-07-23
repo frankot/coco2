@@ -20,7 +20,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { User, ArrowUpDown, ArrowUp, ArrowDown, Mail, Download } from "lucide-react";
+import { ArrowUpDown, ArrowUp, ArrowDown, Mail, Download } from "lucide-react";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { ClientActionsMenu } from "./_components/ClientActions";
@@ -29,11 +29,14 @@ import AdminLoading from "../loading";
 import { useRouter } from "next/navigation";
 import { useRefresh } from "@/providers/RefreshProvider";
 import Pagination from "../../_components/Pagination";
+import SearchBar from "../../_components/SearchBar";
 
 // Type for client data
 type Client = {
   id: string;
   email: string;
+  firstName: string | null;
+  lastName: string | null;
   accountType: "ADMIN" | "DETAL" | "DETAL_B2B" | "HURT";
   createdAt: string;
   orders: { pricePaidInCents: number }[];
@@ -53,10 +56,18 @@ type NewsletterEmail = {
 };
 
 export default function AdminClientsPage() {
+  const [search, setSearch] = useState("");
+
   return (
     <>
       <div className="flex justify-between items-center gap-4">
         <PageHeader>Klienci</PageHeader>
+        <SearchBar
+          value={search}
+          onChange={setSearch}
+          placeholder="Szukaj po nazwisku, imieniu lub emailu..."
+          className="flex-1 max-w-md mx-auto"
+        />
         <div className="flex items-center gap-3">
           <NewsletterDialog />
           <Button asChild>
@@ -64,7 +75,7 @@ export default function AdminClientsPage() {
           </Button>
         </div>
       </div>
-      <ClientsTable />
+      <ClientsTable search={search} />
     </>
   );
 }
@@ -154,7 +165,7 @@ function NewsletterDialog() {
   );
 }
 
-function ClientsTable() {
+function ClientsTable({ search }: { search: string }) {
   const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
   const [sortField, setSortField] = useState<SortField | null>(null);
@@ -164,13 +175,20 @@ function ClientsTable() {
   const router = useRouter();
   const { refreshCounter } = useRefresh();
 
+  // Reset to first page when search changes
+  useEffect(() => {
+    setPage(1);
+  }, [search]);
+
   // Fetch clients
   const fetchClients = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch(`/api/admin/clients?page=${page}&timestamp=${Date.now()}`, {
-        cache: "no-store",
-      });
+      const searchParam = search ? `&search=${encodeURIComponent(search)}` : "";
+      const response = await fetch(
+        `/api/admin/clients?page=${page}${searchParam}&timestamp=${Date.now()}`,
+        { cache: "no-store" }
+      );
 
       if (response.ok) {
         const json = await response.json();
@@ -197,7 +215,7 @@ function ClientsTable() {
 
   useEffect(() => {
     fetchClients();
-  }, [fetchClients, refreshCounter]);
+  }, [fetchClients, refreshCounter, search]);
 
   // Handle sorting
   const handleSort = (field: SortField) => {
@@ -248,12 +266,34 @@ function ClientsTable() {
     );
   };
 
+  // Badge styling per account type
+  const getAccountBadge = (type: string) => {
+    switch (type) {
+      case "ADMIN":
+        return { variant: "destructive" as const, className: undefined };
+      case "DETAL":
+        return { variant: "default" as const, className: undefined };
+      case "DETAL_B2B":
+        return { variant: "outline" as const, className: "border-violet-200 bg-violet-100 text-violet-800 hover:bg-violet-100" };
+      case "HURT":
+        return { variant: "outline" as const, className: "border-emerald-200 bg-emerald-100 text-emerald-800 hover:bg-emerald-100" };
+      default:
+        return { variant: "secondary" as const, className: undefined };
+    }
+  };
+
   if (loading) {
     return <AdminLoading />;
   }
 
   if (clients.length === 0) {
-    return <div className="text-center text-sm text-muted-foreground">Brak klientów</div>;
+    return (
+      <div className="text-center text-sm text-muted-foreground">
+        {search
+          ? `Nie znaleziono klientów dla frazy «${search}»`
+          : "Brak klientów"}
+      </div>
+    );
   }
 
   return (
@@ -261,9 +301,7 @@ function ClientsTable() {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-0">
-              <span className="sr-only">Ikona</span>
-            </TableHead>
+            <TableHead>Imię i Nazwisko</TableHead>
             <TableHead>Email</TableHead>
             <TableHead className="cursor-pointer hover:" onClick={() => handleSort("accountType")}>
               <div className="flex items-center">
@@ -306,7 +344,9 @@ function ClientsTable() {
               <TableRow key={client.id}>
                 <TableCell>
                   <TableCellLink href={`/admin/klienci/${client.id}`}>
-                    <User className="size-8 text-gray-500" />
+                    {client.firstName && client.lastName
+                      ? `${client.firstName} ${client.lastName}`
+                      : "—"}
                   </TableCellLink>
                 </TableCell>
                 <TableCell>
@@ -315,13 +355,8 @@ function ClientsTable() {
                 <TableCell>
                   <TableCellLink href={`/admin/klienci/${client.id}`}>
                     <Badge
-                      variant={
-                        accountType === "ADMIN"
-                          ? "destructive"
-                          : accountType === "HURT"
-                            ? "default"
-                            : "secondary"
-                      }
+                      variant={getAccountBadge(accountType).variant}
+                      className={getAccountBadge(accountType).className}
                     >
                       {accountType}
                     </Badge>

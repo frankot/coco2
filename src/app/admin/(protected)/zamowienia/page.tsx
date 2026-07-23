@@ -21,6 +21,7 @@ import { useState, useEffect } from "react";
 import AdminLoading from "../loading";
 import { OrderActionsMenu, confirmAllApaczka } from "./_components/OrderActions";
 import Pagination from "../../_components/Pagination";
+import SearchBar from "../../_components/SearchBar";
 import {
   Dialog,
   DialogContent,
@@ -76,6 +77,7 @@ export default function AdminOrdersPage() {
   const [downloadTurnIn, setDownloadTurnIn] = useState(true);
   const [showB2B, setShowB2B] = useState(true);
   const [showRegular, setShowRegular] = useState(true);
+  const [search, setSearch] = useState("");
 
   const downloadWaybillsZip = async (orders: { id: string }[]) => {
     const JSZip = (await import("jszip")).default;
@@ -209,57 +211,52 @@ export default function AdminOrdersPage() {
             </label>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="default"
-            disabled={isConfirming}
-            title="Potwierdzi wszystkie opłacone zamówienia — wyśle do Apaczki i zmieni status na W realizacji."
-            onClick={() => setConfirmDialogOpen(true)}
-          >
-            {isConfirming && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            {isConfirming ? "Potwierdzanie..." : "Apaczka - wyślij opłacone"}
-          </Button>
-          <Button
-            variant="outline"
-            onClick={async () => {
-              try {
-                const resp = await fetch(`/api/admin/shipping/apaczka/sync-all`, {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({}),
-                });
-                const data = await resp.json();
-                console.info("sync-all response:", data);
-                if (!resp.ok || !data.success) {
-                  toast.error(`Błąd synchronizacji: ${data.message || "Błąd API"}`);
-                  console.error("sync-all failed response:", data);
-                  return;
-                }
-                const updated = data.results?.filter((r: any) => r.ok).length ?? 0;
-                const failed = data.results?.filter((r: any) => !r.ok).length ?? 0;
-                toast.success(`Zsynchronizowano: ${updated}, błędy: ${failed}`);
-                // print detailed errors for failed items
-                if (data.results && Array.isArray(data.results)) {
-                  const failures = data.results.filter((r: any) => !r.ok);
-                  if (failures.length) console.error("sync-all failures:", failures);
-                }
-                window.location.reload();
-              } catch (e: any) {
-                toast.error(`Błąd synchronizacji: ${e?.message ?? e}`);
-                console.error("sync-all error:", e);
+        <SearchBar
+          value={search}
+          onChange={setSearch}
+          placeholder="Szukaj po nazwisku, emailu lub ID..."
+          className="flex-1 max-w-md mx-auto"
+        />
+        <Button
+          variant="outline"
+          title="Statusy Apaczka są synchronizowane automatycznie co 24h o 9:00. Kliknij, aby zsynchronizować ręcznie."
+          onClick={async () => {
+            try {
+              const resp = await fetch(`/api/admin/shipping/apaczka/sync-all`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({}),
+              });
+              const data = await resp.json();
+              console.info("sync-all response:", data);
+              if (!resp.ok || !data.success) {
+                toast.error(`Błąd synchronizacji: ${data.message || "Błąd API"}`);
+                console.error("sync-all failed response:", data);
+                return;
               }
-            }}
-          >
-            Synchronizuj statusy Apaczka
-          </Button>
-        </div>
+              const updated = data.results?.filter((r: any) => r.ok).length ?? 0;
+              const failed = data.results?.filter((r: any) => !r.ok).length ?? 0;
+              toast.success(`Zsynchronizowano: ${updated}, błędy: ${failed}`);
+              if (data.results && Array.isArray(data.results)) {
+                const failures = data.results.filter((r: any) => !r.ok);
+                if (failures.length) console.error("sync-all failures:", failures);
+              }
+              window.location.reload();
+            } catch (e: any) {
+              toast.error(`Błąd synchronizacji: ${e?.message ?? e}`);
+              console.error("sync-all error:", e);
+            }
+          }}
+        >
+          Synchronizuj statusy Apaczka
+        </Button>
       </div>
-      <OrdersTable showB2B={showB2B} showRegular={showRegular} />
+      <OrdersTable showB2B={showB2B} showRegular={showRegular} search={search} />
     </>
   );
 }
 
-function OrdersTable({ showB2B, showRegular }: { showB2B: boolean; showRegular: boolean }) {
+function OrdersTable({ showB2B, showRegular, search }: { showB2B: boolean; showRegular: boolean; search: string }) {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [sortField, setSortField] = useState<SortField>("createdAt");
@@ -270,15 +267,16 @@ function OrdersTable({ showB2B, showRegular }: { showB2B: boolean; showRegular: 
   // Reset to first page when filters change
   useEffect(() => {
     setPage(1);
-  }, [showB2B, showRegular]);
+  }, [showB2B, showRegular, search]);
 
   // Fetch orders
   useEffect(() => {
     const fetchOrders = async () => {
       setLoading(true);
       try {
+        const searchParam = search ? `&search=${encodeURIComponent(search)}` : "";
         const response = await fetch(
-          `/api/admin/orders?page=${page}&sortField=${sortField}&sortDir=${sortDirection}&showB2B=${showB2B}&showRegular=${showRegular}&timestamp=${Date.now()}`,
+          `/api/admin/orders?page=${page}&sortField=${sortField}&sortDir=${sortDirection}&showB2B=${showB2B}&showRegular=${showRegular}${searchParam}&timestamp=${Date.now()}`,
           { cache: "no-store" }
         );
 
@@ -295,7 +293,7 @@ function OrdersTable({ showB2B, showRegular }: { showB2B: boolean; showRegular: 
     };
 
     fetchOrders();
-  }, [page, sortField, sortDirection, showB2B, showRegular]);
+  }, [page, sortField, sortDirection, showB2B, showRegular, search]);
 
   // Handle sorting
   const handleSort = (field: SortField) => {
@@ -379,7 +377,13 @@ function OrdersTable({ showB2B, showRegular }: { showB2B: boolean; showRegular: 
   }
 
   if (orders.length === 0) {
-    return <div className="text-center text-sm text-muted-foreground">Brak zamówień</div>;
+    return (
+      <div className="text-center text-sm text-muted-foreground">
+        {search
+          ? `Nie znaleziono zamówień dla frazy «${search}»`
+          : "Brak zamówień"}
+      </div>
+    );
   }
 
   return (

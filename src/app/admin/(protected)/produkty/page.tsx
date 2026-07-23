@@ -287,12 +287,6 @@ function ProductsTable() {
         </TableBody>
       </Table>
       <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
-
-      <div className="mt-8 flex justify-end">
-        <Button variant="destructive">
-          <Link href="/admin/clean-db">Usuń wszystkie produkty</Link>
-        </Button>
-      </div>
     </>
   );
 }
