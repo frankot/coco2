@@ -140,7 +140,7 @@ export async function generateAndSendInvoice(orderId: string): Promise<void> {
       name: item.product.name,
       quantity: item.quantity,
       price: formatPriceFromCents(item.pricePerItemInCents),
-      vat: "23",
+      vat: "5",
     }));
 
     // Discount line (rabat) — negative gross amount matching the discount applied at checkout
@@ -152,7 +152,7 @@ export async function generateAndSendInvoice(orderId: string): Promise<void> {
         name: discountLabel,
         quantity: 1,
         price: `-${formatPriceFromCents(order.discountAmountInCents)}`,
-        vat: "23",
+        vat: "5",
       });
     }
 
