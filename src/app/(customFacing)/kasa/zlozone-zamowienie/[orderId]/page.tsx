@@ -127,9 +127,12 @@ export default async function OrderConfirmationPage({
       {isPaymentCompleted ? (
         <PurchaseTracker
           orderId={order.id}
-          value={order.pricePaidInCents / 100}
+          totalGross={order.pricePaidInCents}
+          shippingGross={order.shippingCostInCents || undefined}
           items={order.orderItems.map((item) => ({
             productId: item.productId,
+            productName: item.product.name,
+            unitPriceGross: item.pricePerItemInCents,
             quantity: item.quantity,
           }))}
         />

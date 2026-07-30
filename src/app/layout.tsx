@@ -3,6 +3,7 @@ import { Outfit } from "next/font/google";
 import "./globals.css";
 import { SessionProvider } from "@/components/SessionProvider";
 import { LazyToaster } from "@/components/LazyToaster";
+import { GoogleTagManager } from "@/components/GoogleTagManager";
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -101,6 +102,7 @@ export default function RootLayout({
       <body
         className={`${outfit.variable} font-outfit min-h-screen antialiased bg-white scroll-smooth`}
       >
+        <GoogleTagManager />
         <SessionProvider>{children}</SessionProvider>
         <LazyToaster />
       </body>

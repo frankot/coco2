@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
-import { COOKIE_CONSENT_EVENT, COOKIE_CONSENT_KEY } from "@/lib/meta-pixel";
+import { COOKIE_CONSENT_EVENT, COOKIE_CONSENT_KEY, updateGoogleConsent } from "@/lib/analytics";
 
 export function CookieBanner() {
   const [visible, setVisible] = useState(false);
@@ -16,12 +16,14 @@ export function CookieBanner() {
 
   const accept = () => {
     localStorage.setItem(COOKIE_CONSENT_KEY, "accepted");
+    updateGoogleConsent(true);
     window.dispatchEvent(new Event(COOKIE_CONSENT_EVENT));
     setVisible(false);
   };
 
   const reject = () => {
     localStorage.setItem(COOKIE_CONSENT_KEY, "rejected");
+    updateGoogleConsent(false);
     window.dispatchEvent(new Event(COOKIE_CONSENT_EVENT));
     setVisible(false);
   };

@@ -24,7 +24,7 @@ import { toast } from "sonner";
 import { formatPLN } from "@/lib/formatter";
 import { createOrder } from "./_actions";
 import { ApaczkaService } from "@/types/apaczka";
-import { COOKIE_CONSENT_EVENT, trackMetaPixelEvent } from "@/lib/meta-pixel";
+import { trackBeginCheckout } from "@/lib/analytics";
 
 // Import cart item type from Cart component
 type CartItem = {
@@ -153,20 +153,13 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     if (checkoutTrackedRef.current || cartItems.length === 0) return;
-    const sendInitiateCheckout = () => {
-      if (checkoutTrackedRef.current) return;
-      const tracked = trackMetaPixelEvent("InitiateCheckout", {
-        value: activeCartItems.reduce((sum, item) => sum + item.priceInCents * item.quantity, 0) / 100,
-        currency: "PLN",
-        content_ids: activeCartItems.map((item) => item.id),
-        content_type: "product",
-        num_items: activeCartItems.reduce((sum, item) => sum + item.quantity, 0),
-      });
-      if (tracked) checkoutTrackedRef.current = true;
-    };
-    sendInitiateCheckout();
-    window.addEventListener(COOKIE_CONSENT_EVENT, sendInitiateCheckout);
-    return () => window.removeEventListener(COOKIE_CONSENT_EVENT, sendInitiateCheckout);
+    checkoutTrackedRef.current = true;
+    trackBeginCheckout(activeCartItems.map((item) => ({
+      id: item.id,
+      name: item.name,
+      priceInCents: item.priceInCents,
+      quantity: item.quantity,
+    })));
   }, [activeCartItems]);
 
   // Re-check product availability on checkout entry

@@ -2,8 +2,6 @@ import { Nav, NavLink, NavDropdown } from "./Nav";
 import { BackgroundWrapper } from "./components/BackgroundWrapper";
 import { Footer } from "./components/Footer";
 import { CookieBanner } from "./components/CookieBanner";
-import { GoogleAnalytics } from "./components/GoogleAnalytics";
-import { MetaPixel } from "./components/MetaPixel";
 
 export const dynamic = "force-dynamic";
 
@@ -40,8 +38,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <div className="">{children}</div>
       <Footer />
       <CookieBanner />
-      <MetaPixel />
-      <GoogleAnalytics />
     </BackgroundWrapper>
   );
 }

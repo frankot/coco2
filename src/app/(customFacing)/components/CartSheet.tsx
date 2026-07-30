@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Minus, Plus, Trash2, ShoppingBag, Sparkles } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { formatPrice } from "@/lib/utils";
+import { trackViewCart } from "@/lib/analytics";
 
 export type CartItem = {
   id: string;
@@ -25,6 +26,7 @@ interface CartSheetProps {
 export function CartSheet({ isOpen, onClose }: CartSheetProps) {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const router = useRouter();
+  const viewCartTracked = useRef(false);
 
   useEffect(() => {
     const handleCartChange = () => {
@@ -46,6 +48,22 @@ export function CartSheet({ isOpen, onClose }: CartSheetProps) {
       window.removeEventListener("cartUpdated", handleCartChange);
     };
   }, []);
+
+  // view_cart — track once per open
+  useEffect(() => {
+    if (!isOpen || cartItems.length === 0) {
+      viewCartTracked.current = false;
+      return;
+    }
+    if (viewCartTracked.current) return;
+    viewCartTracked.current = true;
+    trackViewCart(cartItems.map((item) => ({
+      id: item.id,
+      name: item.name,
+      priceInCents: item.priceInCents,
+      quantity: item.quantity,
+    })));
+  }, [isOpen, cartItems]);
 
   const updateQuantity = (itemId: string, newQuantity: number) => {
     if (newQuantity < 1) return;

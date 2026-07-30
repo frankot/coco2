@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { notFound } from "next/navigation";
 import { formatPLN } from "@/lib/formatter";
 import { addProductToCart } from "@/lib/cart-client";
-import { COOKIE_CONSENT_EVENT, trackMetaPixelEvent } from "@/lib/meta-pixel";
+import { trackViewItem } from "@/lib/analytics";
 import ReactMarkdown from "react-markdown";
 import AvailabilityNotificationForm from "./AvailabilityNotificationForm";
 
@@ -59,20 +59,13 @@ export default function ProductPageClient({ params }: { params: Promise<{ id: st
 
   useEffect(() => {
     if (!product || viewedProductRef.current === product.id) return;
-    const sendViewContent = () => {
-      if (viewedProductRef.current === product.id) return;
-      const tracked = trackMetaPixelEvent("ViewContent", {
-        content_ids: [product.id],
-        content_name: product.name,
-        content_type: "product",
-        value: product.priceInCents / 100,
-        currency: "PLN",
-      });
-      if (tracked) viewedProductRef.current = product.id;
-    };
-    sendViewContent();
-    window.addEventListener(COOKIE_CONSENT_EVENT, sendViewContent);
-    return () => window.removeEventListener(COOKIE_CONSENT_EVENT, sendViewContent);
+    if (viewedProductRef.current === product.id) return;
+    viewedProductRef.current = product.id;
+    trackViewItem({
+      id: product.id,
+      name: product.name,
+      priceInCents: product.priceInCents,
+    });
   }, [product]);
 
   useEffect(() => {

@@ -1,40 +1,44 @@
 "use client";
 
 import { useEffect } from "react";
-import { COOKIE_CONSENT_EVENT, trackMetaPixelEvent } from "@/lib/meta-pixel";
+import { trackPurchase } from "@/lib/analytics";
+import type { DrCocoOrder } from "@/lib/analytics";
 
-type PurchaseItem = {
-  productId: string;
-  quantity: number;
+type PurchaseTrackerProps = {
+  orderId: string;
+  totalGross: number; // in cents
+  shippingGross?: number; // in cents
+  taxValue?: number; // in cents
+  items: Array<{
+    productId: string;
+    productName: string;
+    unitPriceGross: number; // in cents
+    quantity: number;
+  }>;
 };
 
 export function PurchaseTracker({
   orderId,
-  value,
+  totalGross,
+  shippingGross,
+  taxValue,
   items,
-}: {
-  orderId: string;
-  value: number;
-  items: PurchaseItem[];
-}) {
+}: PurchaseTrackerProps) {
   useEffect(() => {
-    const key = `fb_purchase_tracked_${orderId}`;
-    const sendPurchase = () => {
-      if (sessionStorage.getItem(key)) return;
-      const tracked = trackMetaPixelEvent("Purchase", {
-        value,
-        currency: "PLN",
-        content_ids: items.map((item) => item.productId),
-        content_type: "product",
-        num_items: items.reduce((sum, item) => sum + item.quantity, 0),
-      });
-      if (tracked) sessionStorage.setItem(key, "1");
+    const key = `purchase_tracked_${orderId}`;
+    if (sessionStorage.getItem(key)) return;
+
+    const order: DrCocoOrder = {
+      id: orderId,
+      totalGross,
+      taxValue,
+      shippingGross,
+      items,
     };
 
-    sendPurchase();
-    window.addEventListener(COOKIE_CONSENT_EVENT, sendPurchase);
-    return () => window.removeEventListener(COOKIE_CONSENT_EVENT, sendPurchase);
-  }, [items, orderId, value]);
+    trackPurchase(order);
+    sessionStorage.setItem(key, "1");
+  }, [items, orderId, totalGross, shippingGross, taxValue]);
 
   return null;
 }
