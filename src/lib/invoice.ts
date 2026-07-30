@@ -104,6 +104,7 @@ export async function generateAndSendInvoice(orderId: string): Promise<void> {
           product: {
             select: {
               name: true,
+              itemsPerPack: true,
             },
           },
         },
@@ -136,12 +137,17 @@ export async function generateAndSendInvoice(orderId: string): Promise<void> {
   generating.add(orderId);
 
   try {
-    const lines = order.orderItems.map((item) => ({
-      name: item.product.name,
-      quantity: item.quantity,
-      price: formatPriceFromCents(item.pricePerItemInCents),
-      vat: "5",
-    }));
+    const lines = order.orderItems.map((item) => {
+      const itemsPerPack = item.product.itemsPerPack;
+      // Integer ceiling division to avoid floating-point: ceil(a/b) = (a+b-1)/b
+      const perItemCents = Math.floor((item.pricePerItemInCents + itemsPerPack - 1) / itemsPerPack);
+      return {
+        name: item.product.name,
+        quantity: item.quantity * itemsPerPack,
+        price: formatPriceFromCents(perItemCents),
+        vat: "5",
+      };
+    });
 
     // Discount line (rabat) — negative gross amount matching the discount applied at checkout
     if (order.discountAmountInCents > 0) {
