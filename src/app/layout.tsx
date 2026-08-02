@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Outfit } from "next/font/google";
 import "./globals.css";
 import { SessionProvider } from "@/components/SessionProvider";
 import { LazyToaster } from "@/components/LazyToaster";
-import { GoogleTagManager } from "@/components/GoogleTagManager";
+
+const GTM_ID = "GTM-MQ3CND2M";
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -98,11 +100,43 @@ export default function RootLayout({
       <head>
         {/* Preload critical images */}
         <link rel="preload" href="/logo.png" as="image" />
+        {/* GTM: dataLayer init + consent defaults + gtm.start — must run BEFORE gtm.js */}
+        <Script id="gtm-init" strategy="beforeInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){window.dataLayer.push(arguments);}
+            gtag('consent', 'default', {
+              ad_storage: 'denied',
+              analytics_storage: 'denied',
+              ad_user_data: 'denied',
+              ad_personalization: 'denied',
+              wait_for_update: 500
+            });
+            window.dataLayer.push({
+              'gtm.start': new Date().getTime(),
+              event: 'gtm.js'
+            });
+          `}
+        </Script>
       </head>
       <body
         className={`${outfit.variable} font-outfit min-h-screen antialiased bg-white scroll-smooth`}
       >
-        <GoogleTagManager />
+        {/* GTM noscript — right after <body> */}
+        <noscript>
+          <iframe
+            src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
+            height="0"
+            width="0"
+            style={{ display: "none", visibility: "hidden" }}
+          />
+        </noscript>
+        {/* GTM external script — afterInteractive, dataLayer is already primed */}
+        <Script
+          id="gtm-script"
+          strategy="afterInteractive"
+          src={`https://www.googletagmanager.com/gtm.js?id=${GTM_ID}`}
+        />
         <SessionProvider>{children}</SessionProvider>
         <LazyToaster />
       </body>
