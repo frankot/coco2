@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { PAYMENT_CONFIRMED_EVENT } from "@/lib/analytics";
 
 export default function VerifySessionClient({
   sessionId,
@@ -37,6 +38,8 @@ export default function VerifySessionClient({
         const data = await res.json();
         if (!mounted) return;
         if (data.success && data.paid) {
+          // Lets PurchaseTracker fire when the page rendered before the webhook landed
+          window.dispatchEvent(new Event(PAYMENT_CONFIRMED_EVENT));
           toast.success(
             data.pending
               ? "Płatność potwierdzona — księgowanie w toku"

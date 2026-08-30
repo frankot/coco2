@@ -108,6 +108,12 @@ export default async function OrderConfirmationPage({
   const isStripePayment = order.paymentMethod === "STRIPE";
   const payment = order.payments[0];
   const isPaymentCompleted = payment?.status === "COMPLETED";
+  // purchase tracking follows order status — COD orders are PAID with a PENDING payment row
+  const isOrderPaid =
+    order.status === "PAID" ||
+    order.status === "PROCESSING" ||
+    order.status === "SHIPPED" ||
+    order.status === "DELIVERED";
   const sessionId = search?.session_id;
   const verifyToken = search?.token;
 
@@ -124,19 +130,19 @@ export default async function OrderConfirmationPage({
 
   return (
     <div className="container max-w-3xl py-10 mt-10">
-      {isPaymentCompleted ? (
-        <PurchaseTracker
-          orderId={order.id}
-          totalGross={order.pricePaidInCents}
-          shippingGross={order.shippingCostInCents || undefined}
-          items={order.orderItems.map((item) => ({
-            productId: item.productId,
-            productName: item.product.name,
-            unitPriceGross: item.pricePerItemInCents,
-            quantity: item.quantity,
-          }))}
-        />
-      ) : null}
+      <PurchaseTracker
+        orderId={order.id}
+        isPaid={isOrderPaid}
+        shippingGross={order.shippingCostInCents || undefined}
+        discountGross={order.discountAmountInCents || undefined}
+        coupon={order.discountCodeValue || undefined}
+        items={order.orderItems.map((item) => ({
+          productId: item.productId,
+          productName: item.product.name,
+          unitPriceGross: item.pricePerItemInCents,
+          quantity: item.quantity,
+        }))}
+      />
       <Card className="p-6">
         <div className="text-center mb-6">
           <div className="flex justify-center mb-4">

@@ -1,44 +1,50 @@
 "use client";
 
-import { useEffect } from "react";
-import { trackPurchase } from "@/lib/analytics";
-import type { DrCocoOrder } from "@/lib/analytics";
+import { useEffect, useRef } from "react";
+import { PAYMENT_CONFIRMED_EVENT, trackPurchase } from "@/lib/analytics";
+import type { DrCocoOrderItem } from "@/lib/analytics";
 
 type PurchaseTrackerProps = {
   orderId: string;
-  totalGross: number; // in cents
+  isPaid: boolean;
   shippingGross?: number; // in cents
-  taxValue?: number; // in cents
-  items: Array<{
-    productId: string;
-    productName: string;
-    unitPriceGross: number; // in cents
-    quantity: number;
-  }>;
+  discountGross?: number; // in cents
+  coupon?: string;
+  items: DrCocoOrderItem[];
 };
 
 export function PurchaseTracker({
   orderId,
-  totalGross,
+  isPaid,
   shippingGross,
-  taxValue,
+  discountGross,
+  coupon,
   items,
 }: PurchaseTrackerProps) {
+  const firedRef = useRef(false);
+
   useEffect(() => {
     const key = `purchase_tracked_${orderId}`;
-    if (sessionStorage.getItem(key)) return;
 
-    const order: DrCocoOrder = {
-      id: orderId,
-      totalGross,
-      taxValue,
-      shippingGross,
-      items,
+    const fire = () => {
+      if (firedRef.current) return;
+      try {
+        if (sessionStorage.getItem(key)) return;
+        sessionStorage.setItem(key, "1");
+      } catch {}
+      firedRef.current = true;
+      trackPurchase({ id: orderId, shippingGross, discountGross, coupon, items });
     };
 
-    trackPurchase(order);
-    sessionStorage.setItem(key, "1");
-  }, [items, orderId, totalGross, shippingGross, taxValue]);
+    if (isPaid) {
+      fire();
+      return;
+    }
+
+    // Stripe: the webhook can land after this page renders — verifyClient signals us
+    window.addEventListener(PAYMENT_CONFIRMED_EVENT, fire);
+    return () => window.removeEventListener(PAYMENT_CONFIRMED_EVENT, fire);
+  }, [orderId, isPaid, shippingGross, discountGross, coupon, items]);
 
   return null;
 }

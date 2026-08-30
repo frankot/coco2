@@ -1,10 +1,10 @@
 // Analytics — GTM dataLayer helpers + cookie consent
 // Hard-coded for Dr.Coco (GTM-MQ3CND2M → GA4 G-N3N1V1116L)
-// Based on drcoco_analytics_helper.ts
 
 export const GTM_ID = "GTM-MQ3CND2M";
 export const COOKIE_CONSENT_KEY = "cookie-consent";
 export const COOKIE_CONSENT_EVENT = "cookieConsentChanged";
+export const PAYMENT_CONFIRMED_EVENT = "paymentConfirmed";
 
 // ── Types ──────────────────────────────────────────────
 
@@ -19,17 +19,19 @@ export type DrCocoCartItem = DrCocoProduct & {
   quantity: number;
 };
 
+export type DrCocoOrderItem = {
+  productId: string;
+  productName: string;
+  unitPriceGross: number; // in cents
+  quantity: number;
+};
+
 export type DrCocoOrder = {
   id: string;
-  totalGross: number; // in cents
-  taxValue?: number; // in cents
   shippingGross?: number; // in cents
-  items: Array<{
-    productId: string;
-    productName: string;
-    unitPriceGross: number; // in cents
-    quantity: number;
-  }>;
+  discountGross?: number; // in cents
+  coupon?: string;
+  items: DrCocoOrderItem[];
 };
 
 type Ga4Item = {
@@ -51,14 +53,12 @@ declare global {
 // ── Helpers ────────────────────────────────────────────
 
 function toMoney(valueInCents: number): number {
-  return Math.round((valueInCents / 100) * 100) / 100;
+  return Math.round(valueInCents) / 100;
 }
 
 function cartValue(items: DrCocoCartItem[]): number {
-  return (
-    Math.round(
-      items.reduce((sum, item) => sum + item.priceInCents * item.quantity, 0)
-    ) / 100
+  return toMoney(
+    items.reduce((sum, item) => sum + item.priceInCents * item.quantity, 0)
   );
 }
 
@@ -91,15 +91,29 @@ export function pushEcommerceEvent(
 
 // ── Consent ────────────────────────────────────────────
 
+// Self-healing gtag shim — the layout script defines window.gtag, but never
+// let a missing shim silently swallow a consent update.
+function ensureGtag(): (...args: unknown[]) => void {
+  const layer = (window.dataLayer = window.dataLayer || []);
+  if (typeof window.gtag !== "function") {
+    window.gtag = function () {
+      // gtag() pushes the raw `arguments` object — GTM relies on that shape
+      // eslint-disable-next-line prefer-rest-params
+      layer.push(arguments as unknown as Record<string, unknown>);
+    };
+  }
+  return window.gtag;
+}
+
 export function hasMarketingConsent() {
   if (typeof window === "undefined") return false;
   return localStorage.getItem(COOKIE_CONSENT_KEY) === "accepted";
 }
 
+// Mirrors the denied-by-default consent state: no explicit choice means no consent.
 export function hasAnalyticsConsent() {
   if (typeof window === "undefined") return false;
-  const consent = localStorage.getItem(COOKIE_CONSENT_KEY);
-  return consent === "accepted" || consent === null;
+  return localStorage.getItem(COOKIE_CONSENT_KEY) === "accepted";
 }
 
 export function updateGoogleConsent(accepted: boolean): void {
@@ -107,7 +121,7 @@ export function updateGoogleConsent(accepted: boolean): void {
 
   const value = accepted ? "granted" : "denied";
 
-  window.gtag?.("consent", "update", {
+  ensureGtag()("consent", "update", {
     ad_storage: value,
     analytics_storage: value,
     ad_user_data: value,
@@ -154,13 +168,22 @@ export function trackBeginCheckout(items: DrCocoCartItem[]): void {
 }
 
 export function trackPurchase(order: DrCocoOrder): void {
+  const itemsTotal = order.items.reduce(
+    (sum, item) => sum + item.unitPriceGross * item.quantity,
+    0
+  );
+  // GA4: value is the items total minus discount — shipping is a separate param
+  const value = Math.max(0, itemsTotal - (order.discountGross || 0));
+
   pushEcommerceEvent("purchase", {
     transaction_id: order.id,
     currency: "PLN",
-    value: toMoney(order.totalGross),
-    tax: order.taxValue == null ? undefined : toMoney(order.taxValue),
-    shipping:
-      order.shippingGross == null ? undefined : toMoney(order.shippingGross),
+    value: toMoney(value),
+    ...(order.shippingGross == null
+      ? {}
+      : { shipping: toMoney(order.shippingGross) }),
+    ...(order.discountGross ? { discount: toMoney(order.discountGross) } : {}),
+    ...(order.coupon ? { coupon: order.coupon } : {}),
     items: order.items.map((item) => ({
       item_id: item.productId,
       item_name: item.productName,

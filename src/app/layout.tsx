@@ -4,8 +4,7 @@ import { Outfit } from "next/font/google";
 import "./globals.css";
 import { SessionProvider } from "@/components/SessionProvider";
 import { LazyToaster } from "@/components/LazyToaster";
-
-const GTM_ID = "GTM-MQ3CND2M";
+import { COOKIE_CONSENT_KEY, GTM_ID } from "@/lib/analytics";
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -100,24 +99,6 @@ export default function RootLayout({
       <head>
         {/* Preload critical images */}
         <link rel="preload" href="/logo.png" as="image" />
-        {/* GTM: dataLayer init + consent defaults + gtm.start — must run BEFORE gtm.js */}
-        <Script id="gtm-init" strategy="beforeInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){window.dataLayer.push(arguments);}
-            gtag('consent', 'default', {
-              ad_storage: 'denied',
-              analytics_storage: 'denied',
-              ad_user_data: 'denied',
-              ad_personalization: 'denied',
-              wait_for_update: 500
-            });
-            window.dataLayer.push({
-              'gtm.start': new Date().getTime(),
-              event: 'gtm.js'
-            });
-          `}
-        </Script>
       </head>
       <body
         className={`${outfit.variable} font-outfit min-h-screen antialiased bg-white scroll-smooth`}
@@ -131,12 +112,38 @@ export default function RootLayout({
             style={{ display: "none", visibility: "hidden" }}
           />
         </noscript>
-        {/* GTM external script — afterInteractive, dataLayer is already primed */}
-        <Script
-          id="gtm-script"
-          strategy="afterInteractive"
-          src={`https://www.googletagmanager.com/gtm.js?id=${GTM_ID}`}
-        />
+        {/* GTM: consent defaults + stored consent replay + container loader — one
+            script so the ordering (default → update → gtm.js) is guaranteed */}
+        <Script id="gtm" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            window.gtag = gtag;
+            gtag('consent', 'default', {
+              ad_storage: 'denied',
+              analytics_storage: 'denied',
+              ad_user_data: 'denied',
+              ad_personalization: 'denied',
+              wait_for_update: 500
+            });
+            try {
+              var stored = localStorage.getItem('${COOKIE_CONSENT_KEY}');
+              if (stored === 'accepted' || stored === 'rejected') {
+                var v = stored === 'accepted' ? 'granted' : 'denied';
+                gtag('consent', 'update', {
+                  ad_storage: v,
+                  analytics_storage: v,
+                  ad_user_data: v,
+                  ad_personalization: v
+                });
+              }
+            } catch (e) {}
+            (function(w,d,s,l,i){w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});
+            var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';
+            j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
+            f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${GTM_ID}');
+          `}
+        </Script>
         <SessionProvider>{children}</SessionProvider>
         <LazyToaster />
       </body>
