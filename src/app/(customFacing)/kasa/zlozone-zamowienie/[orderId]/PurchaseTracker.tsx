@@ -24,15 +24,10 @@ export function PurchaseTracker({
   const firedRef = useRef(false);
 
   useEffect(() => {
-    const key = `purchase_tracked_${orderId}`;
-
     const fire = () => {
       if (firedRef.current) return;
-      try {
-        if (sessionStorage.getItem(key)) return;
-        sessionStorage.setItem(key, "1");
-      } catch {}
       firedRef.current = true;
+      // trackPurchase owns the once-per-order guard
       trackPurchase({ id: orderId, shippingGross, discountGross, coupon, items });
     };
 

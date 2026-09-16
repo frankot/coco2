@@ -167,7 +167,22 @@ export function trackBeginCheckout(items: DrCocoCartItem[]): void {
   });
 }
 
+// purchase must fire once per order, for good — localStorage survives reloads,
+// back-navigation and a later visit from the confirmation e-mail link.
+function claimPurchaseOnce(orderId: string): boolean {
+  const key = `ga4_purchase_${orderId}`;
+  try {
+    if (localStorage.getItem(key)) return false;
+    localStorage.setItem(key, "1");
+    return true;
+  } catch {
+    return true;
+  }
+}
+
 export function trackPurchase(order: DrCocoOrder): void {
+  if (!claimPurchaseOnce(order.id)) return;
+
   const itemsTotal = order.items.reduce(
     (sum, item) => sum + item.unitPriceGross * item.quantity,
     0

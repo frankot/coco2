@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 import { Outfit } from "next/font/google";
 import "./globals.css";
 import { SessionProvider } from "@/components/SessionProvider";
@@ -97,13 +96,52 @@ export default function RootLayout({
   return (
     <html lang="pl">
       <head>
+        {/* dataLayer + Consent Mode defaults — must run before gtm.js */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+window.gtag = gtag;
+gtag('consent', 'default', {
+  ad_storage: 'denied',
+  analytics_storage: 'denied',
+  ad_user_data: 'denied',
+  ad_personalization: 'denied',
+  wait_for_update: 500
+});
+try {
+  var c = localStorage.getItem('${COOKIE_CONSENT_KEY}');
+  if (c === 'accepted' || c === 'rejected') {
+    var v = c === 'accepted' ? 'granted' : 'denied';
+    gtag('consent', 'update', {
+      ad_storage: v,
+      analytics_storage: v,
+      ad_user_data: v,
+      ad_personalization: v
+    });
+  }
+} catch (e) {}
+`,
+          }}
+        />
+        {/* Google Tag Manager */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','${GTM_ID}');`,
+          }}
+        />
         {/* Preload critical images */}
         <link rel="preload" href="/logo.png" as="image" />
       </head>
       <body
         className={`${outfit.variable} font-outfit min-h-screen antialiased bg-white scroll-smooth`}
       >
-        {/* GTM noscript — right after <body> */}
+        {/* Google Tag Manager (noscript) — first element in <body> */}
         <noscript>
           <iframe
             src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
@@ -112,38 +150,6 @@ export default function RootLayout({
             style={{ display: "none", visibility: "hidden" }}
           />
         </noscript>
-        {/* GTM: consent defaults + stored consent replay + container loader — one
-            script so the ordering (default → update → gtm.js) is guaranteed */}
-        <Script id="gtm" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            window.gtag = gtag;
-            gtag('consent', 'default', {
-              ad_storage: 'denied',
-              analytics_storage: 'denied',
-              ad_user_data: 'denied',
-              ad_personalization: 'denied',
-              wait_for_update: 500
-            });
-            try {
-              var stored = localStorage.getItem('${COOKIE_CONSENT_KEY}');
-              if (stored === 'accepted' || stored === 'rejected') {
-                var v = stored === 'accepted' ? 'granted' : 'denied';
-                gtag('consent', 'update', {
-                  ad_storage: v,
-                  analytics_storage: v,
-                  ad_user_data: v,
-                  ad_personalization: v
-                });
-              }
-            } catch (e) {}
-            (function(w,d,s,l,i){w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});
-            var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';
-            j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
-            f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${GTM_ID}');
-          `}
-        </Script>
         <SessionProvider>{children}</SessionProvider>
         <LazyToaster />
       </body>
