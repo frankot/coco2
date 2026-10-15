@@ -23,6 +23,7 @@ import {
 import { toast } from "sonner";
 import { formatPLN } from "@/lib/formatter";
 import { createOrder } from "./_actions";
+import { getMaxPacks, RETAIL_MAX_PACKS_MESSAGE } from "@/lib/order-limits";
 import { ApaczkaService } from "@/types/apaczka";
 import { trackBeginCheckout } from "@/lib/analytics";
 
@@ -669,6 +670,11 @@ export default function CheckoutPage() {
   const totalCartQuantity = activeCartItems.reduce((sum, item) => sum + item.quantity, 0);
   const paczkomatDisabled = totalCartQuantity > 2;
 
+  // Retail pack limit (guests + DETAL)
+  const maxPacks = getMaxPacks(session?.user?.accountType);
+  const atPackLimit = maxPacks !== null && totalCartQuantity >= maxPacks;
+  const overPackLimit = maxPacks !== null && totalCartQuantity > maxPacks;
+
   // If paczkomat becomes unavailable while selected, fall back to first non-map method
   useEffect(() => {
     if (paczkomatDisabled && selectedShippingMethod === "APACZKA_MAP") {
@@ -708,6 +714,11 @@ export default function CheckoutPage() {
 
     if (cartItems.length === 0) {
       setError("Twój koszyk jest pusty");
+      return;
+    }
+
+    if (overPackLimit) {
+      setError(`${RETAIL_MAX_PACKS_MESSAGE} Zmniejsz ilość w koszyku.`);
       return;
     }
 
@@ -930,6 +941,8 @@ export default function CheckoutPage() {
       removeItem(id);
       return;
     }
+    const current = cartItems.find((item) => item.id === id);
+    if (current && newQuantity > current.quantity && atPackLimit) return;
 
     const updatedCart = cartItems.map((item) =>
       item.id === id ? { ...item, quantity: newQuantity } : item
@@ -1694,7 +1707,9 @@ export default function CheckoutPage() {
                         <button
                           type="button"
                           onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                          className="min-h-12 min-w-12 rounded-full border flex items-center justify-center hover:bg-accent"
+                          disabled={atPackLimit}
+                          title={atPackLimit ? RETAIL_MAX_PACKS_MESSAGE : undefined}
+                          className="min-h-12 min-w-12 rounded-full border flex items-center justify-center hover:bg-accent disabled:opacity-40 disabled:cursor-not-allowed"
                           aria-label={`Zwiększ ilość produktu ${item.name}`}
                         >
                           +

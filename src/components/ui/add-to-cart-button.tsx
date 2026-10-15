@@ -3,6 +3,7 @@
 import { useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { addProductToCart, type CartProductInput } from "@/lib/cart-client";
+import { useMaxPacks } from "@/lib/use-max-packs";
 
 interface AddToCartButtonProps {
   product: CartProductInput;
@@ -24,6 +25,7 @@ export function AddToCartButton({
   stopLinkNavigation = false,
 }: AddToCartButtonProps) {
   const [isAdding, setIsAdding] = useState(false);
+  const maxPacks = useMaxPacks();
 
   const handleAddToCart = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (stopLinkNavigation) {
@@ -33,7 +35,7 @@ export function AddToCartButton({
     if (disabled || isAdding) return;
 
     setIsAdding(true);
-    addProductToCart(product, 1);
+    addProductToCart(product, 1, maxPacks);
     window.setTimeout(() => setIsAdding(false), 400);
   };
 

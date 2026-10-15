@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { formatPLN } from "@/lib/formatter";
 import { addProductToCart } from "@/lib/cart-client";
 import { trackViewItem } from "@/lib/analytics";
+import { useMaxPacks } from "@/lib/use-max-packs";
 import ReactMarkdown from "react-markdown";
 import type { Product } from "@/app/generated/prisma/client";
 import AvailabilityNotificationForm from "./AvailabilityNotificationForm";
@@ -28,6 +29,7 @@ export default function ProductPageClient({ product }: { product: Product }) {
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
   const viewedProductRef = useRef<string | null>(null);
   const minSwipeDistance = 40;
+  const maxPacks = useMaxPacks();
   const composition = product.composition as ProductComposition | null;
 
   useEffect(() => {
@@ -79,7 +81,8 @@ export default function ProductPageClient({ product }: { product: Product }) {
     try {
       addProductToCart(
         { ...product, preorderAvailableAt: product.preorderAvailableAt?.toISOString() ?? null },
-        quantity
+        quantity,
+        maxPacks
       );
     } finally {
       setIsAddingToCart(false);
@@ -287,7 +290,8 @@ export default function ProductPageClient({ product }: { product: Product }) {
                     </span>
                     <button
                       onClick={() => setQuantity(quantity + 1)}
-                      className="min-h-12 min-w-12 p-2 hover:bg-gray-100 transition-colors"
+                      disabled={maxPacks !== null && quantity >= maxPacks}
+                      className="min-h-12 min-w-12 p-2 hover:bg-gray-100 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                       aria-label={`Zwiększ ilość produktu ${product.name}`}
                     >
                       <Plus className="w-4 h-4" />

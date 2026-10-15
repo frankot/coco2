@@ -8,6 +8,8 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { formatPrice } from "@/lib/utils";
 import { trackViewCart } from "@/lib/analytics";
+import { useMaxPacks } from "@/lib/use-max-packs";
+import { RETAIL_MAX_PACKS_MESSAGE } from "@/lib/order-limits";
 
 export type CartItem = {
   id: string;
@@ -27,6 +29,7 @@ export function CartSheet({ isOpen, onClose }: CartSheetProps) {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const router = useRouter();
   const viewCartTracked = useRef(false);
+  const maxPacks = useMaxPacks();
 
   useEffect(() => {
     const handleCartChange = () => {
@@ -65,8 +68,13 @@ export function CartSheet({ isOpen, onClose }: CartSheetProps) {
     })));
   }, [isOpen, cartItems]);
 
+  const totalPacks = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const atPackLimit = maxPacks !== null && totalPacks >= maxPacks;
+
   const updateQuantity = (itemId: string, newQuantity: number) => {
     if (newQuantity < 1) return;
+    const current = cartItems.find((item) => item.id === itemId);
+    if (maxPacks !== null && current && newQuantity > current.quantity && atPackLimit) return;
 
     const updatedCart = cartItems.map((item) =>
       item.id === itemId ? { ...item, quantity: newQuantity } : item
@@ -162,6 +170,7 @@ export function CartSheet({ isOpen, onClose }: CartSheetProps) {
                               size="icon"
                               className="min-h-12 min-w-12 hover:bg-white"
                               onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                              disabled={atPackLimit}
                               aria-label={`Zwiększ ilość produktu ${item.name}`}
                             >
                               <Plus className="h-4 w-4" />
@@ -201,6 +210,16 @@ export function CartSheet({ isOpen, onClose }: CartSheetProps) {
                   <span className="text-lg font-medium text-gray-700">Suma</span>
                   <span className="text-2xl font-bold text-primary">{formatPrice(subtotal)}</span>
                 </div>
+
+                {/* Pack Limit Notice */}
+                {atPackLimit && (
+                  <p
+                    className={`text-sm ${maxPacks !== null && totalPacks > maxPacks ? "text-red-600" : "text-gray-600"}`}
+                  >
+                    {RETAIL_MAX_PACKS_MESSAGE}
+                    {maxPacks !== null && totalPacks > maxPacks && " Zmniejsz ilość w koszyku."}
+                  </p>
+                )}
 
                 {/* Features */}
                 <div className="flex flex-wrap gap-3 text-xs text-gray-600">

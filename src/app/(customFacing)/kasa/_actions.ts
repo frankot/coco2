@@ -5,6 +5,7 @@ import crypto from "crypto";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { getServerSession } from "next-auth";
+import { getMaxPacks, RETAIL_MAX_PACKS_MESSAGE } from "@/lib/order-limits";
 import { authOptions } from "@/lib/auth";
 import { createOrUpdateUser } from "@/lib/auth-utils";
 import { sendOrderPlacedEmail } from "@/lib/order-emails";
@@ -105,6 +106,12 @@ export async function createOrder(formData: OrderFormData) {
         })
       : null;
     const isHurt = freshUser?.accountType === "HURT";
+
+    // Retail pack limit (guests + DETAL)
+    const maxPacks = getMaxPacks(freshUser?.accountType);
+    if (maxPacks !== null && totalItems > maxPacks) {
+      return { success: false, error: RETAIL_MAX_PACKS_MESSAGE };
+    }
     if (validatedData.paymentMethod === "COD") {
       if (!isHurt) {
         return {
