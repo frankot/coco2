@@ -3,20 +3,23 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, ShoppingBag, Star, Plus, Minus } from "lucide-react";
+import { ArrowLeft, ShoppingBag, Plus, Minus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { notFound } from "next/navigation";
 import { formatPLN } from "@/lib/formatter";
 import { addProductToCart } from "@/lib/cart-client";
 import { trackViewItem } from "@/lib/analytics";
 import ReactMarkdown from "react-markdown";
+import type { Product } from "@/app/generated/prisma/client";
 import AvailabilityNotificationForm from "./AvailabilityNotificationForm";
 
-export default function ProductPageClient({ params }: { params: Promise<{ id: string }> }) {
-  const [product, setProduct] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+type ProductComposition = {
+  ingredients?: string;
+  storage?: string;
+  nutritionPerHundredMl?: string;
+};
+
+export default function ProductPageClient({ product }: { product: Product }) {
   const [isAddingToCart, setIsAddingToCart] = useState(false);
-  const [productId, setProductId] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
   const [activeTab, setActiveTab] = useState("composition");
@@ -25,40 +28,9 @@ export default function ProductPageClient({ params }: { params: Promise<{ id: st
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
   const viewedProductRef = useRef<string | null>(null);
   const minSwipeDistance = 40;
+  const composition = product.composition as ProductComposition | null;
 
   useEffect(() => {
-    async function initializeParams() {
-      const resolvedParams = await params;
-      setProductId(resolvedParams.id);
-    }
-
-    initializeParams();
-  }, [params]);
-
-  useEffect(() => {
-    if (!productId) return;
-
-    async function fetchProduct() {
-      try {
-        const response = await fetch(`/api/products/${productId}`);
-        if (!response.ok) {
-          notFound();
-        }
-        const productData = await response.json();
-        setProduct(productData);
-      } catch (error) {
-        console.error("Error fetching product:", error);
-        notFound();
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchProduct();
-  }, [productId]);
-
-  useEffect(() => {
-    if (!product || viewedProductRef.current === product.id) return;
     if (viewedProductRef.current === product.id) return;
     viewedProductRef.current = product.id;
     trackViewItem({
@@ -69,155 +41,19 @@ export default function ProductPageClient({ params }: { params: Promise<{ id: st
   }, [product]);
 
   useEffect(() => {
-    if (!product?.isPreorder) return;
+    if (!product.isPreorder) return;
     const interval = window.setInterval(() => setNow(Date.now()), 1000);
     return () => window.clearInterval(interval);
-  }, [product?.isPreorder]);
+  }, [product.isPreorder]);
 
   // Reset selected image if it's out of bounds when product changes
   useEffect(() => {
-    if (product && product.imagePaths) {
-      const productImages = product.imagePaths.filter(Boolean) || [];
-      const displayImages = productImages.length > 0 ? productImages : ["/hero.webp"];
-      if (selectedImage >= displayImages.length) {
-        setSelectedImage(0);
-      }
+    const productImages = product.imagePaths.filter(Boolean);
+    const displayImages = productImages.length > 0 ? productImages : ["/hero.webp"];
+    if (selectedImage >= displayImages.length) {
+      setSelectedImage(0);
     }
   }, [product, selectedImage]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen lg:pt-18">
-        <div className="container mx-auto px-4 pt-4 pb-10 lg:pt-10 lg:pb-20">
-          {/* Back button - real, always works */}
-          <div className="mb-6">
-            <Link href="/sklep">
-              <Button
-                variant="ghost"
-                className="flex items-center gap-2 text-gray-600 hover:bg-primary"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                Wróć do sklepu
-              </Button>
-            </Link>
-          </div>
-
-          {/* Main product section */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 mb-12">
-            {/* Left - Images skeleton */}
-            <div className="space-y-4">
-              <div className="relative aspect-square rounded-lg overflow-hidden bg-gray-100 animate-pulse" />
-              <div className="flex gap-2">
-                {[1, 2, 3, 4].map((i) => (
-                  <div key={i} className="w-20 h-20 bg-gray-100 rounded-lg animate-pulse" />
-                ))}
-              </div>
-            </div>
-
-            {/* Right - Product info: mix of skeleton + static */}
-            <div className="space-y-6">
-              {/* Title skeleton */}
-              <div>
-                <div className="h-8 w-3/4 bg-gray-100 rounded animate-pulse mb-2" />
-
-              </div>
-
-              {/* Price skeleton */}
-              <div className="space-y-2">
-                <div className="h-9 w-32 bg-gray-100 rounded animate-pulse" />
-                <div className="h-5 w-48 bg-gray-100 rounded animate-pulse" />
-                <div className="h-4 w-64 bg-gray-100 rounded animate-pulse" />
-              </div>
-
-              {/* Quantity + Cart - real controls, cart disabled */}
-              <div className="space-y-4">
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center border border-gray-300 rounded-lg">
-                    <button className="p-2 text-gray-400 cursor-default" disabled>
-                      <Minus className="w-4 h-4" />
-                    </button>
-                    <span className="px-4 py-2 font-medium min-w-[60px] text-center text-gray-400">
-                      12
-                    </span>
-                    <button className="p-2 text-gray-400 cursor-default" disabled>
-                      <Plus className="w-4 h-4" />
-                    </button>
-                  </div>
-                  <span className="text-sm text-gray-400">szt. (1 × ?)</span>
-                </div>
-
-                <Button
-                  disabled
-                  className="w-full bg-gray-300 text-gray-500 py-3 text-lg font-medium cursor-not-allowed"
-                  size="lg"
-                >
-                  <ShoppingBag className="w-5 h-5 mr-2" />
-                  Ładowanie...
-                </Button>
-              </div>
-
-              {/* Description skeleton */}
-              <div className="space-y-2">
-                <div className="h-4 bg-gray-100 rounded animate-pulse" />
-                <div className="h-4 bg-gray-100 rounded animate-pulse w-5/6" />
-                <div className="h-4 bg-gray-100 rounded animate-pulse w-4/6" />
-                <div className="h-4 bg-gray-100 rounded animate-pulse w-3/4" />
-              </div>
-            </div>
-          </div>
-
-          {/* Tabs - real, always visible */}
-          <div className="border-t border-gray-200 pt-8 mb-12">
-            <div className="flex gap-8 border-b border-gray-200 mb-6">
-              <button
-                onClick={() => setActiveTab("composition")}
-                className={`pb-2 font-medium ${
-                  activeTab === "composition"
-                    ? "border-b-2 border-primary text-primary"
-                    : "text-gray-600 hover:text-gray-900"
-                }`}
-              >
-                Skład i Wartości
-              </button>
-              <button
-                onClick={() => setActiveTab("related")}
-                className={`pb-2 font-medium ${
-                  activeTab === "related"
-                    ? "border-b-2 border-primary text-primary"
-                    : "text-gray-600 hover:text-gray-900"
-                }`}
-              >
-                Produkty powiązane
-              </button>
-            </div>
-
-            {activeTab === "composition" ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="space-y-4">
-                  <div className="h-5 w-16 bg-gray-100 rounded animate-pulse" />
-                  <div className="h-4 bg-gray-100 rounded animate-pulse" />
-                  <div className="h-4 bg-gray-100 rounded animate-pulse w-3/4" />
-                  <div className="h-5 w-40 bg-gray-100 rounded animate-pulse mt-4" />
-                  <div className="h-4 bg-gray-100 rounded animate-pulse" />
-                  <div className="h-5 w-48 bg-gray-100 rounded animate-pulse mt-4" />
-                  <div className="h-4 bg-gray-100 rounded animate-pulse" />
-                  <div className="h-4 bg-gray-100 rounded animate-pulse w-2/3" />
-                </div>
-              </div>
-            ) : (
-              <div className="text-center py-8 text-gray-500">
-                Produkty powiązane będą dostępne wkrótce
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (!product) {
-    notFound();
-  }
 
   const preorderEndsAtMs = product.preorderAvailableAt
     ? new Date(product.preorderAvailableAt).getTime()
@@ -225,7 +61,10 @@ export default function ProductPageClient({ params }: { params: Promise<{ id: st
   const isPreorderActive = product.isPreorder && preorderEndsAtMs > now;
   const preorderDiscount =
     product.isPreorder && product.preorderOriginalPriceInCents
-      ? Math.max(0, Math.round((1 - product.priceInCents / product.preorderOriginalPriceInCents) * 100))
+      ? Math.max(
+          0,
+          Math.round((1 - product.priceInCents / product.preorderOriginalPriceInCents) * 100)
+        )
       : 0;
   const countdownMs = Math.max(0, preorderEndsAtMs - now);
   const countdownDays = Math.floor(countdownMs / 86_400_000);
@@ -238,7 +77,10 @@ export default function ProductPageClient({ params }: { params: Promise<{ id: st
 
     setIsAddingToCart(true);
     try {
-      addProductToCart(product, quantity);
+      addProductToCart(
+        { ...product, preorderAvailableAt: product.preorderAvailableAt?.toISOString() ?? null },
+        quantity
+      );
     } finally {
       setIsAddingToCart(false);
     }
@@ -361,7 +203,6 @@ export default function ProductPageClient({ params }: { params: Promise<{ id: st
             {/* Product title */}
             <div>
               <h1 className="text-2xl lg:text-3xl font-bold text-primary mb-2">{product.name}</h1>
-
             </div>
 
             {/* Price */}
@@ -405,6 +246,7 @@ export default function ProductPageClient({ params }: { params: Promise<{ id: st
                       ? new Intl.DateTimeFormat("pl-PL", {
                           dateStyle: "long",
                           timeStyle: "short",
+                          timeZone: "Europe/Warsaw",
                         }).format(new Date(product.preorderAvailableAt))
                       : "—"}
                   </p>
@@ -478,6 +320,7 @@ export default function ProductPageClient({ params }: { params: Promise<{ id: st
               </div>
             )}
 
+
             {/* Full description with markdown content */}
             <div className="space-y-2">
               {product.content ? (
@@ -543,7 +386,7 @@ export default function ProductPageClient({ params }: { params: Promise<{ id: st
             <div className="prose max-w-none">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
-                  {product.composition?.ingredients && (
+                  {composition?.ingredients && (
                     <>
                       <h3 className="text-lg font-semibold mb-3">Skład:</h3>
                       <div className="text-gray-700 mb-4">
@@ -556,13 +399,13 @@ export default function ProductPageClient({ params }: { params: Promise<{ id: st
                             li: ({ node, ...props }) => <li className="mb-1" {...props} />,
                           }}
                         >
-                          {product.composition.ingredients}
+                          {composition.ingredients}
                         </ReactMarkdown>
                       </div>
                     </>
                   )}
 
-                  {product.composition?.storage && (
+                  {composition?.storage && (
                     <>
                       <h3 className="text-lg font-semibold mb-3">Sposób przechowywania:</h3>
                       <div className="text-gray-700 mb-4">
@@ -575,13 +418,13 @@ export default function ProductPageClient({ params }: { params: Promise<{ id: st
                             li: ({ node, ...props }) => <li className="mb-1" {...props} />,
                           }}
                         >
-                          {product.composition.storage}
+                          {composition.storage}
                         </ReactMarkdown>
                       </div>
                     </>
                   )}
 
-                  {product.composition?.nutritionPerHundredMl && (
+                  {composition?.nutritionPerHundredMl && (
                     <>
                       <h3 className="text-lg font-semibold mb-3">
                         Wartość odżywcza w 100 ml produktu:
@@ -596,7 +439,7 @@ export default function ProductPageClient({ params }: { params: Promise<{ id: st
                             li: ({ node, ...props }) => <li className="mb-1" {...props} />,
                           }}
                         >
-                          {product.composition.nutritionPerHundredMl}
+                          {composition.nutritionPerHundredMl}
                         </ReactMarkdown>
                       </div>
                     </>
@@ -620,7 +463,9 @@ export default function ProductPageClient({ params }: { params: Promise<{ id: st
 function CountdownBox({ label, value }: { label: string; value: number }) {
   return (
     <div className="rounded-lg border border-primary/10 bg-white/80 p-3 shadow-sm">
-      <div className="text-xl font-bold text-primary">{String(value).padStart(2, "0")}</div>
+      <div className="text-xl font-bold text-primary" suppressHydrationWarning>
+        {String(value).padStart(2, "0")}
+      </div>
       <div className="text-xs text-muted-foreground">{label}</div>
     </div>
   );

@@ -1,16 +1,14 @@
 import type { Metadata } from "next";
-import prisma from "@/db";
+import { notFound } from "next/navigation";
 import ProductPageClient from "./ProductPageClient";
-import { formatPLN } from "@/lib/formatter";
+import { getProductByIdOrSlug, getVisibleProduct } from "@/lib/products-public";
+import { buildProductJsonLd, serializeJsonLd } from "@/lib/structured-data";
 
 type Props = { params: Promise<{ id: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
-  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
-  const product = isUuid
-    ? await prisma.product.findUnique({ where: { id } })
-    : await prisma.product.findUnique({ where: { slug: id } });
+  const product = await getProductByIdOrSlug(id);
 
   if (!product) {
     return {
@@ -23,7 +21,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ? product.description.slice(0, 160) + (product.description.length > 160 ? "..." : "")
     : `${product.name} - naturalna woda kokosowa Dr.Coco®. Zamów online z dostawą w całej Polsce.`;
 
-  const price = formatPLN(product.priceInCents);
   const ogImage = product.imagePaths?.[0] || "/og-image.webp";
 
   return {
@@ -55,6 +52,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default function ProductPage({ params }: Props) {
-  return <ProductPageClient params={params} />;
+export default async function ProductPage({ params }: Props) {
+  const { id } = await params;
+  const product = await getVisibleProduct(id);
+  if (!product) notFound();
+
+  // Base (guest) product for structured data
+  const baseProduct = (await getProductByIdOrSlug(id)) ?? product;
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(buildProductJsonLd(baseProduct)) }}
+      />
+      <ProductPageClient product={product} />
+    </>
+  );
 }

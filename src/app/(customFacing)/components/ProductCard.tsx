@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Bell, Check, ShoppingBag, Star } from "lucide-react";
+import { Bell, Check, ShoppingBag } from "lucide-react";
 import { formatPLN } from "@/lib/formatter";
 import { AddToCartButton } from "@/components/ui/add-to-cart-button";
 import { DeferredHoverImage } from "@/components/ui/deferred-hover-image";
@@ -29,7 +29,10 @@ export function ProductCard({ product, preload }: { product: Product; preload?: 
     product.isPreorder && preorderAvailableAt && preorderAvailableAt.getTime() > Date.now();
   const preorderDiscount =
     product.isPreorder && product.preorderOriginalPriceInCents
-      ? Math.max(0, Math.round((1 - product.priceInCents / product.preorderOriginalPriceInCents) * 100))
+      ? Math.max(
+          0,
+          Math.round((1 - product.priceInCents / product.preorderOriginalPriceInCents) * 100)
+        )
       : 0;
 
   return (
@@ -82,19 +85,14 @@ export function ProductCard({ product, preload }: { product: Product; preload?: 
           </h3>
         </Link>
 
-        <div className="flex items-center space-x-1 mb-2">
-          {[1, 2, 3, 4, 5].map((star) => (
-            <Star key={star} className="w-4 h-4 text-yellow-400 fill-current" />
-          ))}
-          <span className="text-sm text-gray-500 ml-1">(4.8)</span>
-        </div>
-
         <p className="text-gray-600 text-sm line-clamp-2 mb-4">{product.description}</p>
 
         <div className="flex items-end justify-between">
           <div>
             <div className="flex items-center gap-2">
-              <div className="text-xl font-bold text-primary">{formatPLN(product.priceInCents)}</div>
+              <div className="text-xl font-bold text-primary">
+                {formatPLN(product.priceInCents)}
+              </div>
               {product.isPreorder && product.preorderOriginalPriceInCents && (
                 <div className="text-sm text-gray-400 line-through">
                   {formatPLN(product.preorderOriginalPriceInCents)}
@@ -155,11 +153,6 @@ export function ProductCardSkeleton() {
       <div className="aspect-square bg-gray-200"></div>
       <div className="p-4">
         <div className="h-6 bg-gray-200 rounded mb-2"></div>
-        <div className="flex items-center space-x-1 mb-2">
-          {[1, 2, 3, 4, 5].map((star) => (
-            <div key={star} className="w-4 h-4 bg-gray-200 rounded"></div>
-          ))}
-        </div>
         <div className="h-4 bg-gray-200 rounded mb-2"></div>
         <div className="h-4 bg-gray-200 rounded w-3/4 mb-4"></div>
         <div className="flex items-center justify-between">
