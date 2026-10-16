@@ -1,4 +1,5 @@
 import { Card } from "@/components/ui/card";
+import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -81,13 +82,12 @@ export default function RegulaminPage() {
                 o.o. ul. Modlińska 29a, 05-110 Jabłonna.
               </li>
               <li>
-                Utrwalenie, zabezpieczenie i udostępnienie istotnych postanowień umów zawieranych
-                przy użyciu środków porozumiewania się na odległość następuje przez dostarczenie
-                Klientowi dowodu zakupu (paragon lub faktura VAT) lub specyfikacji nabywanych
-                produktów wraz z dostawą produktów. Do umów zawieranych przy pomocy środków
-                porozumiewania się na odległość stosuje się Ustawę z 2 marca 2000 r. o ochronie
-                niektórych praw konsumenckich oraz o odpowiedzialności za szkodę wyrządzoną przez
-                produkt niebezpieczny.
+                Sprzedawca przekazuje Klientowi potwierdzenie zawarcia umowy na trwałym nośniku, np.
+                e-mailem, w rozsądnym czasie po jej zawarciu, najpóźniej w chwili dostarczenia
+                towaru. Potwierdzenie obejmuje informacje wymagane ustawą z dnia 30 maja 2014 r. o
+                prawach konsumenta, chyba że zostały już przekazane na trwałym nośniku przed
+                zawarciem umowy. Do umów zawieranych na odległość stosuje się właściwe przepisy tej
+                ustawy oraz Kodeksu cywilnego.
               </li>
               <li>
                 Warunkiem rozpoczęcia korzystania ze sklepu jest akceptacja i zaznajomienie się z
@@ -235,12 +235,12 @@ export default function RegulaminPage() {
                 VAT).
               </li>
               <li>
-                Podczas odbioru przesyłki dostarczonej przez kuriera, Klient, proszony jest o
-                dokładne i staranne sprawdzenie w obecności kuriera stanu opakowania zewnętrznego
-                paczki oraz jej zawartości jak również zgodności przesyłki ze złożonym zamówieniem.
-                W przypadku uszkodzenia przesyłki Klient powinien sporządzić wraz z kurierem
-                protokół szkody, w dwóch jednobrzmiących egzemplarzach podpisanych przez kuriera i
-                odbiorcę.
+                Prosimy o sprawdzenie przy odbiorze stanu opakowania i zawartości przesyłki oraz
+                zgodności dostawy z zamówieniem. W razie zauważenia uszkodzeń zalecamy sporządzenie
+                protokołu szkody z przewoźnikiem oraz wykonanie zdjęć. Brak protokołu, zdjęć lub
+                sprawdzenia przesyłki w obecności kuriera nie pozbawia konsumenta prawa do
+                reklamacji i sam w sobie nie stanowi podstawy jej odrzucenia. Zasady reklamacji
+                określa dział VI Regulaminu.
               </li>
               <li>
                 Realizujemy zamówienia tylko na terenie Polski. W przypadku zamówień poza granicę
@@ -255,13 +255,9 @@ export default function RegulaminPage() {
             <h2 className="text-xl md:text-2xl font-bold mb-4">V. Ceny i formy płatności</h2>
             <ol className="list-decimal pl-6 space-y-3">
               <li>
-                Informacja o cenie towaru w sklepie jest podawana na stronie sklepu i ma charakter
-                wiążący – w rozumieniu ustawy z 2 marca 2000 r. o ochronie niektórych praw
-                konsumentów oraz o odpowiedzialności za szkodę wyrządzoną przez produkt
-                niebezpieczny – od momentu otrzymania przez Klienta wiadomości e-mail z
-                potwierdzeniem przyjęcia złożonego przez niego zamówienia zakupu wybranych towarów.
-                Wspomniana cena nie ulegnie zmianie niezależnie od zmian cen w sklepie, które
-                ewentualnie mogą się pojawić po złożeniu zamówienia.
+                Cena towaru jest podawana na stronie Sklepu. Cena uzgodniona przy zawarciu umowy i
+                wskazana w potwierdzeniu przyjęcia zamówienia jest wiążąca dla stron. Późniejsza
+                zmiana cen w Sklepie nie wpływa na cenę towarów objętych już zawartą umową.
               </li>
               <li>
                 Ceny produktów w sklepie podawane są w PLN i zawierają podatek VAT oraz wszystkie
@@ -301,88 +297,278 @@ export default function RegulaminPage() {
                 dokonaniem ww. modyfikacji.
               </li>
               <li>
-                W przypadku transakcji kartą zwrot następuje na rachunek przynależący do karty którą
-                dokonano płatności, w tej sytuacji nie istnieje możliwość dokonania zwrotu na inny
-                rachunek.
+                Zwrot płatności następuje przy użyciu takiego samego sposobu płatności, jakiego użył
+                konsument, chyba że wyraźnie zgodzi się on na inny sposób, który nie wiąże się dla
+                niego z dodatkowymi kosztami. Przy płatności kartą zwrot jest co do zasady kierowany
+                na rachunek powiązany z kartą wykorzystaną przy zakupie.
               </li>
             </ol>
           </section>
 
-          {/* VI Gwarancja */}
-          <section>
-            <h2 className="text-xl md:text-2xl font-bold mb-4">
-              VI. Gwarancja, reklamacje i zwroty
-            </h2>
-            <ol className="list-decimal pl-6 space-y-3">
-              <li>Produkty oferowane w sklepie są nieużywane, fabrycznie nowe i oryginalne.</li>
-              <li>
-                Klient może zgłosić informacje o wszelkich niedogodnościach – niezbędne dane
-                kontaktowe, dostępne są na stronie internetowej Sklepu w zakładce „Kontakt i dane
-                firmy" umieszczonej w stopce strony.
-              </li>
-              <li>
-                NEW AGE FOOD sp. z o.o. podejmuje wszelkie działania w celu zapewnienia właściwego
-                funkcjonowania sklepu z uwzględnieniem aktualnej wiedzy technicznej i zobowiązuje
-                się usunąć w możliwie najszybszym terminie wszelkie nieprawidłowości zgłoszone przez
-                użytkowników.
-              </li>
-              <li>
-                NEW AGE FOOD sp. z o.o. jako sprzedawca odpowiada wobec Klienta będącego konsumentem
-                w rozumieniu art. 221 Kodeksu Cywilnego za niezgodność z Umową sprzedaży Towaru
-                zakupionego przez tego konsumenta, w zakresie określonym Ustawą o szczególnych
-                warunkach sprzedaży konsumenckiej i zmianie Kodeksu cywilnego z dnia 27 lipca 2002
-                r..
-              </li>
-              <li>
-                Każdy produkt kupiony w Sklepie może być zareklamowany z zachowaniem wszelkich
-                terminów i warunków reklamacji jeśli posiada wady, stanowiące o jego niezgodności z
-                umową. Reklamację należy złożyć poprzez dostarczenie produktu wraz z opisem wady i
-                dowodem zakupu, na adres: NEW AGE FOOD sp. z o.o. adres: ul. Modlińska 29a, 05-110
-                Jabłonna, z dopiskiem: „reklamacja". Jednocześnie przed rozpoczęciem procedury
-                reklamacyjnej klient proszony jest o bezpośrednio kontakt z właścicielem Sklepu
-                (niezbędne dane kontaktowe, dostępne są na stronie internetowej Sklepu w zakładce
-                „Kontakt i dane firmy" umieszczonej w stopce strony). Klient otrzyma informację o
-                rozpatrzeniu reklamacji w terminie 14 dni od dnia otrzymania przez sklep
-                reklamowanego produktu lub produktów. W przypadku pozytywnego rozpatrzenia
-                reklamacji NEW AGE FOOD sp. z o.o., zobowiązuje się do wysłania do Klienta nowego
-                produkt w ciągu 14 dni, a gdy okaże się to niemożliwe (np. z powodu wyczerpania
-                zapasów magazynowych), do zwrócenia opłaty poniesionej przez Klienta.
-              </li>
-              <li>
-                W przypadku nie uwzględnienia reklamacji, towar na życzenie Klienta zostanie
-                odesłany wraz z opinią Sklepu o niezasadności reklamacji.
-              </li>
-              <li>
-                Reklamacje wynikające z tytułu uszkodzenia towaru podczas transportu będą
-                rozpatrywane na podstawie protokołu szkody sporządzonego przez Klienta i kuriera.
-                Czyt. Rodz. IV. Ptk.3
-              </li>
-              <li>
-                Termin odstąpienia od umowy wynosi 14 dni. Klient ma prawo odstąpić od umowy
-                sprzedaży bez podania przyczyny w ciągu 14 dni od daty otrzymania towaru i w
-                możliwie najszybszym terminie zwrócić towar do Sklepu. W celu odstąpienia od umowy
-                sprzedaży, Klient zobowiązany jest do złożenia oświadczenia o odstąpieniu od
-                zawartej umowy drogą mailową, a następnie przysłanie na adres Sklepu na koszt i
-                ryzyko Klienta nienaruszonego towaru w oryginalnym, nieposiadającym nieuzasadnionych
-                śladów użytkowania opakowaniu. Do przesyłki należy dołączyć dokument potwierdzający
-                zachowanie terminu 10 dni w odniesieniu do konkretnych zwracanych towarów (np.
-                paragon, faktura Vat). Kwota zwróconego zamówienia zostanie przekazana w ciągu
-                maksymalnie 14 dni roboczych od otrzymania przez Sklep nieuszkodzonego towaru, na
-                podany przez Klienta numer konta. W przypadku transakcji kartą zwrot należności
-                następuje na rachunek karty.
-              </li>
-              <li>
-                Sklep ma prawo odmówić przyjęcia zwrotu towaru w przypadkach braku dokumentu
-                potwierdzającego zakup towaru oraz braku, lub nieuzasadnionym naruszeniu lub
-                uszkodzeniu oryginalnego opakowania lub niedotrzymania 14 dniowego terminu zwrotu. W
-                takim przypadku towar zostanie odesłany, na koszt klienta.
-              </li>
-              <li>
-                NEW AGE FOOD sp. z o.o. zobowiązuje się do niezwłocznego poinformowania jednostki
-                certyfikującej Ekogwarancja PTRE Sp. z o.o. o kwestionowaniu statusu produktów
-                ekologicznych
-              </li>
-            </ol>
+          {/* VI Zwroty i reklamacje */}
+          <section id="vi-zwroty">
+            <h2 className="text-xl md:text-2xl font-bold mb-4">VI. Zwroty i reklamacje</h2>
+            <div className="space-y-6">
+              <div id="vi-postanowienia-ogolne">
+                <h3 className="text-lg md:text-xl font-semibold mb-3">1. Postanowienia ogólne</h3>
+                <ol className="list-decimal pl-6 space-y-3">
+                  <li>
+                    Sprzedawcą jest NEW AGE FOOD sp. z o.o., ul. Modlińska 29a, 05-110 Jabłonna,
+                    NIP: 7011015138, dalej „Sprzedawca”. Kontakt: kontakt@drcoco.pl, tel. 798 865
+                    865. Korespondencję można kierować na adres siedziby Sprzedawcy.
+                  </li>
+                  <li>
+                    Adres do odsyłania produktów: NEW AGE FOOD sp. z o.o., ul. Różana 1a, 07-230
+                    Gaj. Jest to adres inny niż adres siedziby Sprzedawcy.
+                  </li>
+                  <li>
+                    Uprawnienia konsumenta opisane w niniejszym dziale stosuje się również do osoby
+                    fizycznej zawierającej umowę bezpośrednio związaną z jej działalnością
+                    gospodarczą, jeżeli z treści umowy wynika, że nie ma ona dla tej osoby
+                    charakteru zawodowego, wynikającego w szczególności z przedmiotu działalności
+                    udostępnionego w CEIDG, w zakresie przewidzianym przepisami prawa.
+                  </li>
+                  <li>
+                    W pozostałych przypadkach zakupów firmowych uprawnienia kupującego określają
+                    właściwe przepisy oraz warunki zawartej umowy.
+                  </li>
+                </ol>
+              </div>
+              <div id="vi-prawo-odstapienia">
+                <h3 className="text-lg md:text-xl font-semibold mb-3">
+                  2. Prawo odstąpienia od umowy
+                </h3>
+                <ol className="list-decimal pl-6 space-y-3">
+                  <li>
+                    Konsument może odstąpić od umowy sprzedaży zawartej za pośrednictwem Sklepu bez
+                    podawania przyczyny w terminie 14 dni.
+                  </li>
+                  <li>
+                    Termin biegnie od objęcia towaru w posiadanie przez konsumenta lub wskazaną
+                    przez niego osobę trzecią inną niż przewoźnik. W przypadku towarów dostarczanych
+                    osobno, partiami lub w częściach w ramach jednej umowy termin biegnie od
+                    otrzymania ostatniego towaru, partii lub części.
+                  </li>
+                  <li>
+                    Aby odstąpić od umowy, należy przekazać Sprzedawcy jednoznaczne oświadczenie o
+                    tej decyzji, na przykład e-mailem na kontakt@drcoco.pl albo listownie na adres
+                    siedziby. Do zachowania terminu wystarczy wysłanie oświadczenia przed jego
+                    upływem. Odstąpienie nie wymaga zgody Sprzedawcy.
+                  </li>
+                  <li>
+                    Konsument może skorzystać z formularza w dziale{" "}
+                    <Link href="/zwroty#formularz" className="text-primary hover:underline">
+                      „Zwroty i reklamacje”
+                    </Link>{" "}
+                    na stronie Sklepu lub ustawowego wzoru formularza. Korzystanie z formularza jest
+                    dobrowolne. Podanie danych kupującego, numeru zamówienia i zwracanych produktów
+                    ułatwia obsługę zwrotu.
+                  </li>
+                  <li>
+                    Papierowy paragon nie jest warunkiem skorzystania z prawa odstąpienia, jeżeli
+                    zakup można wykazać w inny sposób.
+                  </li>
+                </ol>
+              </div>
+              <div id="vi-odeslanie">
+                <h3 className="text-lg md:text-xl font-semibold mb-3">3. Odesłanie produktów</h3>
+                <ol className="list-decimal pl-6 space-y-3">
+                  <li>
+                    Konsument odsyła towar niezwłocznie, najpóźniej w terminie 14 dni od dnia
+                    odstąpienia od umowy, na adres: NEW AGE FOOD sp. z o.o., ul. Różana 1a, 07-230
+                    Gaj. Do zachowania terminu wystarczy nadanie przesyłki przed jego upływem.
+                  </li>
+                  <li>
+                    Bezpośredni koszt odesłania towaru przy odstąpieniu od umowy bez podania
+                    przyczyny ponosi konsument.
+                  </li>
+                  <li>
+                    Towar należy odpowiednio zabezpieczyć na czas transportu. Oryginalny karton
+                    wysyłkowy nie jest wymagany; można użyć innego odpowiedniego opakowania.
+                  </li>
+                  <li>
+                    Konsument odpowiada za zmniejszenie wartości towaru wynikające z korzystania z
+                    niego w sposób wykraczający poza konieczny do stwierdzenia jego charakteru, cech
+                    i funkcjonowania, chyba że Sprzedawca nie poinformował go o prawie odstąpienia
+                    zgodnie z ustawą.
+                  </li>
+                </ol>
+              </div>
+              <div id="vi-wylaczenie">
+                <h3 className="text-lg md:text-xl font-semibold mb-3">
+                  4. Wyłączenie prawa odstąpienia
+                </h3>
+                <ol className="list-decimal pl-6 space-y-3">
+                  <li>
+                    Prawo odstąpienia nie przysługuje w odniesieniu do towaru dostarczonego w
+                    zapieczętowanym opakowaniu, którego po otwarciu nie można zwrócić ze względu na
+                    ochronę zdrowia lub ze względów higienicznych, jeżeli opakowanie zostało otwarte
+                    po dostarczeniu.
+                  </li>
+                  <li>
+                    Wyłączenie dotyczy opakowania zabezpieczającego sam produkt. Otwarcie
+                    zewnętrznego kartonu wysyłkowego nie pozbawia prawa odstąpienia.
+                  </li>
+                  <li>
+                    Otwarcie produktu nie wyłącza prawa do reklamacji jego niezgodności z umową,
+                    także wtedy, gdy problem został zauważony dopiero po otwarciu.
+                  </li>
+                </ol>
+              </div>
+              <div id="vi-zwrot-platnosci">
+                <h3 className="text-lg md:text-xl font-semibold mb-3">5. Zwrot płatności</h3>
+                <ol className="list-decimal pl-6 space-y-3">
+                  <li>
+                    Sprzedawca zwraca należne płatności niezwłocznie, nie później niż w ciągu 14 dni
+                    od otrzymania oświadczenia o odstąpieniu od umowy.
+                  </li>
+                  <li>
+                    Przy odstąpieniu od całej umowy zwrot obejmuje koszt pierwotnej dostawy do
+                    wysokości najtańszego zwykłego sposobu dostarczenia oferowanego przy danym
+                    zamówieniu. Dopłata za wybór droższego sposobu dostawy nie podlega zwrotowi.
+                  </li>
+                  <li>
+                    Sprzedawca może wstrzymać zwrot płatności do otrzymania towaru lub dowodu jego
+                    odesłania, zależnie od tego, co nastąpi wcześniej. Nie dotyczy to sytuacji, w
+                    której Sprzedawca zaproponował samodzielny odbiór towaru.
+                  </li>
+                  <li>
+                    Zwrot następuje przy użyciu tego samego sposobu płatności, jakiego użył
+                    konsument, chyba że wyraźnie zgodzi się on na inny sposób niewiążący się dla
+                    niego z dodatkowymi kosztami.
+                  </li>
+                </ol>
+              </div>
+              <div id="vi-reklamacje">
+                <h3 className="text-lg md:text-xl font-semibold mb-3">
+                  6. Reklamacje z tytułu niezgodności towaru z umową
+                </h3>
+                <ol className="list-decimal pl-6 space-y-3">
+                  <li>
+                    Sprzedawca odpowiada za niezgodność towaru z umową na zasadach ustawy z dnia 30
+                    maja 2014 r. o prawach konsumenta.
+                  </li>
+                  <li>
+                    Odpowiedzialność obejmuje brak zgodności istniejący w chwili dostarczenia i
+                    ujawniony w ciągu dwóch lat od tej chwili, chyba że określony zgodnie z ustawą
+                    termin przydatności jest dłuższy. Okres odpowiedzialności nie przedłuża terminu
+                    przydatności produktu do spożycia. Produkt należy przechowywać zgodnie z
+                    etykietą.
+                  </li>
+                  <li>
+                    Domniemywa się, że niezgodność ujawniona przed upływem dwóch lat od dostarczenia
+                    istniała przy dostarczeniu, chyba że udowodniono inaczej lub domniemania nie
+                    można pogodzić ze specyfiką towaru lub charakterem niezgodności.
+                  </li>
+                  <li>
+                    Reklamację można złożyć e-mailem na kontakt@drcoco.pl lub listownie na adres
+                    siedziby Sprzedawcy. Zaleca się podanie danych umożliwiających kontakt i
+                    identyfikację zakupu, opisu problemu oraz żądania. Numer partii, data
+                    przydatności i zdjęcia mogą ułatwić rozpatrzenie sprawy. Zdjęcia ani papierowy
+                    paragon nie są warunkiem przyjęcia reklamacji.
+                  </li>
+                  <li>
+                    Konsument może żądać naprawy lub wymiany. Sprzedawca może zmienić wybrany
+                    sposób, jeżeli jest on niemożliwy lub wymagałby nadmiernych kosztów. Gdy obydwa
+                    sposoby są niemożliwe lub wymagałyby nadmiernych kosztów, Sprzedawca może
+                    odmówić doprowadzenia towaru do zgodności z umową. W przypadku wody kokosowej
+                    właściwym sposobem usunięcia niezgodności będzie zwykle wymiana.
+                  </li>
+                  <li>
+                    Naprawa lub wymiana następuje w rozsądnym czasie od poinformowania Sprzedawcy o
+                    niezgodności, bez nadmiernych niedogodności dla konsumenta. Koszty, w tym
+                    niezbędnego transportu, ponosi Sprzedawca. Konsument udostępnia towar, a
+                    Sprzedawca odbiera go na swój koszt, po uzgodnieniu sposobu odbioru.
+                  </li>
+                  <li>
+                    Konsument może złożyć oświadczenie o obniżeniu ceny albo odstąpieniu od umowy,
+                    gdy Sprzedawca odmówił doprowadzenia towaru do zgodności albo nie uczynił tego
+                    na zasadach ustawowych, niezgodność nadal występuje mimo próby jej usunięcia,
+                    niezgodność jest na tyle istotna, że uzasadnia takie żądanie od razu, lub z
+                    okoliczności albo oświadczenia Sprzedawcy wynika, że nie usunie on niezgodności
+                    w rozsądnym czasie lub bez nadmiernych niedogodności.
+                  </li>
+                  <li>
+                    Konsument nie może odstąpić od umowy, jeżeli niezgodność jest nieistotna.
+                    Domniemywa się, że niezgodność jest istotna. Obniżka ceny powinna pozostawać w
+                    proporcji do zmniejszenia wartości towaru wynikającego z niezgodności.
+                  </li>
+                  <li>
+                    Sprzedawca odpowiada na reklamację w ciągu 14 dni od jej otrzymania, na papierze
+                    lub innym trwałym nośniku, np. e-mailem. Brak odpowiedzi w tym terminie oznacza
+                    uznanie reklamacji konsumenta.
+                  </li>
+                  <li>
+                    Kwoty należne wskutek obniżenia ceny są zwracane niezwłocznie, najpóźniej w
+                    ciągu 14 dni od otrzymania oświadczenia o obniżeniu ceny.
+                  </li>
+                  <li>
+                    Przy odstąpieniu z powodu niezgodności towaru z umową konsument niezwłocznie
+                    zwraca towar na koszt Sprzedawcy. Zwrot ceny następuje niezwłocznie, najpóźniej
+                    w ciągu 14 dni od otrzymania towaru lub dowodu jego odesłania, przy użyciu tego
+                    samego sposobu płatności, chyba że konsument wyraźnie zgodzi się na inny sposób
+                    bez dodatkowych kosztów.
+                  </li>
+                </ol>
+              </div>
+              <div id="vi-uszkodzenia">
+                <h3 className="text-lg md:text-xl font-semibold mb-3">
+                  7. Uszkodzenia podczas dostawy
+                </h3>
+                <ol className="list-decimal pl-6 space-y-3">
+                  <li>
+                    Uszkodzenie, rozbicie lub nieszczelność produktu można zgłosić na
+                    kontakt@drcoco.pl, podając numer zamówienia lub inne dane umożliwiające
+                    identyfikację zakupu.
+                  </li>
+                  <li>
+                    Zalecamy sprawdzenie stanu przesyłki przy odbiorze i sporządzenie protokołu
+                    szkody z przewoźnikiem w razie zauważenia uszkodzeń. Pomocne są zdjęcia
+                    opakowania, etykiety i uszkodzonych produktów. Brak protokołu, zdjęć lub
+                    sprawdzenia przesyłki przy kurierze nie pozbawia konsumenta prawa do reklamacji
+                    i sam w sobie nie uzasadnia jej odrzucenia.
+                  </li>
+                  <li>
+                    Sprzedawca ocenia reklamację na podstawie okoliczności sprawy i dostępnych
+                    dowodów, z uwzględnieniem ustawowych zasad odpowiedzialności i domniemań. Samo
+                    zgłoszenie nie przesądza o sposobie rozpatrzenia reklamacji.
+                  </li>
+                  <li>
+                    Za uszkodzenia podczas dostawy realizowanej sposobem oferowanym przez Sklep
+                    odpowiada Sprzedawca. Koszty realizacji zasadnej reklamacji, w tym niezbędnego
+                    odbioru i wymiany, ponosi Sprzedawca. Pozostałe ustawowe uprawnienia konsumenta
+                    pozostają zachowane.
+                  </li>
+                  <li>
+                    Sprzedawca nie odpowiada za uszkodzenia spowodowane przez klienta po otrzymaniu
+                    towaru. Odmowa z tej przyczyny wymaga ustalenia podstaw zgodnie z prawem; nie
+                    może opierać się wyłącznie na braku protokołu szkody.
+                  </li>
+                  <li>
+                    Prosimy o zgłoszenie problemu możliwie szybko po jego zauważeniu. Zalecenie to
+                    nie skraca ustawowych terminów ani nie ogranicza prawa do reklamacji.
+                  </li>
+                  <li>
+                    Nie należy spożywać produktów z rozbitych lub nieszczelnych opakowań ani odsyłać
+                    rozbitego szkła. Prosimy o kontakt w celu ustalenia bezpiecznego dalszego
+                    postępowania.
+                  </li>
+                </ol>
+              </div>
+              <div id="vi-postanowienia-koncowe">
+                <h3 className="text-lg md:text-xl font-semibold mb-3">8. Postanowienia końcowe</h3>
+                <ol className="list-decimal pl-6 space-y-3">
+                  <li>
+                    W razie zakwestionowania statusu ekologicznego produktu Sprzedawca niezwłocznie
+                    informuje właściwą jednostkę certyfikującą.
+                  </li>
+                  <li>
+                    Niniejsze postanowienia nie wyłączają ani nie ograniczają uprawnień wynikających
+                    z bezwzględnie obowiązujących przepisów prawa.
+                  </li>
+                </ol>
+              </div>
+            </div>
           </section>
 
           {/* VII Pozostałe */}

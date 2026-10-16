@@ -324,6 +324,15 @@ export default function ProductPageClient({ product }: { product: Product }) {
               </div>
             )}
 
+            {/* Sealed Packaging Notice */}
+            <p className="text-xs text-gray-500 leading-relaxed">
+              Prawo odstąpienia od umowy nie przysługuje, jeżeli zapieczętowane opakowanie napoju
+              zostało otwarte po dostarczeniu. Otwarcie kartonu wysyłkowego nie pozbawia prawa
+              zwrotu.{" "}
+              <Link href="/zwroty#otwarte-opakowania" className="text-primary hover:underline">
+                Zwroty i reklamacje
+              </Link>
+            </p>
 
             {/* Full description with markdown content */}
             <div className="space-y-2">

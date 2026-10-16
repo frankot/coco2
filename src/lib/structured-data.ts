@@ -44,6 +44,15 @@ export function buildProductJsonLd(product: Product) {
       itemCondition: "https://schema.org/NewCondition",
       ...availabilityOf(product),
       seller: { "@type": "Organization", name: "NEW AGE FOOD sp. z o.o." },
+      hasMerchantReturnPolicy: {
+        "@type": "MerchantReturnPolicy",
+        applicableCountry: "PL",
+        returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
+        merchantReturnDays: 14,
+        returnMethod: "https://schema.org/ReturnByMail",
+        returnFees: "https://schema.org/ReturnFeesCustomerResponsibility",
+        merchantReturnLink: `${SITE_URL}/zwroty`,
+      },
     },
   };
 }

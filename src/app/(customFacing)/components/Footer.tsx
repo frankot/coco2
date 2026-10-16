@@ -134,6 +134,14 @@ export function Footer() {
               </li>
               <li>
                 <Link
+                  href="/zwroty"
+                  className="text-gray-600 hover:text-primary transition-colors"
+                >
+                  Zwroty i reklamacje
+                </Link>
+              </li>
+              <li>
+                <Link
                   href="/cookies"
                   className="text-gray-600 hover:text-primary transition-colors"
                 >

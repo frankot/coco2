@@ -1,6 +1,8 @@
 import mailer from "@/lib/mailer";
 import { getOrigin } from "@/lib/get-origin";
 import { renderEmailLayout } from "@/lib/email-layout";
+import { LEGAL_DOCUMENTS } from "@/lib/legal-documents";
+import path from "node:path";
 
 type EmailOrderItem = {
   quantity: number;
@@ -121,6 +123,35 @@ function renderSummary(order: EmailOrder) {
   `;
 }
 
+// Withdrawal Notice (durable medium)
+function renderWithdrawalNotice() {
+  const p = 'style="margin:0 0 10px;font-size:13px;line-height:1.5;color:#0d160f;"';
+  return `
+    <div style="border-top:1px solid #c5e8ea;margin-top:24px;padding-top:16px;">
+      <p style="margin:0 0 10px;font-size:15px;font-weight:700;color:#0d160f;">Pouczenie o prawie odstąpienia od umowy</p>
+      <p ${p}>Jeśli kupujesz jako konsument (lub przedsiębiorca na prawach konsumenta), możesz odstąpić od umowy w terminie 14 dni bez podawania przyczyny. Termin biegnie od otrzymania towaru przez Ciebie lub wskazaną przez Ciebie osobę inną niż przewoźnik, a przy dostawie w częściach od otrzymania ostatniej części.</p>
+      <p ${p}>Aby odstąpić od umowy, wyślij jednoznaczne oświadczenie e-mailem na <strong>kontakt@drcoco.pl</strong> lub listownie na adres: NEW AGE FOOD sp. z o.o., ul. Modlińska 29a, 05-110 Jabłonna. Możesz skorzystać z załączonego formularza odstąpienia, ale nie jest to obowiązkowe. Do zachowania terminu wystarczy wysłanie oświadczenia przed jego upływem.</p>
+      <p ${p}>Towar odeślij niezwłocznie, najpóźniej w ciągu 14 dni od odstąpienia, na adres zwrotów: <strong>NEW AGE FOOD sp. z o.o., ul. Różana 1a, 07-230 Gaj</strong>. Bezpośredni koszt odesłania ponosisz Ty.</p>
+      <p ${p}>Zwrócimy wszystkie należne płatności, w tym koszt dostawy do wysokości najtańszego zwykłego sposobu dostarczenia, niezwłocznie, najpóźniej w ciągu 14 dni od otrzymania oświadczenia, tą samą metodą płatności. Możemy wstrzymać zwrot do otrzymania towaru lub dowodu jego odesłania.</p>
+      <p ${p}>Prawo odstąpienia nie przysługuje, jeżeli zapieczętowane opakowanie napoju zostało otwarte po dostarczeniu. Otwarcie kartonu wysyłkowego nie pozbawia prawa zwrotu, a otwarcie produktu nie wyłącza prawa do reklamacji.</p>
+      <p ${p}>Sprzedawca: NEW AGE FOOD sp. z o.o., ul. Modlińska 29a, 05-110 Jabłonna, NIP: 7011015138, tel. 798 865 865.</p>
+      <p style="margin:0;font-size:13px;line-height:1.5;color:#0d160f;">W załącznikach przesyłamy Regulamin sklepu oraz formularz odstąpienia od umowy.</p>
+    </div>
+  `;
+}
+
+// Legal Attachments (local file in dev, public URL in prod)
+function legalAttachments() {
+  const origin = getOrigin().replace(/\/$/, "");
+  const isLocal = /localhost|127\.0\.0\.1/.test(origin);
+  return [LEGAL_DOCUMENTS.regulamin, LEGAL_DOCUMENTS.withdrawalForm].map((doc) => ({
+    filename: doc.filename,
+    path: isLocal
+      ? path.join(process.cwd(), "public", doc.publicPath)
+      : `${origin}${doc.publicPath}`,
+  }));
+}
+
 // Re-export for backwards compat
 const renderLayout = renderEmailLayout;
 
@@ -137,11 +168,13 @@ export async function sendOrderPlacedEmail(order: EmailOrder) {
     <div style="margin:16px 0;">${renderOrderItems(order.orderItems)}</div>
     ${renderSummary(order)}
     <p style="margin:0;font-size:14px;color:#2b6a4b;">Metoda płatności: <strong>${paymentLabel(order.paymentMethod)}</strong></p>
+    ${renderWithdrawalNotice()}
   `;
 
   return mailer.sendMail({
     to: order.user.email,
     subject: `Potwierdzenie zamówienia ${order.id}`,
+    attachments: legalAttachments(),
     html: renderLayout({
       title: "Dziękujemy za zamówienie",
       intro: "Przyjęliśmy Twoje zamówienie i rozpoczynamy realizację.",
