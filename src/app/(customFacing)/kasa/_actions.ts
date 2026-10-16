@@ -5,6 +5,7 @@ import crypto from "crypto";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { getServerSession } from "next-auth";
+import { SHIPPING_COUNTRY } from "@/lib/shipping-country";
 import { getMaxPacks, RETAIL_MAX_PACKS_MESSAGE } from "@/lib/order-limits";
 import { authOptions } from "@/lib/auth";
 import { createOrUpdateUser } from "@/lib/auth-utils";
@@ -36,7 +37,7 @@ const orderFormSchema = z.object({
   street: z.string().min(1, "Ulica jest wymagana"),
   city: z.string().min(1, "Miasto jest wymagane"),
   postalCode: z.string().min(1, "Kod pocztowy jest wymagany"),
-  country: z.string().default("Polska"),
+  country: z.string().optional().transform(() => SHIPPING_COUNTRY),
   paymentMethod: z.enum(["COD", "STRIPE", "INVOICE_DEFERRED"]),
   shippingMethodId: z.string().optional(),
   shippingServiceName: z.string().optional(),
@@ -59,7 +60,7 @@ const orderFormSchema = z.object({
   shippingStreet: z.string().optional(),
   shippingCity: z.string().optional(),
   shippingPostalCode: z.string().optional(),
-  shippingCountry: z.string().optional(),
+  shippingCountry: z.string().optional().transform(() => SHIPPING_COUNTRY),
   shippingPhoneNumber: z.string().optional(),
   // Faktura VAT
   wantsFaktura: z.boolean().default(false),
@@ -76,7 +77,7 @@ const orderFormSchema = z.object({
   { message: "Nieprawidłowy numer NIP", path: ["nip"] }
 );
 
-type OrderFormData = z.infer<typeof orderFormSchema>;
+type OrderFormData = z.input<typeof orderFormSchema>;
 
 export async function createOrder(formData: OrderFormData) {
   try {

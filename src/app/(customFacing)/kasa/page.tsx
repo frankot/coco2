@@ -23,6 +23,7 @@ import {
 import { toast } from "sonner";
 import { formatPLN } from "@/lib/formatter";
 import { createOrder } from "./_actions";
+import { SHIPPING_COUNTRY, SHIPPING_COUNTRY_NOTICE } from "@/lib/shipping-country";
 import { getMaxPacks, RETAIL_MAX_PACKS_MESSAGE } from "@/lib/order-limits";
 import { ApaczkaService } from "@/types/apaczka";
 import { trackBeginCheckout } from "@/lib/analytics";
@@ -389,7 +390,7 @@ export default function CheckoutPage() {
             street: def.street || prev.street,
             city: def.city || prev.city,
             postalCode: def.postalCode || prev.postalCode,
-            country: def.country || prev.country,
+            country: SHIPPING_COUNTRY,
             phoneNumber: def.phoneNumber || prev.phoneNumber,
           }));
         }
@@ -1265,13 +1266,8 @@ export default function CheckoutPage() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="country">Kraj</Label>
-                    <Input
-                      id="country"
-                      name="country"
-                      value={formData.country}
-                      onChange={handleInputChange}
-                      required
-                    />
+                    <Input id="country" name="country" value={SHIPPING_COUNTRY} readOnly disabled />
+                    <p className="text-xs text-muted-foreground">{SHIPPING_COUNTRY_NOTICE}</p>
                   </div>
                 </div>
               </Card>
@@ -1337,13 +1333,8 @@ export default function CheckoutPage() {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="shippingCountry">Kraj</Label>
-                      <Input
-                        id="shippingCountry"
-                        name="shippingCountry"
-                        value={formData.shippingCountry}
-                        onChange={handleInputChange}
-                        required
-                      />
+                      <Input id="shippingCountry" name="shippingCountry" value={SHIPPING_COUNTRY} readOnly disabled />
+                      <p className="text-xs text-muted-foreground">{SHIPPING_COUNTRY_NOTICE}</p>
                     </div>
                   </div>
                 )}

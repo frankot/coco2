@@ -1,4 +1,5 @@
 import prisma from "@/db";
+import { SHIPPING_COUNTRY } from "@/lib/shipping-country";
 import { createRouteHandler, ApiError, getRequiredParam, readJson } from "@/lib/api";
 import { z } from "zod";
 
@@ -6,7 +7,7 @@ const addressUpdateSchema = z.object({
   street: z.string().min(1, "Ulica jest wymagana").optional(),
   city: z.string().min(1, "Miasto jest wymagane").optional(),
   postalCode: z.string().min(1, "Kod pocztowy jest wymagany").optional(),
-  country: z.string().min(1, "Kraj jest wymagany").optional(),
+  country: z.string().optional().transform(() => SHIPPING_COUNTRY),
   phoneNumber: z.string().optional(),
   isDefault: z.boolean().optional(),
   addressType: z.enum(["BILLING", "SHIPPING", "BOTH"]).optional(),

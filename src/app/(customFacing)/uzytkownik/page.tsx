@@ -24,6 +24,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
+import { SHIPPING_COUNTRY, SHIPPING_COUNTRY_NOTICE } from "@/lib/shipping-country";
 
 type OrderStatus = "PENDING" | "PREORDER" | "PAID" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED";
 
@@ -495,11 +496,10 @@ export default function UserProfilePage() {
                         </div>
                         <div className="md:col-span-2">
                           <Label>Kraj</Label>
-                          <Input
-                            value={editForm.country || "Polska"}
-                            onChange={(e) => setEditForm({ ...editForm, country: e.target.value })}
-                            required
-                          />
+                          <Input value={SHIPPING_COUNTRY} readOnly disabled />
+                          <p className="text-xs text-muted-foreground mt-1">
+                            {SHIPPING_COUNTRY_NOTICE}
+                          </p>
                         </div>
                       </div>
                       <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
