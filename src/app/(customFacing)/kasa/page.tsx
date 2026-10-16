@@ -1578,18 +1578,6 @@ export default function CheckoutPage() {
                   </Link>{" "}
                   i wyrażam zgodę na przetwarzanie moich danych osobowych w celu realizacji
                   zamówienia.
-                  <span className="block mt-2 text-xs text-gray-500">
-                    Prawo odstąpienia od umowy nie przysługuje, jeżeli zapieczętowane opakowanie
-                    napoju zostało otwarte po dostarczeniu. Otwarcie kartonu wysyłkowego nie
-                    pozbawia prawa zwrotu. Szczegóły:{" "}
-                    <Link
-                      href="/zwroty#otwarte-opakowania"
-                      target="_blank"
-                      className="text-primary hover:underline"
-                    >
-                      Zwroty i reklamacje
-                    </Link>
-                  </span>
                 </label>
               </div>
 
