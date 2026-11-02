@@ -7,15 +7,15 @@ import { FeaturedProductsSkeleton } from "./components/FeaturedProductsSkeleton"
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Dr.Coco - Naturalna woda kokosowa z Wietnamu",
+  title: "Dr.Coco - Naturalna woda kokosowa z Tajlandii i Filipin",
   description:
-    "Dr.Coco® to naturalna woda kokosowa z młodych kokosów z organicznych farm w Wietnamie. Naturalny izotonik bez cukru, bez konserwantów, wegański i bezglutenowy. Zamów online.",
+    "Dr.Coco® to naturalna woda kokosowa z młodych kokosów z organicznych farm w Tajlandii i na Filipinach. Naturalny izotonik bez cukru, bez konserwantów, wegański i bezglutenowy. Zamów online.",
   keywords: [
     "woda kokosowa",
     "Dr.Coco",
     "naturalny izotonik",
     "zdrowe napoje",
-    "woda kokosowa Wietnam",
+    "woda kokosowa Tajlandia",
     "napój kokosowy",
     "woda z młodych kokosów",
   ],
@@ -23,9 +23,9 @@ export const metadata: Metadata = {
     canonical: "https://drcoco.pl",
   },
   openGraph: {
-    title: "Dr.Coco - Naturalna woda kokosowa z Wietnamu",
+    title: "Dr.Coco - Naturalna woda kokosowa z Tajlandii i Filipin",
     description:
-      "Naturalny izotonik z organicznych farm w Wietnamie. Bez cukru, bez konserwantów, wegański i bezglutenowy.",
+      "Naturalny izotonik z organicznych farm w Tajlandii i na Filipinach. Bez cukru, bez konserwantów, wegański i bezglutenowy.",
     url: "https://drcoco.pl",
     type: "website",
     images: [
@@ -39,9 +39,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Dr.Coco - Naturalna woda kokosowa z Wietnamu",
+    title: "Dr.Coco - Naturalna woda kokosowa z Tajlandii i Filipin",
     description:
-      "Naturalny izotonik z organicznych farm w Wietnamie. Bez cukru, bez konserwantów, wegański.",
+      "Naturalny izotonik z organicznych farm w Tajlandii i na Filipinach. Bez cukru, bez konserwantów, wegański.",
     images: ["/og-image.webp"],
   },
 };

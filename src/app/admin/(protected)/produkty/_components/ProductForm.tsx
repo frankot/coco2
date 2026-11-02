@@ -471,6 +471,28 @@ export default function ProductForm({ product }: { product?: Product | null }) {
                 )}
               </div>
 
+              {/* SEO */}
+              <div className="space-y-1.5">
+                <Label htmlFor="metaTitle">Meta title (SEO)</Label>
+                <Input
+                  id="metaTitle"
+                  name="metaTitle"
+                  defaultValue={product?.metaTitle ?? ""}
+                  placeholder="Puste = generowany z nazwy, np. Woda kokosowa Dr. Coco 1L – zestaw 6 sztuk | Dr.Coco"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="metaDescription">Meta description (SEO)</Label>
+                <Textarea
+                  id="metaDescription"
+                  name="metaDescription"
+                  rows={2}
+                  maxLength={300}
+                  defaultValue={product?.metaDescription ?? ""}
+                  placeholder="Puste = generowany z tytułu. Zalecane do 160 znaków."
+                />
+              </div>
+
               {/* Wymiary paczki */}
               <div className="grid grid-cols-4 gap-3 pt-2">
                 <div className="space-y-1">

@@ -59,6 +59,8 @@ export async function addProduct(prevState: FormState, formData: FormData): Prom
     const lastPriceRaw = formData.get("lastPriceInCents") as string;
     const lastPriceInCents = lastPriceRaw ? parseInt(lastPriceRaw) : null;
     const description = formData.get("description") as string;
+    const metaTitle = ((formData.get("metaTitle") as string) || "").trim() || null;
+    const metaDescription = ((formData.get("metaDescription") as string) || "").trim() || null;
     const itemsPerPack = parseInt(formData.get("itemsPerPack") as string) || 12;
     const isVisible = formData.get("isVisible") === "on";
     const isPreorder = formData.get("isPreorder") === "on";
@@ -164,6 +166,8 @@ export async function addProduct(prevState: FormState, formData: FormData): Prom
         priceInCents,
         lastPriceInCents,
         description,
+        metaTitle,
+        metaDescription,
         content,
         composition,
         imagePaths,
@@ -229,6 +233,8 @@ export async function updateProduct(
     const lastPriceRaw = formData.get("lastPriceInCents") as string;
     const lastPriceInCents = lastPriceRaw ? parseInt(lastPriceRaw) : null;
     const description = formData.get("description") as string;
+    const metaTitle = ((formData.get("metaTitle") as string) || "").trim() || null;
+    const metaDescription = ((formData.get("metaDescription") as string) || "").trim() || null;
     const itemsPerPack = parseInt(formData.get("itemsPerPack") as string) || 12;
     const isVisible = formData.get("isVisible") === "on";
     const isPreorder = formData.get("isPreorder") === "on";
@@ -301,6 +307,8 @@ export async function updateProduct(
       priceInCents,
       lastPriceInCents,
       description,
+      metaTitle,
+      metaDescription,
       itemsPerPack,
       weightKg,
       lengthCm,

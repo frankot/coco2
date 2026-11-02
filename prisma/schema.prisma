@@ -64,6 +64,8 @@ model Product {
   imagePaths     String[]
   description    String
   content        String?     // Markdown content
+  metaTitle      String?
+  metaDescription String?
   composition    Json?       // Composition/nutritional info
   isAvailable    Boolean     @default(true)
   isVisible      Boolean     @default(true)

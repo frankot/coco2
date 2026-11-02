@@ -44,7 +44,7 @@ export function About() {
             <div className="space-y-4 text-gray-600 leading-relaxed">
               <p>
                 Dr. Coco® to 100% naturalna woda kokosowa, pozyskiwana z młodych kokosów rosnących
-                na certyfikowanych, organicznych farmach w Tajlandii i na Filipinach – sercu
+                na organicznych farmach w Tajlandii i na Filipinach – sercu
                 światowej produkcji wody kokosowej. Dzięki regularnym zbiorom i tropikalnemu
                 klimatowi zachowuje świeżość, naturalny smak i pełnię wartości odżywczych.
               </p>

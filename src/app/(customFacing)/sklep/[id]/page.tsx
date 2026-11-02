@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ProductPageClient from "./ProductPageClient";
 import { getProductByIdOrSlug, getVisibleProduct } from "@/lib/products-public";
+import { getProductMetaDescription, getProductMetaTitle } from "@/lib/product-seo";
 import { buildProductJsonLd, serializeJsonLd } from "@/lib/structured-data";
 
 type Props = { params: Promise<{ id: string }> };
@@ -17,20 +18,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
-  const description = product.description
-    ? product.description.slice(0, 160) + (product.description.length > 160 ? "..." : "")
-    : `${product.name} - naturalna woda kokosowa Dr.Coco®. Zamów online z dostawą w całej Polsce.`;
+  const title = getProductMetaTitle(product);
+  const description = getProductMetaDescription(product);
 
   const ogImage = product.imagePaths?.[0] || "/og-image.webp";
 
   return {
-    title: product.name,
+    title: { absolute: title },
     description,
     alternates: {
       canonical: `https://drcoco.pl/sklep/${product.slug || id}`,
     },
     openGraph: {
-      title: `${product.name} | Dr.Coco`,
+      title,
       description,
       url: `https://drcoco.pl/sklep/${product.slug || id}`,
       type: "website",
@@ -45,7 +45,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: {
       card: "summary_large_image",
-      title: `${product.name} | Dr.Coco`,
+      title,
       description,
       images: [ogImage],
     },

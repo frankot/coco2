@@ -58,6 +58,8 @@ export type ProductMinAggregateOutputType = {
   priceInCents: number | null
   description: string | null
   content: string | null
+  metaTitle: string | null
+  metaDescription: string | null
   isAvailable: boolean | null
   isVisible: boolean | null
   isPreorder: boolean | null
@@ -85,6 +87,8 @@ export type ProductMaxAggregateOutputType = {
   priceInCents: number | null
   description: string | null
   content: string | null
+  metaTitle: string | null
+  metaDescription: string | null
   isAvailable: boolean | null
   isVisible: boolean | null
   isPreorder: boolean | null
@@ -113,6 +117,8 @@ export type ProductCountAggregateOutputType = {
   imagePaths: number
   description: number
   content: number
+  metaTitle: number
+  metaDescription: number
   composition: number
   isAvailable: number
   isVisible: number
@@ -168,6 +174,8 @@ export type ProductMinAggregateInputType = {
   priceInCents?: true
   description?: true
   content?: true
+  metaTitle?: true
+  metaDescription?: true
   isAvailable?: true
   isVisible?: true
   isPreorder?: true
@@ -195,6 +203,8 @@ export type ProductMaxAggregateInputType = {
   priceInCents?: true
   description?: true
   content?: true
+  metaTitle?: true
+  metaDescription?: true
   isAvailable?: true
   isVisible?: true
   isPreorder?: true
@@ -223,6 +233,8 @@ export type ProductCountAggregateInputType = {
   imagePaths?: true
   description?: true
   content?: true
+  metaTitle?: true
+  metaDescription?: true
   composition?: true
   isAvailable?: true
   isVisible?: true
@@ -340,6 +352,8 @@ export type ProductGroupByOutputType = {
   imagePaths: string[]
   description: string
   content: string | null
+  metaTitle: string | null
+  metaDescription: string | null
   composition: runtime.JsonValue | null
   isAvailable: boolean
   isVisible: boolean
@@ -393,6 +407,8 @@ export type ProductWhereInput = {
   imagePaths?: Prisma.StringNullableListFilter<"Product">
   description?: Prisma.StringFilter<"Product"> | string
   content?: Prisma.StringNullableFilter<"Product"> | string | null
+  metaTitle?: Prisma.StringNullableFilter<"Product"> | string | null
+  metaDescription?: Prisma.StringNullableFilter<"Product"> | string | null
   composition?: Prisma.JsonNullableFilter<"Product">
   isAvailable?: Prisma.BoolFilter<"Product"> | boolean
   isVisible?: Prisma.BoolFilter<"Product"> | boolean
@@ -426,6 +442,8 @@ export type ProductOrderByWithRelationInput = {
   imagePaths?: Prisma.SortOrder
   description?: Prisma.SortOrder
   content?: Prisma.SortOrderInput | Prisma.SortOrder
+  metaTitle?: Prisma.SortOrderInput | Prisma.SortOrder
+  metaDescription?: Prisma.SortOrderInput | Prisma.SortOrder
   composition?: Prisma.SortOrderInput | Prisma.SortOrder
   isAvailable?: Prisma.SortOrder
   isVisible?: Prisma.SortOrder
@@ -462,6 +480,8 @@ export type ProductWhereUniqueInput = Prisma.AtLeast<{
   imagePaths?: Prisma.StringNullableListFilter<"Product">
   description?: Prisma.StringFilter<"Product"> | string
   content?: Prisma.StringNullableFilter<"Product"> | string | null
+  metaTitle?: Prisma.StringNullableFilter<"Product"> | string | null
+  metaDescription?: Prisma.StringNullableFilter<"Product"> | string | null
   composition?: Prisma.JsonNullableFilter<"Product">
   isAvailable?: Prisma.BoolFilter<"Product"> | boolean
   isVisible?: Prisma.BoolFilter<"Product"> | boolean
@@ -495,6 +515,8 @@ export type ProductOrderByWithAggregationInput = {
   imagePaths?: Prisma.SortOrder
   description?: Prisma.SortOrder
   content?: Prisma.SortOrderInput | Prisma.SortOrder
+  metaTitle?: Prisma.SortOrderInput | Prisma.SortOrder
+  metaDescription?: Prisma.SortOrderInput | Prisma.SortOrder
   composition?: Prisma.SortOrderInput | Prisma.SortOrder
   isAvailable?: Prisma.SortOrder
   isVisible?: Prisma.SortOrder
@@ -533,6 +555,8 @@ export type ProductScalarWhereWithAggregatesInput = {
   imagePaths?: Prisma.StringNullableListFilter<"Product">
   description?: Prisma.StringWithAggregatesFilter<"Product"> | string
   content?: Prisma.StringNullableWithAggregatesFilter<"Product"> | string | null
+  metaTitle?: Prisma.StringNullableWithAggregatesFilter<"Product"> | string | null
+  metaDescription?: Prisma.StringNullableWithAggregatesFilter<"Product"> | string | null
   composition?: Prisma.JsonNullableWithAggregatesFilter<"Product">
   isAvailable?: Prisma.BoolWithAggregatesFilter<"Product"> | boolean
   isVisible?: Prisma.BoolWithAggregatesFilter<"Product"> | boolean
@@ -563,6 +587,8 @@ export type ProductCreateInput = {
   imagePaths?: Prisma.ProductCreateimagePathsInput | string[]
   description: string
   content?: string | null
+  metaTitle?: string | null
+  metaDescription?: string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: boolean
   isVisible?: boolean
@@ -596,6 +622,8 @@ export type ProductUncheckedCreateInput = {
   imagePaths?: Prisma.ProductCreateimagePathsInput | string[]
   description: string
   content?: string | null
+  metaTitle?: string | null
+  metaDescription?: string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: boolean
   isVisible?: boolean
@@ -629,6 +657,8 @@ export type ProductUpdateInput = {
   imagePaths?: Prisma.ProductUpdateimagePathsInput | string[]
   description?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -662,6 +692,8 @@ export type ProductUncheckedUpdateInput = {
   imagePaths?: Prisma.ProductUpdateimagePathsInput | string[]
   description?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -695,6 +727,8 @@ export type ProductCreateManyInput = {
   imagePaths?: Prisma.ProductCreateimagePathsInput | string[]
   description: string
   content?: string | null
+  metaTitle?: string | null
+  metaDescription?: string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: boolean
   isVisible?: boolean
@@ -725,6 +759,8 @@ export type ProductUpdateManyMutationInput = {
   imagePaths?: Prisma.ProductUpdateimagePathsInput | string[]
   description?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -755,6 +791,8 @@ export type ProductUncheckedUpdateManyInput = {
   imagePaths?: Prisma.ProductUpdateimagePathsInput | string[]
   description?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -793,6 +831,8 @@ export type ProductCountOrderByAggregateInput = {
   imagePaths?: Prisma.SortOrder
   description?: Prisma.SortOrder
   content?: Prisma.SortOrder
+  metaTitle?: Prisma.SortOrder
+  metaDescription?: Prisma.SortOrder
   composition?: Prisma.SortOrder
   isAvailable?: Prisma.SortOrder
   isVisible?: Prisma.SortOrder
@@ -834,6 +874,8 @@ export type ProductMaxOrderByAggregateInput = {
   priceInCents?: Prisma.SortOrder
   description?: Prisma.SortOrder
   content?: Prisma.SortOrder
+  metaTitle?: Prisma.SortOrder
+  metaDescription?: Prisma.SortOrder
   isAvailable?: Prisma.SortOrder
   isVisible?: Prisma.SortOrder
   isPreorder?: Prisma.SortOrder
@@ -861,6 +903,8 @@ export type ProductMinOrderByAggregateInput = {
   priceInCents?: Prisma.SortOrder
   description?: Prisma.SortOrder
   content?: Prisma.SortOrder
+  metaTitle?: Prisma.SortOrder
+  metaDescription?: Prisma.SortOrder
   isAvailable?: Prisma.SortOrder
   isVisible?: Prisma.SortOrder
   isPreorder?: Prisma.SortOrder
@@ -1010,6 +1054,8 @@ export type ProductCreateWithoutAvailabilityNotificationsInput = {
   imagePaths?: Prisma.ProductCreateimagePathsInput | string[]
   description: string
   content?: string | null
+  metaTitle?: string | null
+  metaDescription?: string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: boolean
   isVisible?: boolean
@@ -1042,6 +1088,8 @@ export type ProductUncheckedCreateWithoutAvailabilityNotificationsInput = {
   imagePaths?: Prisma.ProductCreateimagePathsInput | string[]
   description: string
   content?: string | null
+  metaTitle?: string | null
+  metaDescription?: string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: boolean
   isVisible?: boolean
@@ -1090,6 +1138,8 @@ export type ProductUpdateWithoutAvailabilityNotificationsInput = {
   imagePaths?: Prisma.ProductUpdateimagePathsInput | string[]
   description?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1122,6 +1172,8 @@ export type ProductUncheckedUpdateWithoutAvailabilityNotificationsInput = {
   imagePaths?: Prisma.ProductUpdateimagePathsInput | string[]
   description?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1154,6 +1206,8 @@ export type ProductCreateWithoutOrderItemsInput = {
   imagePaths?: Prisma.ProductCreateimagePathsInput | string[]
   description: string
   content?: string | null
+  metaTitle?: string | null
+  metaDescription?: string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: boolean
   isVisible?: boolean
@@ -1186,6 +1240,8 @@ export type ProductUncheckedCreateWithoutOrderItemsInput = {
   imagePaths?: Prisma.ProductCreateimagePathsInput | string[]
   description: string
   content?: string | null
+  metaTitle?: string | null
+  metaDescription?: string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: boolean
   isVisible?: boolean
@@ -1234,6 +1290,8 @@ export type ProductUpdateWithoutOrderItemsInput = {
   imagePaths?: Prisma.ProductUpdateimagePathsInput | string[]
   description?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1266,6 +1324,8 @@ export type ProductUncheckedUpdateWithoutOrderItemsInput = {
   imagePaths?: Prisma.ProductUpdateimagePathsInput | string[]
   description?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1298,6 +1358,8 @@ export type ProductCreateWithoutCustomPricesInput = {
   imagePaths?: Prisma.ProductCreateimagePathsInput | string[]
   description: string
   content?: string | null
+  metaTitle?: string | null
+  metaDescription?: string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: boolean
   isVisible?: boolean
@@ -1330,6 +1392,8 @@ export type ProductUncheckedCreateWithoutCustomPricesInput = {
   imagePaths?: Prisma.ProductCreateimagePathsInput | string[]
   description: string
   content?: string | null
+  metaTitle?: string | null
+  metaDescription?: string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: boolean
   isVisible?: boolean
@@ -1378,6 +1442,8 @@ export type ProductUpdateWithoutCustomPricesInput = {
   imagePaths?: Prisma.ProductUpdateimagePathsInput | string[]
   description?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1410,6 +1476,8 @@ export type ProductUncheckedUpdateWithoutCustomPricesInput = {
   imagePaths?: Prisma.ProductUpdateimagePathsInput | string[]
   description?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   composition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -1491,6 +1559,8 @@ export type ProductSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   imagePaths?: boolean
   description?: boolean
   content?: boolean
+  metaTitle?: boolean
+  metaDescription?: boolean
   composition?: boolean
   isAvailable?: boolean
   isVisible?: boolean
@@ -1525,6 +1595,8 @@ export type ProductSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   imagePaths?: boolean
   description?: boolean
   content?: boolean
+  metaTitle?: boolean
+  metaDescription?: boolean
   composition?: boolean
   isAvailable?: boolean
   isVisible?: boolean
@@ -1555,6 +1627,8 @@ export type ProductSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   imagePaths?: boolean
   description?: boolean
   content?: boolean
+  metaTitle?: boolean
+  metaDescription?: boolean
   composition?: boolean
   isAvailable?: boolean
   isVisible?: boolean
@@ -1585,6 +1659,8 @@ export type ProductSelectScalar = {
   imagePaths?: boolean
   description?: boolean
   content?: boolean
+  metaTitle?: boolean
+  metaDescription?: boolean
   composition?: boolean
   isAvailable?: boolean
   isVisible?: boolean
@@ -1606,7 +1682,7 @@ export type ProductSelectScalar = {
   imagePublicIds?: boolean
 }
 
-export type ProductOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "price" | "priceInCents" | "imagePaths" | "description" | "content" | "composition" | "isAvailable" | "isVisible" | "isPreorder" | "preorderAvailableAt" | "preorderOriginalPriceInCents" | "promo" | "lastPriceInCents" | "visibleToDetal" | "visibleToDetalB2B" | "visibleToHurt" | "itemsPerPack" | "weightKg" | "lengthCm" | "widthCm" | "heightCm" | "createdAt" | "updatedAt" | "imagePublicIds", ExtArgs["result"]["product"]>
+export type ProductOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "price" | "priceInCents" | "imagePaths" | "description" | "content" | "metaTitle" | "metaDescription" | "composition" | "isAvailable" | "isVisible" | "isPreorder" | "preorderAvailableAt" | "preorderOriginalPriceInCents" | "promo" | "lastPriceInCents" | "visibleToDetal" | "visibleToDetalB2B" | "visibleToHurt" | "itemsPerPack" | "weightKg" | "lengthCm" | "widthCm" | "heightCm" | "createdAt" | "updatedAt" | "imagePublicIds", ExtArgs["result"]["product"]>
 export type ProductInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   orderItems?: boolean | Prisma.Product$orderItemsArgs<ExtArgs>
   customPrices?: boolean | Prisma.Product$customPricesArgs<ExtArgs>
@@ -1632,6 +1708,8 @@ export type $ProductPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     imagePaths: string[]
     description: string
     content: string | null
+    metaTitle: string | null
+    metaDescription: string | null
     composition: runtime.JsonValue | null
     isAvailable: boolean
     isVisible: boolean
@@ -2085,6 +2163,8 @@ export interface ProductFieldRefs {
   readonly imagePaths: Prisma.FieldRef<"Product", 'String[]'>
   readonly description: Prisma.FieldRef<"Product", 'String'>
   readonly content: Prisma.FieldRef<"Product", 'String'>
+  readonly metaTitle: Prisma.FieldRef<"Product", 'String'>
+  readonly metaDescription: Prisma.FieldRef<"Product", 'String'>
   readonly composition: Prisma.FieldRef<"Product", 'Json'>
   readonly isAvailable: Prisma.FieldRef<"Product", 'Boolean'>
   readonly isVisible: Prisma.FieldRef<"Product", 'Boolean'>
