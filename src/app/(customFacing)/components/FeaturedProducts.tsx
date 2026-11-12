@@ -44,11 +44,11 @@ export default async function FeaturedProducts() {
   return (
     <section className="py-12 ">
       <div className="container px-4 mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="flex flex-wrap justify-center gap-6">
           {products.map((product, index) => (
             <div
               key={product.id}
-              className="featured-product-item"
+              className="featured-product-item w-full md:w-[calc((100%_-_1.5rem)/2)] lg:w-[calc((100%_-_3rem)/3)]"
               style={{ "--stagger-delay": `${index * 120}ms` } as React.CSSProperties}
             >
               <ProductCard
