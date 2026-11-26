@@ -1,9 +1,38 @@
-import Image from "next/image";
+import Image, { getImageProps } from "next/image";
 import Link from "next/link";
 import { Leaf } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { HeroCarouselControls } from "./HeroCarouselControls";
-import { carouselSlides, isSlideLeftAligned } from "./heroSlides";
+import { carouselSlides, type PromoSlide } from "./heroSlides";
+
+// Promo Desktop Breakpoint (keep in sync with min-[480px] below)
+const PROMO_DESKTOP_MEDIA = "(min-width: 480px)";
+
+const pageHeadingIndex = carouselSlides.findIndex((slide) => slide.kind === "content");
+
+// Promo Slide Image
+function PromoSlideImage({ slide, isFirst }: { slide: PromoSlide; isFirst: boolean }) {
+  const common = { alt: slide.alt, sizes: "100vw" };
+  const {
+    props: { srcSet: desktopSrcSet },
+  } = getImageProps({ ...common, ...slide.desktopImage });
+  const { props: mobileProps } = getImageProps({
+    ...common,
+    ...slide.mobileImage,
+    loading: isFirst ? "eager" : "lazy",
+    fetchPriority: isFirst ? "high" : "auto",
+  });
+
+  return (
+    <picture>
+      <source media={PROMO_DESKTOP_MEDIA} srcSet={desktopSrcSet} sizes="100vw" />
+      <img
+        {...mobileProps}
+        className="absolute inset-0 h-full w-full object-cover object-[50%_75%] min-[480px]:object-[100%_55%]"
+      />
+    </picture>
+  );
+}
 
 export function Hero() {
   return (
@@ -11,8 +40,18 @@ export function Hero() {
       <div className="relative h-full w-full" data-hero-slide-area>
         <div className="flex h-full transition-transform duration-700 ease-in-out" data-hero-track>
           {carouselSlides.map((slide, index) => {
-            const isLeftAligned = isSlideLeftAligned(index);
-            const Title = index === 0 ? "h1" : "h2";
+            if (slide.kind === "promo") {
+              return (
+                <div key={slide.id} className="min-w-full h-full relative">
+                  <Link href={slide.href} className="absolute inset-0 block">
+                    <PromoSlideImage slide={slide} isFirst={index === 0} />
+                  </Link>
+                </div>
+              );
+            }
+
+            const isLeftAligned = slide.align === "left";
+            const Title = index === pageHeadingIndex ? "h1" : "h2";
 
             return (
               <div key={slide.id} className="min-w-full h-full relative">
@@ -22,7 +61,7 @@ export function Hero() {
                     alt={slide.title}
                     fill
                     sizes="100vw"
-                    className={`object-cover ${index === 0 || index === 2 ? "object-right lg:object-center" : ""}`}
+                    className={`object-cover ${slide.imageClassName ?? ""}`}
                     preload={index === 0}
                   />
                   <div
@@ -72,10 +111,7 @@ export function Hero() {
                             variant="outline"
                             className="border-white/30 text-white hover:bg-white hover:text-primary bg-transparent backdrop-blur-sm px-8 py-2.5 text-sm font-normal"
                           >
-                            <Link
-                              href={slide.ctaText === "Zamów teraz" ? "/sklep" : "/nasza-historia"}
-                              aria-label={`${slide.ctaText}: ${slide.title}`}
-                            >
+                            <Link href={slide.href} aria-label={`${slide.ctaText}: ${slide.title}`}>
                               {slide.ctaText}
                             </Link>
                           </Button>

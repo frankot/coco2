@@ -105,9 +105,15 @@ export function HeroCarouselControls() {
     };
   }, [nextSlide, prevSlide]);
 
+  const isPromoActive = carouselSlides[currentSlide].kind === "promo";
+
   return (
     <>
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20 flex gap-2">
+      <div
+        className={`absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20 flex gap-2 ${
+          isPromoActive ? "max-lg:invisible" : ""
+        }`}
+      >
         {carouselSlides.map((_, index) => (
           <button
             key={index}
